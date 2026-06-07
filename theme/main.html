@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  {%- if page and page.title %}
+  <title>{{ page.title }} — {{ config.site_name }}</title>
+  {%- else %}
+  <title>{{ config.site_name }}</title>
+  {%- endif %}
+  <meta name="description" content="{% if page and page.meta.description %}{{ page.meta.description }}{% else %}{{ config.site_description }}{% endif %}">
+  <meta property="og:title" content="{% if page and page.title %}{{ page.title }} — {{ config.site_name }}{% else %}{{ config.site_name }}{% endif %}">
+  <meta property="og:description" content="{{ config.site_description }}">
+  <meta property="og:type" content="website">
+
+  <link rel="icon" type="image/png" href="{{ base_url }}/{{ config.theme.favicon }}">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="{{ base_url }}/css/doriax.css">
+  <link rel="stylesheet" href="{{ base_url }}/css/highlight.css">
+
+  {%- if config.extra.analytics and config.extra.analytics.property %}
+  <script async src="https://www.googletagmanager.com/gtag/js?id={{ config.extra.analytics.property }}"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', '{{ config.extra.analytics.property }}');
+  </script>
+  {%- endif %}
+</head>
+<body>
+
+  <a class="skip-link" href="#dx-content">Skip to content</a>
+
+  {% include "partials/header.html" %}
+
+  <div class="dx-layout">
+    {% include "partials/sidebar.html" %}
+
+    <main class="dx-main" id="dx-content">
+      <article class="dx-article md-typeset">
+        {% block content %}
+        {%- if page and page.meta and page.meta.hide_title %}{% else %}
+        {%- endif %}
+        {{ page.content }}
+        {% endblock %}
+
+        {% include "partials/footer-nav.html" %}
+      </article>
+
+      {% include "partials/page-footer.html" %}
+    </main>
+
+    {% include "partials/toc.html" %}
+  </div>
+
+  <div class="dx-search-overlay" id="dx-search-overlay" hidden>
+    <div class="dx-search-modal" role="dialog" aria-modal="true" aria-label="Search">
+      <div class="dx-search-input-wrap">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="search" id="dx-search-input" placeholder="Search the docs…" autocomplete="off" spellcheck="false">
+        <kbd class="dx-search-esc">Esc</kbd>
+      </div>
+      <ul class="dx-search-results" id="dx-search-results"></ul>
+      <div class="dx-search-empty" id="dx-search-empty" hidden>No results found.</div>
+    </div>
+  </div>
+
+  <script>
+    window.DORIAX_BASE_URL = "{{ base_url }}";
+  </script>
+  <script src="{{ base_url }}/js/doriax.js" defer></script>
+</body>
+</html>

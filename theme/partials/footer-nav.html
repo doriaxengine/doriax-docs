@@ -1,0 +1,25 @@
+<nav class="dx-footer-nav" aria-label="Page navigation">
+  {%- if page.previous_page %}
+  <a class="dx-footer-nav-link dx-prev" href="{{ page.previous_page.url | url }}">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+    <span>
+      <span class="dx-footer-nav-label">Previous</span>
+      <span class="dx-footer-nav-title">{{ page.previous_page.title }}</span>
+    </span>
+  </a>
+  {%- else %}
+  <span></span>
+  {%- endif %}
+
+  {%- if page.next_page %}
+  <a class="dx-footer-nav-link dx-next" href="{{ page.next_page.url | url }}">
+    <span>
+      <span class="dx-footer-nav-label">Next</span>
+      <span class="dx-footer-nav-title">{{ page.next_page.title }}</span>
+    </span>
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+  </a>
+  {%- else %}
+  <span></span>
+  {%- endif %}
+</nav>

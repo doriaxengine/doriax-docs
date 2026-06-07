@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Page not found — {{ config.site_name }}</title>
+  <link rel="icon" type="image/png" href="{{ base_url }}/{{ config.theme.favicon }}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ base_url }}/css/doriax.css">
+</head>
+<body>
+  {% include "partials/header.html" %}
+  <div class="dx-404">
+    <div class="dx-404-glow"></div>
+    <div class="dx-404-content">
+      <div class="dx-404-code">404</div>
+      <h1>Page not found</h1>
+      <p>The page you are looking for doesn't exist or may have moved.</p>
+      <a class="dx-btn dx-btn-primary" href="{{ base_url }}/">Back to Home</a>
+    </div>
+  </div>
+</body>
+</html>

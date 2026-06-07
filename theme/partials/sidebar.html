@@ -1,0 +1,31 @@
+{% macro render_nav(items) %}
+<ul class="dx-nav-list">
+  {%- for nav_item in items %}
+    {%- if nav_item.children %}
+      {%- set is_active_section = nav_item.active %}
+      <li class="dx-nav-section {% if is_active_section %}is-expanded{% endif %}">
+        <button class="dx-nav-section-toggle" aria-expanded="{{ 'true' if is_active_section else 'false' }}">
+          <span>{{ nav_item.title }}</span>
+          <svg class="dx-nav-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+        {{ render_nav(nav_item.children) }}
+      </li>
+    {%- else %}
+      <li class="dx-nav-item">
+        <a href="{{ nav_item.url | url }}" class="dx-nav-link {% if nav_item.active %}is-active{% endif %}"{% if nav_item.is_link %} target="_blank" rel="noopener"{% endif %}>
+          {{ nav_item.title }}
+        </a>
+      </li>
+    {%- endif %}
+  {%- endfor %}
+</ul>
+{% endmacro %}
+
+<aside class="dx-sidebar" id="dx-sidebar">
+  <div class="dx-sidebar-inner">
+    <nav class="dx-nav" aria-label="Documentation navigation">
+      {{ render_nav(nav) }}
+    </nav>
+  </div>
+</aside>
+<div class="dx-sidebar-scrim" id="dx-sidebar-scrim"></div>

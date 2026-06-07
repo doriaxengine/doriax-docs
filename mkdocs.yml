@@ -1,0 +1,83 @@
+site_name: Doriax Engine Docs
+site_url: 'https://docs.doriax.org'
+site_author: 'Eduardo Doria'
+site_description: 'Official documentation for the Doriax game engine — a free, lightweight, open-source engine for building 2D and 3D games with Lua or C++.'
+
+repo_name: 'doriaxengine/doriax'
+repo_url: 'https://github.com/doriaxengine/doriax'
+edit_uri: 'https://github.com/doriaxengine/doriax-docs/edit/main/docs/'
+
+copyright: 'Copyright &copy; 2026 Eduardo Doria. Documentation under CC-BY 4.0.'
+
+watch:
+  - theme
+
+theme:
+  name: null
+  custom_dir: 'theme/'
+  logo: 'assets/logo/logo_part1.png'
+  favicon: 'assets/logo/logo_part1.png'
+
+extra:
+  social:
+    - name: GitHub
+      link: 'https://github.com/doriaxengine/doriax'
+    - name: Discord
+      link: 'https://discord.gg/yXXDyJf3gT'
+  homepage: 'https://doriax.org'
+  analytics:
+    property: G-D2G3S99SDC
+
+markdown_extensions:
+  - tables
+  - md_in_html
+  - footnotes
+  - attr_list
+  - def_list
+  - admonition
+  - toc:
+      permalink: true
+      permalink_title: 'Link to this section'
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.highlight:
+      anchor_linenums: true
+      use_pygments: true
+  - pymdownx.inlinehilite
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.emoji
+  - pymdownx.keys
+  - pymdownx.caret
+  - pymdownx.mark
+  - pymdownx.tilde
+
+plugins:
+  - search
+
+nav:
+  - Home: 'index.md'
+  - Getting Started:
+      - Introduction: 'getting-started/introduction.md'
+      - Installation: 'getting-started/installation.md'
+      - Your First Project: 'getting-started/first-project.md'
+      - The Editor: 'getting-started/the-editor.md'
+  - Manual:
+      - Scenes & Entities: 'manual/scenes-and-entities.md'
+      - Entity Component System: 'manual/entity-component-system.md'
+      - Scripting: 'manual/scripting.md'
+      - 2D Graphics: 'manual/2d-graphics.md'
+      - 3D Graphics: 'manual/3d-graphics.md'
+      - Physics: 'manual/physics.md'
+  - Building:
+      - Overview: 'building/overview.md'
+      - Windows: 'building/windows.md'
+      - Linux: 'building/linux.md'
+      - macOS: 'building/macos.md'
+      - Android: 'building/android.md'
+      - iOS: 'building/ios.md'
+      - HTML5: 'building/html5.md'
+  - About:
+      - License & Credits: 'about/license.md'

@@ -1,0 +1,52 @@
+/* ==========================================================================
+   Doriax docs — Pygments syntax highlighting (dark)
+   Token colors tuned to the Doriax accent palette.
+   ========================================================================== */
+.highlight .hll { background-color: rgba(108,92,231,0.12); }
+.highlight { color: #d4d4e0; }
+
+.highlight .c, .highlight .ch, .highlight .cm, .highlight .c1, .highlight .cs { color: #6b6b80; font-style: italic; } /* Comment */
+.highlight .cp, .highlight .cpf { color: #00cec9; } /* Preprocessor */
+
+.highlight .k, .highlight .kc, .highlight .kd, .highlight .kn, .highlight .kp, .highlight .kr { color: #a29bfe; } /* Keyword */
+.highlight .kt { color: #00cec9; } /* Keyword.Type */
+
+.highlight .o, .highlight .ow { color: #c8c8e0; } /* Operator */
+.highlight .p { color: #b8b8d0; } /* Punctuation */
+
+.highlight .n { color: #d4d4e0; } /* Name */
+.highlight .na { color: #74e0db; } /* Name.Attribute */
+.highlight .nb, .highlight .bp { color: #00cec9; } /* Name.Builtin */
+.highlight .nc { color: #fdcb6e; } /* Name.Class */
+.highlight .no { color: #fd79a8; } /* Name.Constant */
+.highlight .nd { color: #a29bfe; } /* Name.Decorator */
+.highlight .nf, .highlight .fm { color: #6c9eff; } /* Name.Function */
+.highlight .nn { color: #fdcb6e; } /* Name.Namespace */
+.highlight .nt { color: #a29bfe; } /* Name.Tag */
+.highlight .nv, .highlight .vc, .highlight .vg, .highlight .vi { color: #e0e0f0; } /* Name.Variable */
+.highlight .nl { color: #74e0db; } /* Name.Label */
+
+.highlight .s, .highlight .sb, .highlight .sc, .highlight .sd, .highlight .s2,
+.highlight .se, .highlight .sh, .highlight .si, .highlight .sx, .highlight .sr,
+.highlight .s1, .highlight .ss, .highlight .dl { color: #79e6a0; } /* String */
+.highlight .sa { color: #79e6a0; }
+
+.highlight .m, .highlight .mb, .highlight .mf, .highlight .mh, .highlight .mi,
+.highlight .mo, .highlight .il { color: #fdcb6e; } /* Number */
+
+.highlight .gd { color: #e84393; } /* Generic.Deleted */
+.highlight .gi { color: #00cec9; } /* Generic.Inserted */
+.highlight .ge { font-style: italic; }
+.highlight .gs { font-weight: bold; }
+.highlight .gh, .highlight .gu { color: #a29bfe; font-weight: bold; }
+.highlight .gp { color: #6b6b80; } /* Generic.Prompt */
+.highlight .err { color: #e84393; }
+
+/* line numbers */
+.highlight .lineno, .highlight .linenos, .highlight .gl {
+  color: #44445a;
+  user-select: none;
+  padding-right: 16px;
+}
+.highlighttable { width: 100%; }
+.highlighttable td.linenos { width: 1%; white-space: nowrap; vertical-align: top; }

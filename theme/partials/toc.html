@@ -1,0 +1,21 @@
+{% macro render_toc(toc_items) %}
+<ul class="dx-toc-list">
+  {%- for toc_item in toc_items %}
+  <li class="dx-toc-entry">
+    <a href="{{ toc_item.url }}" class="dx-toc-link" data-level="{{ toc_item.level }}">{{ toc_item.title }}</a>
+    {%- if toc_item.children %}
+      {{ render_toc(toc_item.children) }}
+    {%- endif %}
+  </li>
+  {%- endfor %}
+</ul>
+{% endmacro %}
+
+<aside class="dx-toc" id="dx-toc">
+  {%- if page and page.toc and page.toc | length > 0 %}
+  <div class="dx-toc-inner">
+    <div class="dx-toc-title">On this page</div>
+    {{ render_toc(page.toc) }}
+  </div>
+  {%- endif %}
+</aside>
