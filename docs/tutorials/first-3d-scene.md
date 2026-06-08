@@ -120,6 +120,8 @@ Optionally add a `Body3D` with a convex or box shape to the model entity and set
 
 Press **Play**. The model should rotate and be illuminated by the directional light.
 
+![3D scene in play mode](../assets/screenshots/editor-3d-play.png)
+
 If the scene appears completely black:
 
 - [ ] The light is enabled and has positive intensity.

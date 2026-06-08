@@ -44,10 +44,7 @@ The script creation dialog (`ScriptCreateDialog`) generates starter code with ex
 properties and event registration. The integrated **Code Editor** opens the new files
 for editing.
 
-!!! tip "Screenshot needed"
-    Capture `editor-script-create-dialog.png` showing the three script types in the
-    creation dialog. Place it in `docs/assets/screenshots/` (see
-    [Screenshot Checklist](../contributing/screenshot-checklist.md)).
+![Script creation dialog](../assets/screenshots/editor-script-create-dialog.png)
 
 ## Script types
 

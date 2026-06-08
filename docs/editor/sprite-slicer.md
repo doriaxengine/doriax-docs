@@ -31,6 +31,8 @@ characters, explosion effects, or item icons.
 
 ## Grid slicing
 
+![Grid slicing in the Sprite Slicer](../assets/screenshots/sprite-slicer-tool.png)
+
 1. Set **Cell Width** and **Cell Height** to the pixel size of one frame.
 2. Optionally set **Offset X / Y** (first-cell inset) and **Spacing X / Y** (gap
    between cells) if your sheet has padding.

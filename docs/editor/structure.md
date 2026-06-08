@@ -15,6 +15,8 @@ scene is expanded inline, its entities are shown under that child scene node.
 
 ## Empty entity vs empty object
 
+![Create entity from the Structure panel](../assets/screenshots/editor-create-entity.png)
+
 The create menu has two intentionally different entries:
 
 | Entry | Components added | Meaning |

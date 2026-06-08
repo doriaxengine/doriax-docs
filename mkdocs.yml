@@ -163,6 +163,5 @@ nav:
           - Ray: 'reference/classes/ray.md'
   - Contributing:
       - Documentation Guide: 'contributing/documentation-guide.md'
-      - Screenshot Checklist: 'contributing/screenshot-checklist.md'
   - About:
       - License & Credits: 'about/license.md'
