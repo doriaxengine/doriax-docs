@@ -20,11 +20,11 @@ and efficient open-source game engine with an integrated editor for creating 2D 
 
 </div>
 
-!!! note "Documentation in progress"
-    Doriax Engine is evolving quickly. This documentation covers the essentials and
-    is being expanded continuously. If something is missing, join us on
-    [Discord](https://discord.gg/yXXDyJf3gT) or open an issue on
-    [GitHub](https://github.com/doriaxengine/doriax).
+!!! note "Documentation status"
+    This documentation covers the editor workflow, runtime architecture, core
+    subsystems, build targets, and the current public API surface exposed by the
+    Doriax source tree. Doriax is moving quickly, so the reference pages are written
+    to be practical guides rather than frozen ABI guarantees.
 
 ## Start here
 
@@ -52,6 +52,12 @@ and efficient open-source game engine with an integrated editor for creating 2D 
 <div class="dx-card-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg></div>
 <p class="dx-card-title">Entity Component System</p>
 <p class="dx-card-desc">Understand the data-oriented ECS at the core of the engine.</p>
+</a>
+
+<a class="dx-card" href="reference/index/">
+<div class="dx-card-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M16 3h3a2 2 0 0 1 2 2v3"/><path d="M8 21H5a2 2 0 0 1-2-2v-3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/><path d="m9 9-3 3 3 3"/><path d="m15 9 3 3-3 3"/></svg></div>
+<p class="dx-card-title">API Reference</p>
+<p class="dx-card-desc">Complete class reference with C++ and Lua on every page.</p>
 </a>
 
 </div>
@@ -90,6 +96,11 @@ and efficient open-source game engine with an integrated editor for creating 2D 
 <p>Physically-based rendering with dynamic shadows, fog, sky system, and advanced materials for photorealistic visuals.</p>
 </div>
 
+<div class="dx-feature" markdown>
+**Editor Export Pipeline**
+<p>Scene serialization, script generation, shader compilation, and platform-specific project generation live in the editor.</p>
+</div>
+
 </div>
 
 ## The editor
@@ -98,7 +109,7 @@ and efficient open-source game engine with an integrated editor for creating 2D 
 
 Doriax ships with a complete visual editor: design scenes, edit 2D tilemaps, animate
 characters, write code, and test your game in play mode — all from one unified
-environment. Learn more in [The Editor](getting-started/the-editor.md).
+environment. Learn more in [The Editor](editor/index.md).
 
 ---
 

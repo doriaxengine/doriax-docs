@@ -1,11 +1,12 @@
 ---
-description: A tour of the Doriax editor — scene editing, inspector, animation, code editor, and play mode.
+description: A tour of the Doriax editor — scene editing, Properties window, animation, code editor, and play mode.
 ---
 
 # The Editor
 
 Doriax ships with a complete visual editor built for creators. Design scenes, write
-code, animate characters, and test your game — all from one unified environment.
+code, animate characters, manage resources, and test your game from one unified
+environment.
 
 ![Doriax Engine editor — 3D scene](../assets/screenshots/editor-3d-scene.png)
 
@@ -15,9 +16,11 @@ code, animate characters, and test your game — all from one unified environmen
 | --- | --- |
 | Scene view | Viewport for editing 2D and 3D scenes with gizmos and cameras |
 | Scene hierarchy | The tree of entities in the current scene |
-| Inspector | View and edit the components and properties of the selected entity |
+| Properties | View and edit the components and properties of the selected entity |
 | Resources | Manage textures, models, audio, and other project assets |
 | Code editor | Integrated editor for Lua and C++ scripts |
+| Animation | Timeline, keyframes, sprite animation, skeletal animation, and morph tracks |
+| Output | Build logs, export messages, and diagnostics |
 
 ## 3D scenes
 
@@ -55,10 +58,21 @@ physics interactively, then return to editing.
 ## Export pipeline
 
 The editor includes a shader-aware export pipeline that prepares scenes, assets,
-scripts, engine files, and compiled shaders for your target platform. See
-[Building](../building/overview.md) for platform-specific output.
+scripts, engine files, and compiled shaders for your target platform. See the [Export Window](../editor/export.md) for details on platforms and output options.
 
 !!! note "Editor coverage"
     Terrain authoring, particle editing, audio tooling, and direct shader manipulation
     are not fully integrated into the editor yet — these features are currently
     available at the engine/runtime level.
+
+## More editor documentation
+
+The detailed editor manual is split into focused pages:
+
+- [Project Workflow](../editor/project-workflow.md)
+- [Scene View](../editor/scene-view.md)
+- [Properties & Components](../editor/properties.md)
+- [Resources Browser](../editor/resources.md)
+- [Animation Timeline](../editor/animation.md)
+- [Code Editor](../editor/code-editor.md)
+- [Export Window](../editor/export.md)

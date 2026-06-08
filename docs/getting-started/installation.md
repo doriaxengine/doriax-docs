@@ -47,7 +47,7 @@ configuration subdirectory (for example `build/Release/`).
 
 !!! tip
     Each platform has additional dependencies and tooling. See the
-    [Building](../building/overview.md) section for detailed, per-platform
+    [Export Window](../editor/export.md) section for detailed, per-platform
     instructions.
 
 ## Repository layout

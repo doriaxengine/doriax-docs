@@ -35,6 +35,30 @@ After installation, make the SDK available in your environment:
 Configure and build using the Emscripten toolchain. The output is a set of `.js`,
 `.wasm`, and `.html` files for your project.
 
+```bash
+emcmake cmake -S engine -B build-web -G "Ninja" \
+    -DPROJECT_ROOT=/path/to/project \
+    -DCMAKE_BUILD_TYPE=Release
+cmake --build build-web --config Release --target doriax-project
+```
+
+The runtime selects the `gles3` graphics backend and Emscripten app backend for web
+builds. Assets and Lua files are preloaded into the virtual filesystem when the project
+contains `assets/` and `lua/` folders.
+
+## Thread support
+
+Thread support is disabled by default for Emscripten builds. Enable it only when your
+hosting environment supports the required cross-origin isolation headers:
+
+```bash
+emcmake cmake -S engine -B build-web -G "Ninja" \
+    -DPROJECT_ROOT=/path/to/project \
+    -DEMSCRIPTEN_THREAD_SUPPORT=ON
+```
+
+Web builds use memory growth and start with a 256 MB initial memory configuration.
+
 ## 3. Run it
 
 Opening the generated `.html` file directly from the filesystem can trigger browser

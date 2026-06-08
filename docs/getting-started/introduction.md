@@ -27,6 +27,19 @@ Doriax is built around a few core principles:
 - **Write once, deploy everywhere** — a single project can target six platforms with
   native graphics backends.
 
+## Documentation structure
+
+This documentation follows a broad structure similar to large engine manuals:
+
+| Section | Use it for |
+| --- | --- |
+| Getting Started | Install Doriax, understand the editor, and create a first project |
+| Tutorials | Step-by-step 2D, 3D, and export walkthroughs |
+| Editor | Panels, project workflow, assets, code editing, animation, and export tools |
+| Manual | Engine concepts and subsystem guides |
+| Reference | API maps, components, Lua bindings, and build options |
+| Building | Platform-specific toolchain setup |
+
 ## What you can build
 
 | Capability | Description |
@@ -74,6 +87,11 @@ Doriax is built around a few core principles:
 <a class="dx-card" href="../first-project/">
 <p class="dx-card-title">Your First Project →</p>
 <p class="dx-card-desc">Build and run your first Doriax scene.</p>
+</a>
+
+<a class="dx-card" href="../../manual/architecture/">
+<p class="dx-card-title">Architecture →</p>
+<p class="dx-card-desc">Learn how the runtime is organized internally.</p>
 </a>
 
 </div>

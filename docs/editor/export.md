@@ -1,0 +1,104 @@
+---
+description: Export settings, generated files, shader compilation, and platform builds in the Doriax editor.
+---
+
+# Export Window
+
+The **Export Window** prepares a Doriax project for a target platform. It collects
+scene data, resources, scripts, generated C++ glue, engine runtime files, and compiled
+shaders into a self-contained buildable project directory.
+
+![Export window](../assets/screenshots/editor-export-window.png)
+
+## Opening the Export Window
+
+Choose **File → Export** from the menu bar, or press the **Export** button in the
+toolbar.
+
+## Export inputs
+
+| Input | Source |
+| --- | --- |
+| **Scenes** | Saved project scene YAML files |
+| **Bundles** | Reusable entity hierarchy files |
+| **Resources** | Asset folders (textures, models, audio, fonts) |
+| **Lua scripts** | Project Lua script files |
+| **C++ scripts** | Project source files and editor-generated glue code |
+| **Shaders** | Shader builder output and platform backend settings |
+| **Platform settings** | Target platform, output directory, build options |
+
+## Export steps
+
+1. Open the Export Window and select a **target platform**.
+2. Review the included asset folders and script paths.
+3. Choose a **build output directory** (outside the source project).
+4. Click **Export**.
+
+The exporter runs through the following phases:
+
+| Phase | Output |
+| --- | --- |
+| Scene serialization | Converts scene YAML to runtime-loadable data |
+| Bundle factory generation | Generates C++ factory functions for each bundle |
+| Shader compilation | Translates shaders for the selected graphics backend |
+| Asset packaging | Copies and organizes resource files |
+| Startup code generation | Generates `main.cpp` / entry point with scene registration |
+| Engine template copy | Copies the runtime engine library and CMake/build files |
+
+## Generated output structure
+
+```
+output/
+├── assets/          ← copied and processed resources
+├── shaders/         ← compiled shader data for the target backend
+├── src/
+│   ├── main.cpp     ← generated startup entry point
+│   ├── scenes/      ← generated scene factory C++ files
+│   └── bundles/     ← generated bundle factory C++ files
+├── CMakeLists.txt   ← build system entry point
+└── ...              ← platform-specific files
+```
+
+## Shader compilation
+
+The shader builder translates shader source for the selected graphics backend. Supported
+backends:
+
+| Backend | Platforms |
+| --- | --- |
+| OpenGL / GLSL | Windows, Linux, macOS |
+| OpenGL ES 3 / ESSL | Android, web |
+| Metal / MSL | iOS, macOS |
+| Direct3D 11 / HLSL | Windows |
+| WebGL / GLSL ES | HTML5 / Emscripten |
+
+If shader compilation fails, the Output panel reports the shader name, stage, backend,
+and the compiler error. Fix the shader source and re-export.
+
+## Platform toolchains
+
+After export, build the generated project with the appropriate native toolchain:
+
+| Target platform | Toolchain | Notes |
+| --- | --- | --- |
+| **Windows** | CMake + MSVC or MinGW | Requires CMake 3.16+, Windows SDK |
+| **Linux** | CMake + GCC or Clang | Requires X11 or Wayland dev libraries |
+| **macOS** | CMake + Xcode or CLang | Requires Xcode command-line tools |
+| **Android** | Gradle + Android NDK | Requires Android Studio or SDK command-line tools |
+| **iOS** | Xcode workspace | Requires a Mac with Xcode |
+| **HTML5 / Web** | Emscripten | Requires `emcmake cmake` |
+
+## Build options
+
+See [Build Options](../reference/build-options.md) for a full list of CMake flags and
+compile-time defines you can set to control engine features in the export.
+
+## Tips
+
+- Keep the export output directory separate from your source project so version control
+  does not track generated files.
+- Export a clean build before submitting to an app store or sharing a release build.
+- Use the **Development** export mode while iterating; switch to **Release** for final
+  builds (enables optimizations, strips debug symbols).
+- Test exported builds on actual devices — some graphics, input, and memory behaviors
+  differ between the editor's desktop preview and the target platform.

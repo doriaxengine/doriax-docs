@@ -20,6 +20,22 @@ both in the same project.
 A common workflow is to prototype in Lua, then move hot paths to C++ when you need the
 extra performance.
 
+## Editor-era scripting model
+
+Current Doriax projects usually attach behavior to entities with `ScriptComponent`.
+Each `ScriptComponent` can contain multiple script entries. A script entry stores the
+script type, paths, class/module name, enabled state, Properties window fields, and runtime
+instance pointer.
+
+| Script type | Use it for |
+| --- | --- |
+| `SUBCLASS` | C++ class derived from an object wrapper such as `Object`, `Mesh`, `Camera`, or `Light` |
+| `SCRIPT_CLASS` | C++ class derived from `ScriptBase` |
+| `SCRIPT_LUA` | Lua module returning a script table |
+
+See [Creating Scripts](creating-scripts.md), [Events](events.md), and
+[Script Properties](script-properties.md) for the full workflow.
+
 ## Entry points
 
 Each project has entry points for both languages:
@@ -41,11 +57,11 @@ Each project has entry points for both languages:
     ```cpp
     // main.cpp
     #include "Doriax.h"
-    using namespace Doriax;
+    using namespace doriax;
 
     Scene scene;
 
-    void init() {
+    DORIAX_INIT void init() {
         // build your scene here
         Engine::setScene(&scene);
     }
@@ -57,7 +73,11 @@ Each project has entry points for both languages:
 
     - **CMake:** add `-DNO_CPP_INIT=1` (or `-DNO_LUA_INIT=1`) to your configure step.
 
-    See [Building](../building/overview.md) for full details.
+    See [Export Window](../editor/export.md) for full details.
+
+For editor-authored projects, the start scene and exported scene factories are usually
+more important than hand-written startup code. Use entry points for engine-level setup,
+not for recreating an entire editor-authored scene by hand.
 
 ## The Engine API
 
@@ -70,7 +90,70 @@ Engine.setScene(scene)            -- set the active scene
 
 The same methods are available in C++ through `Engine::` static methods.
 
-## Next steps
+## Lua bindings
 
-Continue with [2D Graphics](2d-graphics.md) or [3D Graphics](3d-graphics.md) to start
-drawing on screen.
+Doriax uses LuaBridge to expose the engine API to Lua. The binding layer registers:
+
+| Binding group | Examples |
+| --- | --- |
+| Core | `Engine`, `Scene`, `SceneManager`, `BundleManager`, `Input`, `System` |
+| ECS | Entities and built-in component types |
+| Objects | `Object`, `Sprite`, `Mesh`, `Model`, `Camera`, `Light`, `Lines`, `Points`, `Sound` |
+| Actions | `Action`, `Animation`, `SpriteAnimation`, `Particles`, `Ease` |
+| Math | `Vector2`, `Vector3`, `Vector4`, `Matrix3`, `Matrix4`, `Quaternion`, `Ray`, `AABB`, `Rect`, `Plane` |
+| I/O | `File`, `UserSettings`, memory data helpers |
+
+Most C++ enums are mirrored into Lua namespaces, such as `Scaling.FITWIDTH`,
+`BodyType.DYNAMIC`, and `GraphicBackend.METAL`.
+
+## Script components
+
+Attach `ScriptComponent` to an entity when behavior should live with that entity. The
+component supports C++ subclasses, C++ `ScriptBase` instances, and Lua script modules.
+Use script components for reusable entity behavior such as player controllers, enemy
+AI, interactive doors, or UI widgets.
+
+## Exposing values to the editor
+
+C++ script properties are parsed by the editor and displayed in the Properties window when
+they use the supported property annotations. This lets designers tune values without
+editing source code. Keep exposed properties small and serializable: numbers, booleans,
+strings, colors, vectors, resource paths, and entity references are the best fit.
+
+## Logging
+
+Use `Log` for runtime diagnostics in C++:
+
+```cpp
+Log::print("Player spawned");
+Log::warn("Missing optional texture: %s", path.c_str());
+Log::error("Failed to load level");
+```
+
+Lua scripts should use the engine's exposed logging functions when available, or fall
+back to regular Lua `print()` for quick diagnostics.
+
+## require() and module paths
+
+Lua `require("foo")` searches the virtual filesystem:
+
+1. `lua://lua/foo.lua`
+2. `lua://foo.lua`
+
+Dots in module names map to directory separators (`require("ui.menu")` → `lua/ui/menu.lua`).
+
+Script component paths use the same `lua://` prefix with the stored relative path.
+
+## Global helpers
+
+| Function | Purpose |
+| --- | --- |
+| `RegisterEvent(self, event, methodName [, tag])` | Subscribe to any `FunctionSubscribe` event |
+| `RegisterEngineEvent(self, methodName [, tag])` | Subscribe to `Engine.onUpdate`, etc. |
+
+## Reference
+
+- [Creating Scripts](creating-scripts.md) — editor workflow and lifecycle
+- [Events](events.md) — all event types and registration macros
+- [Script Properties](script-properties.md) — `DPROPERTY` and Lua properties
+- [API Index](../reference/index.md) — complete class reference (C++ and Lua)

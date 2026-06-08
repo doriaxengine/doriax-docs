@@ -1,105 +1,148 @@
 ---
-description: Create your first Doriax scene and run it, using either Lua or C++.
+description: Create your first Doriax project in the editor, add entities and components, attach a script, and run it.
 ---
 
 # Your First Project
 
-This walkthrough creates a simple scene and runs it. The same approach works on every
-platform Doriax targets.
+This walkthrough uses the current Doriax editor workflow. Older Doriax/Supernova
+examples often start by writing a full scene in code; that still works for low-level
+runtime use, but day-to-day projects should start in the editor: create a project,
+author a scene, add entities and components, attach scripts, then run in play mode.
 
 ## Create a project
 
-Open the Doriax editor and create a new project. The editor scaffolds the project
-structure for you, including a scene, an assets folder, and entry-point scripts for
-Lua and C++.
+Open the Doriax editor and create a new project. The editor stores the editable source
+for your game: scenes, assets, Lua scripts, C++ scripts, bundles, and export settings.
 
 A typical project contains:
 
-- 📁 **assets** — textures, models, audio, and other resources
-- 📁 **scripts** — your Lua and/or C++ game code
-- 📄 a **scene** file that the editor edits visually
+- **Assets** - textures, models, audio, fonts, and other resources
+- **Scripts** - Lua and/or C++ game code
+- **Scene files** - YAML scene data edited by the editor and exported into runtime code
+- **Project settings** - build targets, scene references, and export configuration
 
-## Add an entity
+## Create a scene
 
-In the editor's **Scene** panel, create a new entity and give it a visual component —
-for example a sprite (2D) or a box/model (3D). Use the **Inspector** to set its
-position, rotation, scale, and other properties.
+Create a 2D, 3D, or UI scene from the Structure panel. Save the scene with a stable
+name such as `main`, `level_01`, or `menu`.
 
-You can do the same thing in code. The examples below create a colored triangle.
+Scene type controls editor defaults such as camera setup and viewport behavior. It does
+not create a different runtime type; every scene is still a `Scene` that owns entities,
+components, and systems.
 
-=== "Lua"
+## Add entities
 
-    ```lua
-    -- main.lua
-    scene = Scene()
-    triangle = Polygon(scene)
+Open the Structure panel's create menu. The most important first distinction is:
 
-    triangle:addVertex(0, -100)
-    triangle:addVertex(-50, 50)
-    triangle:addVertex(50, 50)
+| Menu item | What it creates | Where it appears |
+| --- | --- | --- |
+| Empty entity | An entity ID with no `Transform` component | The non-hierarchical area of Structure |
+| Empty object | An entity with a `Transform` component | The hierarchy area of Structure |
 
-    triangle.position = Vector3(300, 300, 0)
-    triangle:setColor(0.6, 0.2, 0.6, 1)
+Everything in the scene is an entity. An entity is only an ID; it owns no position,
+mesh, physics body, script, or audio by itself. Components give the entity data and
+behavior. `Transform` is the component that makes an entity spatial and allows it to
+participate in the hierarchy.
 
-    Engine.setCanvasSize(1000, 480)
-    Engine.setScene(scene)
-    ```
+For a first visible object, choose one of these:
 
-=== "C++"
+- In a 2D scene, create **2D > Sprite**.
+- In a 3D scene, create **Basic shape > Box** or **Model**.
+- In a UI scene, create **UI > Button**, **Text**, or **Image**.
 
-    ```cpp
-    // main.cpp
-    #include "Doriax.h"
-    using namespace Doriax;
+## Edit components
 
-    #include "Polygon.h"
+Select the entity and use the Properties window. You will see the components attached to that
+entity. A sprite, for example, is not a special kind of entity; it is an entity with
+components such as `Transform`, `MeshComponent`, and `SpriteComponent`.
 
-    Scene scene;
-    Polygon triangle(&scene);
+Common first edits:
 
-    void init() {
-        triangle.addVertex(0, -100);
-        triangle.addVertex(-50, 50);
-        triangle.addVertex(50, 50);
+| Component | Edit |
+| --- | --- |
+| `Transform` | Position, rotation, scale, visibility, parent hierarchy |
+| `SpriteComponent` | Width, height, frame, pivot, texture region |
+| `MeshComponent` | Material, color, shadows, transparency, primitive data |
+| `CameraComponent` | Projection, clipping, target, render-to-texture |
+| `ScriptComponent` | Lua or C++ scripts attached to the entity |
 
-        triangle.setPosition(Vector3(300, 300, 0));
-        triangle.setColor(0.6, 0.2, 0.6, 1);
+## Add a script
 
-        Engine::setCanvasSize(1000, 480);
-        Engine::setScene(&scene);
+Add a `ScriptComponent` to the selected entity, then create a script from the
+Properties window or code editor workflow. For your first script, choose Lua for fast iteration.
+
+The generated Lua script returns a table. The engine creates an instance, injects
+`self.scene` and `self.entity`, then calls `init()` when the scene starts.
+
+```lua
+local PlayerController = {
+    properties = {
+        { name = "speed", displayName = "Speed", type = "float", default = 5.0 },
+        { name = "isActive", displayName = "Is Active", type = "bool", default = true }
     }
-    ```
+}
 
-In C++, the engine calls your `init()` function when the game starts. In Lua, the main
-script runs at startup and can require other Lua files.
+function PlayerController:init()
+    RegisterEngineEvent(self, "onUpdate")
+end
+
+function PlayerController:onUpdate()
+    if not self.isActive then return end
+    if Input.isKeyPressed(S_KEY_RIGHT) then
+        local object = Object(self.scene, self.entity)
+        object.position = object.position + Vector3(self.speed, 0, 0)
+    end
+end
+
+return PlayerController
+```
+
+For C++ scripts, the editor can generate either a subclass script or a `ScriptBase`
+script. C++ scripts use `DPROPERTY` for values that should appear in the Properties window and
+`REGISTER_ENGINE_EVENT` for callbacks.
 
 !!! warning "Mixing Lua and C++ entry points"
-    If both Lua and C++ call `Engine.setScene()` / `Engine::setScene()`, the C++ call
-    runs last and the Lua scene will not be used. Use the `NO_CPP_INIT` or
-    `NO_LUA_INIT` build option to disable the entry point you don't want. See
-    [Building](../building/overview.md) for details.
+    Editor-authored projects should not rely on both `main.lua` and C++ `DORIAX_INIT`
+    code to set the startup scene. If both paths call `Engine.setScene()` /
+    `Engine::setScene()`, one startup path can replace the other. Use `NO_CPP_INIT` or
+    `NO_LUA_INIT` when you intentionally want only one entry point.
 
 ## Run the project
 
-Press **Play** in the editor to run the scene immediately. You should see your
-triangle (or entity) rendered on screen.
+Press Play in the editor. The editor saves a play-mode snapshot, starts the runtime
+scene, initializes scripts, and restores editable scene state when you stop.
 
-When building from source instead of using the editor's play mode, build and install
-the project first, then run the produced executable from the install directory's
-`bin/` folder. After changing code, build and install again.
+If something does not appear, check these in order:
+
+- The intended scene is selected or configured as the start scene.
+- The entity has the required components.
+- Visible/spatial entities have a `Transform`.
+- The active camera can see the entity.
+- The script is enabled in `ScriptComponent`.
+- The output panel has no Lua or C++ errors.
 
 ## Next steps
 
 <div class="dx-cards" markdown>
 
 <a class="dx-card" href="../the-editor/">
-<p class="dx-card-title">The Editor →</p>
+<p class="dx-card-title">The Editor</p>
 <p class="dx-card-desc">Tour the editor's panels and tools.</p>
 </a>
 
+<a class="dx-card" href="../../tutorials/first-2d-scene/">
+<p class="dx-card-title">First 2D Scene</p>
+<p class="dx-card-desc">Follow a more complete 2D tutorial.</p>
+</a>
+
 <a class="dx-card" href="../../manual/scenes-and-entities/">
-<p class="dx-card-title">Scenes &amp; Entities →</p>
+<p class="dx-card-title">Scenes &amp; Entities</p>
 <p class="dx-card-desc">Learn how scenes and entities are structured.</p>
+</a>
+
+<a class="dx-card" href="../../manual/creating-scripts/">
+<p class="dx-card-title">Creating Scripts</p>
+<p class="dx-card-desc">Create Lua and C++ behavior scripts for entities.</p>
 </a>
 
 </div>

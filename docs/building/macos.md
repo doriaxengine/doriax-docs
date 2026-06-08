@@ -9,6 +9,7 @@ description: Build Doriax from source on macOS.
 - **Xcode** with the Command Line Tools (`xcode-select --install`)
 - **CMake** — install via [the official installer](https://cmake.org/download/) or
   Homebrew:
+- Python 3 for generated editor API suggestion files
 
 ```bash
 brew install cmake ninja
@@ -27,7 +28,7 @@ Using Ninja (single-config):
 
 ```bash
 cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -G "Ninja"
-cmake --build build --config Release
+cmake --build build --config Release --target doriax-editor
 ```
 
 The `doriax-editor` executable is created under `build/`.
@@ -37,8 +38,30 @@ The `doriax-editor` executable is created under `build/`.
 
     ```bash
     cmake -S . -B build -G "Xcode"
-    cmake --build build --config Release
+    cmake --build build --config Release --target doriax-editor
     ```
 
     Xcode is a **multi-config** generator, so the build output is placed under a
     configuration subdirectory such as `build/Release/`.
+
+## Runtime project build
+
+macOS runtime builds default to Metal. When using the Xcode generator, the app backend
+defaults to the native Apple backend; otherwise it defaults to Sokol.
+
+```bash
+cmake -S engine -B build-runtime \
+  -DPROJECT_ROOT=/path/to/project \
+  -DCMAKE_BUILD_TYPE=Release \
+  -G "Ninja"
+cmake --build build-runtime --config Release --target doriax-project
+```
+
+For Xcode:
+
+```bash
+cmake -S engine -B build-xcode -DPROJECT_ROOT=/path/to/project -G "Xcode"
+cmake --build build-xcode --config Release --target doriax-project
+```
+
+The engine sets the macOS deployment target to 10.15 for runtime builds.
