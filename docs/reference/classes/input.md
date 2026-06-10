@@ -8,6 +8,12 @@ description: Input API reference — keyboard, mouse, and touch polling, modifie
 
 `Input` is a static polling class that provides the current keyboard, mouse, and touch state at any point during a frame. Use it inside `onUpdate` or `onFixedUpdate` to check whether a key or button is held down. For event-based input (press/release notifications), subscribe to the [Engine](engine.md) callback events instead.
 
+!!! note "Constant naming differs by language"
+    Key, mouse-button, and modifier constants are C++ preprocessor macros prefixed `S_`
+    (e.g. `S_KEY_SPACE`, `S_MOUSE_BUTTON_LEFT`). In Lua they are static properties on the
+    `Input` class with the `S_` prefix dropped (e.g. `Input.KEY_SPACE`,
+    `Input.MOUSE_BUTTON_LEFT`).
+
 === "C++"
 
     ```cpp
@@ -24,7 +30,7 @@ description: Input API reference — keyboard, mouse, and touch polling, modifie
 
     ```lua
     -- Inside update:
-    if Input.isKeyPressed(S_KEY_SPACE) then
+    if Input.isKeyPressed(Input.KEY_SPACE) then
         player:jump()
     end
     ```
@@ -47,7 +53,7 @@ description: Input API reference — keyboard, mouse, and touch polling, modifie
 
 ## Keys
 
-Key constants are preprocessor `#define` values (C++) and global numeric constants (Lua). Prefix: `S_KEY_`.
+Key constants are preprocessor `#define` values in C++ (prefix `S_KEY_`) and static properties on `Input` in Lua (prefix `Input.KEY_`). The table below lists the C++ form; for Lua, replace `S_KEY_` with `Input.KEY_`.
 
 | Constant | Value | Description |
 | --- | --- | --- |
@@ -84,25 +90,27 @@ Key constants are preprocessor `#define` values (C++) and global numeric constan
 
 ## Mouse buttons
 
-| Constant | Value | Description |
-| --- | --- | --- |
-| `S_MOUSE_BUTTON_LEFT` | 0 | Left button |
-| `S_MOUSE_BUTTON_RIGHT` | 1 | Right button |
-| `S_MOUSE_BUTTON_MIDDLE` | 2 | Middle button |
-| `S_MOUSE_BUTTON_1` … `S_MOUSE_BUTTON_8` | 0–7 | All buttons |
+In Lua, replace the `S_MOUSE_BUTTON_` prefix with `Input.MOUSE_BUTTON_`.
+
+| C++ constant | Lua property | Value | Description |
+| --- | --- | --- | --- |
+| `S_MOUSE_BUTTON_LEFT` | `Input.MOUSE_BUTTON_LEFT` | 0 | Left button |
+| `S_MOUSE_BUTTON_RIGHT` | `Input.MOUSE_BUTTON_RIGHT` | 1 | Right button |
+| `S_MOUSE_BUTTON_MIDDLE` | `Input.MOUSE_BUTTON_MIDDLE` | 2 | Middle button |
+| `S_MOUSE_BUTTON_1` … `S_MOUSE_BUTTON_8` | `Input.MOUSE_BUTTON_1` … `Input.MOUSE_BUTTON_8` | 0–7 | All buttons |
 
 ## Modifiers
 
-Modifier bits returned by [getModifiers](#getmodifiers) and passed to key/mouse callbacks.
+Modifier bits returned by [getModifiers](#getmodifiers) and passed to key/mouse callbacks. In Lua, replace the `S_MODIFIER_` prefix with `Input.MODIFIER_`.
 
-| Constant | Bit | Description |
-| --- | --- | --- |
-| `S_MODIFIER_SHIFT` | `0x0001` | Shift key held |
-| `S_MODIFIER_CONTROL` | `0x0002` | Ctrl key held |
-| `S_MODIFIER_ALT` | `0x0004` | Alt key held |
-| `S_MODIFIER_SUPER` | `0x0008` | Super (Win/Cmd) held |
-| `S_MODIFIER_CAPS_LOCK` | `0x0010` | Caps Lock active |
-| `S_MODIFIER_NUM_LOCK` | `0x0020` | Num Lock active |
+| C++ constant | Lua property | Bit | Description |
+| --- | --- | --- | --- |
+| `S_MODIFIER_SHIFT` | `Input.MODIFIER_SHIFT` | `0x0001` | Shift key held |
+| `S_MODIFIER_CONTROL` | `Input.MODIFIER_CONTROL` | `0x0002` | Ctrl key held |
+| `S_MODIFIER_ALT` | `Input.MODIFIER_ALT` | `0x0004` | Alt key held |
+| `S_MODIFIER_SUPER` | `Input.MODIFIER_SUPER` | `0x0008` | Super (Win/Cmd) held |
+| `S_MODIFIER_CAPS_LOCK` | `Input.MODIFIER_CAPS_LOCK` | `0x0010` | Caps Lock active |
+| `S_MODIFIER_NUM_LOCK` | `Input.MODIFIER_NUM_LOCK` | `0x0020` | Num Lock active |
 
 ## Method details
 
@@ -110,7 +118,7 @@ Modifier bits returned by [getModifiers](#getmodifiers) and passed to key/mouse 
 
 * `static bool isKeyPressed(int key)`
 
-Returns `true` while the given key is held down. Use `S_KEY_*` constants for the key code.
+Returns `true` while the given key is held down. Use `S_KEY_*` constants in C++ and `Input.KEY_*` in Lua for the key code.
 
 === "C++"
 
@@ -123,7 +131,7 @@ Returns `true` while the given key is held down. Use `S_KEY_*` constants for the
 === "Lua"
 
     ```lua
-    if Input.isKeyPressed(S_KEY_W) then
+    if Input.isKeyPressed(Input.KEY_W) then
         player:moveForward(Engine.deltatime * speed)
     end
     ```
@@ -134,7 +142,7 @@ Returns `true` while the given key is held down. Use `S_KEY_*` constants for the
 
 * `static bool isMousePressed(int button)`
 
-Returns `true` while the given mouse button is held down. Use `S_MOUSE_BUTTON_*` constants.
+Returns `true` while the given mouse button is held down. Use `S_MOUSE_BUTTON_*` constants in C++ and `Input.MOUSE_BUTTON_*` in Lua.
 
 === "C++"
 
@@ -147,7 +155,7 @@ Returns `true` while the given mouse button is held down. Use `S_MOUSE_BUTTON_*`
 === "Lua"
 
     ```lua
-    if Input.isMousePressed(S_MOUSE_BUTTON_LEFT) then
+    if Input.isMousePressed(Input.MOUSE_BUTTON_LEFT) then
         -- drag logic
     end
     ```
@@ -258,7 +266,7 @@ Returns the current modifier key bitmask. Check individual modifiers with bitwis
 
     ```lua
     local mods = Input.getModifiers()
-    if (mods & S_MODIFIER_SHIFT) ~= 0 then
+    if (mods & Input.MODIFIER_SHIFT) ~= 0 then
         -- Shift is held
     end
     ```

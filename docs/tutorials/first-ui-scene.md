@@ -74,11 +74,13 @@ Add a restart button:
 Create a Lua script `scripts/HUD.lua`:
 
 ```lua
-local HUD = {}
-HUD.__index = HUD
-
-DPROPERTY("Health Bar Entity")
-HUD.healthBarEntity = nil
+-- In Lua, editor-exposed fields are declared in a `properties` table
+-- (DPROPERTY is a C++-only macro).
+local HUD = {
+    properties = {
+        { name = "healthBarEntity", displayName = "Health Bar Entity", type = "entity", default = nil }
+    }
+}
 
 function HUD:init()
     RegisterEngineEvent(self, "onUpdate")
@@ -87,7 +89,7 @@ end
 function HUD:onUpdate()
     -- Read health from a shared value or an event
     -- For demonstration, use a global updated by gameplay code
-    if GameState and GameState.health and HUD.healthBarEntity then
+    if GameState and GameState.health and self.healthBarEntity then
         local bar = Progressbar(self.scene, self.healthBarEntity)
         bar.value = GameState.health
     end
@@ -97,7 +99,7 @@ return HUD
 ```
 
 Attach the script to the canvas root entity via **ScriptComponent**, and use the
-`DPROPERTY` entity reference field to link the health bar entity.
+`healthBarEntity` property field to link the health bar entity.
 
 ## 6. Load the UI scene as a layer
 
@@ -151,7 +153,7 @@ If the UI is not visible:
   `addSceneLayer`, not `setScene`.
 - [ ] The canvas size and scaling mode are set correctly.
 - [ ] The UI scene camera is orthographic.
-- [ ] UI events are enabled on the scene (`scene.uiEventsEnabled = true`).
+- [ ] UI events are enabled on the scene (the scene's `enableUIEvents` setting).
 
 ## 8. Next steps
 

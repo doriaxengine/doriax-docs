@@ -61,9 +61,10 @@ The editor includes a shader-aware export pipeline that prepares scenes, assets,
 scripts, engine files, and compiled shaders for your target platform. See the [Export Window](../editor/export.md) for details on platforms and output options.
 
 !!! note "Editor coverage"
-    Terrain authoring, particle editing, audio tooling, and direct shader manipulation
-    are not fully integrated into the editor yet — these features are currently
-    available at the engine/runtime level.
+    Terrain sculpting/painting has a dedicated **Terrain Editor** window, and particle
+    entities can be created from the Structure panel. Audio tooling and direct shader
+    manipulation are not fully integrated into the editor yet — those are available at
+    the engine/runtime level.
 
 ## More editor documentation
 

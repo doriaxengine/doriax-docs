@@ -113,15 +113,15 @@ for the full list of `EaseType` values.
 ## Easing curves
 
 Apply easing in the timeline by right-clicking a keyframe, or set it on runtime actions
-with `setEaseType()`. Common choices:
+with `setFunctionType()`. Common choices:
 
 | Curve | Best for |
 | --- | --- |
 | `LINEAR` | Constant-speed motion, debug |
-| `EASE_IN_OUT_QUAD` | UI transitions and camera moves |
-| `EASE_OUT_BOUNCE` | Playful jumps and pop-in effects |
-| `EASE_IN_BACK` | Anticipation before a jump |
-| `EASE_OUT_ELASTIC` | Springing UI elements |
+| `QUAD_IN_OUT` | UI transitions and camera moves |
+| `BOUNCE_OUT` | Playful jumps and pop-in effects |
+| `BACK_IN` | Anticipation before a jump |
+| `ELASTIC_OUT` | Springing UI elements |
 
 ## Best practices
 

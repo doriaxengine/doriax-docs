@@ -15,8 +15,8 @@ and the audio system reads their Transform to compute spatial attenuation.
 
     ```lua
     sound = Sound(scene)
-    sound:load("audio/jump.ogg")
-    sound:setVolume(0.8)
+    sound:loadSound("audio/jump.ogg")
+    sound.volume = 0.8
     sound:play()
     ```
 
@@ -24,50 +24,57 @@ and the audio system reads their Transform to compute spatial attenuation.
 
     ```cpp
     Sound jump(&scene);
-    jump.load("audio/jump.ogg");
+    jump.loadSound("audio/jump.ogg");
     jump.setVolume(0.8f);
     jump.play();
     ```
 
+!!! note "Lua uses properties, C++ uses setters"
+    Most sound parameters are exposed to Lua as **properties** (`sound.volume = 0.8`),
+    while C++ uses setter methods (`sound.setVolume(0.8f)`). The property/method names
+    below list both forms.
+
 ## Core features
 
-| Feature | API | Notes |
-| --- | --- | --- |
-| **Playback control** | `play()`, `pause()`, `stop()`, `resume()` | Standard transport controls |
-| **Looping** | `setLoop(bool)` | Loop music or ambient sound |
-| **Volume** | `setVolume(float)` | Per-sound level from 0.0 to 1.0+ |
-| **Pitch / speed** | `setSpeed(float)` | 1.0 = normal, 2.0 = double speed |
-| **Pan** | `setPan(float)` | –1.0 = full left, 0 = center, +1.0 = full right |
-| **Seek** | `seek(seconds)` | Jump to a position in the audio |
-| **3D position** | `setPosition()` or entity Transform | Spatial audio uses the entity's world position |
-| **Attenuation** | `setSoundAttenuation()`, `setMinDistance()`, `setMaxDistance()` | Distance-based volume falloff |
-| **Doppler effect** | `setDopplerFactor(float)` | Pitch shift from relative motion |
+| Feature | Lua property | C++ method | Notes |
+| --- | --- | --- | --- |
+| **Playback control** | `play()`, `pause()`, `stop()` | same | Transport controls (call `play()` again to resume a paused sound) |
+| **Looping** | `sound.looping` | `setLooping(bool)` | Loop music or ambient sound |
+| **Volume** | `sound.volume` | `setVolume(float)` | Per-sound level from 0.0 to 1.0+ |
+| **Pitch / speed** | `sound.speed` | `setSpeed(float)` | 1.0 = normal, 2.0 = double speed |
+| **Pan** | `sound.pan` | `setPan(float)` | –1.0 = full left, 0 = center, +1.0 = full right |
+| **Seek** | `seek(seconds)` | same | Jump to a position in the audio |
+| **3D mode** | `sound.sound3D` | `setSound3D(bool)` | Enable spatialization (or pass `true` to the constructor) |
+| **Attenuation** | `sound.attenuationModel`, `sound.minDistance`, `sound.maxDistance` | `setAttenuationModel()`, `setMinDistance()`, `setMaxDistance()` | Distance-based volume falloff |
+| **Doppler effect** | `sound.dopplerFactor` | `setDopplerFactor(float)` | Pitch shift from relative motion |
 
 ## 3D spatial audio
 
 Attach a sound to a moving entity to get automatic position-based spatialization. The
 audio system reads the entity's world transform every frame.
 
+Pass `true` to the `Sound` constructor (or set `sound.sound3D = true`) to make a sound
+spatial. A 3D sound is positioned by its entity's Transform, so parent it under the
+moving entity in the editor's Structure panel (or in the scene hierarchy).
+
 === "Lua"
 
     ```lua
-    -- 3D footstep sound attached to a character entity
-    footstep = Sound(scene)
-    footstep:setParent(characterEntity)
-    footstep:load("audio/footstep.ogg")
-    footstep:setSoundAttenuation(SoundAttenuation.INVERSE)
-    footstep:setMinDistance(1.0)
-    footstep:setMaxDistance(20.0)
+    -- 3D footstep sound (the `true` enables spatialization)
+    footstep = Sound(scene, true)
+    footstep:loadSound("audio/footstep.ogg")
+    footstep.attenuationModel = SoundAttenuation.INVERSE_DISTANCE
+    footstep.minDistance = 1.0
+    footstep.maxDistance = 20.0
     footstep:play()
     ```
 
 === "C++"
 
     ```cpp
-    Sound footstep(&scene);
-    footstep.setParent(character);
-    footstep.load("audio/footstep.ogg");
-    footstep.setSoundAttenuation(SoundAttenuation::INVERSE);
+    Sound footstep(&scene, true);
+    footstep.loadSound("audio/footstep.ogg");
+    footstep.setAttenuationModel(SoundAttenuation::INVERSE_DISTANCE);
     footstep.setMinDistance(1.0f);
     footstep.setMaxDistance(20.0f);
     footstep.play();
@@ -77,10 +84,10 @@ audio system reads the entity's world transform every frame.
 
 | `SoundAttenuation` | Behavior |
 | --- | --- |
-| `NONE` | No distance attenuation — volume is constant regardless of distance |
-| `INVERSE` | Volume decreases inversely with distance (realistic for point sources) |
-| `LINEAR` | Volume falls off linearly between min and max distance |
-| `EXPONENTIAL` | Exponential falloff, louder near the source |
+| `NO_ATTENUATION` | No distance attenuation — volume is constant regardless of distance |
+| `INVERSE_DISTANCE` | Volume decreases inversely with distance (realistic for point sources) |
+| `LINEAR_DISTANCE` | Volume falls off linearly between min and max distance |
+| `EXPONENTIAL_DISTANCE` | Exponential falloff, louder near the source |
 
 ## Global controls
 
@@ -89,7 +96,7 @@ audio system reads the entity's world transform every frame.
 === "Lua"
 
     ```lua
-    AudioSystem.setGlobalVolume(0.5)   -- halve all audio
+    AudioSystem.globalVolume = 0.5     -- halve all audio (property, not a setter)
     AudioSystem.pauseAll()
     AudioSystem.resumeAll()
     AudioSystem.stopAll()
@@ -106,16 +113,18 @@ audio system reads the entity's world transform every frame.
 
 ## SoundPool
 
-For sounds that play frequently (gunshots, footsteps, coins), use `SoundPool` to avoid
-loading the same audio data multiple times. The pool caches loaded audio and reuses it
-across multiple `Sound` instances.
+For sounds that play frequently (gunshots, footsteps, coins), the engine caches decoded
+audio data in an internal `SoundPool` so the same file is not loaded multiple times.
+Loading the same path from several `Sound` instances reuses the cached data
+automatically — you do not need to manage the pool yourself.
 
 ```cpp
-SoundPool::load("audio/coin.ogg");
-
-// Later, play from any number of Sound objects without re-loading
+// Each Sound that loads the same path shares the cached audio data.
 Sound coin1(&scene);
-coin1.load("audio/coin.ogg");  // served from pool
+coin1.loadSound("audio/coin.ogg");
+
+Sound coin2(&scene);
+coin2.loadSound("audio/coin.ogg");  // served from the shared cache
 ```
 
 ## Background music
@@ -127,9 +136,9 @@ effects:
 
     ```lua
     music = Sound(scene)
-    music:load("audio/music_level1.ogg")
-    music:setLoop(true)
-    music:setVolume(0.4)
+    music:loadSound("audio/music_level1.ogg")
+    music.looping = true
+    music.volume = 0.4
     music:play()
     ```
 
@@ -147,8 +156,8 @@ effects:
 - Keep sound effect files short and compressed; use OGG/Vorbis for best size-to-quality
   ratio.
 - Use WAV for very short, frequently-triggered sounds where decoding latency matters.
-- Non-spatial sounds (UI clicks, music) should not have a parent Transform entity — set
-  attenuation to `NONE`.
+- Non-spatial sounds (UI clicks, music) should not be 3D — leave `sound3D` off (the
+  default) so they play at full volume regardless of listener position.
 - Tune attenuation `minDistance` and `maxDistance` in the actual scene scale so the
   falloff feels natural.
 - Separate music, ambient, and SFX into named volume categories so players can control

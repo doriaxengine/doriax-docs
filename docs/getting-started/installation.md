@@ -46,8 +46,8 @@ On single-config generators (Ninja, Makefiles) the executable is created under
 configuration subdirectory (for example `build/Release/`).
 
 !!! tip
-    Each platform has additional dependencies and tooling. See the
-    [Export Window](../editor/export.md) section for detailed, per-platform
+    Each platform has additional dependencies and tooling. See
+    [Building from Source](../building/overview.md) for detailed, per-platform
     instructions.
 
 ## Repository layout

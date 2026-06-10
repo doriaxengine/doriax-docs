@@ -8,19 +8,34 @@ Doriax exposes all input through the static `Input` class. It covers keyboard, m
 touch, and modifier state for desktop, mobile, and web targets. All polling APIs are
 safe to call from any script or system update.
 
+## Key and button constants
+
+Key and button constants are based on GLFW key codes. The naming differs by language:
+
+| Language | How to access | Example |
+| --- | --- | --- |
+| **C++** | `S_KEY_*` / `S_MOUSE_BUTTON_*` / `S_MODIFIER_*` preprocessor macros | `S_KEY_SPACE` |
+| **Lua** | Static properties on the `Input` class (drop the `S_` prefix) | `Input.KEY_SPACE` |
+
+There is no global `S_KEY_SPACE` in Lua — always use `Input.KEY_SPACE`. The same applies
+to mouse buttons (`Input.MOUSE_BUTTON_LEFT`) and modifiers (`Input.MODIFIER_SHIFT`).
+
 ## Keyboard
 
-Keyboard key constants follow the `S_KEY_*` naming convention and are based on GLFW
-key codes.
+`Input.isKeyPressed(key)` returns `true` while the key is **currently held down**. It is
+a polling call: read it every frame inside `onUpdate`. There is no separate
+"down/released this frame" polling method — for one-shot press and release *edges*,
+subscribe to the [`Engine.onKeyDown` / `Engine.onKeyUp`](../reference/classes/engine.md)
+events instead.
 
 === "Lua"
 
     ```lua
-    if Input.isKeyPressed(S_KEY_SPACE) then
+    if Input.isKeyPressed(Input.KEY_SPACE) then
         player:jump()
     end
 
-    if Input.isKeyDown(S_KEY_A) then
+    if Input.isKeyPressed(Input.KEY_A) then
         player:moveLeft()
     end
     ```
@@ -32,40 +47,36 @@ key codes.
         player.jump();
     }
 
-    if (Input::isKeyDown(S_KEY_A)) {
+    if (Input::isKeyPressed(S_KEY_A)) {
         player.moveLeft();
     }
     ```
 
-### Key query methods
-
-| Method | Returns true when |
-| --- | --- |
-| `isKeyDown(key)` | Key is currently held down (every frame) |
-| `isKeyPressed(key)` | Key was pressed this frame (fires once) |
-| `isKeyReleased(key)` | Key was released this frame (fires once) |
-
 ### Common key constants
 
-| Constant | Key |
-| --- | --- |
-| `S_KEY_A` … `S_KEY_Z` | Letter keys |
-| `S_KEY_0` … `S_KEY_9` | Number row |
-| `S_KEY_KP_0` … `S_KEY_KP_9` | Numpad |
-| `S_KEY_LEFT`, `S_KEY_RIGHT`, `S_KEY_UP`, `S_KEY_DOWN` | Arrow keys |
-| `S_KEY_SPACE` | Spacebar |
-| `S_KEY_ENTER`, `S_KEY_ESCAPE`, `S_KEY_BACKSPACE`, `S_KEY_TAB` | Editing keys |
-| `S_KEY_F1` … `S_KEY_F12` | Function keys |
-| `S_KEY_LEFT_SHIFT`, `S_KEY_LEFT_CONTROL`, `S_KEY_LEFT_ALT` | Modifier keys |
+| C++ macro | Lua property | Key |
+| --- | --- | --- |
+| `S_KEY_A` … `S_KEY_Z` | `Input.KEY_A` … `Input.KEY_Z` | Letter keys |
+| `S_KEY_0` … `S_KEY_9` | `Input.KEY_0` … `Input.KEY_9` | Number row |
+| `S_KEY_KP_0` … `S_KEY_KP_9` | `Input.KEY_KP_0` … `Input.KEY_KP_9` | Numpad |
+| `S_KEY_LEFT`, `S_KEY_RIGHT`, `S_KEY_UP`, `S_KEY_DOWN` | `Input.KEY_LEFT`, … | Arrow keys |
+| `S_KEY_SPACE` | `Input.KEY_SPACE` | Spacebar |
+| `S_KEY_ENTER`, `S_KEY_ESCAPE`, `S_KEY_BACKSPACE`, `S_KEY_TAB` | `Input.KEY_ENTER`, … | Editing keys |
+| `S_KEY_F1` … `S_KEY_F12` | `Input.KEY_F1` … `Input.KEY_F12` | Function keys |
+| `S_KEY_LEFT_SHIFT`, `S_KEY_LEFT_CONTROL`, `S_KEY_LEFT_ALT` | `Input.KEY_LEFT_SHIFT`, … | Modifier keys |
 
 See [Input](../reference/classes/input.md) for the full constant list.
 
 ## Mouse
 
+Like the keyboard, `Input.isMousePressed(button)` returns `true` while the button is
+held down. For click and release edges use the
+[`Engine.onMouseDown` / `Engine.onMouseUp`](../reference/classes/engine.md) events.
+
 === "Lua"
 
     ```lua
-    if Input.isMousePressed(S_MOUSE_BUTTON_LEFT) then
+    if Input.isMousePressed(Input.MOUSE_BUTTON_LEFT) then
         local pos = Input.getMousePosition()
         shoot(pos.x, pos.y)
     end
@@ -84,19 +95,18 @@ See [Input](../reference/classes/input.md) for the full constant list.
 
 | Method | Purpose |
 | --- | --- |
-| `isMouseDown(button)` | Button held this frame |
-| `isMousePressed(button)` | Button pressed this frame (fires once) |
-| `isMouseReleased(button)` | Button released this frame (fires once) |
-| `getMousePosition()` | Current cursor position in canvas/screen coordinates |
-| `getMouseScroll()` | Scroll wheel delta this frame |
+| `isMousePressed(button)` | Button is currently held down |
+| `isMouseEntered()` | Cursor is inside the canvas |
+| `getMousePosition()` | Current cursor position in canvas coordinates |
+| `getMouseScroll()` | Accumulated scroll wheel delta `(x, y)` since last frame |
 
 ### Mouse button constants
 
-| Constant | Button |
-| --- | --- |
-| `S_MOUSE_BUTTON_LEFT` | Primary / left button |
-| `S_MOUSE_BUTTON_RIGHT` | Secondary / right button |
-| `S_MOUSE_BUTTON_MIDDLE` | Middle button / scroll wheel click |
+| C++ macro | Lua property | Button |
+| --- | --- | --- |
+| `S_MOUSE_BUTTON_LEFT` | `Input.MOUSE_BUTTON_LEFT` | Primary / left button |
+| `S_MOUSE_BUTTON_RIGHT` | `Input.MOUSE_BUTTON_RIGHT` | Secondary / right button |
+| `S_MOUSE_BUTTON_MIDDLE` | `Input.MOUSE_BUTTON_MIDDLE` | Middle button / scroll wheel click |
 
 ## Touch
 
@@ -141,11 +151,13 @@ single-touch to also fire mouse events.
 
 Modifier key state is available for keyboard shortcuts:
 
+`getModifiers()` returns a bitmask, so test individual modifiers with bitwise AND.
+
 === "Lua"
 
     ```lua
     local mods = Input.getModifiers()
-    if mods == S_MODIFIER_CONTROL then
+    if (mods & Input.MODIFIER_CONTROL) ~= 0 then
         -- Ctrl is held
     end
     ```
@@ -159,17 +171,28 @@ Modifier key state is available for keyboard shortcuts:
     }
     ```
 
-Modifier constants include `S_MODIFIER_SHIFT`, `S_MODIFIER_CONTROL`, `S_MODIFIER_ALT`,
-`S_MODIFIER_SUPER`, `S_MODIFIER_CAPS_LOCK`, and `S_MODIFIER_NUM_LOCK`.
+Modifier constants (C++ `S_MODIFIER_*` / Lua `Input.MODIFIER_*`): `SHIFT`, `CONTROL`,
+`ALT`, `SUPER`, `CAPS_LOCK`, and `NUM_LOCK`.
 
 ## Mouse and touch mirroring
 
-Configure the engine to mirror mouse events as touch events or vice versa:
+Configure the engine to mirror mouse events as touch events or vice versa. The flags are
+`callMouseInTouchEvent` (fire mouse callbacks from touch input) and
+`callTouchInMouseEvent` (fire touch callbacks from mouse input):
 
-```cpp
-Engine::setMouseAsTouch(true);    // mouse click fires touch callbacks
-Engine::setTouchAsMouse(true);    // touch fires mouse callbacks
-```
+=== "Lua"
+
+    ```lua
+    Engine.callMouseInTouchEvent = true   -- touch input also fires mouse callbacks
+    Engine.callTouchInMouseEvent = true   -- mouse input also fires touch callbacks
+    ```
+
+=== "C++"
+
+    ```cpp
+    Engine::setCallMouseInTouchEvent(true);   // touch input also fires mouse callbacks
+    Engine::setCallTouchInMouseEvent(true);   // mouse input also fires touch callbacks
+    ```
 
 This simplifies cross-platform code — write one input path that works for both desktop
 and mobile.
@@ -183,7 +206,7 @@ button), call:
 === "Lua"
 
     ```lua
-    Engine.setIgnoreEventsHandledByUI(true)
+    Engine.ignoreEventsHandledByUI = true
     ```
 
 === "C++"
@@ -200,22 +223,22 @@ input:
 === "Lua"
 
     ```lua
-    System.showVirtualKeyboard()
+    System.showVirtualKeyboard("")   -- the text argument is required in Lua
     System.hideVirtualKeyboard()
     ```
 
 === "C++"
 
     ```cpp
-    System::showVirtualKeyboard();
+    System::showVirtualKeyboard();   // text argument defaults to L""
     System::hideVirtualKeyboard();
     ```
 
 ## Cross-platform advice
 
 - Always provide both keyboard/mouse and touch code paths.
-- Use `S_KEY_*` names in comments so the code is readable even when constants are
-  captured in variables.
+- Use the named key constants (`Input.KEY_*` in Lua, `S_KEY_*` in C++) instead of raw
+  numbers so the code stays readable.
 - Avoid relying on platform-specific keys (e.g. Windows key, macOS Command) for core
   gameplay mechanics.
 - Test canvas/input coordinate scaling together — a touch at screen position (x, y)

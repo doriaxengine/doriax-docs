@@ -77,17 +77,21 @@ Available presets include `TOP_LEFT`, `TOP_CENTER`, `TOP_RIGHT`, `CENTER_LEFT`,
 
 ### Manual anchors
 
-For precise control, set the four anchor values directly. Anchor values range from 0
-(left/top of parent) to 1 (right/bottom of parent):
+For precise control, set the four anchor points directly. Anchor point values range from
+0 (left/top of parent) to 1 (right/bottom of parent):
 
 ```lua
-widget.anchorLeft   = 0.25
-widget.anchorRight  = 0.75
-widget.anchorTop    = 0.0
-widget.anchorBottom = 0.5
+widget.anchorPointLeft   = 0.25
+widget.anchorPointRight  = 0.75
+widget.anchorPointTop    = 0.0
+widget.anchorPointBottom = 0.5
 ```
 
 ## Building UI in code
+
+In Lua, `anchorPreset` and a widget's text/label are **properties**; parenting is done by
+calling `addChild` on the parent. Button click handlers live on the `ButtonComponent`
+(`onPress` / `onRelease`).
 
 === "Lua"
 
@@ -96,23 +100,25 @@ widget.anchorBottom = 0.5
 
     -- Background panel
     panel = Panel(scene)
-    panel:setAnchorPreset(AnchorPreset.CENTER)
+    panel.anchorPreset = AnchorPreset.CENTER
     panel:setSize(400, 300)
     panel:setTexture("ui/panel_bg.png")
 
     -- Label
     title = Text(scene)
-    title:setParent(panel)
-    title:setAnchorPreset(AnchorPreset.TOP_CENTER)
-    title:setText("Game Over")
-    title:setFontSize(36)
+    panel:addChild(title)
+    title.anchorPreset = AnchorPreset.TOP_CENTER
+    title.text = "Game Over"
+    title.fontSize = 36
 
     -- Button
     btn = Button(scene)
-    btn:setParent(panel)
-    btn:setAnchorPreset(AnchorPreset.BOTTOM_CENTER)
-    btn:setLabel("Restart")
-    btn.onPress = function()
+    panel:addChild(btn)
+    btn.anchorPreset = AnchorPreset.BOTTOM_CENTER
+    btn.label = "Restart"
+
+    local btnComp = btn:getButtonComponent()
+    btnComp.onPress = function()
         SceneManager.loadScene("Game")
     end
 
@@ -130,16 +136,17 @@ widget.anchorBottom = 0.5
     panel.setTexture("ui/panel_bg.png");
 
     Text title(&uiScene);
-    title.setParent(panel);
+    panel.addChild(&title);
     title.setAnchorPreset(AnchorPreset::TOP_CENTER);
     title.setText("Game Over");
     title.setFontSize(36);
 
     Button btn(&uiScene);
-    btn.setParent(panel);
+    panel.addChild(&btn);
     btn.setAnchorPreset(AnchorPreset::BOTTOM_CENTER);
     btn.setLabel("Restart");
-    btn.onPress = []() {
+
+    btn.getComponent<ButtonComponent>().onPress = []() {
         SceneManager::loadScene("Game");
     };
     ```
@@ -156,7 +163,7 @@ player taps a UI button), call:
 === "Lua"
 
     ```lua
-    Engine.setIgnoreEventsHandledByUI(true)
+    Engine.ignoreEventsHandledByUI = true   -- property in Lua
     ```
 
 === "C++"
@@ -186,13 +193,12 @@ number of items changes at runtime.
 
 ```lua
 list = Container(scene)
-list:setContainerType(ContainerType.VERTICAL)
-list:setSpacing(8)
+list.type = ContainerType.VERTICAL   -- type is a property; values: VERTICAL, HORIZONTAL, VERTICAL_WRAP, HORIZONTAL_WRAP
 
 for i = 1, 5 do
     local item = Button(scene)
-    item:setParent(list)
-    item:setLabel("Item " .. i)
+    list:addChild(item)
+    item.label = "Item " .. i
 end
 ```
 
@@ -210,12 +216,21 @@ matches your design resolution and choose a scaling mode:
 | `STRETCH` | Stretch to fill (may distort) |
 | `NATIVE` | Use actual screen pixel resolution |
 
-Set the canvas size on the scene before adding UI:
+Canvas size and scaling are configured on the global `Engine`, not on the scene:
 
-```cpp
-scene.setCanvasSize(1920, 1080);
-scene.setScalingMode(ScalingMode::LETTERBOX);
-```
+=== "Lua"
+
+    ```lua
+    Engine.setCanvasSize(1920, 1080)
+    Engine.scalingMode = Scaling.LETTERBOX   -- scalingMode is a property in Lua
+    ```
+
+=== "C++"
+
+    ```cpp
+    Engine::setCanvasSize(1920, 1080);
+    Engine::setScalingMode(Scaling::LETTERBOX);
+    ```
 
 ## Practical guidance
 

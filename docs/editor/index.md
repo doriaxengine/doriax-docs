@@ -96,3 +96,4 @@ resource assignments.
 - [Animation Timeline](animation.md)
 - [Code Editor](code-editor.md)
 - [Export Window](export.md)
+- [Command-Line Tools](command-line.md)

@@ -60,4 +60,15 @@ Android, iOS, macOS, and HTML5 have additional platform requirements. See the
 | Script starts twice | `NO_CPP_INIT` / `NO_LUA_INIT` configuration |
 | Shader errors | Target backend, shader compiler output, generated shader files |
 
+## Exporting without the GUI
+
+You can run the same export from a terminal with the `doriax-editor` CLI — handy for
+build servers and automated releases:
+
+```bash
+doriax-editor export --project ./MyGame --out ./build/MyGame --platform "linux,web"
+```
+
+See [Command-Line Tools](../editor/command-line.md) for all options.
+
 Continue with [Export Window](../editor/export.md) and [Build Options](../reference/build-options.md).

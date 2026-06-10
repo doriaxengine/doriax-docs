@@ -38,7 +38,7 @@ Most high-level objects accept a file path and load the resource automatically:
 
     -- Sound loaded by Sound object
     sfx = Sound(scene)
-    sfx:load("audio/jump.ogg")
+    sfx:loadSound("audio/jump.ogg")
     ```
 
 === "C++"
@@ -51,7 +51,7 @@ Most high-level objects accept a file path and load the resource automatically:
     model.loadGLTF("models/hero.gltf");
 
     Sound sfx(&scene);
-    sfx.load("audio/jump.ogg");
+    sfx.loadSound("audio/jump.ogg");
     ```
 
 ## Runtime pools
@@ -74,54 +74,62 @@ for level loading.
 
 ## File I/O
 
-The `File`, `FileData`, and `Data` classes provide platform-portable file access and
-in-memory buffers.
+`FileData` is the abstract base for byte-level access; `File` reads and writes files on
+disk and `Data` wraps an in-memory buffer. All three share `readString`, `writeString`,
+`read8/16/32`, `seek`, `pos`, `length`, and `eof`.
 
 === "Lua"
 
     ```lua
-    -- Read a file into memory
-    local f = FileData("saves/player.dat")
+    -- Read a file into memory (second argument: open for writing)
+    local f = File("saves/player.dat", false)
     local contents = f:readString()
     f:close()
+
+    -- Write
+    local out = File("saves/player.dat", true)
+    out:writeString(contents)
+    out:flush()
+    out:close()
     ```
 
 === "C++"
 
     ```cpp
-    // Read binary data
-    Data buffer;
-    FileData file("saves/player.dat");
-    file.read(buffer);
+    File file("saves/player.dat", false);
+    std::string contents = file.readString();
     file.close();
     ```
 
 File paths support both project-relative and absolute paths. On mobile and web,
 write-accessible directories are separate from read-only resource paths — use
-`System::getPersistentStoragePath()` for player save data.
+`System.getUserDataPath()` for player save data, and `System.getAssetPath()` for
+read-only bundled assets.
 
 ## User settings
 
-`UserSettings` persists key/value pairs to a YAML configuration file. It is suited for
-player preferences, audio/video settings, and small game state. Changes are saved
-immediately on write.
+`UserSettings` persists key/value pairs using each platform's native preferences
+storage. It is suited for player preferences, audio/video settings, and small game
+state. The API is typed — use the matching `set…ForKey` / `get…ForKey` pair for `Bool`,
+`Integer`, `Long`, `Float`, `Double`, `String`, or `Data`:
 
 === "Lua"
 
     ```lua
-    UserSettings.set("volume", 0.8)
-    UserSettings.set("fullscreen", true)
+    UserSettings.setFloatForKey("volume", 0.8)
+    UserSettings.setBoolForKey("fullscreen", true)
 
-    local vol = UserSettings.getFloat("volume", 1.0)  -- second arg is default
+    local vol = UserSettings.getFloatForKey("volume", 1.0)  -- second arg is the default
+    UserSettings.removeKey("obsoleteSetting")
     ```
 
 === "C++"
 
     ```cpp
-    UserSettings::set("volume", 0.8f);
-    UserSettings::set("fullscreen", true);
+    UserSettings::setFloatForKey("volume", 0.8f);
+    UserSettings::setBoolForKey("fullscreen", true);
 
-    float vol = UserSettings::getFloat("volume", 1.0f);
+    float vol = UserSettings::getFloatForKey("volume", 1.0f);
     ```
 
 Keep heavy save data (inventory, world state) in custom binary or JSON files. Reserve

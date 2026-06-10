@@ -88,6 +88,17 @@ After export, build the generated project with the appropriate native toolchain:
 | **iOS** | Xcode workspace | Requires a Mac with Xcode |
 | **HTML5 / Web** | Emscripten | Requires `emcmake cmake` |
 
+## Exporting from the command line
+
+The same export pipeline is available headlessly through the `doriax-editor` CLI, which
+is ideal for build servers and CI/CD:
+
+```bash
+doriax-editor export --project ./MyGame --out ./build/MyGame --platform "linux,web"
+```
+
+See [Command-Line Tools](command-line.md) for the full `export` and `shaders` reference.
+
 ## Build options
 
 See [Build Options](../reference/build-options.md) for a full list of CMake flags and

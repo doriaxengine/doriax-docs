@@ -714,7 +714,7 @@ Called when the mouse cursor leaves the canvas boundary.
 
 * `static FunctionSubscribe<void(int,bool,int)> onKeyDown`
 * Callback: `void(int key, bool repeat, int mods)`
-    * **key** — Key code; see [Input](input.md#keys) constants (`S_KEY_*`).
+    * **key** — Key code; see [Input](input.md#keys) constants (`S_KEY_*` in C++, `Input.KEY_*` in Lua).
     * **repeat** — `true` if the key is being held and this is a repeat event.
     * **mods** — Modifier key bitmask.
 

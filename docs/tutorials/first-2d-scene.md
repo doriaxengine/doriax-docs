@@ -40,7 +40,7 @@ By the end of this tutorial you will have:
 
 The default 2D scene already has a camera entity. Select it and verify:
 
-- **Type** is set to `CAMERA_2D` (orthographic).
+- **Type** is set to `CAMERA_ORTHO` (orthographic).
 - **Canvas size** matches your design resolution, for example `1280 × 720`.
 - **Scaling mode** is set to `LETTERBOX` or `FITWIDTH`.
 
@@ -64,13 +64,13 @@ Move the camera so the sprite is visible in the camera preview.
         local obj = Object(self.scene, self.entity)
         local speed = 200  -- pixels per second
 
-        local dt = Engine.getDeltaTime()
+        local dt = Engine.deltatime
         local pos = obj.position
 
-        if Input.isKeyDown(S_KEY_LEFT)  then pos.x = pos.x - speed * dt end
-        if Input.isKeyDown(S_KEY_RIGHT) then pos.x = pos.x + speed * dt end
-        if Input.isKeyDown(S_KEY_UP)    then pos.y = pos.y + speed * dt end
-        if Input.isKeyDown(S_KEY_DOWN)  then pos.y = pos.y - speed * dt end
+        if Input.isKeyPressed(Input.KEY_LEFT)  then pos.x = pos.x - speed * dt end
+        if Input.isKeyPressed(Input.KEY_RIGHT) then pos.x = pos.x + speed * dt end
+        if Input.isKeyPressed(Input.KEY_UP)    then pos.y = pos.y + speed * dt end
+        if Input.isKeyPressed(Input.KEY_DOWN)  then pos.y = pos.y - speed * dt end
 
         obj.position = pos
     end

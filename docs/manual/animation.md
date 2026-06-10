@@ -42,13 +42,17 @@ code-friendly, and do not require the timeline editor.
 
 ### Basic action example
 
+`setAction` takes the start value, end value, duration in seconds, and an optional loop
+flag. The easing curve is set separately with `setFunctionType`:
+
 === "Lua"
 
     ```lua
-    -- Move an entity from its current position to (100, 200, 0) over 1.5 seconds
+    -- Move an entity from (0, 0, 0) to (100, 200, 0) over 1.5 seconds
     move = PositionAction(scene)
     move:setTarget(entity)
-    move:setAction(Vector3(100, 200, 0), 1.5, EaseType.EASE_OUT_QUAD)
+    move:setAction(Vector3(0, 0, 0), Vector3(100, 200, 0), 1.5, false)
+    move:setFunctionType(EaseType.QUAD_OUT)
     move:start()
     ```
 
@@ -57,60 +61,71 @@ code-friendly, and do not require the timeline editor.
     ```cpp
     PositionAction move(&scene);
     move.setTarget(entity);
-    move.setAction(Vector3(100, 200, 0), 1.5f, EaseType::EASE_OUT_QUAD);
+    move.setAction(Vector3(0, 0, 0), Vector3(100, 200, 0), 1.5f, false);
+    move.setFunctionType(EaseType::QUAD_OUT);
     move.start();
     ```
 
-### Chaining actions with callbacks
+### Chaining actions with events
 
-Use `TimedAction` to sequence multiple actions:
+Every action's `ActionComponent` exposes `onStart`, `onPause`, `onStop`, and `onStep`
+events. Subscribe to `onStop` to start the next action when one finishes:
 
 === "Lua"
 
     ```lua
-    seq = TimedAction(scene)
-    seq:setTarget(entity)
-    seq:setDuration(0.5)
-    seq:setCallback(function()
+    move:getActionComponent().onStop = function()
         -- start the next action when this one ends
         nextAction:start()
-    end)
-    seq:start()
+    end
+    move:start()
+    ```
+
+=== "C++"
+
+    ```cpp
+    move.getComponent<ActionComponent>().onStop = []() {
+        nextAction.start();
+    };
+    move.start();
     ```
 
 ## Easing curves
 
-All `TimedAction` subclasses accept an `EaseType` that shapes the interpolation curve.
-Common choices:
+All `TimedAction` subclasses accept an `EaseType` (via `setFunctionType`) that shapes
+the interpolation curve. Names follow the `<CURVE>_<IN/OUT/IN_OUT>` pattern. Common
+choices:
 
 | EaseType | Best for |
 | --- | --- |
 | `LINEAR` | Constant-speed motion, debug |
-| `EASE_IN_OUT_QUAD` | UI transitions and camera moves |
-| `EASE_OUT_BOUNCE` | Playful jumps and pop-in effects |
-| `EASE_IN_BACK` | Anticipation before a jump |
-| `EASE_OUT_ELASTIC` | Springing UI elements |
-| `EASE_OUT_CUBIC` | Smooth deceleration into a stop |
+| `QUAD_IN_OUT` | UI transitions and camera moves |
+| `BOUNCE_OUT` | Playful jumps and pop-in effects |
+| `BACK_IN` | Anticipation before a jump |
+| `ELASTIC_OUT` | Springing UI elements |
+| `CUBIC_OUT` | Smooth deceleration into a stop |
 
-See [TimedAction](../reference/classes/timedaction.md) for the full `EaseType`
-enumeration.
+The full set covers `QUAD`, `CUBIC`, `QUART`, `QUINT`, `SINE`, `EXPO`, `CIRC`,
+`ELASTIC`, `BACK`, and `BOUNCE`, each with `_IN`, `_OUT`, and `_IN_OUT` variants, plus
+`CUSTOM` for supplying your own curve function.
 
 ## Sprite animation
 
-`SpriteAnimation` cycles through a sequence of atlas frames at a fixed interval. Use
-the [Sprite Slicer](../editor/sprite-slicer.md) to cut a sprite sheet into named frames
-first.
+`SpriteAnimation` cycles through a sequence of atlas frames by **frame index**. Frames
+must be registered on the sprite first — with `addFrame` in code or via the
+[Sprite Slicer](../editor/sprite-slicer.md). The interval is in **milliseconds**, and
+looping is the last argument of `setAnimation`.
 
 === "Lua"
 
     ```lua
     sprite = Sprite(scene)
     sprite:setTexture("characters/hero.png")
+    -- frames 0..7 previously registered with addFrame or the Sprite Slicer
 
     anim = SpriteAnimation(scene)
     anim:setTarget(sprite)
-    anim:setAnimation("walk_00", "walk_07", 0.08)  -- from frame, to frame, interval (seconds)
-    anim:setLoop(true)
+    anim:setAnimation(0, 7, 80, true)  -- startFrame, endFrame, interval (ms), loop
     anim:start()
     ```
 
@@ -121,11 +136,21 @@ first.
     hero.setTexture("characters/hero.png");
 
     SpriteAnimation anim(&scene);
-    anim.setTarget(hero);
-    anim.setAnimation("walk_00", "walk_07", 0.08f);
-    anim.setLoop(true);
+    anim.setTarget(&hero);
+    anim.setAnimation(0, 7, 80, true);
     anim.start();
     ```
+
+For per-frame timing, pass explicit frame and time lists:
+`setAnimation({0, 1, 2, 5}, {100, 80, 80, 200}, true)`.
+
+As a shortcut, `Sprite` can drive its own animation without a separate action object:
+
+```lua
+sprite:startAnimation(0, 7, 80, true)
+-- ...
+sprite:stopAnimation()
+```
 
 ## Skeletal animation from GLTF
 
@@ -138,9 +163,9 @@ or index.
     model = Model(scene)
     model:loadGLTF("characters/hero.gltf")
 
-    -- Find and play by name
+    -- Find and play by name (loop is a property in Lua)
     local walk = model:findAnimation("Walk")
-    walk:setLoop(true)
+    walk.loop = true
     walk:start()
 
     -- Or blend between clips

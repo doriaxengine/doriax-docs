@@ -15,10 +15,38 @@ assets (multi-megabyte models, terrain heightmaps, audio files), this produces
 noticeable hitches. Async loading moves the heavy work to a worker thread while the
 main thread continues rendering a loading screen or animating a progress indicator.
 
-## Async thread scope
+## Automatic async resource loading
 
-Mark background work with `Engine::AsyncThreadScope`. The engine tracks when a scope
-enters and exits so it can gate certain operations appropriately:
+The simplest way to use threading is to enable **async loading** and let the engine
+handle the rest. When enabled, the resource pools (textures, models, sounds, shaders)
+load data on a worker thread pool automatically:
+
+=== "Lua"
+
+    ```lua
+    Engine.asyncLoading = true   -- property in Lua
+    Engine.setMaxResourceLoadingThreads(4)
+    ```
+
+=== "C++"
+
+    ```cpp
+    Engine::setAsyncLoading(true);
+    Engine::setMaxResourceLoadingThreads(4);
+    ```
+
+While resources load, the entity is created immediately and the resource appears when
+its data is ready. Query `Engine.getQueuedResourceCount()` to see how many resources
+are still pending.
+
+## Async thread scope (manual background work, C++)
+
+For your own background work, bracket it with `Engine::AsyncThreadScope` (an RAII
+helper around `Engine::startAsyncThread()` / `Engine::endAsyncThread()`). While inside
+an async scope, GPU resource creation is **deferred to a commit queue** instead of
+touching the graphics API from the wrong thread. When the outermost scope ends, the
+queue is flushed automatically (you can also flush manually with
+`Engine::commitThreadQueue()` from the main thread):
 
 === "C++"
 
@@ -28,76 +56,67 @@ enters and exits so it can gate certain operations appropriately:
     void loadLevelInBackground() {
         Engine::AsyncThreadScope asyncScope;
 
-        // Load raw resource data on the worker thread
-        Data modelData;
-        FileData file("models/level.gltf");
-        file.read(modelData);
-        file.close();
+        // Heavy work on the worker thread. Engine objects created here defer
+        // their GPU-side resources to the commit queue.
+        model.loadGLTF("models/level.gltf");
 
-        // Commit main-thread work (GPU upload, scene mutation) via the queue
-        Engine::queueMainThread([modelData = std::move(modelData)]() {
-            // This runs on the main thread at the next safe point
-            model.loadData(modelData);
-        });
-    }
+    } // scope ends → queued GPU work is committed
     ```
+
+Use `Engine::isAsyncThread()` to check whether the current code runs inside an async
+scope.
 
 ## Thread pool
 
-`ThreadPoolManager` dispatches work items to a pool of worker threads. It is suited for
-parallelizable tasks that do not need the main thread:
+`ThreadPoolManager` is the worker pool behind async resource loading. In C++ you can
+also dispatch your own tasks to it. `enqueue` is an instance method — get the singleton
+first:
 
 === "C++"
 
     ```cpp
-    ThreadPoolManager::enqueue([]() {
+    ThreadPoolManager::getInstance().enqueue([]() {
         // parse data, decompress files, run a simulation step, etc.
     });
     ```
 
-Worker count is determined at startup based on available hardware concurrency. The pool
-is shared across the engine; avoid blocking workers with long synchronous operations.
+The pool is initialized on demand with one thread per hardware core by default;
+`Engine::setMaxResourceLoadingThreads(n)` re-initializes it with a specific worker
+count. The pool is shared across the engine; avoid blocking workers with long
+synchronous operations. (In Lua only `initialize`, `shutdown`, and `getQueueSize` are
+exposed — task dispatch is C++-only.)
 
-## Queued main-thread commits
+## Tracking loading progress
 
-Any GPU, physics, or scene operation that is not thread-safe must be committed back to
-the main thread. Use `Engine::queueMainThread()` to schedule a lambda for execution at
-the next safe processing point:
+`ResourceProgress` is a static tracker that reports per-resource and overall build
+progress while async loads are running. Read the overall progress to drive a loading
+bar:
+
+=== "Lua"
+
+    ```lua
+    function LoadingScreen:onUpdate()
+        if ResourceProgress.hasActiveBuilds() then
+            local overall = ResourceProgress.getOverallProgress()
+            progressBar.value = overall.totalProgress * 100
+            statusText.text = overall.currentBuildName
+        end
+    end
+    ```
 
 === "C++"
 
     ```cpp
-    Engine::queueMainThread([&]() {
-        // safe to create GPU resources, modify the scene, or register entities here
-        Sprite sprite(&scene);
-        sprite.setTexture(loadedTexturePath);
-    });
+    if (ResourceProgress::hasActiveBuilds()) {
+        OverallBuildProgress overall = ResourceProgress::getOverallProgress();
+        progressBar.setValue(overall.totalProgress * 100.0f);
+    }
     ```
 
-Call `Engine::commitThreadQueue()` in the main update loop to flush queued work. This
-is called automatically by the engine at the end of each frame.
-
-## ResourceProgress
-
-Track loading state with `ResourceProgress`:
-
-```cpp
-ResourceProgress progress;
-progress.setState(ResourceProgressState::LOADING);
-
-// Later, on completion:
-progress.setState(ResourceProgressState::FINISHED);
-progress.setProgress(1.0f);
-```
-
-Show progress in a UI `Progressbar` widget by reading `progress.getProgress()` in the
-update loop:
-
-```lua
-function onUpdate()
-    progressBar.value = ResourceProgress.getGlobalProgress()
-end
-```
+`OverallBuildProgress` carries `totalProgress` (0–1), `totalBuilds`,
+`completedBuilds`, `currentBuildName`, `currentBuildType`, and `hasActiveBuilds`. Your
+own loaders can participate by calling `ResourceProgress.startBuild(id, type, name)`,
+`updateProgress(id, value)`, and `completeBuild(id)` / `failBuild(id)`.
 
 ## Platform caveats
 
@@ -112,10 +131,11 @@ For web, always test async loading with pthreads enabled in your deployment envi
 
 ## Practical rules
 
-- Load raw file data (read bytes, decompress) on worker threads.
-- Create GPU resources (textures, meshes), spawn physics bodies, and mutate scene
-  hierarchies **only on the main thread**.
-- Use `Engine::queueMainThread` to bridge worker results back to the main thread.
+- Prefer the built-in async loading (`Engine.asyncLoading = true`) over manual threads —
+  the resource pools already handle the thread-safety details.
+- For manual background work, wrap it in `Engine::AsyncThreadScope` so GPU resource
+  creation is deferred to the commit queue instead of running on the wrong thread.
+- Spawn physics bodies and mutate scene hierarchies **only on the main thread**.
 - Do not hold scene references or entity handles on worker threads without synchronization.
 - Test async loading on the slowest target device — the loading time and race conditions
   may not reproduce on a fast desktop machine.
@@ -124,25 +144,11 @@ For web, always test async loading with pthreads enabled in your deployment envi
 
 A common pattern for level loading:
 
-1. Enter a loading scene with a progress bar.
-2. Launch a worker thread that loads asset data and reports progress.
-3. Each loaded asset queues a main-thread commit to create the in-scene object.
-4. When all objects are committed, the main thread transitions to the gameplay scene.
-
-=== "C++"
-
-    ```cpp
-    void startLevelLoad(const std::string& levelPath) {
-        ThreadPoolManager::enqueue([levelPath]() {
-            Engine::AsyncThreadScope scope;
-            // ... load data ...
-
-            Engine::queueMainThread([]() {
-                SceneManager::loadScene("Level1");
-            });
-        });
-    }
-    ```
+1. Enable async loading and enter a loading scene with a progress bar.
+2. Load (or switch to) the gameplay scene — its resources stream in on worker threads.
+3. Drive the progress bar from `ResourceProgress.getOverallProgress().totalProgress`.
+4. When `ResourceProgress.hasActiveBuilds()` returns `false` and
+   `Engine.getQueuedResourceCount()` reaches zero, hide the loading overlay.
 
 ## See also
 

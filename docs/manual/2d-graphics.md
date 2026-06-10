@@ -87,10 +87,19 @@ and aspect ratios. Doriax provides scaling modes so your game looks correct acro
 devices and window sizes — configure the canvas size and scaling behavior through the
 `Engine` API.
 
-```lua
-Engine.setCanvasSize(1000, 480)
-Engine.setScalingMode(Scaling.FITWIDTH)
-```
+=== "Lua"
+
+    ```lua
+    Engine.setCanvasSize(1000, 480)
+    Engine.scalingMode = Scaling.FITWIDTH   -- scalingMode is a property in Lua
+    ```
+
+=== "C++"
+
+    ```cpp
+    Engine::setCanvasSize(1000, 480);
+    Engine::setScalingMode(Scaling::FITWIDTH);
+    ```
 
 | Scaling mode | Behavior |
 | --- | --- |

@@ -88,7 +88,7 @@ end
 
 function PlayerController:onUpdate()
     if not self.isActive then return end
-    if Input.isKeyPressed(S_KEY_RIGHT) then
+    if Input.isKeyPressed(Input.KEY_RIGHT) then
         local object = Object(self.scene, self.entity)
         object.position = object.position + Vector3(self.speed, 0, 0)
     end

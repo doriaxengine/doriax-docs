@@ -58,13 +58,13 @@ After slicing, use frame names or indices in scripts and components:
     sprite = Sprite(scene)
     sprite:setTexture("characters/hero.png")
 
-    -- Show a specific named frame
+    -- Show a specific frame by name or index
     sprite:setFrame("walk_01")
 
-    -- Animate through a range of frames
+    -- Animate through a frame index range (interval in milliseconds)
     anim = SpriteAnimation(scene)
     anim:setTarget(sprite)
-    anim:setAnimation("walk_01", "walk_08", 0.1)
+    anim:setAnimation(1, 8, 100, true)   -- startFrame, endFrame, interval (ms), loop
     anim:start()
     ```
 
@@ -74,13 +74,13 @@ After slicing, use frame names or indices in scripts and components:
     Sprite hero(&scene);
     hero.setTexture("characters/hero.png");
 
-    // Show a specific named frame
+    // Show a specific frame by name or index
     hero.setFrame("walk_01");
 
-    // Animate through a range of frames
+    // Animate through a frame index range (interval in milliseconds)
     SpriteAnimation anim(&scene);
-    anim.setTarget(hero);
-    anim.setAnimation("walk_01", "walk_08", 0.1f);
+    anim.setTarget(&hero);
+    anim.setAnimation(1, 8, 100, true);
     anim.start();
     ```
 

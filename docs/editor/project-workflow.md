@@ -93,28 +93,29 @@ Structure panel with **Add Bundle Instance**.
 
 ### Runtime bundle usage
 
+Bundle registration is generated automatically by the export step. At runtime you call
+`createBundle` (bundle **name first, then scene**) and `destroyBundle`:
+
 === "Lua"
 
     ```lua
-    -- Register a bundle factory (called at startup)
-    BundleManager.registerBundle(1, "enemy_grunt", function(scene, parent)
-        -- entity creation happens here automatically from the bundle file
-    end)
-
     -- Create a bundle instance at runtime
-    local root = BundleManager.createBundle(scene, "enemy_grunt")
+    local root = BundleManager.createBundle("enemy_grunt", scene)
+
+    -- Destroy it later
+    BundleManager.destroyBundle(scene, root)
     ```
 
 === "C++"
 
     ```cpp
-    // Register at startup
-    BundleManager::registerBundle(1, "enemy_grunt", [](Scene* scene, EntityHandle parent) {
+    // Registration is normally emitted by export:
+    BundleManager::registerBundle(1, "enemy_grunt", [](Scene* scene, Entity parent) {
         // bundle factory body
     });
 
     // Create an instance
-    EntityHandle root = BundleManager::createBundle(&scene, "enemy_grunt");
+    Entity root = BundleManager::createBundle("enemy_grunt", &scene);
     ```
 
 See [BundleManager](../reference/classes/bundlemanager.md) for the complete API.

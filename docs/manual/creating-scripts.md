@@ -95,7 +95,7 @@ end
 
 function PlayerController:onUpdate()
     local object = Object(self.scene, self.entity)
-    if Input.isKeyPressed(S_KEY_RIGHT) then
+    if Input.isKeyPressed(Input.KEY_RIGHT) then
         object.position = object.position + Vector3(self.speed * Engine.deltatime, 0, 0)
     end
 end
@@ -278,7 +278,8 @@ See [Script Properties](script-properties.md) for the full type mapping.
 local MenuButton = {}
 
 function MenuButton:init()
-    local ui = self.scene:findComponent(UIComponent, self.entity)
+    local button = Button(self.scene, self.entity)
+    local ui = button:getUIComponent()
     RegisterEvent(self, ui.onClick, "onClick")
 end
 
@@ -292,7 +293,7 @@ return MenuButton
 ### Physics contact (C++)
 
 ```cpp
-void Trap::onBeginContact(Body2D bodyA, int shapeA, Body2D bodyB, int shapeB) {
+void Trap::onBeginContact(Body2D bodyA, unsigned long shapeA, Body2D bodyB, unsigned long shapeB) {
     // registered with REGISTER_EVENT(physics->beginContact2D, onBeginContact)
 }
 ```

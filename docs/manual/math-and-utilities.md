@@ -33,7 +33,7 @@ local dot    = pos:dotProduct(dir)
 | Constant | Value |
 | --- | --- |
 | `Vector3.ZERO` | (0, 0, 0) |
-| `Vector3.ONE` | (1, 1, 1) |
+| `Vector3.UNIT_SCALE` | (1, 1, 1) |
 | `Vector3.UNIT_X` | (1, 0, 0) |
 | `Vector3.UNIT_Y` | (0, 1, 0) |
 | `Vector3.UNIT_Z` | (0, 0, 1) |
@@ -45,10 +45,10 @@ quaternions over Euler angles for rotation interpolation and composition.
 
 ```lua
 -- Create from Euler angles (in degrees if useDegrees is enabled)
-local q = Quaternion.fromEulerAngles(0, 90, 0)
+local q = Quaternion(0, 90, 0)
 
--- Interpolate
-local result = Quaternion.slerp(q1, q2, 0.5)
+-- Interpolate (interpolation factor comes first)
+local result = Quaternion.slerp(0.5, q1, q2)
 
 -- Apply to a vector
 local rotated = q * Vector3(1, 0, 0)
@@ -71,7 +71,6 @@ Use it for UI bounds, sprite atlas frames, and screen-space regions.
 
 ```lua
 local frame = Rect(64, 0, 32, 32)   -- x=64, y=0, w=32, h=32
-local center = frame:center()
 local contains = frame:contains(Vector2(70, 10))
 ```
 
@@ -86,13 +85,18 @@ local contains = frame:contains(Vector2(70, 10))
 | [`Plane`](../reference/classes/plane.md) | Infinite plane defined by normal and distance — frustum planes, clip tests |
 
 ```lua
--- Cast a ray from a camera position
-local ray = camera:screenToRay(Input.getMousePosition())
-local result = ray:testScene(scene)
-if result.hasHit then
-    print("Hit entity:", result.entity)
+-- Cast a ray through the cursor and test it against the scene's 3D physics bodies
+local pos = Input.getMousePosition()
+local ray = camera:screenToRay(pos.x, pos.y)
+local result = ray:intersects(scene, RayFilter.BODY_3D)
+if result.hit then
+    print("Hit entity:", result.body, "at distance", result.distance)
 end
 ```
+
+`intersects` also accepts individual `AABB`, `OBB`, `Plane`, `Body2D`, and `Body3D`
+targets. The returned `RayReturn` carries `hit`, `distance`, `point`, `normal`, `body`
+(the entity), and `shapeIndex`.
 
 ## Angles
 
@@ -109,16 +113,14 @@ local deg = Angle.radToDeg(math.pi / 2)
 ## Color utilities
 
 The static [`Color`](../reference/classes/color.md) class provides sRGB ↔ linear
-conversions and a set of named color constants. Rendering expects linear color space
-internally.
+conversions. Rendering expects linear color space internally.
 
 ```lua
 -- Convert from sRGB to linear for the renderer
 local linearRed = Color.sRGBToLinear(Vector3(1, 0, 0))
 
--- Named constants
-local white = Color.WHITE   -- Vector4(1, 1, 1, 1)
-local black = Color.BLACK
+-- And back for display values
+local srgb = Color.linearTosRGB(linearRed)
 ```
 
 ## Logging
@@ -129,17 +131,19 @@ severity levels.
 === "Lua"
 
     ```lua
+    -- The Lua functions take a single string; use .. for formatting
     Log.print("Scene loaded")
-    Log.debug("Entity count: " .. scene:getEntityCount())
-    Log.warn("Optional resource missing: %s", path)
+    Log.debug("Player position: " .. tostring(obj.position))
+    Log.warn("Optional resource missing: " .. path)
     Log.error("Physics body creation failed")
     ```
 
 === "C++"
 
     ```cpp
+    // The C++ functions accept printf-style format arguments
     Log::print("Scene loaded");
-    Log::debug("Entity count: %u", scene.getEntityCount());
+    Log::debug("Player position: %s", position.toString().c_str());
     Log::warn("Optional resource missing: %s", path.c_str());
     Log::error("Physics body creation failed");
     ```

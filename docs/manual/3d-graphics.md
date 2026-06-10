@@ -66,12 +66,9 @@ preserving the player's view.
 
 ## Additional features
 
-The runtime also supports particle systems, terrain with level-of-detail (LOD), and
-mesh instancing for efficiently rendering many copies of the same geometry.
-
-!!! note
-    Terrain and particle authoring are available at the engine/runtime level; visual
-    editor tooling for them is still being integrated.
+The runtime also supports [particle systems](particles.md), [terrain](terrain.md) with
+level-of-detail (LOD), and [mesh instancing](rendering-pipeline.md#gpu-instancing) for
+efficiently rendering many copies of the same geometry.
 
 ## Next steps
 

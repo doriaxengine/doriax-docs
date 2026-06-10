@@ -81,6 +81,7 @@ nav:
       - Animation Timeline: 'editor/animation.md'
       - Code Editor: 'editor/code-editor.md'
       - Export Window: 'editor/export.md'
+      - Command-Line Tools: 'editor/command-line.md'
   - Manual:
       - Engine Architecture: 'manual/architecture.md'
       - Scenes & Entities: 'manual/scenes-and-entities.md'
@@ -96,6 +97,8 @@ nav:
       - Rendering Pipeline: 'manual/rendering-pipeline.md'
       - User Interface: 'manual/user-interface.md'
       - Animation: 'manual/animation.md'
+      - Particles: 'manual/particles.md'
+      - Terrain: 'manual/terrain.md'
       - Physics: 'manual/physics.md'
       - Audio: 'manual/audio.md'
       - Math & Utilities: 'manual/math-and-utilities.md'
@@ -161,7 +164,16 @@ nav:
           - Matrix4: 'reference/classes/matrix4.md'
           - Quaternion: 'reference/classes/quaternion.md'
           - Ray: 'reference/classes/ray.md'
+  - Building from Source:
+      - Overview: 'building/overview.md'
+      - Windows: 'building/windows.md'
+      - Linux: 'building/linux.md'
+      - macOS: 'building/macos.md'
+      - Android: 'building/android.md'
+      - iOS: 'building/ios.md'
+      - HTML5: 'building/html5.md'
   - Contributing:
       - Documentation Guide: 'contributing/documentation-guide.md'
   - About:
+      - FAQ: 'about/faq.md'
       - License & Credits: 'about/license.md'

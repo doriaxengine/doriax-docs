@@ -22,7 +22,7 @@ A 2D sound is heard at the same volume and position regardless of where in the s
 | double | [volume](#volume) | `1.0` | C++ \| Lua |
 | float | [speed](#speed) | `1.0` | C++ \| Lua |
 | float | [pan](#pan) | `0.0` | C++ \| Lua |
-| bool | [lopping](#lopping) | `false` | C++ \| Lua |
+| bool | [looping](#looping) | `false` | C++ \| Lua |
 | double | [loopingPoint](#loopingpoint) | `0.0` | C++ \| Lua |
 | bool | [protectVoice](#protectvoice) | `false` | C++ \| Lua |
 | float | [minDistance](#mindistance-maxdistance) | `1.0` | C++ \| Lua |
@@ -110,10 +110,10 @@ Stereo pan. `-1.0` is fully left, `0.0` is centre, `1.0` is fully right. Panning
 
 ---
 
-### lopping
+### looping
 
-* *Setter*: void **setLopping**(bool lopping)
-* *Getter*: bool **isLopping**() const
+* *Setter*: void **setLooping**(bool looping)
+* *Getter*: bool **isLooping**() const
 
 When `true`, the clip restarts from [loopingPoint](#loopingpoint) after it finishes.
 
@@ -124,7 +124,7 @@ When `true`, the clip restarts from [loopingPoint](#loopingpoint) after it finis
 * *Setter*: void **setLoopingPoint**(double loopingPoint)
 * *Getter*: double **getLoopingPoint**() const
 
-Position in **seconds** at which the clip restarts when [lopping](#lopping) is `true`. Defaults to `0.0` (beginning of the clip).
+Position in **seconds** at which the clip restarts when [looping](#looping) is `true`. Defaults to `0.0` (beginning of the clip).
 
 ---
 
@@ -191,7 +191,7 @@ Loads an audio file from disk. Supported formats depend on the SoLoud build bund
     ```cpp
     Sound bgm(&scene);
     bgm.loadSound("sounds/music.ogg");
-    bgm.setLopping(true);
+    bgm.setLooping(true);
     bgm.play();
     ```
 
@@ -199,7 +199,7 @@ Loads an audio file from disk. Supported formats depend on the SoLoud build bund
     ```lua
     local bgm = Sound(scene)
     bgm:loadSound("sounds/music.ogg")
-    bgm:setLopping(true)
+    bgm:setLooping(true)
     bgm:play()
     ```
 

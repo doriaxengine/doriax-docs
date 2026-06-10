@@ -35,25 +35,21 @@ dialogs, and a live output panel for compile and export messages.
 
 ## Script entry point
 
-Every script receives engine lifecycle callbacks. Implement only the callbacks you need:
+Scripts subscribe to the engine events they need (`onUpdate`, `onFixedUpdate`,
+`onPause`, `onResume`, `onShutdown`, and the input events). Lua scripts register in
+`init()`; C++ scripts register in the constructor and unregister in the destructor:
 
 === "Lua"
 
     ```lua
     local Player = {}
-    Player.__index = Player
 
     function Player:init()
         RegisterEngineEvent(self, "onUpdate")
-        RegisterEngineEvent(self, "onDestroy")
     end
 
     function Player:onUpdate()
         -- called every frame
-    end
-
-    function Player:onDestroy()
-        -- called when the entity is destroyed
     end
 
     return Player
@@ -62,15 +58,25 @@ Every script receives engine lifecycle callbacks. Implement only the callbacks y
 === "C++"
 
     ```cpp
-    #include "script/ScriptBase.h"
-    using namespace doriax;
+    #include "ScriptBase.h"
 
-    class Player : public ScriptBase {
+    class Player : public doriax::ScriptBase {
     public:
-        void init() override;
-        void update(double dt) override;
-        void destroy() override;
+        Player(doriax::Scene* scene, doriax::Entity entity);
+        ~Player();
+
+        void onUpdate();
     };
+    ```
+
+    ```cpp
+    Player::Player(Scene* scene, Entity entity) : ScriptBase(scene, entity) {
+        REGISTER_ENGINE_EVENT(onUpdate);
+    }
+
+    Player::~Player() {
+        UNREGISTER_ENGINE_EVENT(onUpdate);
+    }
     ```
 
 See [Creating Scripts](../manual/creating-scripts.md) for the full lifecycle and event

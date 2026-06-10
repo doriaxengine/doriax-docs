@@ -132,8 +132,14 @@ Log::warn("Missing optional texture: %s", path.c_str());
 Log::error("Failed to load level");
 ```
 
-Lua scripts should use the engine's exposed logging functions when available, or fall
-back to regular Lua `print()` for quick diagnostics.
+The same logging functions are exposed to Lua through the `Log` class. Regular Lua
+`print()` also works for quick diagnostics:
+
+```lua
+Log.print("Player spawned")
+Log.warn("Missing optional texture")
+Log.error("Failed to load level")
+```
 
 ## require() and module paths
 

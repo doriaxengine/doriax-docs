@@ -89,14 +89,15 @@ Tips:
     function Rotator:init()
         RegisterEngineEvent(self, "onUpdate")
         self.speed = 45  -- degrees per second
+        self.angle = 0
     end
 
     function Rotator:onUpdate()
-        local obj   = Object(self.scene, self.entity)
-        local dt    = Engine.getDeltaTime()
-        local euler = obj.rotation:toEulerAngles()
-        euler.y     = euler.y + self.speed * dt
-        obj.rotation = Quaternion.fromEulerAngles(euler.x, euler.y, euler.z)
+        local obj = Object(self.scene, self.entity)
+        self.angle = self.angle + self.speed * Engine.deltatime
+        -- Quaternion(x, y, z) builds a rotation from Euler angles
+        -- (in degrees, since Engine.useDegrees is true by default).
+        obj.rotation = Quaternion(0, self.angle, 0)
     end
 
     return Rotator

@@ -13,16 +13,15 @@ Lua uses `RegisterEvent` and `RegisterEngineEvent` globals registered by `LuaBin
 
 ## How dispatch works
 
-```mermaid
-flowchart LR
-    Platform[Platform input / frame tick]
-    Engine[Engine.systemTouchStart / systemUpdate]
-    FS[FunctionSubscribe.call]
-    CPP[C++ callback]
-    Lua[Lua closure]
-    Platform --> Engine --> FS
-    FS --> CPP
-    FS --> Lua
+```
+Platform input / frame tick
+        │
+        ▼
+Engine.systemTouchStart / systemUpdate
+        │
+        ▼
+FunctionSubscribe.call ──► C++ callbacks
+                       └─► Lua closures
 ```
 
 1. The platform layer calls `Engine::systemUpdate()`, `systemTouchStart()`, etc.
@@ -177,7 +176,9 @@ end
 
 ```lua
 function Trigger:init()
-    local ui = self.scene:findComponent(UIComponent, self.entity)
+    -- Get the UIComponent through a wrapper for this entity
+    local image = Image(self.scene, self.entity)
+    local ui = image:getUIComponent()
     RegisterEvent(self, ui.onClick, "onClick")
 end
 
@@ -215,13 +216,13 @@ Use custom tags when you need to replace or manually remove a specific subscript
 
 | Event | Signature | Meaning |
 | --- | --- | --- |
-| `beginContact2D` | `void(Body2D, int, Body2D, int)` | Contact begins |
-| `endContact2D` | `void(Body2D, int, Body2D, int)` | Contact ends |
-| `hitContact2D` | `void(Body2D, int, Body2D, int, Vector2, Vector2, float)` | Impact with hit data |
-| `beginSensorContact2D` | `void(Body2D, int, Body2D, int)` | Sensor overlap begins |
-| `endSensorContact2D` | `void(Body2D, int, Body2D, int)` | Sensor overlap ends |
-| `preSolve2D` | `bool(Body2D, int, Body2D, int)` | Return `false` to disable contact before solve |
-| `shouldCollide2D` | `bool(Body2D, int, Body2D, int)` | Filter pairs before collision |
+| `beginContact2D` | `void(Body2D, unsigned long, Body2D, unsigned long)` | Contact begins |
+| `endContact2D` | `void(Body2D, unsigned long, Body2D, unsigned long)` | Contact ends |
+| `hitContact2D` | `void(Body2D, unsigned long, Body2D, unsigned long, Vector2, Vector2, float)` | Impact with hit data |
+| `beginSensorContact2D` | `void(Body2D, unsigned long, Body2D, unsigned long)` | Sensor overlap begins |
+| `endSensorContact2D` | `void(Body2D, unsigned long, Body2D, unsigned long)` | Sensor overlap ends |
+| `preSolve2D` | `bool(Body2D, unsigned long, Body2D, unsigned long, Manifold2D)` | Return `false` to disable contact before solve |
+| `shouldCollide2D` | `bool(Body2D, unsigned long, Body2D, unsigned long)` | Filter pairs before collision |
 
 ### 3D events
 
