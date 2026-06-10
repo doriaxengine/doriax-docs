@@ -154,23 +154,76 @@ sprite:stopAnimation()
 
 ## Skeletal animation from GLTF
 
-Import a GLTF file as a `Model`. The model exposes its embedded animation clips by name
-or index.
+A `Model` exposes the animation clips embedded in its GLTF file, addressable by name or
+index. How you obtain the `Model` depends on whether the model is **already in your
+scene** or is being **created at runtime** — these are two different things, and mixing
+them up is the most common animation mistake.
+
+### Playing a clip on a model already in the scene
+
+This is the usual case: you imported the GLTF in the editor (so it appears as an entity
+in the Structure panel), and you want a script on that entity — or on a parent — to start
+its idle clip. **Do not reload the file.** The mesh, skeleton, and clips are already
+loaded; the script only needs to *reference* the existing entity and start the clip.
+
+The cleanest way to reach another entity is an [entity reference property](script-properties.md):
+expose a `Model` property, then drag the model entity onto it in the Properties window.
 
 === "Lua"
 
     ```lua
-    model = Model(scene)
-    model:loadGLTF("characters/hero.gltf")
+    -- player.lua — attached to a parent entity that has a child model
+    local player = {}
 
-    -- Find and play by name (loop is a property in Lua)
-    local walk = model:findAnimation("Walk")
+    -- 'model' is filled in by dragging the child model onto the property
+    player.properties = {
+        { name = "model", type = "Model" },
+    }
+
+    function player:init()
+        if self.model then
+            local idle = self.model:findAnimation("idle")
+            idle.loop = true
+            idle:start()
+        end
+    end
+
+    return player
+    ```
+
+Don't have a property wired up? Look the child up by name instead. `Scene:findEntity`
+returns the first entity with that name (use the two-argument form to scope the search to
+children of a given parent), and the **two-argument** `Model(scene, entity)` constructor
+*wraps that existing entity* without creating or destroying anything:
+
+=== "Lua"
+
+    ```lua
+    function player:init()
+        -- find the child named "model" under this script's entity
+        local modelEntity = self.scene:findEntity("model", self.entity)
+        if modelEntity ~= NULL_ENTITY then
+            local model = Model(self.scene, modelEntity)
+            model:getAnimation(0):start()   -- first clip, by index
+        end
+    end
+    ```
+
+### Creating a model at runtime
+
+When you genuinely want to spawn a brand-new model from code (an enemy, a pickup), use
+the **single-argument** constructor and then `loadGLTF`. This *creates a new entity*.
+
+=== "Lua"
+
+    ```lua
+    -- store the handle so it lives as long as you need the entity
+    self.enemy = Model(self.scene)
+    self.enemy:loadGLTF("characters/hero.gltf")
+
+    local walk = self.enemy:findAnimation("Walk")
     walk.loop = true
     walk:start()
-
-    -- Or blend between clips
-    local idle = model:findAnimation("Idle")
-    idle:start()
     ```
 
 === "C++"
@@ -184,8 +237,28 @@ or index.
     walk.start();
     ```
 
+!!! warning "`Model(scene)` creates a new entity — it does not find an existing one"
+    `Model(self.scene)` (one argument) **always creates a new entity** and that handle
+    *owns* it. `Model(self.scene, entity)` (two arguments) **wraps an existing entity**
+    and does not own it. So:
+
+    - Never put `Model(...)` + `loadGLTF` inside `onUpdate` — that reloads the file and
+      churns entities every frame. Load once in `init`.
+    - To touch a model placed in the editor, reference it (property or `findEntity`) and
+      use the two-argument constructor. Reloading the GLTF in code is **not** required.
+    - When you do create a model at runtime, keep the handle in `self` (or another
+      long-lived reference). A one-argument handle stored only in a local can have its
+      entity destroyed when the local is garbage-collected.
+
 GLTF can carry multiple named clips in a single file. You can play several clips
 simultaneously for layered animation blending.
+
+!!! note "Clip names come from the GLTF, not the Structure panel"
+    `findAnimation` matches the clip's name as authored in the GLTF (often Mixamo-style,
+    e.g. `mixamo.com`), which is independent of the entity name you see in the editor. If
+    a name lookup fails, check the clip's **AnimationComponent → Name** field in the
+    Properties window, or address the clip by index with `getAnimation(0)`. Requesting a
+    name or index that doesn't exist raises an error, so guard lookups you're unsure of.
 
 ## Keyframe tracks (timeline-authored)
 

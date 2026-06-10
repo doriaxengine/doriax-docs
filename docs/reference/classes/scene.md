@@ -68,6 +68,10 @@ A `Scene` is the root container for all objects, systems, and resources in a pro
 | void | [updateCameraSize](#updatecamerasize) | C++ \| Lua |
 | void | [removeSubscriptionsByTag](#removesubscriptionsbytag) | C++ \| Lua |
 
+Entity and hierarchy methods — `createEntity`, `destroyEntity`, `setEntityName` /
+`getEntityName`, [`findEntity`](entityregistry.md#findentity), `addEntityChild`,
+`getEntityList` — are inherited from [EntityRegistry](entityregistry.md).
+
 ## Enumerations
 
 ### LightState

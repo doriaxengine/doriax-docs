@@ -123,6 +123,83 @@ return PlayerController
 
 `ScriptComponent` entries store a relative path loaded as `lua://` + path.
 
+## Referencing other entities
+
+A script frequently needs to touch entities other than its own — a child model, a sibling
+UI element, a target the designer picks. There are three ways to get a handle, and
+choosing the right one (and the right constructor) avoids the most common scripting bug:
+accidentally creating a new entity instead of referencing an existing one.
+
+### 1. Your own entity
+
+`self.entity` is the entity the script is attached to. Wrap it with the **two-argument**
+constructor for the object type you need:
+
+```lua
+local object = Object(self.scene, self.entity)
+```
+
+### 2. An entity the designer picks (entity reference property)
+
+Expose a typed property and drag the target entity onto it in the Properties window. The
+engine resolves it to a ready-to-use handle (or the target's script instance) before
+`init()` runs. This is the preferred way to wire up known relationships:
+
+```lua
+MyScript.properties = {
+    { name = "target", type = "Object" },
+}
+
+function MyScript:init()
+    if self.target then
+        self.target.position = Vector3(0, 1, 0)
+    end
+end
+```
+
+See [Script Properties](script-properties.md) for the supported reference types.
+
+### 3. An entity found by name
+
+When a reference isn't wired up, look it up with
+[`Scene:findEntity`](../reference/classes/entityregistry.md#findentity). It returns the
+first entity with that name, or `NULL_ENTITY` if none. The two-argument form scopes the
+search to children of a parent:
+
+```lua
+function MyScript:init()
+    local childEntity = self.scene:findEntity("model", self.entity)
+    if childEntity ~= NULL_ENTITY then
+        self.model = Model(self.scene, childEntity)
+    end
+end
+```
+
+### Wrap vs. create: the constructor that bites people
+
+Every object handle has two constructors:
+
+| Constructor | Effect | Owns the entity? |
+| --- | --- | --- |
+| `Type(scene, entity)` | **Wraps** an existing entity | No |
+| `Type(scene)` | **Creates a brand-new** entity | Yes |
+
+Use the two-argument form whenever the entity already exists (your own entity, a found
+child, an editor-placed object). Reserve the one-argument form for genuinely spawning new
+objects at runtime.
+
+!!! warning "Pitfalls to avoid"
+    - **`Type(scene)` does not find anything** — it always creates a new, empty entity.
+      Using it to "get" a model placed in the editor silently produces a duplicate.
+    - **Don't create or load assets in `onUpdate`.** Loading a model
+      (`Model(scene)` + `loadGLTF`) every frame churns entities and floods the log with
+      errors. Do it once in `init()`.
+    - **Keep handles to created entities alive.** A one-argument handle *owns* its
+      entity; if you store it only in a local variable, the entity can be destroyed when
+      that handle is garbage-collected. Store runtime-spawned objects in `self`.
+    - **Cache `findEntity` results.** The lookup is linear over the entity list — resolve
+      once in `init()`, not every frame.
+
 ## Lua runtime lifecycle
 
 When a scene loads, `LuaBinding::initializeLuaScripts(scene)` runs three passes:
