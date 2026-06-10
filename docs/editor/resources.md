@@ -18,7 +18,7 @@ Slicer.
 | Audio | OGG, WAV, MP3, FLAC | Sound effects, music, 3D spatial audio |
 | Fonts | TTF, OTF | Text and UI rendering |
 | Scenes | YAML scene files | Saved scenes and child scene references |
-| Bundles | YAML bundle files | Reusable entity hierarchies (prefab-like) |
+| Bundles | YAML `.bundle` files | Reusable entity hierarchies — see [Bundles](bundles.md) |
 | Shaders | Shader data files | Built, serialized, and loaded shader programs |
 | Scripts | LUA, CPP, H | Gameplay logic files |
 
@@ -47,17 +47,33 @@ project folder changes.
     naming avoids case-sensitivity issues on Linux and Android and makes asset paths
     predictable in scripts.
 
-## Dragging assets into scenes
+## Dragging assets out of the browser
 
-Drag a texture, model, audio file, or scene directly from the Resources Browser:
+Files dragged from the Resources Browser are accepted by several editor windows:
 
 | Asset type | Drop target | Result |
 | --- | --- | --- |
-| Texture | Scene view | Creates a Sprite entity with the texture assigned |
-| Model (GLTF/OBJ) | Scene view | Creates a Model entity and loads the file |
-| Audio | Scene view | Creates a Sound entity with the file assigned |
-| Scene / bundle | Scene view or hierarchy | Adds the scene as a child scene or creates a bundle instance |
-| Texture | A component field | Assigns the texture to that field |
+| Model (GLTF/GLB/OBJ) | Scene view (3D scene) | Creates a Model entity at the drop position |
+| Image | Scene view, empty space (2D / UI scene) | Creates a Sprite (2D) or Image widget (UI) sized to the texture |
+| Image | Scene view, onto a mesh or UI entity | Assigns the texture (base color / UI texture) with live preview |
+| Material | Scene view, onto a mesh entity | Applies the material to all submeshes with live preview |
+| Font | Scene view, onto a Text entity | Assigns the font with live preview |
+| Texture / audio / asset | A component field in Properties | Assigns the file to that field |
+| `.scene` file | Structure panel, scene root | Adds the scene as a child scene |
+| `.bundle` file | Structure panel | Creates a bundle instance (as child of the target entity, or at the root) |
+
+See [Scene View](scene-view.md#drag-and-drop-from-the-resources-browser) for the
+viewport behaviors in detail.
+
+## Dragging entities in: creating bundles
+
+The Resources Browser is also a drop *target*: drag an entity (or a multi-selection)
+from the **Structure panel** into the browser to save it as a `.bundle` file in the
+currently open folder. The dragged hierarchy is replaced in the scene by an instance of
+the new bundle. Since the file is created wherever you drop it, bundles can be
+organized in any directory of the project.
+
+See [Bundles](bundles.md) for the full bundle workflow.
 
 ## Context menu
 
@@ -103,6 +119,7 @@ See [Tileset Slicer](tileset-slicer.md) for the complete workflow.
 
 ## See also
 
+- [Bundles](bundles.md)
 - [Sprite Slicer](sprite-slicer.md)
 - [Tileset Slicer](tileset-slicer.md)
 - [Resources & Assets](../manual/resources-and-assets.md)

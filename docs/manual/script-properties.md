@@ -174,6 +174,48 @@ For entity references, the code editor picks the property type from the referenc
 entity: it prefers an enabled Lua script class name when present, otherwise the wrapper
 type detected from components (`Object`, `Mesh`, `Camera`, etc.).
 
+## Insert entity references by drag and drop
+
+The fastest way to declare an entity reference property is to drag the entity from the
+**Structure panel** into the script file open in the **Code Editor**. This works for
+both Lua files and C++ headers, and does three things at once:
+
+1. **Inserts the declaration** at the right place — a new entry in the Lua `properties`
+   table, or a `DPROPERTY` line plus pointer member after the last existing `DPROPERTY`
+   in the C++ header.
+2. **Picks the type from the dropped entity** — the entity's script class name if it has
+   an enabled script of the matching language, otherwise the wrapper type detected from
+   its components (`Object`, `Mesh`, `Camera`, etc.). For C++ subclass types the editor
+   also adds the missing `#include`.
+3. **Assigns the value** — every entity already using this script gets the dropped
+   entity linked as the property value, so it shows up wired in the Properties window
+   immediately.
+
+The property name is derived from the entity name (camelCase), with a numeric suffix if
+the name is already taken.
+
+=== "Lua (inserted)"
+
+    ```lua
+    {
+        name = "mainCamera",
+        displayName = "Main Camera",
+        type = "Camera",
+        default = nil
+    }
+    ```
+
+=== "C++ header (inserted)"
+
+    ```cpp
+    DPROPERTY("Main Camera")
+    doriax::Camera* mainCamera = nullptr;
+    ```
+
+!!! note "Drop on the header, not the source"
+    For C++ scripts the declaration belongs in the header. Dropping an entity onto a
+    `.cpp` file shows a reminder instead of inserting code.
+
 ## Runtime sync
 
 `ScriptProperty` (`engine/core/script/ScriptProperty.cpp`):

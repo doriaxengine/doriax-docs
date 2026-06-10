@@ -174,6 +174,10 @@ end
 
 ### Component event (Lua)
 
+Lua has no per-component macros. The pattern that replaces `REGISTER_UI_EVENT`,
+`REGISTER_BUTTON_EVENT`, and the other component macros is always the same: wrap the
+entity, get the component, and pass its event to `RegisterEvent`:
+
 ```lua
 function Trigger:init()
     -- Get the UIComponent through a wrapper for this entity
@@ -186,6 +190,30 @@ function Trigger:onClick(x, y)
     print("clicked", x, y)
 end
 ```
+
+| C++ macro | Lua equivalent |
+| --- | --- |
+| `REGISTER_ENGINE_EVENT(onUpdate)` | `RegisterEngineEvent(self, "onUpdate")` |
+| `REGISTER_UI_EVENT(onClick, onClick)` | `RegisterEvent(self, wrapper:getUIComponent().onClick, "onClick")` |
+| `REGISTER_BUTTON_EVENT(onPress, onPress)` | `RegisterEvent(self, button:getButtonComponent().onPress, "onPress")` |
+| `REGISTER_SCROLLBAR_EVENT(onChange, onChange)` | `RegisterEvent(self, scrollbar:getScrollbarComponent().onChange, "onChange")` |
+| `REGISTER_PANEL_EVENT(onMove, onMove)` | `RegisterEvent(self, panel:getPanelComponent().onMove, "onMove")` |
+| `REGISTER_EVENT(physics->beginContact2D, onBeginContact)` | `RegisterEvent(self, physics.beginContact2D, "onBeginContact")` |
+
+```lua
+function MenuButton:init()
+    local button = Button(self.scene, self.entity)
+    local bc = button:getButtonComponent()
+    RegisterEvent(self, bc.onPress, "onPress")
+end
+
+function MenuButton:onPress()
+    print("button pressed")
+end
+```
+
+Cleanup is also automatic in Lua: when the scene unloads, all subscriptions tagged with
+the script instance are removed — there is no `UNREGISTER_*` to call.
 
 ### Physics event (Lua)
 

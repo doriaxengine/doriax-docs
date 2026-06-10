@@ -22,16 +22,32 @@ dialogs, and a live output panel for compile and export messages.
 
 ## Creating a new script
 
-1. Open the **New Script** dialog from the toolbar or the Code Editor menu.
-2. Choose **Lua** or **C++**.
-3. Enter the class name — the editor generates a file with the correct `ScriptBase`
-   subclass structure.
-4. Save to the `scripts/` folder.
-5. Return to the scene, select an entity, and add a `ScriptComponent` in the Properties
-   window.
-6. Assign the new script file and enable the entry.
+1. Select an entity and click **New Script** at the bottom of the **Properties** window.
+2. Choose **Lua Script**, **C++ Subclass**, or **C++ Script Class**.
+3. Enter the class/module name and confirm.
+
+The editor generates the files from templates, attaches a `ScriptComponent` entry to
+the entity, and opens the new files here in the Code Editor. To link *existing* files
+instead, add an empty entry with **Add Script** inside the ScriptComponent and pick the
+files in its edit dialog — see
+[Creating Scripts](../manual/creating-scripts.md#create-a-script-in-the-editor).
 
 ![Script creation dialog](../assets/screenshots/editor-script-create-dialog.png)
+
+## Drag entities into your code
+
+Drag an entity from the **Structure panel** onto a script open in the Code Editor to
+create an entity reference property:
+
+- **Lua file** — a typed entry is appended to the `properties` table.
+- **C++ header** — a `DPROPERTY` line and pointer member are inserted (with the
+  `#include` when the type is another script class). Dropping on a `.cpp` shows a
+  reminder to use the header.
+
+The property type comes from the dropped entity (its script class, or wrapper type such
+as `Object`/`Mesh`/`Camera`), and the entity is assigned as the property value
+automatically. See
+[Script Properties](../manual/script-properties.md#insert-entity-references-by-drag-and-drop).
 
 ## Script entry point
 

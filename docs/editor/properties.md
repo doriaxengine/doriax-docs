@@ -52,17 +52,31 @@ Most fields are edited with the mouse or keyboard directly in the panel:
 | Entity references | Drag an entity from the Structure panel |
 | Enumerations | Drop-down selection |
 
-## Script properties
+## Scripts
 
-When a `ScriptComponent` is present, the Properties window shows every property
-declared with the `DPROPERTY` macro (C++) or in the `properties` table (Lua). These
-fields are serialized with the scene and injected into the script instance at play and
-export time.
+Two buttons at the bottom of the Properties window create scripts:
+
+- **New Script** — opens a dialog that generates the script files (Lua module, or C++
+  header + source), adds a `ScriptComponent` if the entity lacks one, and links an
+  enabled entry to the new files — all in one undoable step.
+- **New component → ScriptComponent**, then **Add Script** inside the component — adds
+  an *empty* script entry without creating files. Use the entry's pencil button to set
+  the class name and link existing header/source (or `.lua`) files.
+
+Each script entry shows an enable checkbox, buttons to open its files in the Code
+Editor, and a right-click menu to reorder or remove it.
+
+### Script properties
+
+When a script is linked, the Properties window shows every property declared with the
+`DPROPERTY` macro (C++) or in the `properties` table (Lua). These fields are serialized
+with the scene and injected into the script instance at play and export time.
 
 ![Script property fields in the Properties window](../assets/screenshots/editor-script-properties.png)
 
-See [Script Properties](../manual/script-properties.md) for full details on declaring
-and typing custom script properties.
+See [Creating Scripts](../manual/creating-scripts.md) for the full workflow and
+[Script Properties](../manual/script-properties.md) for declaring and typing custom
+script properties.
 
 ## Entity references
 
@@ -92,5 +106,8 @@ step back and forward through changes made in the Properties window or in the vi
 - Keep generated or runtime-only data out of serialized component fields.
 - After changing physics, script, or animation fields, test in play mode immediately
   because those affect runtime behavior, not just visual appearance.
-- Use bundles for repeated configured entity hierarchies so the same property values do
-  not have to be re-entered manually in many scenes.
+- Use [bundles](bundles.md) for repeated configured entity hierarchies so the same
+  property values do not have to be re-entered manually in many scenes. For entities
+  inside a bundle instance, the component header's right-click menu offers
+  **Make Unique** (override this instance) and **Revert to Bundle** (re-link to the
+  shared values).

@@ -76,6 +76,7 @@ nav:
       - Scene View: 'editor/scene-view.md'
       - Properties & Components: 'editor/properties.md'
       - Resources Browser: 'editor/resources.md'
+      - Bundles: 'editor/bundles.md'
       - Sprite Slicer: 'editor/sprite-slicer.md'
       - Tileset Slicer: 'editor/tileset-slicer.md'
       - Animation Timeline: 'editor/animation.md'

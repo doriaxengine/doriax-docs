@@ -46,6 +46,44 @@ immediately. Hold **Ctrl** and click to add to or remove from a multi-selection.
 For fine-grained selection in dense scenes, use the **Structure panel** — clicking a
 row there selects the entity without needing to click through overlapping objects.
 
+## Drag and drop from the Resources Browser
+
+Files dragged from the [Resources Browser](resources.md) can be dropped directly into
+the viewport. The editor shows a live preview while you hover, and the change is only
+committed (undoably) when you release the mouse:
+
+### Creating entities
+
+| File | Scene type | Result |
+| --- | --- | --- |
+| Model (GLTF/GLB/OBJ) | 3D | Creates a Model entity at the drop position, named after the file |
+| Image | 2D, on empty space | Creates a **Sprite** entity at the drop point, sized to the image |
+| Image | UI, on empty space | Creates an **Image** widget at the drop point, sized to the image |
+
+While dragging an image over empty space, a half-transparent ghost of the texture
+follows the cursor so you can place it precisely before dropping.
+
+### Modifying the entity under the cursor
+
+Dropping a file *onto* an existing entity assigns it instead of creating something new.
+The hovered entity previews the change live; moving away before releasing restores the
+original value:
+
+| File | Target entity | Result |
+| --- | --- | --- |
+| Image | Mesh-based entity (sprite, mesh, model) | Sets the base color texture of the material |
+| Image | UI widget | Sets the widget texture |
+| Material (`.material`) | Mesh-based entity | Applies the material to all submeshes |
+| Font (TTF/OTF) | Text entity | Sets the text font |
+
+This makes texturing a scene fast: drop a texture onto each model to assign it, or
+drop a saved material onto several meshes to keep them consistent.
+
+!!! note "Bundles and scenes drop on the Structure panel"
+    `.bundle` and `.scene` files are instanced by dropping them on the
+    [Structure panel](structure.md), not the viewport — the tree controls where the
+    instance is parented. See [Bundles](bundles.md).
+
 ## Viewport camera vs game camera
 
 The **editor camera** is only for authoring navigation. The **game camera** is a

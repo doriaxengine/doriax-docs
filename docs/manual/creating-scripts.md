@@ -31,20 +31,53 @@ can be enabled or disabled separately.
 
 ## Create a script in the editor
 
-1. Select an entity in the **Structure** panel.
-2. In the **Properties**, add `ScriptComponent` (or expand it if already present).
-3. Click **Add Script** to open the script creation dialog.
-4. Choose **Lua Script**, **C++ Subclass**, or **C++ Script Class**.
-5. Enter a class/module name and confirm. The editor writes template files into your
-   project scripts folder.
-6. Enable the script entry and tune properties in the Properties window.
-7. Save the scene and press **Play** to test.
+There are two ways to attach a script to an entity. Use **New Script** when you want
+the editor to generate the files for you; use **Add Script** when the files already
+exist and you only need a new entry pointing at them.
 
-The script creation dialog (`ScriptCreateDialog`) generates starter code with example
-properties and event registration. The integrated **Code Editor** opens the new files
-for editing.
+### Flow A — New Script (generates the files)
+
+1. Select an entity in the **Structure** panel.
+2. Click **New Script** at the bottom of the **Properties** window (next to
+   **New component**).
+3. Choose **Lua Script**, **C++ Subclass**, or **C++ Script Class**.
+4. Enter a class/module name and confirm.
+
+The editor then does everything in one undoable step:
+
+- writes template files into your project (header + source for C++, a single `.lua`
+  module for Lua) with example properties and event registration already in place,
+- adds a `ScriptComponent` to the entity if it does not have one,
+- appends an enabled script entry linked to the new files.
 
 ![Script creation dialog](../assets/screenshots/editor-script-create-dialog.png)
+
+### Flow B — Add Script (links existing files)
+
+1. Select the entity and add `ScriptComponent` through **New component** (skip if it
+   already has one).
+2. In the **ScriptComponent** section, click **Add Script**. This creates an *empty*
+   script entry — no files are written.
+3. Click the pencil button on the new entry to open **Edit Script Details** and set the
+   class name, then pick the **Header File** and **Source File** (or the `.lua` file for
+   Lua scripts) from your project.
+
+Use this flow to reuse one script across many entities, or to wire up files you wrote
+outside the editor.
+
+### Managing script entries
+
+Each entry in the ScriptComponent section has its own controls:
+
+| Control | Action |
+| --- | --- |
+| Checkbox | Enable or disable the entry without removing it |
+| Pencil button | Open **Edit Script Details** (class name, header, source); the **×** buttons clear a linked file |
+| File buttons | Open the header or source in the integrated Code Editor |
+| Right-click the entry header | **Move Up**, **Move Down**, or **Remove** the entry |
+
+Entries run in list order, so use Move Up/Down when one script must initialize before
+another. All edits are undoable.
 
 ## Script types
 
@@ -158,6 +191,13 @@ end
 ```
 
 See [Script Properties](script-properties.md) for the supported reference types.
+
+!!! tip "Declare the property by drag and drop"
+    You don't have to write the property declaration by hand: drag the entity from the
+    **Structure panel** straight into the script open in the Code Editor — onto the
+    `.lua` file or the C++ header. The editor inserts a typed property declaration *and*
+    assigns the dropped entity as its value. See
+    [Insert entity references by drag and drop](script-properties.md#insert-entity-references-by-drag-and-drop).
 
 ### 3. An entity found by name
 
