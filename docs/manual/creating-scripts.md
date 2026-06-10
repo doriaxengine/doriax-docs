@@ -204,7 +204,7 @@ PlayerMover::~PlayerMover() {
 
 void PlayerMover::onUpdate() {
     Vector3 position = getPosition();
-    if (Input::isKeyPressed(S_KEY_RIGHT)) {
+    if (Input::isKeyPressed(D_KEY_RIGHT)) {
         setPosition(position + Vector3(speed * Engine::getDeltatime(), 0, 0));
     }
 }

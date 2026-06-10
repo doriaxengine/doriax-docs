@@ -14,10 +14,10 @@ Key and button constants are based on GLFW key codes. The naming differs by lang
 
 | Language | How to access | Example |
 | --- | --- | --- |
-| **C++** | `S_KEY_*` / `S_MOUSE_BUTTON_*` / `S_MODIFIER_*` preprocessor macros | `S_KEY_SPACE` |
-| **Lua** | Static properties on the `Input` class (drop the `S_` prefix) | `Input.KEY_SPACE` |
+| **C++** | `D_KEY_*` / `D_MOUSE_BUTTON_*` / `D_MODIFIER_*` preprocessor macros | `D_KEY_SPACE` |
+| **Lua** | Static properties on the `Input` class (drop the `D_` prefix) | `Input.KEY_SPACE` |
 
-There is no global `S_KEY_SPACE` in Lua — always use `Input.KEY_SPACE`. The same applies
+There is no global `D_KEY_SPACE` in Lua — always use `Input.KEY_SPACE`. The same applies
 to mouse buttons (`Input.MOUSE_BUTTON_LEFT`) and modifiers (`Input.MODIFIER_SHIFT`).
 
 ## Keyboard
@@ -43,11 +43,11 @@ events instead.
 === "C++"
 
     ```cpp
-    if (Input::isKeyPressed(S_KEY_SPACE)) {
+    if (Input::isKeyPressed(D_KEY_SPACE)) {
         player.jump();
     }
 
-    if (Input::isKeyPressed(S_KEY_A)) {
+    if (Input::isKeyPressed(D_KEY_A)) {
         player.moveLeft();
     }
     ```
@@ -56,14 +56,14 @@ events instead.
 
 | C++ macro | Lua property | Key |
 | --- | --- | --- |
-| `S_KEY_A` … `S_KEY_Z` | `Input.KEY_A` … `Input.KEY_Z` | Letter keys |
-| `S_KEY_0` … `S_KEY_9` | `Input.KEY_0` … `Input.KEY_9` | Number row |
-| `S_KEY_KP_0` … `S_KEY_KP_9` | `Input.KEY_KP_0` … `Input.KEY_KP_9` | Numpad |
-| `S_KEY_LEFT`, `S_KEY_RIGHT`, `S_KEY_UP`, `S_KEY_DOWN` | `Input.KEY_LEFT`, … | Arrow keys |
-| `S_KEY_SPACE` | `Input.KEY_SPACE` | Spacebar |
-| `S_KEY_ENTER`, `S_KEY_ESCAPE`, `S_KEY_BACKSPACE`, `S_KEY_TAB` | `Input.KEY_ENTER`, … | Editing keys |
-| `S_KEY_F1` … `S_KEY_F12` | `Input.KEY_F1` … `Input.KEY_F12` | Function keys |
-| `S_KEY_LEFT_SHIFT`, `S_KEY_LEFT_CONTROL`, `S_KEY_LEFT_ALT` | `Input.KEY_LEFT_SHIFT`, … | Modifier keys |
+| `D_KEY_A` … `D_KEY_Z` | `Input.KEY_A` … `Input.KEY_Z` | Letter keys |
+| `D_KEY_0` … `D_KEY_9` | `Input.KEY_0` … `Input.KEY_9` | Number row |
+| `D_KEY_KP_0` … `D_KEY_KP_9` | `Input.KEY_KP_0` … `Input.KEY_KP_9` | Numpad |
+| `D_KEY_LEFT`, `D_KEY_RIGHT`, `D_KEY_UP`, `D_KEY_DOWN` | `Input.KEY_LEFT`, … | Arrow keys |
+| `D_KEY_SPACE` | `Input.KEY_SPACE` | Spacebar |
+| `D_KEY_ENTER`, `D_KEY_ESCAPE`, `D_KEY_BACKSPACE`, `D_KEY_TAB` | `Input.KEY_ENTER`, … | Editing keys |
+| `D_KEY_F1` … `D_KEY_F12` | `Input.KEY_F1` … `Input.KEY_F12` | Function keys |
+| `D_KEY_LEFT_SHIFT`, `D_KEY_LEFT_CONTROL`, `D_KEY_LEFT_ALT` | `Input.KEY_LEFT_SHIFT`, … | Modifier keys |
 
 See [Input](../reference/classes/input.md) for the full constant list.
 
@@ -85,7 +85,7 @@ held down. For click and release edges use the
 === "C++"
 
     ```cpp
-    if (Input::isMousePressed(S_MOUSE_BUTTON_LEFT)) {
+    if (Input::isMousePressed(D_MOUSE_BUTTON_LEFT)) {
         Vector2 pos = Input::getMousePosition();
         shoot(pos.x, pos.y);
     }
@@ -104,9 +104,9 @@ held down. For click and release edges use the
 
 | C++ macro | Lua property | Button |
 | --- | --- | --- |
-| `S_MOUSE_BUTTON_LEFT` | `Input.MOUSE_BUTTON_LEFT` | Primary / left button |
-| `S_MOUSE_BUTTON_RIGHT` | `Input.MOUSE_BUTTON_RIGHT` | Secondary / right button |
-| `S_MOUSE_BUTTON_MIDDLE` | `Input.MOUSE_BUTTON_MIDDLE` | Middle button / scroll wheel click |
+| `D_MOUSE_BUTTON_LEFT` | `Input.MOUSE_BUTTON_LEFT` | Primary / left button |
+| `D_MOUSE_BUTTON_RIGHT` | `Input.MOUSE_BUTTON_RIGHT` | Secondary / right button |
+| `D_MOUSE_BUTTON_MIDDLE` | `Input.MOUSE_BUTTON_MIDDLE` | Middle button / scroll wheel click |
 
 ## Touch
 
@@ -166,12 +166,12 @@ Modifier key state is available for keyboard shortcuts:
 
     ```cpp
     int mods = Input::getModifiers();
-    if (mods & S_MODIFIER_CONTROL) {
+    if (mods & D_MODIFIER_CONTROL) {
         // Ctrl is held
     }
     ```
 
-Modifier constants (C++ `S_MODIFIER_*` / Lua `Input.MODIFIER_*`): `SHIFT`, `CONTROL`,
+Modifier constants (C++ `D_MODIFIER_*` / Lua `Input.MODIFIER_*`): `SHIFT`, `CONTROL`,
 `ALT`, `SUPER`, `CAPS_LOCK`, and `NUM_LOCK`.
 
 ## Mouse and touch mirroring
@@ -237,7 +237,7 @@ input:
 ## Cross-platform advice
 
 - Always provide both keyboard/mouse and touch code paths.
-- Use the named key constants (`Input.KEY_*` in Lua, `S_KEY_*` in C++) instead of raw
+- Use the named key constants (`Input.KEY_*` in Lua, `D_KEY_*` in C++) instead of raw
   numbers so the code stays readable.
 - Avoid relying on platform-specific keys (e.g. Windows key, macOS Command) for core
   gameplay mechanics.

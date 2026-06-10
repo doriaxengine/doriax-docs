@@ -45,10 +45,10 @@ The engine filters messages based on the build configuration (defined in `System
 
 | Macro | Level | Description |
 | --- | --- | --- |
-| `S_LOG_VERBOSE` | 1 | Detailed trace information; typically disabled in release builds. |
-| `S_LOG_DEBUG` | 2 | Debug-level messages useful during development. |
-| `S_LOG_WARN` | 3 | Non-fatal warnings that may indicate incorrect usage. |
-| `S_LOG_ERROR` | 4 | Errors that require attention; may terminate the operation. |
+| `D_LOG_VERBOSE` | 1 | Detailed trace information; typically disabled in release builds. |
+| `D_LOG_DEBUG` | 2 | Debug-level messages useful during development. |
+| `D_LOG_WARN` | 3 | Non-fatal warnings that may indicate incorrect usage. |
+| `D_LOG_ERROR` | 4 | Errors that require attention; may terminate the operation. |
 
 ## Method details
 
