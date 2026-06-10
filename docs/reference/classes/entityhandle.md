@@ -42,7 +42,36 @@ Human-readable tag for this entity. Used by the editor to display entities in th
 * *Setter*: void **setEntityOwned**(bool entityOwned)
 * *Getter*: bool **isEntityOwned**() const
 
-When `true` (default), the entity is destroyed when the `EntityHandle` is destroyed. Set to `false` to keep the underlying entity alive after the handle goes out of scope — useful when you pass ownership to another system.
+Whether this handle *owns* its entity. When `true`, the entity is destroyed (and any
+sub-resources it set up are cleared) when the handle is destroyed. Set it to `false` to
+detach the handle from the entity's lifetime.
+
+The value is decided by which constructor you use:
+
+| Constructor | Owns the entity? |
+| --- | --- |
+| `Type(scene)` | `true` — creates a **new** entity |
+| `Type(scene, entity)` | `false` — **wraps** an existing entity |
+
+---
+
+## Ownership and lifetime
+
+`EntityHandle` follows single-owner semantics so an entity is never destroyed twice:
+
+- **Copying** produces a non-owning observer. `Type b = a;` leaves `a` as the sole owner
+  (if it was one) and `b` referencing the same entity without owning it.
+- **Moving** transfers ownership. `Type b = std::move(a);` makes `b` the owner and leaves
+  `a` as a non-owning observer.
+- **Wrapping** an existing entity (`Type(scene, entity)`) never owns it, so references you
+  pass around — including handles resolved from script properties or
+  [`Scene:findEntity`](entityregistry.md#findentity) — are safe to copy and discard.
+
+!!! warning "Keep owning handles alive"
+    An owning handle destroys its entity when it is itself destroyed — in Lua that happens
+    when the handle is garbage-collected. If you create an entity at runtime with
+    `Type(scene)` and want it to persist, store the handle (e.g. in `self`), or call
+    `setEntityOwned(false)` to hand the entity's lifetime to the scene.
 
 ---
 
