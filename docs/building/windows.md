@@ -54,3 +54,21 @@ cmake --build build-runtime --config Release --target doriax-project
 ```
 
 Use the generated executable from the selected configuration folder.
+
+## Vulkan backend
+
+To build a Windows runtime with the Vulkan backend, install the
+[Vulkan SDK](https://vulkan.lunarg.com/) and set the `VULKAN_SDK` environment variable
+to your SDK path. Pass `-DGRAPHIC_BACKEND=vulkan` at configure time:
+
+```bash
+cmake -S engine -B build-vulkan ^
+  -DPROJECT_ROOT="C:/path/to/project" ^
+  -DGRAPHIC_BACKEND=vulkan ^
+  -DCMAKE_BUILD_TYPE=Release ^
+  -G "Ninja"
+cmake --build build-vulkan --config Release --target doriax-project
+```
+
+Shaders for exported Vulkan projects are compiled to SPIR-V by the editor's shader
+builder.

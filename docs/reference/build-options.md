@@ -57,6 +57,7 @@ cmake --build build --config Debug
 | `gles3` | OpenGL ES 3 / WebGL-style targets |
 | `d3d11` | Windows Direct3D 11 |
 | `metal` | macOS and iOS Metal |
+| `vulkan` | Vulkan (Linux and Windows; requires `APP_BACKEND=sokol`) |
 
 ## App backend
 

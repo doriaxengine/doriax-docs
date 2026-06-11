@@ -71,6 +71,7 @@ backends:
 | Metal / MSL | iOS, macOS |
 | Direct3D 11 / HLSL | Windows |
 | WebGL / GLSL ES | HTML5 / Emscripten |
+| Vulkan / SPIR-V | Windows, Linux |
 
 If shader compilation fails, the Output panel reports the shader name, stage, backend,
 and the compiler error. Fix the shader source and re-export.

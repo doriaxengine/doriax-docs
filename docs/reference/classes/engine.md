@@ -155,6 +155,7 @@ Control engine properties and define defaults used across the whole project. `En
 * **D3D11** — Direct3D 11 (Windows).
 * **METAL** — Metal (Apple platforms).
 * **WGPU** — WebGPU.
+* **VULKAN** — Vulkan (Linux and Windows).
 
 ---
 

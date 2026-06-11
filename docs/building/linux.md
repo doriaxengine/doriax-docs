@@ -59,3 +59,22 @@ cmake --build build-runtime --config Release --target doriax-project
 
 Assets and Lua files are copied next to the build output when the project contains
 `assets/` and `lua/` folders.
+
+## Vulkan backend
+
+To build a Linux runtime with the Vulkan backend, install the Vulkan SDK development
+packages and pass `-DGRAPHIC_BACKEND=vulkan` at configure time. The Vulkan backend
+requires the sokol app backend, which is selected automatically:
+
+```bash
+sudo apt install -y libvulkan-dev vulkan-tools
+cmake -S engine -B build-vulkan \
+  -DPROJECT_ROOT=/path/to/project \
+  -DGRAPHIC_BACKEND=vulkan \
+  -DCMAKE_BUILD_TYPE=Release \
+  -G "Ninja"
+cmake --build build-vulkan --config Release --target doriax-project
+```
+
+Shaders for exported Vulkan projects are compiled to SPIR-V by the editor's shader
+builder.

@@ -5,7 +5,7 @@ description: Targeting Android with Doriax.
 # Building for Android
 
 Doriax can target **Android** for your exported game projects. The runtime supports
-Android with an OpenGL ES 3 backend through the Android Native Activity path.
+Android with an OpenGL ES 3.1 backend through the Android Native Activity path.
 
 ## Requirements
 
