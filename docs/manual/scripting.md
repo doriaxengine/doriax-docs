@@ -33,6 +33,12 @@ instance pointer.
 | `SCRIPT_CLASS` | C++ class derived from `ScriptBase` |
 | `SCRIPT_LUA` | Lua module returning a script table |
 
+The difference between the two C++ types trips people up: a **Subclass** *is* the object
+(it inherits `Camera`/`Mesh`/`Object`/… and you call wrapper methods on `this`), while a
+**Script Class** only *references* the entity through `ScriptBase`. See
+[C++ Subclass vs. C++ Script Class](creating-scripts.md#c-subclass-vs-c-script-class) for
+the full breakdown and player-controller guidance.
+
 See [Creating Scripts](creating-scripts.md), [Events](events.md), and
 [Script Properties](script-properties.md) for the full workflow.
 

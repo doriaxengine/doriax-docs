@@ -99,14 +99,86 @@ The editor inspects the selected entity's components:
 | `Transform` (and none of the above) | `Object` |
 | None of the above | `EntityHandle` |
 
+### C++ Subclass vs. C++ Script Class
+
+This is the most common source of confusion, so it's worth stating plainly. Both are C++
+classes attached through a `ScriptComponent`. The **only** difference is what they inherit
+from — and that changes how you reach the entity.
+
+**C++ Subclass — the script *is* the object.**
+
+The class inherits from the object wrapper that matches the entity (the table above shows
+which one the editor picks). The script instance therefore *is* a `Camera`, `Mesh`,
+`Object`, etc. for that entity, so you call wrapper methods directly on `this` — no wrapper
+to construct:
+
+```cpp
+// Subclass generated on a Camera entity
+class FreeLook : public doriax::Camera {
+    void onUpdate() {
+        setPosition(getPosition() + offset);   // Object method, called on this
+        setView(target);                        // Camera-specific method, called on this
+    }
+};
+```
+
+Yes — exactly as you'd expect: a subclass created on a **Camera** entity inherits from
+`Camera`, and you get the `Camera` API for free. The wrapper hierarchy is:
+
+```
+EntityHandle  →  Object  →  Camera
+                         →  Mesh
+                         →  Light
+```
+
+So a `Camera` subclass also has every `Object` method (`getPosition`, `setRotation`, …)
+and every `EntityHandle` method (`getComponent`, `addComponent`, `getName`, …). An
+`Object` subclass has Object + EntityHandle methods; a bare `EntityHandle` subclass (an
+entity with no `Transform`) has only the component-access methods.
+
+**C++ Script Class — the script *references* the object.**
+
+The class inherits from `ScriptBase`, which holds nothing but `getScene()` and
+`getEntity()`. It implies no object type at all. To touch the entity you construct a
+wrapper yourself:
+
+```cpp
+class ScoreTracker : public doriax::ScriptBase {
+    void onUpdate() {
+        Object self(getScene(), getEntity());   // wrap the entity explicitly
+        self.setPosition(...);
+    }
+};
+```
+
+| | C++ Subclass | C++ Script Class |
+| --- | --- | --- |
+| Base class | Closest wrapper (`Camera` / `Mesh` / `Light` / `Object` / `EntityHandle`) | `ScriptBase` |
+| Reaching the entity | Call methods on `this` directly | Construct a wrapper from `getScene()` / `getEntity()` |
+| Implies an object type | Yes — matches the entity | No |
+| Best when | The script's job *is* this entity | The script coordinates other entities or holds non-entity logic |
+
+Neither is more powerful: a Script Class can do everything a Subclass can by constructing
+wrappers, and a Subclass can still reach other entities the same way. It is a design choice
+about ergonomics and intent — pick the base that matches what the script is *about*.
+
 ### When to use each type
 
 - **Lua** — Prototyping, gameplay that changes often, designers tuning values in the
   Properties, UI event handlers.
-- **C++ Subclass** — Movement, animation control, or physics on entities that already
-  have mesh/camera/light wrappers. You get `setPosition()`, `getBody2D()`, etc. directly.
-- **C++ ScriptBase** — Managers, score trackers, spawners, or logic that touches many
+- **C++ Subclass** — Movement, animation control, or physics on the entity the script
+  lives on. You get `setPosition()`, `getBody2D()`, camera/mesh/light methods, etc.
+  directly on `this`.
+- **C++ Script Class** — Managers, score trackers, spawners, or logic that touches many
   entities through `getScene()` and `getEntity()`.
+
+!!! tip "Which should a player controller use?"
+    A player controller almost always drives its **own** entity — reading input and moving
+    its transform — so a **C++ Subclass** is the natural fit. The editor bases it on
+    `Object` (or `Mesh` / `Camera` if the player entity has those components), so
+    `getPosition()`/`setPosition()` and the physics wrappers are available on `this` with
+    no boilerplate. Reach for a **C++ Script Class** only when the controller is really a
+    coordinator that mostly manipulates *other* entities.
 
 ## Lua script format
 
@@ -280,9 +352,11 @@ Register events inside `init()` so `self` and resolved references are ready.
 2. `luaL_unref` the script instance.
 3. Clear `ScriptEntry.instance`.
 
-## C++ subclass script
+## C++ Subclass
 
-A subclass script derives from an object wrapper and calls wrapper methods directly.
+A subclass script derives from the object wrapper that matches the entity and calls wrapper
+methods directly on `this` — see
+[C++ Subclass vs. C++ Script Class](#c-subclass-vs-c-script-class) for why.
 
 ### Header (`PlayerMover.h`)
 
@@ -330,9 +404,11 @@ void PlayerMover::onUpdate() {
 The editor's **Factory** generates instantiation code when you export or build the
 project. Subclass scripts are compiled into the game binary.
 
-## C++ ScriptBase script
+## C++ Script Class (`ScriptBase`)
 
-Use `ScriptBase` when you want a behavior class without implying any object wrapper.
+Use a Script Class when you want a behavior class without implying any object wrapper. It
+derives from `ScriptBase` — which exposes only `getScene()` and `getEntity()` — so you
+reach the entity by constructing a wrapper explicitly.
 
 ```cpp
 #pragma once
