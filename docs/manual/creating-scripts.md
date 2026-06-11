@@ -519,9 +519,11 @@ return Follower
 | Property not in Properties | `DPROPERTY` not immediately above member; unsupported type; header path wrong |
 | Entity reference is nil | Target entity missing, wrong scene, or referenced script disabled |
 | Duplicate event callbacks | Same tag registered twice; use `UNREGISTER_*` in destructor |
+| C++ build or CMake errors | Missing or misconfigured toolchain — see [C++ Build Setup](cpp-build-setup.md) |
 
 ## Next steps
 
+- [C++ Build Setup](cpp-build-setup.md) — compilers, CMake, and build troubleshooting
 - [Events](events.md) — full event list, macros, and Lua registration
 - [Script Properties](script-properties.md) — `DPROPERTY` and Lua `properties` tables
 - [Engine](../reference/classes/engine.md) — runtime API

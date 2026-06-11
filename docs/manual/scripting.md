@@ -168,6 +168,7 @@ Script component paths use the same `lua://` prefix with the stored relative pat
 ## Reference
 
 - [Creating Scripts](creating-scripts.md) — editor workflow and lifecycle
+- [C++ Build Setup](cpp-build-setup.md) — compilers, CMake, and build troubleshooting
 - [Events](events.md) — all event types and registration macros
 - [Script Properties](script-properties.md) — `DPROPERTY` and Lua properties
 - [API Index](../reference/index.md) — complete class reference (C++ and Lua)

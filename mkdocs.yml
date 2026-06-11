@@ -89,6 +89,7 @@ nav:
       - Entity Component System: 'manual/entity-component-system.md'
       - Scripting: 'manual/scripting.md'
       - Creating Scripts: 'manual/creating-scripts.md'
+      - C++ Build Setup: 'manual/cpp-build-setup.md'
       - Events: 'manual/events.md'
       - Script Properties: 'manual/script-properties.md'
       - Input: 'manual/input.md'
