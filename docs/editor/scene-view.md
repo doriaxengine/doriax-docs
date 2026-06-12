@@ -73,11 +73,26 @@ original value:
 | --- | --- | --- |
 | Image | Mesh-based entity (sprite, mesh, model) | Sets the base color texture of the material |
 | Image | UI widget | Sets the widget texture |
-| Material (`.material`) | Mesh-based entity | Applies the material to all submeshes |
+| Material (`.material`) | Mesh-based entity | Links all submeshes to the material file (live preview while hovering) |
 | Font (TTF/OTF) | Text entity | Sets the text font |
 
 This makes texturing a scene fast: drop a texture onto each model to assign it, or
 drop a saved material onto several meshes to keep them consistent.
+
+### Shared materials across meshes
+
+When you drop the same `.material` file onto different mesh entities, each submesh
+**links** to that file. Editing the material in Properties (while linked) or saving the
+`.material` file on disk updates every linked mesh.
+
+To create a new shared material from an existing look:
+
+1. Tune the material on one mesh in Properties.
+2. Drag its **material preview** into the Resources Browser to create `Material.material`.
+3. Drag that file onto other meshes in the Scene view.
+
+Use the unlink control in Properties when a mesh needs a one-off variation copied from a
+shared file.
 
 !!! note "Bundles and scenes drop on the Structure panel"
     `.bundle` and `.scene` files are instanced by dropping them on the

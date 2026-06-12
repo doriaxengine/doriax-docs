@@ -43,6 +43,7 @@ description: Mesh API reference — geometry, materials, shadows, transparency, 
 | [CullingMode](#cullingmode) | cullingMode | `BACK` | C++ \| Lua |
 | [WindingOrder](#windingorder) | windingOrder | `CCW` | C++ \| Lua |
 | bool | receiveLights | `true` | C++ \| Lua |
+| bool | receiveIBL | `false` | Editor / scene |
 | bool | [castShadows](#castshadows-receiveshadows) | `false` | C++ \| Lua |
 | bool | [receiveShadows](#castshadows-receiveshadows) | `false` | C++ \| Lua |
 | bool | shadowsBillboard | `false` | C++ \| Lua |
@@ -187,6 +188,17 @@ Enables or disables back-face culling globally for this mesh. Disable for double
 * *Getter:* `bool isCastShadows() const` / `bool isReceiveShadows() const`
 
 Shadow participation flags. Enabling both adds depth-map cost; disable on distant or small objects for performance.
+
+---
+
+### receiveIBL
+
+When `true`, the mesh samples the scene's Sky environment for image-based lighting:
+diffuse irradiance plus specular reflections on top of punctual lights. Requires a Sky
+entity with a cubemap texture, **Receive Lights** enabled, and surface normals.
+
+Set this in the editor on the Mesh component (**Receive IBL**). The flag is serialized
+with the scene. Metallic, low-roughness materials show the strongest reflections.
 
 ---
 

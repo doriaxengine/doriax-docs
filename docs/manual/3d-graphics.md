@@ -32,6 +32,33 @@ GLTF materials are converted into the engine material representation during load
 editor-created materials are serialized with the project and baked into exported
 output.
 
+### Shared material files (`.material`)
+
+Each mesh submesh can reference a standalone **`.material`** file in your project instead
+of embedding values only inside the scene. Multiple meshes can link to the same file so
+they always stay in sync — change the file once and every linked mesh updates.
+
+**Create a material file from the editor:**
+
+1. Select a mesh and open its **Material** row in the Properties window.
+2. Tune base colour, textures, metallic, and roughness as needed.
+3. **Drag the material preview** from Properties into the [Resources Browser](../editor/resources.md).
+4. The editor creates `Material.material` (or `Material_1.material`, etc.) in the folder
+   you drop on and **links** the submesh to that file.
+
+**Apply an existing material file:**
+
+- Drag a `.material` file from the Resources Browser onto a mesh in the [Scene view](../editor/scene-view.md), or
+- Drop it onto the **Material** field in Properties (live preview while hovering).
+
+Linked materials reload automatically when the file changes on disk. Use the **unlink**
+button (chain icon) next to the material name in Properties to copy the values back into
+the scene as a local, unlinked material.
+
+See [Resources Browser — Material files](../editor/resources.md#material-files) and
+[Properties — Mesh materials](../editor/properties.md#mesh-materials-and-ibl) for the
+full workflow.
+
 ## Lighting and shadows
 
 Doriax supports multiple light types with **dynamic shadows**, so moving objects cast
@@ -51,7 +78,19 @@ lighting. Use `Scene::setShadowsPCF(true)` when you want smoother shadow filteri
 Add atmosphere to your scenes with:
 
 - **Fog** — depth-based atmospheric fog
-- **Sky system** — a configurable sky for outdoor environments
+- **Sky system** — a configurable cubemap background that also drives **image-based
+  lighting (IBL)** for reflective surfaces
+
+### Sky and reflections
+
+A **Sky** entity provides the scene background and the lighting environment for IBL.
+Assign a cubemap texture (six faces or a single cross layout). Meshes that should pick up
+sky reflections and indirect colour need **Receive IBL** enabled on their Mesh
+component — see [Rendering Pipeline — IBL](rendering-pipeline.md#image-based-lighting-ibl).
+
+Use **Visible** on the Sky component when you want IBL without drawing the sky dome
+(for example, a studio HDR used only for reflections). The sky texture still generates
+irradiance and prefiltered maps either way.
 
 ## Cameras
 

@@ -19,7 +19,8 @@ Each frame, the engine runs the following phases in order:
    testing enabled for early-Z efficiency.
 4. **Lighting and shadows** — Shadow maps are rendered for each shadow-casting light,
    then the lighting pass applies directional, point, and spot lights.
-5. **Skybox and environment** — The skybox is drawn; global illumination is applied.
+5. **Skybox and IBL** — The sky cubemap is drawn (when visible). Environment maps derived
+   from the sky feed **image-based lighting (IBL)** on meshes that opt in.
 6. **Transparent pass** — Objects with blending enabled are sorted back-to-front and
    drawn after opaque geometry.
 7. **UI pass** — UI entities are rendered in screen-space canvas coordinates, on top of
@@ -81,8 +82,9 @@ The engine supports three light types plus global illumination:
 | **Point** | Omni-directional bulbs, torches |
 | **Spot** | Flashlights, stage lighting, headlights |
 
-Global illumination (ambient light) fills shadowed areas. Tune its intensity to match
-your scene's mood.
+**Scene ambient light** (`Scene::setGlobalIllumination`) fills shadowed areas with a flat
+tint. It is separate from IBL — ambient light affects all lit meshes uniformly, while IBL
+adds directional reflections and diffuse fill derived from the sky environment.
 
 ```cpp
 Light sun(&scene);
@@ -131,7 +133,8 @@ fog.setDensity(0.02f);
 
 ## Skybox
 
-Add a `SkyBox` entity and assign either a single texture or six cube-face textures:
+Add a **Sky** entity (Skybox component) and assign either a single cubemap texture or six
+cube-face textures. The sky is rendered as an infinite background behind opaque geometry.
 
 ```cpp
 SkyBox sky(&scene);
@@ -143,6 +146,45 @@ sky.setTextures("daysky",
     "sky/py.png", "sky/ny.png",
     "sky/pz.png", "sky/nz.png");
 ```
+
+In the editor, the Sky component also exposes **Visible**. When disabled, the sky is not
+drawn in the viewport but still generates IBL environment maps for meshes that use them.
+Use this when you want reflections and indirect lighting from an environment without
+showing the sky dome itself (for example, an interior level with a hidden outdoor HDR
+environment).
+
+## Image-based lighting (IBL)
+
+When a scene contains a Sky entity with a valid cubemap texture, the engine builds two
+environment maps from that sky:
+
+| Map | Purpose |
+| --- | --- |
+| **Irradiance** | Diffuse ambient fill — soft colour bounced from every direction |
+| **Prefiltered specular** | Glossy reflections — sharper highlights on smooth (low-roughness) surfaces |
+
+These maps follow the glTF-style split-sum approximation used in modern PBR pipelines.
+Rough surfaces sample blurrier mips; mirror-like surfaces pick up crisp sky detail.
+
+IBL is **per mesh**. Each mesh has a **Receive IBL** flag (default `false` in new scenes).
+Only meshes with this enabled combine punctual lights (directional/point/spot) with the
+sky environment. Meshes also need **Receive Lights** enabled and a valid normal (tangent
+space for normal maps).
+
+Typical workflow:
+
+1. Add a Sky entity and assign a cubemap (HDR or LDR).
+2. Select meshes that should reflect the environment (metal, glass, wet stone, etc.).
+3. Enable **Receive IBL** on those meshes in the Properties window.
+4. Tune **Roughness** and **Metallic** on the material — low roughness makes reflections
+   more obvious.
+
+The material preview sphere in the Properties window updates when **Receive IBL** is
+toggled, so you can compare lit-only vs environment-lit looks before play mode.
+
+!!! note "One sky per scene"
+    The render system uses the first Sky component in the scene for both drawing and IBL
+    generation. Keep a single active sky environment unless you know you are replacing it.
 
 ## Framebuffers and render-to-texture
 
@@ -198,7 +240,8 @@ Instances can be modified later with `updateInstance(index, ...)` and read back 
 
 | Area | Guideline |
 | --- | --- |
-| Draw calls | Reduce with instancing, atlases, and material sharing |
+| Draw calls | Reduce with instancing, atlases, and shared `.material` files |
+| IBL cost | Environment maps are rebuilt when the sky texture changes; disable **Receive IBL** on distant or unimportant meshes |
 | Shadow casters | Limit shadow-casting lights; cascade only when needed |
 | Transparent objects | Keep transparent draw counts low; sort correctly |
 | Mobile shaders | Simplify PBR (skip normal maps, lower cascade count) |

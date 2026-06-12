@@ -12,6 +12,22 @@ A PBR (Physically Based Rendering) material definition that drives how a mesh su
 
 Materials are attached to [Mesh](mesh.md) objects (or individual sub-meshes) via `Mesh::setMaterial()`. When loading a [Model](model.md), each sub-mesh automatically receives the material defined in the source file.
 
+### Material files (`.material`)
+
+In the editor, materials can be saved as standalone **`.material`** YAML files and
+**linked** from multiple mesh submeshes. All linked meshes read from the same file, so
+one edit updates every user of that material.
+
+| Task | Editor workflow |
+| --- | --- |
+| Create a file | Drag the material preview from Properties into the Resources Browser |
+| Apply to a mesh | Drag the `.material` file onto a mesh in the Scene view or onto the Material row in Properties |
+| Share across meshes | Link each submesh to the same file |
+| Break the link | Click the unlink button next to the material name in Properties |
+
+Linked materials reload when the file changes on disk. See
+[Resources Browser — Material files](../../editor/resources.md#material-files).
+
 ### Properties
 
 | Type | Name | Default | Langs |

@@ -14,7 +14,7 @@ then loaded on demand by the runtime as needed.
 | --- | --- | --- |
 | **Textures** | PNG, JPG, TGA, BMP, PSD, HDR | `Texture`, texture pools |
 | **3D Models** | GLTF, GLB, OBJ | `Model`, `MeshSystem` |
-| **Materials** | Engine material files | `Material` struct |
+| **Materials** | Engine `.material` files (YAML) | `Material` struct, linked from mesh submeshes |
 | **Audio** | OGG, WAV, MP3, FLAC | `SoundPool`, `Sound` |
 | **Fonts** | TTF, OTF | Font pool, `Text` components |
 | **Shaders** | Shader data (engine format) | `ShaderPool`, `RenderSystem` |
@@ -53,6 +53,21 @@ Most high-level objects accept a file path and load the resource automatically:
     Sound sfx(&scene);
     sfx.loadSound("audio/jump.ogg");
     ```
+
+## Material files
+
+`.material` files store PBR parameters outside scene YAML so many meshes can reference
+one definition. Each file lists colour factors, metallic/roughness scalars, and relative
+texture paths — the same fields as the [Material](../reference/classes/material.md)
+struct.
+
+In the editor, drag a material preview from **Properties** into the **Resources Browser**
+to create a file, or drag an existing `.material` from the browser onto a mesh to link
+it. Linked materials reload when the file changes. See
+[Resources Browser — Material files](../editor/resources.md#material-files).
+
+At runtime, linked materials are resolved when the scene loads; exported games bundle
+the referenced textures and material data like any other asset.
 
 ## Runtime pools
 

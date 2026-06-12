@@ -52,6 +52,53 @@ Most fields are edited with the mouse or keyboard directly in the panel:
 | Entity references | Drag an entity from the Structure panel |
 | Enumerations | Drop-down selection |
 
+## Mesh materials and IBL
+
+The **Mesh** component exposes rendering flags beyond per-submesh material slots:
+
+| Property | Purpose |
+| --- | --- |
+| **Receive IBL** | When enabled, the mesh is lit with the scene's Sky environment (diffuse irradiance + specular reflections) in addition to punctual lights. Requires a Sky entity with a cubemap texture. |
+| **Receive Lights** | Master switch for dynamic lighting (must be on for IBL to apply). |
+| **Cast / Receive Shadows** | Shadow map participation. |
+
+Each **Submesh** section contains a **Material** row with a shaded preview sphere. The
+preview reflects the current **Receive IBL** setting so you can see environment
+reflections before entering play mode.
+
+### Linking material files
+
+The Material row supports three workflows:
+
+1. **Edit inline** — expand the material section and change factors and textures directly
+   in the scene (values stored on the mesh component).
+2. **Link to a file** — drag a `.material` file from the Resources Browser onto the
+   Material row or preview; the mesh submesh links to that file and reloads when it
+   changes on disk.
+3. **Create a shared file** — drag the material preview **from Properties into the
+   Resources Browser**; the editor writes a new `.material` file and links the submesh
+   to it automatically.
+
+When linked, the material name shows the file name and an **unlink** button (broken
+chain icon) appears. Unlinking keeps the current values on the mesh but stops syncing
+with the file.
+
+You can also drop a single **image** onto the Material row to assign only the base colour
+texture without replacing the rest of the material.
+
+## Sky component
+
+The **Sky** component controls the scene cubemap background and the IBL environment:
+
+| Property | Purpose |
+| --- | --- |
+| **Visible** | Draw the sky in the viewport. When off, the sky is hidden but still feeds IBL to meshes with **Receive IBL** enabled. |
+| **Texture** | Cubemap source (six faces or bundled layout). Changing it rebuilds IBL maps. |
+| **Color** | Tint multiplied with the sky texture. |
+| **Rotation** | Rotate the sky around the Y axis. |
+
+Use **Default sky** to restore the built-in editor cubemap.
+
 ## Scripts
 
 Two buttons at the bottom of the Properties window create scripts:

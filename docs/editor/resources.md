@@ -15,6 +15,7 @@ Slicer.
 | --- | --- | --- |
 | Textures | PNG, JPG, BMP, TGA, PSD, HDR | Sprites, UI images, albedo/normal/roughness/metallic maps, skyboxes |
 | Models | GLTF, GLB, OBJ | 3D meshes, skeletons, animations, morph targets |
+| Materials | `.material` (YAML) | Reusable PBR material definitions shared across meshes |
 | Audio | OGG, WAV, MP3, FLAC | Sound effects, music, 3D spatial audio |
 | Fonts | TTF, OTF | Text and UI rendering |
 | Scenes | YAML scene files | Saved scenes and child scene references |
@@ -57,6 +58,7 @@ Files dragged from the Resources Browser are accepted by several editor windows:
 | Image | Scene view, empty space (2D / UI scene) | Creates a Sprite (2D) or Image widget (UI) sized to the texture |
 | Image | Scene view, onto a mesh or UI entity | Assigns the texture (base color / UI texture) with live preview |
 | Material | Scene view, onto a mesh entity | Applies the material to all submeshes with live preview |
+| Material (`.material`) | Properties → Material preview | Creates a new `.material` file in the open folder and links the source submesh |
 | Font | Scene view, onto a Text entity | Assigns the font with live preview |
 | Texture / audio / asset | A component field in Properties | Assigns the file to that field |
 | `.scene` file | Structure panel, scene root | Adds the scene as a child scene |
@@ -64,6 +66,42 @@ Files dragged from the Resources Browser are accepted by several editor windows:
 
 See [Scene View](scene-view.md#drag-and-drop-from-the-resources-browser) for the
 viewport behaviors in detail.
+
+## Material files
+
+A **`.material`** file stores a PBR material as YAML: base colour factor, metallic and
+roughness factors, and texture paths for albedo, normal, metallic-roughness, occlusion,
+and emissive slots. Material files live anywhere under the project and appear in the
+Resources Browser with a shaded-sphere thumbnail preview.
+
+### Creating a material file
+
+Drag the **material preview** from the Properties window (Mesh → Submesh → Material row)
+into the Resources Browser. Drop it on the folder where you want the file. The editor:
+
+1. Creates `Material.material` (or `Material_1.material`, … if the name already exists).
+2. Writes the current PBR settings into that file.
+3. **Links** the submesh you dragged from, so future edits to the file propagate back to
+   that mesh automatically.
+
+This is the fastest way to turn a tuned material into a reusable project asset.
+
+### Applying and sharing materials
+
+| Action | How |
+| --- | --- |
+| Apply to a mesh | Drag the `.material` file from the browser onto a mesh in the Scene view, or onto the Material row in Properties |
+| Share across many meshes | Link each mesh submesh to the same `.material` file — all linked meshes stay identical |
+| Edit once, update all | Change the `.material` file on disk (or via linked Properties fields); the editor reloads linked meshes when the file timestamp changes |
+| Stop sharing | Click the **unlink** button next to the material name in Properties |
+
+Linked materials are tracked per submesh. The scene stores the link; the `.material` file
+is the single source of truth for colour factors and texture paths.
+
+!!! tip "Organize shared materials"
+    Keep reusable `.material` files under something like `assets/materials/` and link
+    props, terrain chunks, and instanced meshes to the same file instead of duplicating
+    values in every scene.
 
 ## Dragging entities in: creating bundles
 

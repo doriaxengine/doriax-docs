@@ -65,9 +65,13 @@ completely black shadow areas.
 If the model carries its own GLTF materials, they appear automatically. To adjust them:
 
 1. Select the Model entity.
-2. In the Properties window, find the **Materials** section.
+2. In the Properties window, expand the **Submesh** material section.
 3. Adjust **Roughness** (lower = shinier), **Metallic** (0 = plastic, 1 = metal), and
-   check that the **Albedo** texture path is correct.
+   check that the **Base Texture** path is correct.
+
+To reuse the same material on several objects later, drag the **material preview** from
+Properties into the Resources Browser to create a `.material` file, then drag that file
+onto other meshes. See [Material files](../editor/resources.md#material-files).
 
 Tips:
 
@@ -136,6 +140,9 @@ Press **Stop** when done.
 ## 9. Next steps
 
 - Add skeletal animation using the [Animation Timeline](../editor/animation.md).
-- Add fog and a skybox for atmosphere: see [Rendering Pipeline](../manual/rendering-pipeline.md).
+- Add a **Sky** entity, enable **Receive IBL** on reflective meshes, and optionally hide
+  the sky with **Visible** while keeping reflections: see
+  [Rendering Pipeline — IBL](../manual/rendering-pipeline.md#image-based-lighting-ibl).
+- Add fog for depth: see [Rendering Pipeline](../manual/rendering-pipeline.md).
 - Add a UI overlay HUD: see [First UI Scene](first-ui-scene.md).
 - Continue with [3D Graphics](../manual/3d-graphics.md) and [Physics](../manual/physics.md).

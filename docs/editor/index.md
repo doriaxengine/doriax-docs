@@ -34,6 +34,7 @@ The editor window is divided into a set of resizable panels:
 | Place and transform entities | Scene view gizmos |
 | Edit component data | Properties window |
 | Import and preview assets | Resources Browser |
+| Share PBR materials across meshes | Create `.material` files (Properties → Resources drag), link from Scene view |
 | Slice sprite sheets and tilesets | Sprite Slicer, Tileset Slicer |
 | Write Lua or C++ scripts | Code Editor and script creation dialog |
 | Animate objects and characters | Animation Timeline |
@@ -46,7 +47,7 @@ The editor supports three scene workflows:
 
 | Type | Purpose |
 | --- | --- |
-| **3D scene** | Games with perspective cameras, 3D models, PBR materials, and lighting |
+| **3D scene** | Games with perspective cameras, 3D models, PBR materials, sky/IBL, and lighting |
 | **2D scene** | Top-down or side-scrolling games with sprites and tilemaps |
 | **UI scene** | Menus, HUDs, overlays, and screen-space controls using the UI system |
 
