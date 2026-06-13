@@ -28,7 +28,7 @@ the entity immediately and their defaults appear in the panel for editing.
 
 | Group | Typical components |
 | --- | --- |
-| **Spatial** | Transform, Camera, Light, Fog, Skybox |
+| **Spatial** | Transform, Camera, Light, Fog, Skybox, Mirror |
 | **2D** | Sprite, Sprite Animation, Tilemap, Polygon |
 | **3D** | Mesh, Model, Instanced Mesh, Terrain, Bone |
 | **Physics** | Body2D, Body3D, Joint2D, Joint3D |
@@ -48,9 +48,15 @@ Most fields are edited with the mouse or keyboard directly in the panel:
 | Colors | Color picker with RGBA sliders |
 | Booleans | Toggle checkbox |
 | Strings | Inline text input |
-| Textures / assets | Drag from the Resources Browser or type the asset path |
+| Textures / assets | Drag from the Resources Browser, type the asset path, or pick a **camera** as the source (camera button / drag a camera entity) for render-to-texture |
 | Entity references | Drag an entity from the Structure panel |
 | Enumerations | Drop-down selection |
+
+A texture field set to a camera shows that camera's live output (render-to-texture). The
+camera is switched to render-to-texture automatically and can no longer be the scene's
+main camera. This is the manual building block behind effects like minimaps and monitors;
+for reflections, prefer the [Mirror component](#mirror-component), which manages its own
+camera.
 
 ## Mesh materials and IBL
 
@@ -98,6 +104,21 @@ The **Sky** component controls the scene cubemap background and the IBL environm
 | **Rotation** | Rotate the sky around the Y axis. |
 
 Use **Default sky** to restore the built-in editor cubemap.
+
+## Mirror component
+
+The **Mirror** component turns its mesh into a planar reflection surface. Add it to a flat
+mesh (a [Wall](structure.md#basic-shapes) works out of the box), or use the **Mirror**
+entry in the Structure create menu, which sets up the wall and component together.
+
+| Property | Purpose |
+| --- | --- |
+| **Normal** | The reflecting surface direction in the mesh's local space (default `+Z`, matching a Wall). It is rotated with the entity to form the world mirror plane. |
+
+The reflection camera is created and managed by the engine — there is nothing else to
+wire. If the reflection is clipped on the wrong side, flip the sign of **Normal**. See
+[Rendering Pipeline — Mirrors and planar reflections](../manual/rendering-pipeline.md#mirrors-and-planar-reflections)
+for how it works and its cost.
 
 ## Scripts
 

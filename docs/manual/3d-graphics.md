@@ -92,6 +92,18 @@ Use **Visible** on the Sky component when you want IBL without drawing the sky d
 (for example, a studio HDR used only for reflections). The sky texture still generates
 irradiance and prefiltered maps either way.
 
+IBL gives soft, environment-wide reflections suited to curved and rough surfaces. For a
+**sharp, mirror-like reflection on a flat surface**, add a **Mirror** instead — see below.
+
+### Mirrors
+
+For a true planar reflection on a flat surface — a mirror, still water, or a polished
+floor — add a **Mirror** from the Structure panel's create menu. It produces an upright
+reflective wall that reflects the scene from the viewer's mirrored viewpoint, with no
+camera or texture setup required. See
+[Rendering Pipeline — Mirrors and planar reflections](rendering-pipeline.md#mirrors-and-planar-reflections)
+for how it works and its performance cost.
+
 ## Cameras
 
 Cameras define the viewpoint into a 3D scene. Position and orient a camera entity, and

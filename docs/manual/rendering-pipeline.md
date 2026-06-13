@@ -27,6 +27,9 @@ Each frame, the engine runs the following phases in order:
    the 3D or 2D scene.
 8. **Post-processing** — Fog and other post effects are applied (if configured).
 
+Cameras that render to a texture (minimaps, [mirrors](#mirrors-and-planar-reflections),
+portals) run this same flow into their own framebuffer before the main view is drawn.
+
 ## Cameras
 
 Three camera projection modes are available:
@@ -203,6 +206,64 @@ Image preview(&uiScene);
 preview.setTexture(minimapCam.getFramebuffer());
 ```
 
+In the editor, any **Texture** field can use a camera as its source instead of an image
+file: click the camera button on the field (or drag a camera entity from the Structure
+panel onto it). The chosen camera is switched to render-to-texture and its output feeds
+the slot — the basis for the manual mirror setup below. A camera used this way cannot
+also be the scene's main camera.
+
+## Mirrors and planar reflections
+
+A **Mirror** turns a flat surface into a true planar reflection — the kind used for
+mirrors, still water, and polished floors. It is built on render-to-texture: the engine
+renders the scene a second time from the viewpoint *reflected across the mirror plane*,
+then maps that image back onto the surface.
+
+The simplest way to add one is the **Mirror** entry in the Structure panel's create menu
+(or **Basic shape → Wall** plus a **Mirror** component). This creates an upright
+[Wall](../reference/classes/shape.md) whose surface normal faces the camera, with a
+`MirrorComponent` already attached. No camera or texture wiring is required — the
+component manages its own reflection camera internally.
+
+```cpp
+// C++: a wall mesh that reflects the scene
+Shape mirror(&scene);
+mirror.createWall(10.0f, 10.0f);                 // vertical quad, +Z normal
+scene.addComponent<MirrorComponent>(mirror.getEntity(), {});
+```
+
+### How it works
+
+| Stage | What happens |
+| --- | --- |
+| Reflected camera | Each frame the active camera is mirrored across the surface plane (entity position + normal). This preserves the handedness flip a real mirror has, so reflected geometry is rendered with **reversed face winding** to stay front-facing. |
+| Projective sampling | The surface samples the reflection texture by screen position, not by mesh UVs, so the reflection stays correctly aligned regardless of the surface's size or placement. |
+| Oblique clipping | The reflection camera's near plane is bent onto the mirror plane (Lengyel oblique projection), so geometry **behind** the mirror cannot leak into the reflection. The sky is excluded from this clip and reflects normally. |
+
+### The Normal field
+
+`MirrorComponent` exposes a single **Normal** — the reflecting surface direction in the
+mesh's local space (default `+Z`, matching a Wall). It is transformed by the entity's
+rotation to build the world mirror plane, so rotating the mirror entity orients the
+reflection automatically.
+
+!!! tip "If the reflection looks wrong"
+    The reflection image is the same whichever way the normal points, but the
+    behind-the-mirror clipping depends on its sign. If the reflection is clipped on the
+    wrong side (showing geometry that should be hidden, or going mostly empty), flip the
+    sign of the **Normal**.
+
+### Cost
+
+A mirror renders the visible scene **one additional time per frame** into its own
+off-screen target — the same inherent cost planar reflections have in every engine. Use
+them deliberately:
+
+- Prefer one hero mirror / water plane over many.
+- A mirror never reflects itself, and reflections of other mirrors are not recursive.
+- The reflection target matches the canvas resolution by default; lowering it trades
+  sharpness for performance.
+
 ## Shaders
 
 Shaders are authored in GLSL and transpiled by the shader builder for each supported
@@ -246,6 +307,7 @@ Instances can be modified later with `updateInstance(index, ...)` and read back 
 | Transparent objects | Keep transparent draw counts low; sort correctly |
 | Mobile shaders | Simplify PBR (skip normal maps, lower cascade count) |
 | Render targets | Minimize framebuffer resolution for off-screen effects |
+| Mirrors | Each mirror re-renders the scene once per frame; keep one hero reflection and lower its target resolution if needed |
 | Textures | Use compressed formats (ETC2/BC) on mobile/desktop respectively |
 
 ## See also

@@ -27,6 +27,25 @@ The create menu has two intentionally different entries:
 This distinction matters because the entity itself owns nothing. Components decide what
 the ID can do.
 
+The rest of the create menu adds ready-configured entities (camera, light, sky, fog,
+sound, **mirror**), basic shapes, 2D and UI objects, physics bodies, and more — each one
+is just an entity with the right components already attached.
+
+### Basic shapes
+
+**Basic shape** creates a mesh entity with procedural geometry: Box, Plane, **Wall**,
+Sphere, Cylinder, Capsule, and Torus. A **Plane** lies flat (normal points up, `+Y`); a
+**Wall** stands upright facing the camera (normal points `+Z`) — handy for walls,
+backdrops, and mirror surfaces. You can change a mesh's geometry later from the
+**Create Shape** dropdown in [Properties](properties.md).
+
+### Mirror
+
+**Mirror** is a one-click convenience entry: it creates a Wall with a
+[Mirror component](properties.md#mirror-component) already attached, giving an upright
+planar-reflection surface with no camera or texture setup. See
+[Rendering Pipeline — Mirrors](../manual/rendering-pipeline.md#mirrors-and-planar-reflections).
+
 ## Hierarchical area
 
 Entities with `Transform` appear in the hierarchy area. Their parent-child relation is
