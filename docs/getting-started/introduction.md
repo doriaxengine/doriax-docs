@@ -62,8 +62,7 @@ This documentation follows a broad structure similar to large engine manuals:
 - 3D audio
 
 !!! note "Editor coverage"
-    Some features — terrain authoring, particle editing, audio tooling, and direct
-    shader manipulation — are available at the engine/runtime level but are not yet
+    Direct shader manipulation is available at the engine/runtime level but is not yet
     fully integrated into the editor's visual tools.
 
 ## Platforms

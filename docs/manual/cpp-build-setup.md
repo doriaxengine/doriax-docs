@@ -78,6 +78,15 @@ compatible CMake generator:
     it is a wrapper that stops working outside its install location. If Windows blocked
     a downloaded exe, right-click it → **Properties** → **Unblock**.
 
+!!! info "Clang also needs the Windows SDK"
+    A standalone Clang compiles your code with its own toolchain but still **links
+    against the Windows SDK and the MSVC C runtime** (`kernel32.lib`, `msvcrtd`, …).
+    Those ship with Visual Studio's "Desktop development with C++" workload. The editor
+    loads the Visual Studio environment automatically before building with Ninja, so you
+    do **not** need to launch it from a Developer Command Prompt. If linking fails with
+    `lld-link: error: could not open 'kernel32.lib'`, the Windows SDK is either not
+    installed or could not be located — install it via the Visual Studio Installer.
+
 Switching compilers is safe at any time: the editor detects the change and cleans the
 build directory automatically (CMake cannot switch generators or compilers in-place).
 
@@ -98,6 +107,8 @@ is almost always the meaningful one.
 | `Missing Build Tools` dialog | CMake or a C++ compiler is not installed / not on `PATH`. Install it and restart the editor. |
 | `The C compiler ... is not able to compile a simple test program` together with `CMAKE_LINKER-NOTFOUND` or `TRK0005` | A custom compiler (usually Clang) was configured with the Visual Studio generator. Install Ninja and re-select the Clang compiler in Project Settings, or switch to the MSVC compiler. Editor versions before June 2026 allowed this broken combination. |
 | `CMake was unable to find a build program corresponding to "Ninja"` | `ninja.exe` is not on `PATH`, or it exists but cannot run (pip wrapper copied out of place, or blocked download). Install the standalone binary and check `ninja --version` works in a fresh terminal. |
+| `lld-link: error: could not open 'kernel32.lib'` (or other `*.lib`) | Clang cannot find the Windows SDK libraries. Install the Windows SDK through the Visual Studio Installer ("Desktop development with C++"). The editor loads the MSVC environment automatically; if it can't find Visual Studio it warns and you can instead launch the editor from a Developer Command Prompt. |
+| `Does not match the generator used previously` | The build directory holds a cache from a different generator. The editor normally cleans it automatically when you switch compilers; if it reports the directory is **locked**, close anything using `.doriax/build` (notably the VS Code *CMake Tools* extension) or delete the folder manually, then try again. |
 | `CMake configuration failed` with **no other output** | Update the editor — older versions dropped the output of commands that failed quickly. Current versions print the full CMake error plus a `Process exited with code N` line. |
 | `Compiler kit changed. Cleaning build directory...` | Not an error — the compiler selection changed, so the editor wipes `.doriax/build` and reconfigures from scratch. |
 | Errors persist after fixing the toolchain | Delete `.doriax/build` and press Play again to force a clean configure. |
