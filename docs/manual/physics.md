@@ -81,13 +81,68 @@ body.setAllowedDOFs2DPlane();
 
 ## Contacts and filtering
 
-The physics system exposes contact subscriptions for begin, end, hit, sensor, and
-pre-solve events. Use begin/end events for gameplay state, hit events for impacts, and
-pre-solve callbacks when a contact should be conditionally disabled.
+The physics system exposes contact subscriptions so you can react to collisions in game
+logic. **2D bodies** use `beginContact2D`, `endContact2D`, hit, sensor, and `preSolve2D`
+events — use begin/end for gameplay state, hit for impacts, and pre-solve when a contact
+should be conditionally disabled. **3D bodies** instead use `onContactAdded3D`,
+`onContactPersisted3D`, and `onContactRemoved3D` (plus `onBodyActivated3D` /
+`onBodyDeactivated3D`); each added/persisted callback receives a
+[Contact3D](../reference/classes/contact3d.md) carrying the contact normal and points.
 
 Collision filters use category and mask bits. Put broad gameplay groups into category
 bits, such as player, enemy, world, projectile, and trigger. Use masks to decide which
 groups interact.
+
+## Raycasts and ground checks
+
+A common need for character controllers is knowing whether a body is **standing on the
+ground**. Doriax has no built-in `isGrounded()` flag, but you can build a reliable check
+two ways.
+
+### Downward raycast (recommended)
+
+Cast a short [Ray](../reference/classes/ray.md) straight down from the body's feet and
+test it against the 3D physics world with `RayFilter::BODY_3D`. Checking `normal.y` lets
+you reject steep walls so only near-horizontal surfaces count as ground.
+
+```cpp
+bool isGrounded(Body3D& body, Scene* scene, float feetOffset, float probe = 0.15f) {
+    // feetOffset = distance from the center of mass down to the soles
+    // (for a capsule: halfHeight + radius)
+    Vector3 com = body.getCenterOfMassPosition();
+    Vector3 origin = com - Vector3(0, feetOffset - 0.05f, 0); // start just above the soles
+    Ray ray(origin, Vector3(0, -(probe + 0.05f), 0));         // direction also sets the length
+
+    RayReturn result = ray.intersects(scene, RayFilter::BODY_3D);
+
+    return result.hit
+        && result.body != body.getEntity()  // ignore a self-hit
+        && result.normal.y > 0.7f;           // ~45 degree slope limit
+}
+```
+
+Pass `onlyStatic` or category/mask bits to restrict what counts as ground, for example
+`ray.intersects(scene, RayFilter::BODY_3D, true, groundCategory, groundMask)`. The same
+`Ray` API is available in Lua. The returned [RayReturn](../reference/classes/rayreturn.md)
+also carries the hit `distance`, which is handy for step snapping or coyote-time.
+
+### Contact normal (event-driven)
+
+If you already subscribe to contact events, inspect the contact normal instead of
+raycasting. Read [Contact3D](../reference/classes/contact3d.md)`::getWorldSpaceNormal()`
+inside `onContactAdded3D` / `onContactPersisted3D`. Jolt's normal points **from body 1
+toward body 2**, and Jolt — not your code — decides which body is which, so flip the sign
+when your character is body 1:
+
+```cpp
+Vector3 n = contact.getWorldSpaceNormal();
+Vector3 up = (bodyA.getEntity() == characterEntity) ? n * -1.0f : n;
+bool grounded = up.y > 0.7f;
+```
+
+Track grounded state with a contact counter (increment on `onContactAdded3D`, decrement
+on `onContactRemoved3D`) rather than a single bool, so multiple simultaneous contacts are
+handled correctly.
 
 ## Joints
 
