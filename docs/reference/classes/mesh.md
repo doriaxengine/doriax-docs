@@ -89,6 +89,9 @@ description: Mesh API reference — geometry, materials, shadows, transparency, 
 | bool | [isTransparent](#transparent-autotransparency) | C++ \| Lua |
 | void | [setAutoTransparency](#transparent-autotransparency) | C++ \| Lua |
 | bool | [isAutoTransparency](#transparent-autotransparency) | C++ \| Lua |
+| void | [setAsMirror](#setasmirror-removemirror-ismirror) | C++ \| Lua |
+| void | [removeMirror](#setasmirror-removemirror-ismirror) | C++ \| Lua |
+| bool | [isMirror](#setasmirror-removemirror-ismirror) | C++ \| Lua |
 | void | [createInstancedMesh](#createinstancedmesh) | C++ \| Lua |
 | void | [removeInstancedMesh](#createinstancedmesh) | C++ \| Lua |
 | bool | [hasInstancedMesh](#createinstancedmesh) | C++ \| Lua |
@@ -241,6 +244,37 @@ Assigns the diffuse/base-color texture. Accepts a file path, raw `TextureData`, 
 
     ```lua
     mesh:setTexture("textures/stone.png")
+    ```
+
+---
+
+### setAsMirror / removeMirror / isMirror
+
+* `void setAsMirror()` — turn this flat mesh into a planar reflection surface, using the default `+Z` normal (matching a [Wall](shape.md)).
+* `void setAsMirror(Vector3 normal)` — same, with an explicit surface normal in local space (e.g. `Vector3(0, 1, 0)` for a `createPlane` floor).
+* `void removeMirror()` — stop being a mirror.
+* `bool isMirror() const` — whether this mesh is currently a mirror.
+
+The engine creates and drives the reflection camera internally and feeds its render
+target to the mesh's base texture — no camera setup is required. Set `receiveLights` to
+`false` for a reflection shown without surface shading. See
+[Rendering Pipeline — Mirrors](../../manual/rendering-pipeline.md#mirrors-and-planar-reflections).
+
+=== "C++"
+
+    ```cpp
+    Shape mirror(&scene);
+    mirror.createWall(10.0f, 10.0f);
+    mirror.setAsMirror();
+    mirror.setReceiveLights(false);
+    ```
+
+=== "Lua"
+
+    ```lua
+    mirror:createWall(10.0, 10.0)
+    mirror:setAsMirror()
+    mirror.receiveLights = false
     ```
 
 ---

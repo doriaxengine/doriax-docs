@@ -228,9 +228,14 @@ component manages its own reflection camera internally.
 ```cpp
 // C++: a wall mesh that reflects the scene
 Shape mirror(&scene);
-mirror.createWall(10.0f, 10.0f);                 // vertical quad, +Z normal
-scene.addComponent<MirrorComponent>(mirror.getEntity(), {});
+mirror.createWall(10.0f, 10.0f);   // vertical quad, +Z normal (faces the camera)
+mirror.setAsMirror();              // one call — engine manages the reflection camera
+mirror.setReceiveLights(false);    // optional: show the reflection unshaded
 ```
+
+`Mesh::setAsMirror()` works on any flat mesh; pass a normal — `setAsMirror(Vector3(0, 1, 0))`
+— when the surface isn't a Wall (for example a floor created with `createPlane`). Use
+`removeMirror()` / `isMirror()` to toggle or query it.
 
 ### How it works
 
