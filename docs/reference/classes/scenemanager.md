@@ -12,8 +12,13 @@ A registry for named scene stacks that lets you switch between scenes at runtime
 
 The typical workflow is:
 
-1. **Register** all scenes at startup, providing a factory function that creates and wires up the scene objects.
-2. **Load** a scene by name or ID; the manager calls `Engine::removeAllSceneLayers()`, destroys the previous scene, and invokes the new scene's factory function.
+1. **Register** all scenes at startup, providing a factory function that creates and wires up the scene objects. In an exported project this is done for you — the editor registers every scene stack.
+2. **Load** a scene by name or ID; the manager calls `Engine::removeAllScenes()` to clear the current main scene and all layers, then invokes the new scene's factory function.
+
+Two operations change what is on screen:
+
+- [`loadScene`](#loadscene) is a full **transition** — it tears down everything and builds a new stack. Use it to move between levels, menus, and game-over screens.
+- [`addChildScene`](#addchildscene-removechildscene) / [`removeChildScene`](#addchildscene-removechildscene) **overlay** a scene on top of the running stack without a transition. Use them for pause menus, dialogs, and HUD toggles. See [Switching scenes with SceneManager](../../manual/scenes-and-entities.md#switching-scenes-with-scenemanager) for the broader workflow.
 
 ### Methods
 
@@ -75,7 +80,21 @@ The optional `sceneIds` vector lists child scene IDs that should also be loaded 
 * static bool **loadScene**(const std::string& name)
 * static bool **loadScene**(uint32_t id)
 
-Loads a registered scene stack by name or ID. Calls `Engine::removeAllSceneLayers()` first to clean up the previous scene. Returns `false` if the name or ID is not found.
+Loads a registered scene stack by name or ID, performing a full scene transition. Calls `Engine::removeAllScenes()` first — this clears the current main scene **and** every layer — then runs the registered factory to build the new stack. Returns `false` if the name or ID is not found.
+
+Because it clears everything, do not call `loadScene` once per layer. Persistent layers (a HUD, shared lighting) should be **start-active child scenes** of the target scene so they come up in the same call.
+
+=== "Lua"
+    ```lua
+    SceneManager.loadScene("Level2")
+    SceneManager.loadScene(2)
+    ```
+
+=== "C++"
+    ```cpp
+    SceneManager::loadScene("Level2");
+    SceneManager::loadScene(2);
+    ```
 
 ---
 
@@ -86,7 +105,23 @@ Loads a registered scene stack by name or ID. Calls `Engine::removeAllSceneLayer
 * static bool **removeChildScene**(uint32_t id)
 * static bool **removeChildScene**(const std::string& name)
 
-Dynamically add or remove a child scene stack from the active scene layer list without triggering a full scene transition. Useful for overlaying UI scenes on top of a game scene.
+Add or remove a scene stack as layers on top of the running scenes **without** a full transition — ideal for overlaying a UI scene (pause menu, dialog) on top of a game scene.
+
+`addChildScene` adds the scene's start-active stack at the **top** of the layer list, so the overlay draws above everything below it. The target scene must already be loaded (its `Scene*` must exist) — in the editor model this is satisfied by a child scene marked **Start active → Off**, which is built with its parent but not shown until you add it. Returns `false` if the scene is unknown or not yet loaded.
+
+`removeChildScene` removes those layers again, keeping the main scene and any other layers intact. Returns `false` if nothing was removed.
+
+=== "Lua"
+    ```lua
+    SceneManager.addChildScene("PauseMenu")     -- show overlay
+    SceneManager.removeChildScene("PauseMenu")  -- hide it again
+    ```
+
+=== "C++"
+    ```cpp
+    SceneManager::addChildScene("PauseMenu");
+    SceneManager::removeChildScene("PauseMenu");
+    ```
 
 ---
 

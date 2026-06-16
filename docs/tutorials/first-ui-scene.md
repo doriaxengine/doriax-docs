@@ -103,23 +103,25 @@ Attach the script to the canvas root entity via **ScriptComponent**, and use the
 
 ## 6. Load the UI scene as a layer
 
-In the project's startup file or `main` scene script, add the HUD scene as a layer:
+In the editor, the simplest way is to make the HUD a **child scene** of the gameplay
+scene: select the gameplay scene in the [Structure panel](../editor/structure.md),
+right-click the scene root, and choose **Add child scene → HUD**. Leave **Start active**
+on so the HUD loads with the level. The exporter then loads both together when you call
+`SceneManager.loadScene("Main")`.
+
+If you are wiring scenes up by hand instead, register the gameplay scene and its HUD as a
+**single stack** — one factory that sets the main scene *and* adds the HUD layer — so a
+single `loadScene` brings up both:
 
 === "Lua"
 
     ```lua
-    -- Register both scenes
     SceneManager.registerScene(1, "Main", function()
         Engine.setScene(gameplayScene)
+        Engine.addSceneLayer(hudScene)   -- HUD layer on top
     end)
 
-    SceneManager.registerScene(2, "HUD", function()
-        Engine.addSceneLayer(hudScene)
-    end)
-
-    -- Load them at startup
     SceneManager.loadScene("Main")
-    SceneManager.loadScene("HUD")
     ```
 
 === "C++"
@@ -127,16 +129,17 @@ In the project's startup file or `main` scene script, add the HUD scene as a lay
     ```cpp
     SceneManager::registerScene(1, "Main", []() {
         Engine::setScene(&gameplayScene);
-    });
-    SceneManager::registerScene(2, "HUD", []() {
-        Engine::addSceneLayer(&hudScene);
+        Engine::addSceneLayer(&hudScene);   // HUD layer on top
     });
 
     SceneManager::loadScene("Main");
-    SceneManager::loadScene("HUD");
     ```
 
-The UI scene renders on top of the gameplay scene automatically.
+!!! note
+    Don't call `loadScene` once per layer — each call to `loadScene` clears every scene
+    first. Add the HUD inside the same stack (as above, or as a start-active child scene)
+    so it survives the load. The UI scene then renders on top of the gameplay scene
+    automatically.
 
 ## 7. Run and test
 

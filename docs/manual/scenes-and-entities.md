@@ -61,6 +61,9 @@ load scenes by name or numeric ID:
     SceneManager::loadScene("Level1");
     ```
 
+See [Switching scenes with SceneManager](#switching-scenes-with-scenemanager) for full
+scene transitions and on-demand overlays at runtime.
+
 ## Scene types
 
 All scenes use the same `Scene` class and ECS foundation at runtime. The **scene type**
@@ -143,18 +146,188 @@ Every scene owns rendering and interaction state that affects all entities withi
 | UI events | Enables/disables UI input processing for the scene |
 | Canvas size | Logical resolution for 2D and UI scenes |
 
+## Scene stacks
+
+When the engine runs, every loaded scene lives in an ordered list of **layers**, and a
+group of scenes that are loaded together is called a **scene stack**:
+
+- The **main scene** is always the bottom layer. There is exactly one per stack.
+- Each additional scene is a **layer** drawn on top of the layers before it.
+- The **last** layer is the topmost — it renders over everything below it.
+
+In the editor, each scene file is the main scene of its own stack, and you attach other
+scenes to it as **child scenes**. At export, the editor turns each stack into a factory
+that calls `Engine::setScene()` for the main scene and `Engine::addSceneLayer()` for each
+child, then registers it with `SceneManager`.
+
 ## Child scenes
 
-A **child scene** reference lets one scene load and run another. Child scenes share the
-same engine tick but maintain their own entity and component storage. Use them for:
+A **child scene** reference lets one scene load and run another as part of the same stack.
+Child scenes share the same engine tick but keep their own entity and component storage,
+so they stay cleanly separated. Use them for:
 
-- **Persistent UI** — a HUD scene that stays loaded across gameplay level changes.
+- **Persistent UI** — a HUD or menu scene that stays loaded across gameplay level changes.
 - **Shared setup** — a single lighting and skybox scene included in every level.
 - **Additive worlds** — large open worlds assembled from independently-authored chunks.
 - **Scene streaming** — load and unload sections without a full scene transition.
+- **Pop-ups and pause menus** — UI that appears on demand and is removed without
+  reloading the level.
 
-In the editor, add a child scene reference from the Structure panel's **Add Child
-Scene** option.
+### Adding a child scene in the editor
+
+Select the parent scene in the [Structure panel](../editor/structure.md) and either:
+
+- right-click the scene root and choose **Add child scene → _SceneName_**, or
+- drag a `.scene` file from the [Resources Browser](../editor/resources.md) onto the
+  scene root.
+
+Child scenes are listed **above** the parent's entities. Click the eye icon next to a
+child scene to load it *inline*, so you can see and edit its entities in context — this
+is an editor convenience and does not change runtime behavior.
+
+### Start active
+
+Each child scene reference has a **Start active** flag (right-click the child scene node →
+**Start active**). It controls whether the child scene is added to the engine
+automatically when its parent loads:
+
+| Start active | Behavior when the parent loads | Use it for |
+| --- | --- | --- |
+| **On** (default) | The child scene is created **and** added as a layer. It runs and renders immediately. | HUDs, persistent overlays, shared lighting — anything always present. |
+| **Off** | The child scene is still created and prepared (its entities, scripts, and `Scene*` are all ready), but it is **not** added to the engine. | Pause menus, dialogs, level sections — anything you reveal later. |
+
+A child scene that starts inactive is *ready but hidden*. Because it is already built,
+showing it later with [`SceneManager.addChildScene`](#switching-scenes-with-scenemanager)
+is instant — there is no loading cost at the moment it appears.
+
+### Scene order
+
+The order of the layers follows the order the child scenes are listed under their parent
+in the Structure panel, which is the order you added them. The main scene stays at the
+bottom; each child scene draws on top of the ones above it in the list. **Put a HUD or
+menu scene last so it renders over the gameplay below it.**
+
+To change the order, remove the child scenes and add them back in the sequence you want —
+the one added last ends up on top. At runtime, `SceneManager.addChildScene` always adds a
+scene **on top** of the current layers, so re-adding is also how you bring a layer to the
+front.
+
+## Switching scenes with SceneManager
+
+[`SceneManager`](../reference/classes/scenemanager.md) is the runtime entry point for
+moving between scenes. The editor registers every scene stack for you at startup, so from
+a script you refer to scenes by their **name** (or numeric ID) and never touch the
+factory functions directly. There are two ways to change what is on screen.
+
+### Migrate to another scene
+
+`SceneManager.loadScene` performs a full **transition**: it removes every currently loaded
+scene (`Engine::removeAllScenes()` — main *and* all layers), then builds the requested
+stack from scratch and runs it. Use it to move between levels, menus, and game-over
+screens.
+
+=== "Lua"
+
+    ```lua
+    -- Leave the current scene entirely and load another
+    SceneManager.loadScene("Level2")
+
+    -- Or by registration ID
+    SceneManager.loadScene(2)
+    ```
+
+=== "C++"
+
+    ```cpp
+    SceneManager::loadScene("Level2");
+    SceneManager::loadScene(2);
+    ```
+
+!!! warning "One stack at a time"
+    `loadScene` clears everything first, so you do **not** call it once per layer. Attach
+    persistent layers (a HUD, shared lighting) as **start-active child scenes** of the
+    target scene instead — they come up with it in a single `loadScene` call.
+
+### Overlay a scene without leaving the current one
+
+`SceneManager.addChildScene` and `removeChildScene` add or remove a scene **on top** of
+what is already running, with no transition. This is how you show a pause menu, dialog, or
+HUD toggle over live gameplay. They operate on scenes that are part of the loaded stack —
+typically a child scene you marked **Start active → Off** so it is prepared but hidden.
+
+=== "Lua"
+
+    ```lua
+    -- Open a pause menu over the running game
+    function onPause()
+        if SceneManager.addChildScene("PauseMenu") then
+            Engine.pauseGameEvents(true)   -- freeze gameplay updates
+        end
+    end
+
+    -- "Resume" button handler inside the PauseMenu scene
+    resumeBtn = Button(scene)
+    resumeBtn.label = "Resume"
+    local btnComp = resumeBtn:getButtonComponent()
+    btnComp.onPress = function()
+        SceneManager.removeChildScene("PauseMenu")
+        Engine.pauseGameEvents(false)
+    end
+    ```
+
+=== "C++"
+
+    ```cpp
+    // Open a pause menu over the running game
+    if (SceneManager::addChildScene("PauseMenu")) {
+        Engine::pauseGameEvents(true);
+    }
+
+    // "Resume" button handler inside the PauseMenu scene
+    resumeBtn.getComponent<ButtonComponent>().onPress = []() {
+        SceneManager::removeChildScene("PauseMenu");
+        Engine::pauseGameEvents(false);
+    };
+    ```
+
+Because `addChildScene` puts the scene at the top of the layer list, the overlay always
+draws above the gameplay below it. `removeChildScene` takes it back out and leaves the
+main scene and other layers untouched.
+
+### Knowing where you are
+
+`SceneManager` also reports the current state, which is handy for transition logic and
+save systems:
+
+| Query | Returns |
+| --- | --- |
+| `SceneManager.getCurrentSceneName()` | Name of the most recently loaded scene |
+| `SceneManager.getCurrentSceneId()` | ID of the most recently loaded scene |
+| `SceneManager.getSceneNames()` | All registered scene names |
+| `SceneManager.getSceneId(name)` | Numeric ID for a name (`0` if unknown) |
+
+See the [SceneManager reference](../reference/classes/scenemanager.md) for the complete
+API.
+
+## Creating UIs as scenes
+
+User interfaces fit the child-scene model naturally. The recommended pattern is to author
+each interface — HUD, main menu, pause menu, settings — as its own **UI scene**, then
+bring it on screen as a layer:
+
+1. Create a [**UI scene**](user-interface.md) and add widgets to it
+   ([`Panel`](../reference/classes/panel.md), [`Button`](../reference/classes/button.md),
+   [`Text`](../reference/classes/text.md), and so on).
+2. Add it as a **child scene** of the gameplay scene it belongs to.
+3. Choose its [**Start active**](#start-active) flag:
+    - **On** for a permanent HUD that should appear with the level.
+    - **Off** for a menu or dialog you open later with `SceneManager.addChildScene`.
+4. Keep the UI scene **last** in the child list so its widgets draw above the game.
+
+Because a UI scene is screen-space and self-contained, you can swap menus without touching
+gameplay data and load or unload interfaces independently. For widget construction,
+anchoring, events, and canvas scaling, see the [User Interface](user-interface.md) manual
+and the [First UI Scene](../tutorials/first-ui-scene.md) tutorial.
 
 ## Bundles
 
@@ -191,6 +364,13 @@ Bundle **registration** is generated automatically by the export step (it emits 
 `registerBundle` call that wires the factory to the bundle name/ID). At runtime you
 mainly call `createBundle` and `destroyBundle`. Note that `createBundle` takes the bundle
 **name first, then the scene**, and returns the root `Entity`.
+
+!!! note "There is no direct `.bundle` file loader"
+    You don't load a `.bundle` file by path at runtime. Export turns each file into a
+    registered factory, and you spawn it by the **bundle name** — the file's path with the
+    `.bundle` extension removed and forward slashes (so `bundles/enemies/EnemyShip.bundle`
+    is created as `"enemies/EnemyShip"`). Use `BundleManager.getBundleNames()` to list
+    everything that is registered.
 
 === "Lua"
 

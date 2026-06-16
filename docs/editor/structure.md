@@ -13,6 +13,36 @@ entity, but only entities with a `Transform` participate in the spatial hierarch
 The top node is the selected scene. Child scenes are shown before entities. If a child
 scene is expanded inline, its entities are shown under that child scene node.
 
+## Child scenes
+
+A scene can reference other scenes as **child scenes** so they load and run together as
+one [scene stack](../manual/scenes-and-entities.md#scene-stacks). Child scene nodes appear
+above the parent's entities, tinted to set them apart.
+
+**Add a child scene** in one of two ways:
+
+- Right-click the scene root and choose **Add child scene → _SceneName_** (the submenu
+  lists every other scene that is not already attached).
+- Drag a `.scene` file from the [Resources Browser](resources.md) onto the scene root.
+
+**Right-click a child scene node** for its menu:
+
+| Action | Effect |
+| --- | --- |
+| **Start active** | Toggles whether the child scene is added to the engine automatically when the parent loads. On (the default) means it runs immediately; off means it is built but hidden until you call `SceneManager.addChildScene` at runtime. |
+| **Remove child scene** | Detaches the reference (it does not delete the scene file). |
+
+Click the **eye icon** on a child scene node to load it *inline* — its entities appear
+nested under the node so you can view and edit them in the parent's context. This is an
+editing convenience and does not affect runtime behavior.
+
+**Order matters:** scenes render as layers, with the main scene at the bottom and each
+child scene drawn on top of the ones listed above it — so the last child scene is the
+topmost layer. The order follows the order you added the child scenes; to change it,
+remove them and add them back in the sequence you want (top-most last). See
+[Child scenes](../manual/scenes-and-entities.md#child-scenes) in the manual for the full
+runtime model.
+
 ## Empty entity vs empty object
 
 ![Create entity from the Structure panel](../assets/screenshots/editor-create-entity.png)
