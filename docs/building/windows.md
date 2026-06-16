@@ -43,6 +43,26 @@ OpenGL Core instead with `-DGRAPHIC_BACKEND=glcore` when configuring a runtime b
 
     With Ninja the executable is created directly under `build/`.
 
+## Building with MinGW (GCC)
+
+The default and recommended Windows toolchain is MSVC. You can instead build with a
+MinGW-w64 GCC toolchain — for example from [MSYS2](https://www.msys2.org/) — with
+`gcc`, `g++` and `ninja` on `PATH`:
+
+```bash
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -G "Ninja" ^
+  -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++
+cmake --build build --config Release --target doriax-editor
+```
+
+!!! warning "A MinGW editor only loads MinGW C++ plugins"
+    The editor and your compiled C++ scripts share a single engine instance, so they must
+    use the same C++ ABI. A MinGW-built editor can therefore only build and load **MinGW
+    GCC** plugins — not MSVC ones — while the official MSVC download is the reverse; the
+    two never mix. Most users should stay on the MSVC build and only choose MinGW if they
+    specifically need a GCC plugin toolchain. See
+    [C++ Build Setup → Choosing a compiler](../manual/cpp-build-setup.md#choosing-a-compiler).
+
 ## Runtime project build
 
 For an exported or standalone runtime project, configure the engine directory and pass
