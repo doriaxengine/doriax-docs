@@ -73,6 +73,10 @@ and receive shadows in real time.
 The runtime supports up to six active lights and cascaded shadow maps for directional
 lighting. Use `Scene::setShadowsPCF(true)` when you want smoother shadow filtering.
 
+Enable **screen-space ambient occlusion** with `Scene::setSSAOEnabled(true)` to add soft
+contact shading in creases and corners. It affects ambient/indirect light only — see
+[Rendering Pipeline — Ambient occlusion (SSAO)](rendering-pipeline.md#ambient-occlusion-ssao).
+
 ## Environment
 
 Add atmosphere to your scenes with:

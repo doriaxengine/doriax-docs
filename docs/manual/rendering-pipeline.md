@@ -189,6 +189,54 @@ toggled, so you can compare lit-only vs environment-lit looks before play mode.
     The render system uses the first Sky component in the scene for both drawing and IBL
     generation. Keep a single active sky environment unless you know you are replacing it.
 
+## Ambient occlusion (SSAO)
+
+Screen-space ambient occlusion darkens creases, corners, and contact areas where ambient
+light is naturally blocked. Like Godot, Unity, and Unreal, it modulates only the
+**ambient/indirect** term (IBL or global illumination) — direct light from your sun, point,
+and spot lights is left untouched — so it reads as soft contact shading rather than a
+second shadow.
+
+Each frame the render system runs a small depth pre-pass for the main camera, derives
+occlusion from a rotated hemisphere kernel, blurs it, and the lit mesh shader multiplies
+the result into its ambient term.
+
+SSAO is a scene setting:
+
+```cpp
+scene.setSSAOEnabled(true);
+scene.setSSAORadius(0.5f);     // view-space sampling radius (world units)
+scene.setSSAOIntensity(1.0f);  // strength (exponent on the occlusion factor)
+scene.setSSAOBias(0.025f);     // depth bias to avoid self-occlusion acne
+```
+
+```lua
+scene.ssaoEnabled = true
+scene.ssaoRadius = 0.5
+scene.ssaoIntensity = 1.0
+scene.ssaoBias = 0.025
+```
+
+In the editor, the same controls live under **Scene → Ambient Occlusion (SSAO)** in the
+Properties window, including a **Debug View** toggle that renders the raw AO buffer so you
+can tune radius/intensity/bias directly.
+
+| Parameter | Effect |
+| --- | --- |
+| **Radius** | How far samples reach in view space — larger is broader/softer, smaller stays in tight creases |
+| **Intensity** | Darkening strength; raise to make occlusion more pronounced |
+| **Bias** | Pushes samples off the surface to stop flat areas self-occluding (acne) |
+
+Because the effect only touches ambient light, it is most visible with a strong ambient
+source — raise **Global Illumination Intensity** or use IBL if SSAO looks too subtle in a
+scene lit mainly by direct light.
+
+!!! note "Scope and limitations"
+    SSAO is computed for the main camera; render-to-texture cameras and terrain are
+    currently excluded (terrain would exceed the shader's sampler limit). Surface normals
+    are reconstructed from depth, which is fast but slightly softer at silhouettes than a
+    dedicated normal buffer. Enabling SSAO recompiles lit mesh shaders.
+
 ## Framebuffers and render-to-texture
 
 A camera can capture its output to a texture instead of the screen — for minimaps,

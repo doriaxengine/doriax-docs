@@ -40,6 +40,11 @@ A `Scene` is the root container for all objects, systems, and resources in a pro
 | [LightState](#lightstate) | [lightState](#lightstate_1) | `AUTO` | C++ \| Lua |
 | float | [globalIlluminationIntensity](#globalilluminationintensity) | `1.0` | C++ \| Lua |
 | Vector3 | [globalIlluminationColor](#globalilluminationcolor) | `(1,1,1)` | C++ \| Lua |
+| bool | [ssaoEnabled](#ssaoenabled) | `false` | C++ \| Lua |
+| float | [ssaoRadius](#ssaoradius) | `0.5` | C++ \| Lua |
+| float | [ssaoIntensity](#ssaointensity) | `1.0` | C++ \| Lua |
+| float | [ssaoBias](#ssaobias) | `0.025` | C++ \| Lua |
+| bool | [ssaoDebug](#ssaodebug) | `false` | C++ \| Lua |
 | [UIEventState](#uieventstate) | [enableUIEvents](#enableuievents) | `NOT_SET` | C++ \| Lua |
 
 ### Methods
@@ -62,6 +67,16 @@ A `Scene` is the root container for all objects, systems, and resources in a pro
 | void | [setGlobalIllumination](#setglobalillumination) | C++ \| Lua |
 | float | [getGlobalIlluminationIntensity](#setglobalillumination) | C++ \| Lua |
 | Vector3 | [getGlobalIlluminationColor](#setglobalillumination) | C++ \| Lua |
+| void | [setSSAOEnabled](#ssaoenabled) | C++ \| Lua |
+| bool | [isSSAOEnabled](#ssaoenabled) | C++ \| Lua |
+| void | [setSSAORadius](#ssaoradius) | C++ \| Lua |
+| float | [getSSAORadius](#ssaoradius) | C++ \| Lua |
+| void | [setSSAOIntensity](#ssaointensity) | C++ \| Lua |
+| float | [getSSAOIntensity](#ssaointensity) | C++ \| Lua |
+| void | [setSSAOBias](#ssaobias) | C++ \| Lua |
+| float | [getSSAOBias](#ssaobias) | C++ \| Lua |
+| void | [setSSAODebug](#ssaodebug) | C++ \| Lua |
+| bool | [isSSAODebug](#ssaodebug) | C++ \| Lua |
 | void | [enableUIEvents](#enableuievents_1) | C++ \| Lua |
 | bool | [isEnableUIEvents](#isenableuievents) | C++ \| Lua |
 | bool | [canReceiveUIEvents](#canreceiveuievents) | C++ \| Lua |
@@ -126,6 +141,51 @@ Part of [setGlobalIllumination](#setglobalillumination). Controls the brightness
 ### globalIlluminationColor
 
 Part of [setGlobalIllumination](#setglobalillumination). Controls the tint of the ambient light (linear color, [0,1] per channel).
+
+---
+
+### ssaoEnabled
+
+* *Setter:* `void setSSAOEnabled(bool enabled)`
+* *Getter:* `bool isSSAOEnabled() const`
+
+Enables screen-space ambient occlusion. SSAO darkens the ambient/indirect lighting (IBL or global illumination) in creases and contact areas; it does not affect direct light. Toggling it recompiles lit mesh shaders. Applies to the main camera; terrain is currently excluded.
+
+---
+
+### ssaoRadius
+
+* *Setter:* `void setSSAORadius(float radius)`
+* *Getter:* `float getSSAORadius() const`
+
+View-space sampling radius (world units). Larger values gather occlusion from farther surfaces (broader, softer AO); smaller values keep it to tight contact creases.
+
+---
+
+### ssaoIntensity
+
+* *Setter:* `void setSSAOIntensity(float intensity)`
+* *Getter:* `float getSSAOIntensity() const`
+
+Strength of the effect, applied as an exponent on the occlusion factor — higher values darken occluded areas more.
+
+---
+
+### ssaoBias
+
+* *Setter:* `void setSSAOBias(float bias)`
+* *Getter:* `float getSSAOBias() const`
+
+View-space depth bias that prevents self-occlusion artifacts (acne) on flat surfaces. Increase slightly if flat areas appear dirty; keep small to preserve fine contact detail.
+
+---
+
+### ssaoDebug
+
+* *Setter:* `void setSSAODebug(bool debug)`
+* *Getter:* `bool isSSAODebug() const`
+
+Debug aid: when enabled, lit meshes output the raw screen-space AO buffer as grayscale instead of their shaded color, so you can inspect and tune the occlusion directly. Not serialized.
 
 ---
 
