@@ -45,6 +45,13 @@ A `Scene` is the root container for all objects, systems, and resources in a pro
 | float | [ssaoIntensity](#ssaointensity) | `1.0` | C++ \| Lua |
 | float | [ssaoBias](#ssaobias) | `0.025` | C++ \| Lua |
 | bool | [ssaoDebug](#ssaodebug) | `false` | C++ \| Lua |
+| bool | [ssrEnabled](#ssrenabled) | `false` | C++ \| Lua |
+| float | [ssrMaxDistance](#ssrmaxdistance) | `8.0` | C++ \| Lua |
+| float | [ssrThickness](#ssrthickness) | `0.5` | C++ \| Lua |
+| int | [ssrMaxSteps](#ssrmaxsteps) | `48` | C++ \| Lua |
+| float | [ssrIntensity](#ssrintensity) | `1.0` | C++ \| Lua |
+| float | [ssrBlur](#ssrblur) | `0.0` | C++ \| Lua |
+| int | [ssrDebugMode](#ssrdebugmode) | `0` | C++ \| Lua |
 | [UIEventState](#uieventstate) | [enableUIEvents](#enableuievents) | `NOT_SET` | C++ \| Lua |
 
 ### Methods
@@ -77,6 +84,20 @@ A `Scene` is the root container for all objects, systems, and resources in a pro
 | float | [getSSAOBias](#ssaobias) | C++ \| Lua |
 | void | [setSSAODebug](#ssaodebug) | C++ \| Lua |
 | bool | [isSSAODebug](#ssaodebug) | C++ \| Lua |
+| void | [setSSREnabled](#ssrenabled) | C++ \| Lua |
+| bool | [isSSREnabled](#ssrenabled) | C++ \| Lua |
+| void | [setSSRMaxDistance](#ssrmaxdistance) | C++ \| Lua |
+| float | [getSSRMaxDistance](#ssrmaxdistance) | C++ \| Lua |
+| void | [setSSRThickness](#ssrthickness) | C++ \| Lua |
+| float | [getSSRThickness](#ssrthickness) | C++ \| Lua |
+| void | [setSSRMaxSteps](#ssrmaxsteps) | C++ \| Lua |
+| int | [getSSRMaxSteps](#ssrmaxsteps) | C++ \| Lua |
+| void | [setSSRIntensity](#ssrintensity) | C++ \| Lua |
+| float | [getSSRIntensity](#ssrintensity) | C++ \| Lua |
+| void | [setSSRBlur](#ssrblur) | C++ \| Lua |
+| float | [getSSRBlur](#ssrblur) | C++ \| Lua |
+| void | [setSSRDebugMode](#ssrdebugmode) | C++ \| Lua |
+| int | [getSSRDebugMode](#ssrdebugmode) | C++ \| Lua |
 | void | [enableUIEvents](#enableuievents_1) | C++ \| Lua |
 | bool | [isEnableUIEvents](#isenableuievents) | C++ \| Lua |
 | bool | [canReceiveUIEvents](#canreceiveuievents) | C++ \| Lua |
@@ -186,6 +207,69 @@ View-space depth bias that prevents self-occlusion artifacts (acne) on flat surf
 * *Getter:* `bool isSSAODebug() const`
 
 Debug aid: when enabled, lit meshes output the raw screen-space AO buffer as grayscale instead of their shaded color, so you can inspect and tune the occlusion directly. Not serialized.
+
+---
+
+### ssrEnabled
+
+* *Setter:* `void setSSREnabled(bool ssrEnabled)`
+* *Getter:* `bool isSSREnabled() const`
+
+Enables screen-space reflections. SSR reflects on-screen geometry by marching the camera depth/G-buffer, and where it finds a hit it *replaces* the surface's IBL environment reflection rather than adding to it (falling back to IBL where the ray misses). Requires a framebuffer destination (editor viewport, render-to-texture camera, or engine framebuffer) and applies to the main camera. Toggling it reloads meshes to build the G-buffer shaders.
+
+---
+
+### ssrMaxDistance
+
+* *Setter:* `void setSSRMaxDistance(float maxDistance)`
+* *Getter:* `float getSSRMaxDistance() const`
+
+Maximum reflection ray length in view-space units. Longer rays catch more distant reflections at higher cost. Default `8.0`.
+
+---
+
+### ssrThickness
+
+* *Setter:* `void setSSRThickness(float thickness)`
+* *Getter:* `float getSSRThickness() const`
+
+Depth-compare tolerance (view-space units) for accepting a ray hit. Smaller is stricter; larger fills gaps but can smear at object contacts. Default `0.5`.
+
+---
+
+### ssrMaxSteps
+
+* *Setter:* `void setSSRMaxSteps(int maxSteps)`
+* *Getter:* `int getSSRMaxSteps() const`
+
+Linear march sample count. Higher gives sharper, longer reflections (and helps thin contacts register) at more cost. Default `48`.
+
+---
+
+### ssrIntensity
+
+* *Setter:* `void setSSRIntensity(float intensity)`
+* *Getter:* `float getSSRIntensity() const`
+
+Overall reflection strength multiplier applied in the composite. Default `1.0`.
+
+---
+
+### ssrBlur
+
+* *Setter:* `void setSSRBlur(float blur)`
+* *Getter:* `float getSSRBlur() const`
+
+Glossy blur amount in `[0..1]`. `0` keeps mirror-sharp reflections; higher values blur the reflection in proportion to each surface's roughness. Default `0.0`.
+
+---
+
+### ssrDebugMode
+
+* *Setter:* `void setSSRDebugMode(int mode)`
+* *Getter:* `int getSSRDebugMode() const`
+
+Debug visualization of the SSR G-buffer, rendered full-screen: `0` off, `1` reflection buffer, `2` normal, `3` roughness, `4` metallic, `5` albedo, `6` IBL specular. Not serialized.
 
 ---
 

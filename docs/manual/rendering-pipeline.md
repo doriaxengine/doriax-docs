@@ -233,9 +233,81 @@ scene lit mainly by direct light.
 
 !!! note "Scope and limitations"
     SSAO is computed for the main camera; render-to-texture cameras and terrain are
-    currently excluded (terrain would exceed the shader's sampler limit). Surface normals
-    are reconstructed from depth, which is fast but slightly softer at silhouettes than a
-    dedicated normal buffer. Enabling SSAO recompiles lit mesh shaders.
+    currently excluded (terrain would exceed the shader's sampler limit). Normals are
+    reconstructed from depth when SSAO runs alone; when
+    [SSR](#screen-space-reflections-ssr) is also enabled SSAO reuses the SSR G-buffer's
+    depth **and** geometric normals — a single shared geometry pass, and sharper at
+    silhouettes. Enabling SSAO recompiles lit mesh shaders.
+
+## Screen-space reflections (SSR)
+
+Screen-space reflections add real-time reflections of on-screen geometry — wet floors,
+polished metal, glossy surfaces — by marching the camera depth buffer in screen space and
+sampling the lit scene colour where a reflected ray hits. Like Godot and Unity, SSR is
+*energy-conserving*: where a ray finds a hit it **replaces** the surface's
+[IBL](#image-based-lighting-ibl) environment reflection rather than adding on top of it, and
+where a ray misses (off-screen or occluded) the IBL reflection remains as the fallback. So
+SSR refines what IBL already provides instead of double-counting it.
+
+When SSR is enabled the main camera first renders a small **G-buffer** geometry pre-pass —
+packed depth, view-space normal, roughness/metallic, and base colour — then runs three
+fullscreen passes:
+
+1. **March** — reflect the view ray about the G-buffer normal and step it through depth
+   (with a binary-search refine) until it crosses on-screen geometry.
+2. **Glossy blur** *(optional)* — blurs the reflection in proportion to surface roughness,
+   so rough materials get soft reflections while mirrors stay sharp.
+3. **Composite** — recomputes the surface's IBL specular and blends the reflection over it
+   with the correct GGX reflectance (including metal tint), writing the final image.
+
+The opaque colour pass is rendered into an offscreen buffer first so the march has a full
+scene-colour image to sample. SSR therefore requires a framebuffer destination — the editor
+viewport, a [render-to-texture](#framebuffers-and-render-to-texture) camera, or an engine
+framebuffer.
+
+SSR is a scene setting:
+
+```cpp
+scene.setSSREnabled(true);
+scene.setSSRMaxDistance(8.0f);   // max ray length in view-space units
+scene.setSSRThickness(0.5f);     // depth-compare tolerance (view-space units)
+scene.setSSRMaxSteps(48);        // linear march sample count (quality vs cost)
+scene.setSSRIntensity(1.0f);     // reflection strength multiplier
+scene.setSSRBlur(0.0f);          // glossy blur amount [0..1] (0 = sharp/mirror)
+```
+
+```lua
+scene.ssrEnabled = true
+scene.ssrMaxDistance = 8.0
+scene.ssrThickness = 0.5
+scene.ssrMaxSteps = 48
+scene.ssrIntensity = 1.0
+scene.ssrBlur = 0.0
+```
+
+In the editor the same controls live under **Scene → Screen-Space Reflections (SSR)** in the
+Properties window, plus a **Debug View** dropdown for tuning.
+
+| Parameter | Effect |
+| --- | --- |
+| **Max Distance** | How far a reflection ray travels in view space before giving up |
+| **Thickness** | Depth tolerance for accepting a hit — smaller is stricter; larger fills gaps but can smear at contacts |
+| **Max Steps** | March sample count — higher gives sharper/longer reflections at more cost; raise it if reflections miss thin contacts |
+| **Intensity** | Overall reflection strength |
+| **Glossy Blur** | `0` = mirror; raise to blur reflections by surface roughness |
+
+**Debug View** renders one G-buffer channel full-screen: `Reflection` (the raw reflection
+buffer), `Normal`, `Roughness`, `Metallic`, `Albedo`, or `IBL Specular` (the recomputed
+environment term SSR blends against — compare it with the in-scene reflections to confirm
+the energy match). `Off` shows the normal render. Per-pixel roughness, metallic, and base
+colour come from the material factors and the metallic-roughness / base-colour textures.
+
+!!! note "Scope and limitations"
+    SSR is screen-space, so it only reflects what is currently on screen: reflections fade
+    out near the screen edges and cannot show off-screen or occluded geometry (IBL fills
+    those in). Thin contact lines where an object meets a reflective surface can leave a
+    small seam — raise **Max Steps** or lower **Thickness** to tighten it. SSR runs for the
+    main camera only and is skipped when there is no framebuffer destination.
 
 ## Framebuffers and render-to-texture
 
@@ -361,6 +433,7 @@ Instances can be modified later with `updateInstance(index, ...)` and read back 
 | Mobile shaders | Simplify PBR (skip normal maps, lower cascade count) |
 | Render targets | Minimize framebuffer resolution for off-screen effects |
 | Mirrors | Each mirror re-renders the scene once per frame; keep one hero reflection and lower its target resolution if needed |
+| SSR | Adds a G-buffer geometry pass plus fullscreen march/blur/composite passes; lower **Max Steps** for cost, and it shares its geometry pass with SSAO when both are on |
 | Textures | Use compressed formats (ETC2/BC) on mobile/desktop respectively |
 
 ## See also
