@@ -51,6 +51,7 @@ Control engine properties and define defaults used across the whole project. `En
 | static int | [preferredCanvasHeight](#preferredcanvaswidth-preferredcanvasheight) | — | C++ \| Lua |
 | static Rect | [viewRect](#viewrect) | — | C++ \| Lua |
 | static float | [deltatime](#deltatime) | — | C++ \| Lua |
+| static float | [maxDeltatime](#maxdeltatime) | `0.25` | C++ \| Lua |
 | static float | [framerate](#framerate) | — | C++ \| Lua |
 | static double | [systemTime](#systemtime) | — | C++ \| Lua |
 | static [Platform](#platform) | [platform](#platform_1) | — | C++ \| Lua |
@@ -275,13 +276,27 @@ Viewport rectangle computed from canvas size, screen size, and scaling mode.
 
 Time elapsed in **seconds** since the last draw frame. Multiply movement speeds by `deltatime` inside `onUpdate` to make motion frame-rate independent.
 
+The value is **clamped** to [maxDeltatime](#maxdeltatime). After a long stall — the first frame of a scene (which includes load time), a debugger break, or an alt-tab — the real elapsed time can be several seconds. Returning that unclamped would teleport anything driven by `deltatime` in a single step (and could trigger a physics "spiral of death"). Clamping makes the simulation skip the lost time instead. This matches Unity's `Time.deltaTime` / `Time.maximumDeltaTime` and Godot's max-step behaviour.
+
+> **Tip:** Even with clamping, prefer [`Vector3::moveTowards`](vector3.md#movetowards) over `direction * speed * deltatime` for "move to a target" logic — it clamps the step to the remaining distance so it can never overshoot, regardless of frame time.
+
+---
+
+### maxDeltatime
+
+* *Getter:* `static float getMaxDeltatime()`
+* *Setter:* `static void setMaxDeltatime(float seconds)`
+* *Default:* `0.25`
+
+Upper bound, in **seconds**, for the value returned by [deltatime](#deltatime) and used by the update loop. Lower it for stricter clamping; raise it to allow larger single steps. Must be greater than `0`. Equivalent to Unity's `Time.maximumDeltaTime`.
+
 ---
 
 ### framerate
 
 * *Getter:* `static float getFramerate()`
 
-Current frames-per-second estimate.
+Current frames-per-second estimate. Computed from the **raw** (unclamped) frame time, so it stays accurate even on stalled frames where [deltatime](#deltatime) is clamped.
 
 ---
 

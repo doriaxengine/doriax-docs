@@ -45,6 +45,8 @@ All arithmetic operators (`+`, `-`, `*`, `/`) support both component-wise vector
 | Vector3 | [normalized](#normalize-normalized) | C++ \| Lua |
 | float | [normalizeL](#normalizel) | C++ \| Lua |
 | Vector3 | [midPoint](#midpoint) | C++ \| Lua |
+| Vector3 | [moveTowards](#movetowards) | C++ \| Lua |
+| Vector3 | [lerp](#lerp) | C++ \| Lua |
 | Vector3 | [perpendicular](#perpendicular) | C++ \| Lua |
 | Vector3 | [reflect](#reflect) | C++ \| Lua |
 | void | [makeFloor](#makefloor-makeceil) | C++ \| Lua |
@@ -128,6 +130,38 @@ Normalises in-place and returns the original magnitude in a single operation.
 * Vector3 **midPoint**(const Vector3& v) const
 
 Returns the midpoint between this vector and `v`.
+
+---
+
+### moveTowards
+
+* Vector3 **moveTowards**(const Vector3& target, float maxDistanceDelta) const
+
+Returns a point moved from `*this` toward `target` by at most `maxDistanceDelta`, **never overshooting** — once the remaining distance is within `maxDistanceDelta`, `target` is returned exactly. Pass `speed * deltatime` as `maxDistanceDelta` for frame-rate independent movement. This is the preferred way to move toward a target, since the naïve `direction * speed * deltatime` overshoots when the step is larger than the remaining distance (for example on the first, large [deltatime](engine.md#deltatime) frame). Equivalent to Unity's `Vector3.MoveTowards` and Godot's `Vector3.move_toward`.
+
+=== "C++"
+    ```cpp
+    void MyScript::onUpdate() {
+        float step = speed * Engine::getDeltatime();
+        setPosition(getPosition().moveTowards(targetPosition, step));
+    }
+    ```
+
+=== "Lua"
+    ```lua
+    function MyScript:onUpdate()
+        local step = self.speed * Engine.getDeltatime()
+        self:setPosition(self:getPosition():moveTowards(self.targetPosition, step))
+    end
+    ```
+
+---
+
+### lerp
+
+* Vector3 **lerp**(const Vector3& target, float t) const
+
+Linear interpolation from `*this` toward `target` by factor `t`. `t = 0` returns `*this`, `t = 1` returns `target`. Unlike [moveTowards](#movetowards), the step is proportional to the remaining distance (eases as it approaches). Values outside `[0, 1]` extrapolate.
 
 ---
 
