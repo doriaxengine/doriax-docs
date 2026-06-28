@@ -81,6 +81,7 @@ nav:
       - Tileset Slicer: 'editor/tileset-slicer.md'
       - Animation Timeline: 'editor/animation.md'
       - Code Editor: 'editor/code-editor.md'
+      - Custom Shaders: 'editor/custom-shaders.md'
       - Export Window: 'editor/export.md'
       - Command-Line Tools: 'editor/command-line.md'
   - Manual:

@@ -14,7 +14,7 @@ sudo apt install -y \
   build-essential cmake ninja-build python3 \
   libglfw3-dev libxi-dev libxcursor-dev libxrandr-dev libxinerama-dev \
   libwayland-dev libxkbcommon-dev wayland-protocols extra-cmake-modules \
-  libgl1-mesa-dev libdbus-1-dev
+  libgl1-mesa-dev libdbus-1-dev libcurl4-openssl-dev
 ```
 
 | Package | Purpose |
@@ -27,6 +27,7 @@ sudo apt install -y \
 | `libwayland-dev`, `libxkbcommon-dev`, `wayland-protocols` | Wayland support through GLFW/native dialogs |
 | `libgl1-mesa-dev` | OpenGL headers |
 | `libdbus-1-dev` | Native file dialog / portal support |
+| `libcurl4-openssl-dev` | HTTP client for the editor's AI assistant (Windows uses native WinHTTP instead) |
 
 ## 2. Clone the repository
 

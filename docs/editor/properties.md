@@ -48,7 +48,7 @@ Most fields are edited with the mouse or keyboard directly in the panel:
 | Colors | Color picker with RGBA sliders |
 | Booleans | Toggle checkbox |
 | Strings | Inline text input |
-| Textures / assets | Drag from the Resources Browser, type the asset path, or pick a **camera** as the source (camera button / drag a camera entity) for render-to-texture |
+| Textures / assets | Drag from the Resources Browser, type the asset path, or pick a **camera** as the source (camera button / drag a camera entity) for render-to-texture. For an `.svg` source, a vector-square button opens an **SVG Scale** control |
 | Entity references | Drag an entity from the Structure panel |
 | Enumerations | Drop-down selection |
 
@@ -57,6 +57,14 @@ camera is switched to render-to-texture automatically and can no longer be the s
 main camera. This is the manual building block behind effects like minimaps and monitors;
 for reflections, prefer the [Mirror component](#mirror-component), which manages its own
 camera.
+
+When the field points at an `.svg` file, an extra vector-square button appears next to the
+camera button. It opens a popup to set the **SVG Scale** — a multiplier on the vector's
+intrinsic size (a slider plus 0.5×–4× presets) — so the image rasterizes crisp when drawn
+larger or on high-DPI displays. The scale is stored on the texture reference, so different
+slots can use the same SVG at different resolutions. See
+[Vector images (SVG)](../manual/resources-and-assets.md#vector-images-svg) for the
+underlying behavior.
 
 ## Mesh materials and IBL
 
@@ -91,6 +99,17 @@ with the file.
 
 You can also drop a single **image** onto the Material row to assign only the base colour
 texture without replacing the rest of the material.
+
+## Custom shaders
+
+Mesh, UI, Points, Lines, and Sky components expose a **Shader** row. By default it shows
+**Built-in**; click **Customize** to fork the built-in shader into your project and edit
+its GLSL in the Code Editor. **Edit** reopens the assigned shader and **Reset to
+Built-in** returns to the engine default. You can also drag an existing `.vert`/`.frag`
+from the Resources Browser onto the row.
+
+See [Custom Shaders](custom-shaders.md) for the full workflow, includes, and project
+settings.
 
 ## Sky component
 

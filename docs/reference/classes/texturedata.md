@@ -11,6 +11,7 @@ CPU pixel buffer for textures.
 | Name | Languages |
 | --- | --- |
 | `dataOwned` | C++ \| Lua |
+| `svgScale` | C++ \| Lua |
 
 ## Methods
 

@@ -12,7 +12,7 @@ then loaded on demand by the runtime as needed.
 
 | Asset type | Formats | Loaded by |
 | --- | --- | --- |
-| **Textures** | PNG, JPG, TGA, BMP, PSD, HDR | `Texture`, texture pools |
+| **Textures** | PNG, JPG, TGA, BMP, PSD, HDR, SVG | `Texture`, texture pools |
 | **3D Models** | GLTF, GLB, OBJ | `Model`, `MeshSystem` |
 | **Materials** | Engine `.material` files (YAML) | `Material` struct, linked from mesh submeshes |
 | **Audio** | OGG, WAV, MP3, FLAC | `SoundPool`, `Sound` |
@@ -53,6 +53,43 @@ Most high-level objects accept a file path and load the resource automatically:
     Sound sfx(&scene);
     sfx.loadSound("audio/jump.ogg");
     ```
+
+## Vector images (SVG)
+
+`.svg` files are treated as textures: they are **rasterized to RGBA when loaded**, so they
+work anywhere a raster texture does — sprites, UI images, and material maps. Only the
+features of the bundled rasterizer are drawn (basic shapes, paths, solid and gradient fills,
+and strokes); there is no text or filter/effect support, so convert text to paths when
+authoring.
+
+By default an SVG is rasterized at its intrinsic size (the `width`/`height` or `viewBox` in
+the file). Because a vector is resolution-independent, you can rasterize it larger for crisp
+results on high-DPI displays or when the image is drawn bigger than its native size. The
+rasterization scale is set per texture (`2.0` = twice the intrinsic resolution) and has no
+effect on raster images:
+
+=== "Lua"
+
+    ```lua
+    local data = TextureData()
+    data.svgScale = 4
+    data:loadTextureFromFile("ui/icon.svg")  -- a 24x24 SVG -> 96x96 texture
+    ```
+
+=== "C++"
+
+    ```cpp
+    TextureData data;
+    data.setSVGScale(4.0f);
+    data.loadTextureFromFile("ui/icon.svg");  // a 24x24 SVG -> 96x96 texture
+    ```
+
+A scale can also be carried in the texture path itself as `"ui/icon.svg?svgScale=4"`, so a
+`Texture` reference keeps its scale through serialization and export — the runtime strips
+the suffix and loads the file at that scale. This is what the editor's per-slot **SVG Scale**
+control writes; see [Properties — texture fields](../editor/properties.md). The rasterized
+size is capped to a GPU-friendly limit, so very large scales are rejected rather than
+allocated.
 
 ## Material files
 

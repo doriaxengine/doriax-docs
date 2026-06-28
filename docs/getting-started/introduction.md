@@ -61,9 +61,9 @@ This documentation follows a broad structure similar to large engine manuals:
 - Scene serialization, texture and shader pools, and multithreading
 - 3D audio
 
-!!! note "Editor coverage"
-    Direct shader manipulation is available at the engine/runtime level but is not yet
-    fully integrated into the editor's visual tools.
+!!! tip "Custom shaders"
+    Fork, edit, and customize the built-in shaders for Mesh, UI, Points, Lines, and Sky
+    components directly in the editor — see [Custom Shaders](../editor/custom-shaders.md).
 
 ## Platforms
 

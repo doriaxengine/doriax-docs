@@ -16,6 +16,7 @@ dialogs, and a live output panel for compile and export messages.
 | --- | --- |
 | **Lua scripts** | Fast iteration — script-only changes take effect immediately in play mode without rebuilding |
 | **C++ scripts** | Compiled at export/build time for native performance; require a rebuild to take effect |
+| **GLSL shaders** | Edit forked shader sources (`.vert`/`.frag`/`.glsl`); saving recompiles and refreshes the viewport. See [Custom Shaders](custom-shaders.md) |
 | **Script templates** | Create new Lua or C++ script files from boilerplate using the **New Script** dialog |
 | **API completion** | Engine API suggestions generated from Lua bindings; covers classes, methods, and constants |
 | **Build output** | Compiler errors, warnings, and export messages stream into the Output panel |
