@@ -32,7 +32,7 @@
   --accent-2: #6da0ff;
   --accent-3: #38d0ff;
   --accent-text: #4b93ff;
-  --accent-gradient: linear-gradient(120deg, #2f6bff 0%, #38d0ff 100%);
+  --accent-gradient: linear-gradient(135deg, #2f6bff 0%, #57a5ff 100%);
   --accent-glow: rgba(47, 107, 255, 0.35);
   --accent-soft: rgba(47, 107, 255, 0.1);
 
