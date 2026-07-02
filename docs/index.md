@@ -7,7 +7,7 @@ description: Official documentation for the Doriax game engine — a free, light
 
 <span class="dx-hero-badge">Open Source &amp; Free</span>
 
-# The lightweight engine <span class="dx-text-gradient">for 2D &amp; 3D games</span> { .dx-hero-title }
+# Lightweight engine <span class="dx-text-gradient">for 2D &amp; 3D games</span> { .dx-hero-title }
 
 Welcome to the official documentation for **Doriax Engine** — a free, lightweight,
 and efficient open-source game engine with an integrated editor for creating 2D and
@@ -88,7 +88,7 @@ and efficient open-source game engine with an integrated editor for creating 2D 
 
 <div class="dx-feature" markdown>
 **Cross-Platform**
-<p>Deploy to Windows, Linux, macOS, Android, iOS, and HTML5 with OpenGL, Metal, and DirectX backends.</p>
+<p>Deploy to Windows, Linux, macOS, Android, iOS, and HTML5 with OpenGL, Vulkan, Metal, and DirectX backends.</p>
 </div>
 
 <div class="dx-feature" markdown>

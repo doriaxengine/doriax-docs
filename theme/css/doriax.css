@@ -31,6 +31,7 @@
   --accent-1: #2f6bff;
   --accent-2: #6da0ff;
   --accent-3: #38d0ff;
+  --accent-text: #4b93ff;
   --accent-gradient: linear-gradient(120deg, #2f6bff 0%, #38d0ff 100%);
   --accent-glow: rgba(47, 107, 255, 0.35);
   --accent-soft: rgba(47, 107, 255, 0.1);
@@ -789,7 +790,7 @@ a:hover { color: var(--accent-3); }
   font-size: clamp(5rem, 18vw, 10rem);
   font-weight: 800;
   line-height: 1;
-  color: var(--accent-3);
+  color: var(--accent-text);
 }
 .dx-404-content h1 { font-size: 1.8rem; margin: 12px 0 8px; }
 .dx-404-content p { color: var(--text-secondary); margin-bottom: 28px; }
@@ -842,7 +843,7 @@ a:hover { color: var(--accent-3); }
   margin-bottom: 14px;
 }
 .dx-text-gradient {
-  color: var(--accent-3);
+  color: var(--accent-text);
 }
 .dx-hero-actions { display: flex; gap: 12px; flex-wrap: wrap; margin: 24px 0 8px; }
 

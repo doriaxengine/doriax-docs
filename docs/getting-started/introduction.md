@@ -71,7 +71,7 @@ This documentation follows a broad structure similar to large engine manuals:
 | --- | --- |
 | Editor downloads | Windows, Linux, macOS |
 | Project targets | Windows, Linux, macOS, Android, iOS, HTML5 |
-| Graphics APIs | OpenGL, Metal, DirectX |
+| Graphics APIs | OpenGL, Vulkan, Metal, DirectX |
 | Scripting | Lua, C++ |
 
 ## Next steps
