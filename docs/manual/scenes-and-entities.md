@@ -140,7 +140,7 @@ Every scene owns rendering and interaction state that affects all entities withi
 | --- | --- |
 | Active camera | The `Camera` entity used for rendering |
 | Background color | Clear color for the scene |
-| Shadows PCF | Percentage-closer filtering for smoother shadow edges |
+| Shadow quality | PCF filtering level for smoother shadow edges (`NONE` to `HIGH`) |
 | Light state | `OFF`, `ON`, or `AUTO` (auto-detects lights in the scene) |
 | Global illumination | Ambient light color and intensity |
 | UI events | Enables/disables UI input processing for the scene |

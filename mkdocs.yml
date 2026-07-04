@@ -124,6 +124,8 @@ nav:
           - Sprite: 'reference/classes/sprite.md'
           - Camera: 'reference/classes/camera.md'
           - Light: 'reference/classes/light.md'
+          - Light2D: 'reference/classes/light2d.md'
+          - Occluder2D: 'reference/classes/occluder2d.md'
           - Model: 'reference/classes/model.md'
           - Shape: 'reference/classes/shape.md'
           - Sound: 'reference/classes/sound.md'

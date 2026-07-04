@@ -29,7 +29,7 @@ the entity immediately and their defaults appear in the panel for editing.
 | Group | Typical components |
 | --- | --- |
 | **Spatial** | Transform, Camera, Light, Fog, Skybox, Mirror |
-| **2D** | Sprite, Sprite Animation, Tilemap, Polygon |
+| **2D** | Sprite, Sprite Animation, Tilemap, Polygon, 2D Light, 2D Occluder |
 | **3D** | Mesh, Model, Instanced Mesh, Terrain, Bone |
 | **Physics** | Body2D, Body3D, Joint2D, Joint3D |
 | **UI** | UILayout, Button, Text, Image, Panel, Scrollbar, Progressbar, TextEdit |

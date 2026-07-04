@@ -61,6 +61,9 @@ The rest of the create menu adds ready-configured entities (camera, light, sky, 
 sound, **mirror**), basic shapes, 2D and UI objects, physics bodies, and more — each one
 is just an entity with the right components already attached.
 
+The **2D** submenu includes **2D Light** and **2D Occluder** for the 2D lighting
+system — see [2D Graphics — 2D lighting](../manual/2d-graphics.md#2d-lighting).
+
 ### Basic shapes
 
 **Basic shape** creates a mesh entity with procedural geometry: Box, Plane, **Wall**,

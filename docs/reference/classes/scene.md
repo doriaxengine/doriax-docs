@@ -36,10 +36,13 @@ A `Scene` is the root container for all objects, systems, and resources in a pro
 | Type | Name | Default | Languages |
 | --- | --- | --- | --- |
 | Vector4 | [backgroundColor](#backgroundcolor) | `(0,0,0,1)` | C++ \| Lua |
-| bool | [shadowsPCF](#shadowspcf) | `true` | C++ \| Lua |
+| [ShadowQuality](#shadowquality) | [shadowQuality](#shadowquality_1) | `LOW` | C++ \| Lua |
 | [LightState](#lightstate) | [lightState](#lightstate_1) | `AUTO` | C++ \| Lua |
 | float | [globalIlluminationIntensity](#globalilluminationintensity) | `1.0` | C++ \| Lua |
 | Vector3 | [globalIlluminationColor](#globalilluminationcolor) | `(1,1,1)` | C++ \| Lua |
+| float | [ambientLight2DIntensity](#ambientlight2dintensity) | `1.0` | C++ \| Lua |
+| Vector3 | [ambientLight2DColor](#ambientlight2dcolor) | `(1,1,1)` | C++ \| Lua |
+| [ShadowQuality](#shadowquality) | [shadow2DQuality](#shadow2dquality) | `LOW` | C++ \| Lua |
 | bool | [ssaoEnabled](#ssaoenabled) | `false` | C++ \| Lua |
 | float | [ssaoRadius](#ssaoradius) | `0.5` | C++ \| Lua |
 | float | [ssaoIntensity](#ssaointensity) | `1.0` | C++ \| Lua |
@@ -67,13 +70,18 @@ A `Scene` is the root container for all objects, systems, and resources in a pro
 | Entity | [getCamera](#getcamera) | C++ \| Lua |
 | void | [setBackgroundColor](#setbackgroundcolor) | C++ \| Lua |
 | Vector4 | [getBackgroundColor](#setbackgroundcolor) | C++ \| Lua |
-| void | [setShadowsPCF](#setshadowspcf) | C++ \| Lua |
-| bool | [isShadowsPCF](#setshadowspcf) | C++ \| Lua |
+| void | [setShadowQuality](#shadowquality_1) | C++ \| Lua |
+| ShadowQuality | [getShadowQuality](#shadowquality_1) | C++ \| Lua |
 | void | [setLightState](#setlightstate) | C++ \| Lua |
 | LightState | [getLightState](#setlightstate) | C++ \| Lua |
 | void | [setGlobalIllumination](#setglobalillumination) | C++ \| Lua |
 | float | [getGlobalIlluminationIntensity](#setglobalillumination) | C++ \| Lua |
 | Vector3 | [getGlobalIlluminationColor](#setglobalillumination) | C++ \| Lua |
+| void | [setAmbientLight2D](#setambientlight2d) | C++ \| Lua |
+| float | [getAmbientLight2DIntensity](#setambientlight2d) | C++ \| Lua |
+| Vector3 | [getAmbientLight2DColor](#setambientlight2d) | C++ \| Lua |
+| void | [setShadow2DQuality](#shadow2dquality) | C++ \| Lua |
+| ShadowQuality | [getShadow2DQuality](#shadow2dquality) | C++ \| Lua |
 | void | [setSSAOEnabled](#ssaoenabled) | C++ \| Lua |
 | bool | [isSSAOEnabled](#ssaoenabled) | C++ \| Lua |
 | void | [setSSAORadius](#ssaoradius) | C++ \| Lua |
@@ -124,6 +132,17 @@ Entity and hierarchy methods — `createEntity`, `destroyEntity`, `setEntityName
 * **ENABLED** — This scene receives UI pointer events.
 * **DISABLED** — This scene ignores UI pointer events.
 
+---
+
+### ShadowQuality
+
+PCF filter quality of shadow edges, shared by [shadowQuality](#shadowquality) (3D shadow maps) and [shadow2DQuality](#shadow2dquality) (2D lights).
+
+* **NONE** — 1 tap, no filtering (hard edges)
+* **LOW** — 3×3 taps in 3D / 5 taps in 2D (default)
+* **MEDIUM** — 5×5 taps in 3D / 9 taps in 2D
+* **HIGH** — 7×7 taps in 3D / 13 taps in 2D
+
 ## Property details
 
 ### backgroundColor
@@ -135,12 +154,19 @@ Background clear color for the scene, in RGBA [0, 1] range. Convenience overload
 
 ---
 
-### shadowsPCF
+### shadowQuality
 
-* *Setter:* `void setShadowsPCF(bool shadowsPCF)`
-* *Getter:* `bool isShadowsPCF() const`
+* *Setter:* `void setShadowQuality(ShadowQuality quality)`
+* *Getter:* `ShadowQuality getShadowQuality() const`
 
-Enables Percentage Closer Filtering for shadow maps, producing softer shadow edges. Disable for hard-edged shadows or performance savings on mobile.
+Filter quality of 3D shadow map edges (PCF kernel size, applied instantly with no shader rebuild):
+
+* **NONE** — 1 tap, hard edges (or performance savings on mobile)
+* **LOW** — 3×3 taps (default)
+* **MEDIUM** — 5×5 taps
+* **HIGH** — 7×7 taps
+
+The same [ShadowQuality](#shadowquality) enum also drives [shadow2DQuality](#shadow2dquality) for 2D lights.
 
 ---
 
@@ -162,6 +188,44 @@ Part of [setGlobalIllumination](#setglobalillumination). Controls the brightness
 ### globalIlluminationColor
 
 Part of [setGlobalIllumination](#setglobalillumination). Controls the tint of the ambient light (linear color, [0,1] per channel).
+
+---
+
+### ambientLight2DIntensity
+
+Part of [setAmbientLight2D](#setambientlight2d). Controls the brightness of the 2D ambient light applied to 2D-lit objects. Defaults to `1.0` (fully lit), so a scene looks unchanged until you dim it.
+
+---
+
+### ambientLight2DColor
+
+Part of [setAmbientLight2D](#setambientlight2d). Controls the tint of the 2D ambient light.
+
+---
+
+### shadow2DQuality
+
+* *Setter:* `void setShadow2DQuality(ShadowQuality quality)`
+* *Getter:* `ShadowQuality getShadow2DQuality() const`
+
+Filter quality of 2D light shadows (PCF taps along the 1D polar shadow map). More taps smooth the **same** penumbra width (set per light by [Light2D — shadowSoftness](light2d.md#shadowsoftness)), removing banding on wide penumbras. Changing it takes effect immediately (no shader rebuild).
+
+* **NONE** — 1 tap, no filtering (hard edges regardless of softness)
+* **LOW** — 5 taps (default)
+* **MEDIUM** — 9 taps
+* **HIGH** — 13 taps
+
+=== "C++"
+
+    ```cpp
+    scene.setShadow2DQuality(ShadowQuality::MEDIUM);
+    ```
+
+=== "Lua"
+
+    ```lua
+    scene.shadow2DQuality = ShadowQuality.MEDIUM
+    ```
 
 ---
 
@@ -377,15 +441,6 @@ Sets the clear color used before rendering the scene each frame.
 
 ---
 
-### setShadowsPCF
-
-* `void setShadowsPCF(bool shadowsPCF)`
-* `bool isShadowsPCF() const`
-
-Enables or disables Percentage Closer Filtering for shadow rendering.
-
----
-
 ### setLightState
 
 * `void setLightState(LightState state)`
@@ -413,6 +468,28 @@ Sets the ambient (global illumination) light for the scene. Intensity scales bri
 
     ```lua
     scene:setGlobalIllumination(0.3, Vector3(1.0, 0.95, 0.9))
+    ```
+
+---
+
+### setAmbientLight2D
+
+* `void setAmbientLight2D(float intensity, Vector3 color)`
+* `void setAmbientLight2D(float intensity)`
+* `void setAmbientLight2D(Vector3 color)`
+
+Sets the ambient light for the **2D lighting path** (see [Light2D](light2d.md)). Every [Light2D](light2d.md) adds on top of this base level, so dim the ambient to make 2D lights visible. Separate from [setGlobalIllumination](#setglobalillumination), which drives the 3D PBR ambient.
+
+=== "C++"
+
+    ```cpp
+    scene.setAmbientLight2D(0.15f, Vector3(0.9f, 0.9f, 1.0f)); // dark, blueish night
+    ```
+
+=== "Lua"
+
+    ```lua
+    scene:setAmbientLight2D(0.15, Vector3(0.9, 0.9, 1.0)) -- dark, blueish night
     ```
 
 ---

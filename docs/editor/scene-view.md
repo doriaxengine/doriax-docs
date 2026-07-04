@@ -118,6 +118,23 @@ selected and the tile-paint mode is active.
 
 ![Tilemap in scene](../assets/screenshots/editor-2d-tilemap.png)
 
+### 2D lights and occluders
+
+2D lights show a **bulb icon** in the viewport — click the icon to select the light and
+drag it to move it. While selected, the light's range is drawn as a circle.
+
+Selecting an entity with an **Occluder2D component** shows its outline. For polygon
+occluders, each point gets a small handle:
+
+- **Click a handle** to select that point (it also highlights in the Properties point
+  list), then **drag the move cross** to reposition it. The drag is a single undo step
+  and respects snap-to-grid.
+- **Click the occluder body** to go back to entity-level selection, or click another
+  handle to switch points.
+
+Standalone occluder entities (no sprite) are selected by clicking anywhere inside the
+polygon's bounds. See [2D Graphics — 2D shadows](../manual/2d-graphics.md#2d-shadows).
+
 ## 3D scene editing
 
 3D scenes use perspective projection and full 3D gizmos. Switch between the editor

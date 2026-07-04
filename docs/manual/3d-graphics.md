@@ -71,7 +71,8 @@ and receive shadows in real time.
 | Spot | Flashlights, cones, and focused effects |
 
 The runtime supports up to six active lights and cascaded shadow maps for directional
-lighting. Use `Scene::setShadowsPCF(true)` when you want smoother shadow filtering.
+lighting. Tune edge smoothness with `Scene::setShadowQuality` (`NONE` / `LOW` / `MEDIUM` /
+`HIGH` PCF filtering).
 
 Enable **screen-space ambient occlusion** with `Scene::setSSAOEnabled(true)` to add soft
 contact shading in creases and corners. It affects ambient/indirect light only — see

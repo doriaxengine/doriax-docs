@@ -110,11 +110,53 @@ time):
 | `MAX_SHADOWSCUBEMAP` | 1 | Cube shadow maps (point lights) |
 | `MAX_SHADOWCASCADES` | 4 | Cascades for directional CSM |
 
-Enable **Percentage Closer Filtering (PCF)** on a scene for softer shadow edges:
+Shadow edge smoothness is a per-scene setting, `Scene::setShadowQuality`, with
+**Percentage Closer Filtering (PCF)** kernels of `NONE` (1 tap, hard edges), `LOW`
+(3x3, default), `MEDIUM` (5x5), or `HIGH` (7x7). The kernel size is uniform-driven, so
+changing it applies instantly without shader rebuilds:
 
 ```cpp
-scene.setShadowsPCF(true);
+scene.setShadowQuality(ShadowQuality::MEDIUM);
 ```
+
+## 2D lighting and shadows
+
+2D scenes use a **dedicated forward light path** instead of the PBR model: each
+[Light2D](../reference/classes/light2d.md) contributes
+`color · intensity · falloff(distance)` and all contributions add on top of the scene's
+**2D ambient light** (`Scene::setAmbientLight2D`). The result multiplies the sprite's
+base color, so the unlit fast path is preserved — a 2D-lit sprite costs far less than a
+PBR-lit mesh. Both paths can coexist: a mesh lit by 3D lights in the same scene simply
+adds the 2D contribution on top.
+
+A light's optional `height` places it on a virtual Z above the 2D plane, giving normal
+maps a direction to respond to. Sprites, tilemaps, and mesh polygons generate tangents
+automatically, so assigning a normal texture to their material is enough.
+
+2D lights ignore the scene's `lightState` flag — that switch controls only the 3D
+lighting pass.
+
+### 1D polar shadow maps
+
+Shadows from [Occluder2D](../reference/classes/occluder2d.md) components use per-light
+**1D polar shadow maps**: all occluder outlines in the scene are merged into one segment
+buffer and rendered into a one-pixel-tall atlas row per shadow-casting light, where the
+X axis is the angle around the light and the stored value is the distance to the nearest
+occluder. Lit fragments compare their own angle and distance against the row, with a PCF
+filter along it for soft edges: the light's `shadowSoftness` sets the penumbra width and
+the scene's `shadow2DQuality` (`NONE` / `LOW` / `MEDIUM` / `HIGH` — 1 to 13 taps) sets
+how smoothly it is sampled. The tap count is uniform-driven, so quality changes apply
+instantly without shader rebuilds.
+
+| Constant | Default | Controls |
+| --- | --- | --- |
+| `MAX_LIGHTS_2D` | 16 | Max simultaneous 2D lights (and shadow atlas rows) |
+
+The shadow pass renders line segments only (no scene geometry), so it stays cheap even
+with many occluders; each shadow-enabled light adds one atlas row at the light's
+`mapResolution` width. Each light's shadow attenuates only that light's own
+contribution — ambient light is never shadowed. See
+[2D Graphics — 2D lighting](2d-graphics.md#2d-lighting) for the usage guide.
 
 ## Fog
 

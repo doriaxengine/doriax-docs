@@ -16,6 +16,8 @@ See [Engine](classes/engine.md) for `Scaling`, `Platform`, and `GraphicBackend`.
 | `BodyType` | `STATIC`, `KINEMATIC`, `DYNAMIC` |
 | `CameraType` | UI, orthographic, perspective |
 | `LightType` | Directional, point, spot |
+| `Occluder2DShape` | 2D shadow occluder outline (`AUTO_QUAD`, `POLYGON`) |
+| `ShadowQuality` | Shadow PCF filter, 3D and 2D (`NONE`, `LOW`, `MEDIUM`, `HIGH`) |
 | `Shape2DType` / `Shape3DType` | Physics shapes |
 | `Joint2DType` / `Joint3DType` | Constraints |
 | `AnchorPreset` / `PivotPreset` | UI layout |
