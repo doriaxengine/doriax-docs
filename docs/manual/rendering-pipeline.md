@@ -437,9 +437,10 @@ Shaders are authored in GLSL and transpiled by the shader builder for each suppo
 backend. Shader data files are generated at export time.
 
 Each renderable type (Mesh, UI, Points, Lines, Sky) has a built-in shader. In the editor
-you can **fork** any of them per component and edit the GLSL — the engine keeps driving
-the variant system, lighting, and depth/shadow/G-buffer passes. See
-[Custom Shaders](../editor/custom-shaders.md).
+you can **fork** any of them — per component, or as a scene-wide default for that type —
+and edit the GLSL; the engine keeps driving the variant system, lighting, and
+depth/shadow/G-buffer passes. A shader set on the component wins over the scene default,
+which wins over the built-in. See [Custom Shaders](../editor/custom-shaders.md).
 
 Supported graphics backends (`GraphicBackend` enum):
 

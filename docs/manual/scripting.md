@@ -104,7 +104,7 @@ Doriax uses LuaBridge to expose the engine API to Lua. The binding layer registe
 | --- | --- |
 | Core | `Engine`, `Scene`, `SceneManager`, `BundleManager`, `Input`, `System` |
 | ECS | Entities and built-in component types |
-| Objects | `Object`, `Sprite`, `Mesh`, `Model`, `Camera`, `Light`, `Lines`, `Points`, `Sound` |
+| Objects | `Object`, `Sprite`, `Mesh`, `Model`, `Camera`, `Light`, `Light2D`, `Occluder2D`, `Lines`, `Points`, `Sound` |
 | Actions | `Action`, `Animation`, `SpriteAnimation`, `Particles`, `Ease` |
 | Math | `Vector2`, `Vector3`, `Vector4`, `Matrix3`, `Matrix4`, `Quaternion`, `Ray`, `AABB`, `Rect`, `Plane` |
 | I/O | `File`, `UserSettings`, memory data helpers |

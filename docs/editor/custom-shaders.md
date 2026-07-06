@@ -1,5 +1,5 @@
 ---
-description: Fork, edit, and customize the built-in shaders for Mesh, UI, Points, Lines, and Sky components directly in the Doriax editor.
+description: Fork, edit, and customize the built-in shaders for Mesh, UI, Points, Lines, and Sky — per component or as scene-wide defaults — directly in the Doriax editor.
 ---
 
 # Custom Shaders
@@ -43,6 +43,35 @@ these components has a **Shader** row:
 
 The Shader row is shown for a single selected entity (the path is per-entity). Assigning,
 editing, or resetting a custom shader is undoable.
+
+## Scene default shaders
+
+Besides per-component shaders, each scene can set a **default custom shader per type**.
+Select the scene (no entity) in the **Structure panel** and look for the **Default
+Shaders** section at the bottom of the scene settings in the Properties window. It shows
+one row per applicable type — 3D scenes list Mesh, Sky, UI, Points, and Lines; 2D scenes
+omit Sky; UI scenes list only UI.
+
+Each row offers the same controls as the component Shader row (fork, edit files, open
+`.vert`/`.frag`, reset, drag-and-drop), and every change is undoable.
+
+The shader used by a component is resolved with this priority:
+
+1. **Component shader** — a custom shader assigned on the component always wins.
+2. **Scene default shader** — used by every component of that type whose Shader row
+   still shows **Built-in**.
+3. **Engine built-in** — used when neither is set.
+
+A component with no custom shader *inherits* the scene default; resetting a component's
+shader returns it to the scene default (or the built-in if the scene has none). To keep a
+single component on stock shading while a scene default is active, fork the built-in
+shader for that component and leave it unedited.
+
+Scene default shaders are saved with the scene, applied in play mode, and exported like
+any other custom shader — components that inherit them compile and ship the right shader
+variants automatically. They are also scriptable via the `Scene` properties
+`defaultMeshShader`, `defaultUIShader`, `defaultSkyShader`, `defaultPointsShader`, and
+`defaultLinesShader` (see the [Scene reference](../reference/classes/scene.md)).
 
 ## Editing and live updates
 

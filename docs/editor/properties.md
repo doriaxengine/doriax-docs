@@ -108,8 +108,12 @@ its GLSL in the Code Editor. **Edit** reopens the assigned shader and **Reset to
 Built-in** returns to the engine default. You can also drag an existing `.vert`/`.frag`
 from the Resources Browser onto the row.
 
-See [Custom Shaders](custom-shaders.md) for the full workflow, includes, and project
-settings.
+A scene can also define a **default custom shader per type** (in the scene settings'
+**Default Shaders** section); components whose Shader row shows **Built-in** inherit it.
+A shader assigned on the component always takes priority over the scene default.
+
+See [Custom Shaders](custom-shaders.md) for the full workflow, scene defaults, includes,
+and project settings.
 
 ## Sky component
 

@@ -55,6 +55,11 @@ A `Scene` is the root container for all objects, systems, and resources in a pro
 | float | [ssrIntensity](#ssrintensity) | `1.0` | C++ \| Lua |
 | float | [ssrBlur](#ssrblur) | `0.0` | C++ \| Lua |
 | int | [ssrDebugMode](#ssrdebugmode) | `0` | C++ \| Lua |
+| string | [defaultMeshShader](#defaultmeshshader) | `""` | C++ \| Lua |
+| string | [defaultUIShader](#defaultuishader) | `""` | C++ \| Lua |
+| string | [defaultSkyShader](#defaultskyshader) | `""` | C++ \| Lua |
+| string | [defaultPointsShader](#defaultpointsshader) | `""` | C++ \| Lua |
+| string | [defaultLinesShader](#defaultlinesshader) | `""` | C++ \| Lua |
 | [UIEventState](#uieventstate) | [enableUIEvents](#enableuievents) | `NOT_SET` | C++ \| Lua |
 
 ### Methods
@@ -70,8 +75,8 @@ A `Scene` is the root container for all objects, systems, and resources in a pro
 | Entity | [getCamera](#getcamera) | C++ \| Lua |
 | void | [setBackgroundColor](#setbackgroundcolor) | C++ \| Lua |
 | Vector4 | [getBackgroundColor](#setbackgroundcolor) | C++ \| Lua |
-| void | [setShadowQuality](#shadowquality_1) | C++ \| Lua |
-| ShadowQuality | [getShadowQuality](#shadowquality_1) | C++ \| Lua |
+| void | [setShadowQuality](#shadowquality_1) | C++ |
+| ShadowQuality | [getShadowQuality](#shadowquality_1) | C++ |
 | void | [setLightState](#setlightstate) | C++ \| Lua |
 | LightState | [getLightState](#setlightstate) | C++ \| Lua |
 | void | [setGlobalIllumination](#setglobalillumination) | C++ \| Lua |
@@ -80,8 +85,8 @@ A `Scene` is the root container for all objects, systems, and resources in a pro
 | void | [setAmbientLight2D](#setambientlight2d) | C++ \| Lua |
 | float | [getAmbientLight2DIntensity](#setambientlight2d) | C++ \| Lua |
 | Vector3 | [getAmbientLight2DColor](#setambientlight2d) | C++ \| Lua |
-| void | [setShadow2DQuality](#shadow2dquality) | C++ \| Lua |
-| ShadowQuality | [getShadow2DQuality](#shadow2dquality) | C++ \| Lua |
+| void | [setShadow2DQuality](#shadow2dquality) | C++ |
+| ShadowQuality | [getShadow2DQuality](#shadow2dquality) | C++ |
 | void | [setSSAOEnabled](#ssaoenabled) | C++ \| Lua |
 | bool | [isSSAOEnabled](#ssaoenabled) | C++ \| Lua |
 | void | [setSSAORadius](#ssaoradius) | C++ \| Lua |
@@ -167,6 +172,14 @@ Filter quality of 3D shadow map edges (PCF kernel size, applied instantly with n
 * **HIGH** — 7×7 taps
 
 The same [ShadowQuality](#shadowquality) enum also drives [shadow2DQuality](#shadow2dquality) for 2D lights.
+
+Lua exposes this setting as the `shadowQuality` property:
+
+```lua
+scene.shadowQuality = ShadowQuality.MEDIUM
+```
+
+There is no separate `shadow3DQuality` Lua property; `shadowQuality` is the 3D shadow quality setting.
 
 ---
 
@@ -334,6 +347,63 @@ Glossy blur amount in `[0..1]`. `0` keeps mirror-sharp reflections; higher value
 * *Getter:* `int getSSRDebugMode() const`
 
 Debug visualization of the SSR G-buffer, rendered full-screen: `0` off, `1` reflection buffer, `2` normal, `3` roughness, `4` metallic, `5` albedo, `6` IBL specular. Not serialized.
+
+---
+
+### defaultMeshShader
+
+* *Setter:* `void setDefaultMeshShader(const std::string& path)`
+* *Getter:* `const std::string& getDefaultMeshShader() const`
+
+Scene-wide custom shader for Mesh components. The value is a project-relative base path to a forked shader (for example `"shaders/myMesh"`, resolving to `.vert`/`.frag`), or `"a.vert|b.frag"` for separately named files. Every Mesh whose own custom shader is empty uses it; an empty string (default) means the engine built-in. A shader assigned on the component always takes priority. Changing the value reloads the affected meshes. See [Custom Shaders — Scene default shaders](../../editor/custom-shaders.md#scene-default-shaders).
+
+=== "C++"
+
+    ```cpp
+    scene.setDefaultMeshShader("shaders/toon");
+    ```
+
+=== "Lua"
+
+    ```lua
+    scene.defaultMeshShader = "shaders/toon"
+    ```
+
+---
+
+### defaultUIShader
+
+* *Setter:* `void setDefaultUIShader(const std::string& path)`
+* *Getter:* `const std::string& getDefaultUIShader() const`
+
+Scene-wide custom shader for UI components. Same semantics as [defaultMeshShader](#defaultmeshshader).
+
+---
+
+### defaultSkyShader
+
+* *Setter:* `void setDefaultSkyShader(const std::string& path)`
+* *Getter:* `const std::string& getDefaultSkyShader() const`
+
+Scene-wide custom shader for the Sky component. Same semantics as [defaultMeshShader](#defaultmeshshader).
+
+---
+
+### defaultPointsShader
+
+* *Setter:* `void setDefaultPointsShader(const std::string& path)`
+* *Getter:* `const std::string& getDefaultPointsShader() const`
+
+Scene-wide custom shader for Points components. Same semantics as [defaultMeshShader](#defaultmeshshader).
+
+---
+
+### defaultLinesShader
+
+* *Setter:* `void setDefaultLinesShader(const std::string& path)`
+* *Getter:* `const std::string& getDefaultLinesShader() const`
+
+Scene-wide custom shader for Lines components. Same semantics as [defaultMeshShader](#defaultmeshshader).
 
 ---
 

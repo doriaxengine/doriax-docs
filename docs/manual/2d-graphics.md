@@ -154,6 +154,11 @@ An occluder has two shapes:
     torch.shadows = true
     torch.shadowSoftness = 3.0
 
+    local crate = Sprite(scene)
+    crate:setTexture("crate.png")
+    crate:setSize(96, 96)
+    crate:getOccluder2D() -- AUTO_QUAD outline from the sprite bounds
+
     local wall = Occluder2D(scene)
     wall.position = Vector3(500, 200, 0)
     wall:addVertex(-60, -20)
@@ -167,6 +172,11 @@ An occluder has two shapes:
     ```cpp
     torch.setShadows(true);
     torch.setShadowSoftness(3.0f);
+
+    Sprite crate(&scene);
+    crate.setTexture("crate.png");
+    crate.setSize(96, 96);
+    crate.getOccluder2D(); // AUTO_QUAD outline from the sprite bounds
 
     Occluder2D wall(&scene);
     wall.setPosition(Vector3(500, 200, 0));
@@ -192,6 +202,9 @@ In the editor, create one from **2D → 2D Occluder** (a standalone polygon), or
 **Occluder2D component** to an existing sprite for an `AUTO_QUAD` outline. Polygon
 points can be dragged directly in the [scene view](../editor/scene-view.md#2d-lights-and-occluders)
 or edited as a list in Properties.
+
+In code, `Sprite::getOccluder2D()` and Lua's `sprite:getOccluder2D()` are the
+convenience path for adding that `AUTO_QUAD` occluder directly to a sprite entity.
 
 For how the technique works under the hood, see
 [Rendering Pipeline — 2D lighting](rendering-pipeline.md#2d-lighting-and-shadows).

@@ -47,6 +47,8 @@ description: Sprite API reference — 2D images, texture atlas frames, pivot, an
 | Returns | Name | Languages |
 | --- | --- | --- |
 | bool | [createSprite](#createsprite) | C++ \| Lua |
+| [Occluder2D](occluder2d.md) | [getOccluder2D](#getoccluder2d) | C++ \| Lua |
+| void | [removeOccluder2D](#getoccluder2d) | C++ \| Lua |
 | void | [setSize](#setsize) | C++ \| Lua |
 | void | setWidth | C++ \| Lua |
 | void | setHeight | C++ \| Lua |
@@ -155,6 +157,42 @@ Builds the quad geometry and uploads it to the GPU. Must be called at least once
     sprite:setTexture("ui/button.png")
     sprite:setSize(128, 64)
     sprite:createSprite()
+    ```
+
+---
+
+### getOccluder2D
+
+* `Occluder2D getOccluder2D()`
+* `void removeOccluder2D()`
+
+Attaches an [Occluder2D](occluder2d.md) component to the sprite's entity if one does
+not already exist, then returns an `Occluder2D` handle for configuration. The default
+`AUTO_QUAD` shape uses the sprite's mesh bounds, so it is the quickest way to make a
+sprite cast shadows from [Light2D](light2d.md).
+
+Use `removeOccluder2D()` to remove the occluder component from the sprite.
+
+=== "C++"
+
+    ```cpp
+    Sprite crate(&scene);
+    crate.setTexture("crate.png");
+    crate.setSize(96, 96);
+
+    Occluder2D occluder = crate.getOccluder2D();
+    occluder.setShape(Occluder2DShape::AUTO_QUAD);
+    ```
+
+=== "Lua"
+
+    ```lua
+    local crate = Sprite(scene)
+    crate:setTexture("crate.png")
+    crate:setSize(96, 96)
+
+    local occluder = crate:getOccluder2D()
+    occluder.shape = Occluder2DShape.AUTO_QUAD
     ```
 
 ---
