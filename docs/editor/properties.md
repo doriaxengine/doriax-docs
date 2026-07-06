@@ -58,6 +58,11 @@ main camera. This is the manual building block behind effects like minimaps and 
 for reflections, prefer the [Mirror component](#mirror-component), which manages its own
 camera.
 
+Once a camera is in render-to-texture mode, its own properties gain a **Render Target**
+section for setting the framebuffer **Width**, **Height**, and sampling **Filter**
+(Nearest or Linear). These control the resolution and look of the output texture, are
+saved with the scene, and are applied in exported projects.
+
 When the field points at an `.svg` file, an extra vector-square button appears next to the
 camera button. It opens a popup to set the **SVG Scale** — a multiplier on the vector's
 intrinsic size (a slider plus 0.5×–4× presets) — so the image rasterizes crisp when drawn

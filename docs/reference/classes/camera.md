@@ -390,8 +390,10 @@ Configure render-to-texture mode.
 
 * `void setRenderToTexture(bool renderToTexture)` — Enable/disable off-screen rendering.
 * `Framebuffer* getFramebuffer()` — Returns the internal framebuffer; valid only after `setRenderToTexture(true)`.
-* `void setFramebufferSize(int width, int height)` — Overrides the framebuffer resolution (defaults to canvas size).
+* `void setFramebufferSize(int width, int height)` — Overrides the framebuffer resolution (defaults to 512×512).
 * `void setFramebufferFilter(TextureFilter filter)` — Sets the sampling filter for the output texture.
+
+The size and filter are also editable in the editor's **Render Target** section on a render-to-texture camera and are saved with the scene.
 
 === "C++"
 
