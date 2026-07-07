@@ -48,9 +48,13 @@ Most fields are edited with the mouse or keyboard directly in the panel:
 | Colors | Color picker with RGBA sliders |
 | Booleans | Toggle checkbox |
 | Strings | Inline text input |
-| Textures / assets | Drag from the Resources Browser, type the asset path, or pick a **camera** as the source (camera button / drag a camera entity) for render-to-texture. For an `.svg` source, a vector-square button opens an **SVG Scale** control |
+| Textures / assets | Drag from the Resources Browser, type the asset path, or pick a **camera** as the source (camera button / drag a camera entity) for render-to-texture. For image sources, a sliders button opens the **Texture Settings** popup (filter, wrap, and SVG scale) |
 | Entity references | Drag an entity from the Structure panel |
 | Enumerations | Drop-down selection |
+
+When a field differs from the component's default value, a small reset arrow appears next
+to its label; clicking it restores the default. Edits apply to every selected entity and
+every change is undoable.
 
 A texture field set to a camera shows that camera's live output (render-to-texture). The
 camera is switched to render-to-texture automatically and can no longer be the scene's
@@ -63,11 +67,19 @@ section for setting the framebuffer **Width**, **Height**, and sampling **Filter
 (Nearest or Linear). These control the resolution and look of the output texture, are
 saved with the scene, and are applied in exported projects.
 
-When the field points at an `.svg` file, an extra vector-square button appears next to the
-camera button. It opens a popup to set the **SVG Scale** — a multiplier on the vector's
-intrinsic size (a slider plus 0.5×–4× presets) — so the image rasterizes crisp when drawn
-larger or on high-DPI displays. The scale is stored on the texture reference, so different
-slots can use the same SVG at different resolutions. See
+When the field holds an image texture (not a camera link or an empty slot), a sliders
+button next to the camera button opens the **Texture Settings** popup:
+
+* **Min Filter** / **Mag Filter** — sampling filters for minification and magnification.
+  Picking a mipmap variant for Min Filter enables mipmap generation for the texture.
+* **Wrap U** / **Wrap V** — wrapping mode per texture axis.
+* **SVG Scale** (only for `.svg` sources) — a multiplier on the vector's intrinsic size
+  (a drag field plus 0.5×–4× presets), so the image rasterizes crisp when drawn larger or
+  on high-DPI displays. The scale is stored on the texture reference, so different slots
+  can use the same SVG at different resolutions.
+
+Like any other field, each row shows the reset arrow when it differs from the component's
+default, and the settings are saved with the scene and applied in exported projects. See
 [Vector images (SVG)](../manual/resources-and-assets.md#vector-images-svg) for the
 underlying behavior.
 

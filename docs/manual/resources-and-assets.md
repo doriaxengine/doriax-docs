@@ -84,12 +84,30 @@ effect on raster images:
     data.loadTextureFromFile("ui/icon.svg");  // a 24x24 SVG -> 96x96 texture
     ```
 
-A scale can also be carried in the texture path itself as `"ui/icon.svg?svgScale=4"`, so a
-`Texture` reference keeps its scale through serialization and export — the runtime strips
-the suffix and loads the file at that scale. This is what the editor's per-slot **SVG Scale**
-control writes; see [Properties — texture fields](../editor/properties.md). The rasterized
-size is capped to a GPU-friendly limit, so very large scales are rejected rather than
-allocated.
+The scale can also be set directly on a `Texture` reference — `svgScale` in Lua,
+`setSvgScale()` in C++ (see [Texture](../reference/classes/texture.md#svgscale)):
+
+=== "Lua"
+
+    ```lua
+    local icon = Texture("ui/icon.svg")
+    icon.svgScale = 4  -- a 24x24 SVG -> 96x96 texture
+    ```
+
+=== "C++"
+
+    ```cpp
+    Texture icon("ui/icon.svg");
+    icon.setSvgScale(4.0f);  // a 24x24 SVG -> 96x96 texture
+    ```
+
+The property is saved with the scene and applied in exported projects, and because the
+scale is part of the texture's identity, different slots can use the same SVG at different
+resolutions. This is what the editor's per-slot **SVG Scale** control edits; see
+[Properties — texture fields](../editor/properties.md). The legacy path form
+`"ui/icon.svg?svgScale=4"` is still accepted and absorbed into the property when the path
+is set. The rasterized size is capped to a GPU-friendly limit, so very large scales are
+rejected rather than allocated.
 
 ## Material files
 

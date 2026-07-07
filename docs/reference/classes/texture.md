@@ -22,6 +22,7 @@ A `Texture` object is a lightweight handle; the actual GPU resource is managed i
 | [TextureFilter](#texturefilter) | [magFilter](#minfilter-magfilter) | `LINEAR` | C++ \| Lua |
 | [TextureWrap](#texturewrap) | [wrapU](#wrapu-wrapv) | `REPEAT` | C++ \| Lua |
 | [TextureWrap](#texturewrap) | [wrapV](#wrapu-wrapv) | `REPEAT` | C++ \| Lua |
+| float | [svgScale](#svgscale) | `1.0` | C++ \| Lua |
 
 ### Methods
 
@@ -95,6 +96,34 @@ Wrapping mode along the horizontal (U) and vertical (V) texture coordinates.
 
 ---
 
+### svgScale
+
+* *Setter*: void **setSvgScale**(float scale)
+* *Getter*: float **getSvgScale**() const
+
+Rasterization scale for `.svg` path sources (`2.0` = twice the intrinsic resolution). Has no
+effect on raster images or framebuffer textures. Invalid values (zero or negative) snap back
+to `1.0`.
+
+The scale is part of the texture's identity: the same SVG file at two different scales
+produces two independent GPU textures, so different slots can share one file at different
+resolutions. Changing the scale on an SVG source releases the current GPU texture and
+reloads at the new resolution.
+
+=== "C++"
+    ```cpp
+    Texture icon("ui/icon.svg");
+    icon.setSvgScale(4.0f);  // a 24x24 SVG rasterizes as 96x96
+    ```
+
+=== "Lua"
+    ```lua
+    local icon = Texture("ui/icon.svg")
+    icon.svgScale = 4  -- a 24x24 SVG rasterizes as 96x96
+    ```
+
+---
+
 ## Method details
 
 ### setPath
@@ -118,6 +147,10 @@ Sets the file path for a 2D texture. The file is not loaded immediately; loading
     ```
 
 Alternatively, pass the path directly to the constructor: `Texture("textures/wall.png")`.
+
+Setting a new path resets [svgScale](#svgscale) to `1.0`. The legacy form
+`"icon.svg?svgScale=4"` is still accepted: the suffix is absorbed into the `svgScale`
+property and `getPath()` returns the clean file path.
 
 ---
 
@@ -223,7 +256,10 @@ Returns the file path associated with this texture. For cube maps, `index` selec
 
 * std::string **getId**() const
 
-Returns the internal cache key used to identify this texture in the pool.
+Returns the internal cache key used to identify this texture in the pool. For an SVG source
+with a non-default [svgScale](#svgscale), the id encodes the scale (`"icon.svg?svgScale=4"`)
+because each scale is a separate pool entry; use [getPath](#getpath) when you need the plain
+file path.
 
 ---
 
