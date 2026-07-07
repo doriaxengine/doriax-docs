@@ -98,6 +98,7 @@ nav:
       - 2D Graphics: 'manual/2d-graphics.md'
       - 3D Graphics: 'manual/3d-graphics.md'
       - Rendering Pipeline: 'manual/rendering-pipeline.md'
+      - Multiple Resolutions: 'manual/multiple-resolutions.md'
       - User Interface: 'manual/user-interface.md'
       - Animation: 'manual/animation.md'
       - Particles: 'manual/particles.md'

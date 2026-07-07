@@ -55,6 +55,10 @@ A `Scene` is the root container for all objects, systems, and resources in a pro
 | float | [ssrIntensity](#ssrintensity) | `1.0` | C++ \| Lua |
 | float | [ssrBlur](#ssrblur) | `0.0` | C++ \| Lua |
 | int | [ssrDebugMode](#ssrdebugmode) | `0` | C++ \| Lua |
+| bool | [fixedResolutionEnabled](#fixedresolutionenabled) | `false` | C++ \| Lua |
+| unsigned int | [fixedResolutionWidth](#fixedresolutionwidth-fixedresolutionheight) | `640` | C++ \| Lua |
+| unsigned int | [fixedResolutionHeight](#fixedresolutionwidth-fixedresolutionheight) | `360` | C++ \| Lua |
+| TextureFilter | [fixedResolutionFilter](#fixedresolutionfilter) | `NEAREST` | C++ \| Lua |
 | string | [defaultMeshShader](#defaultmeshshader) | `""` | C++ \| Lua |
 | string | [defaultUIShader](#defaultuishader) | `""` | C++ \| Lua |
 | string | [defaultSkyShader](#defaultskyshader) | `""` | C++ \| Lua |
@@ -111,6 +115,15 @@ A `Scene` is the root container for all objects, systems, and resources in a pro
 | float | [getSSRBlur](#ssrblur) | C++ \| Lua |
 | void | [setSSRDebugMode](#ssrdebugmode) | C++ \| Lua |
 | int | [getSSRDebugMode](#ssrdebugmode) | C++ \| Lua |
+| void | [setFixedResolutionEnabled](#fixedresolutionenabled) | C++ \| Lua |
+| bool | [isFixedResolutionEnabled](#fixedresolutionenabled) | C++ \| Lua |
+| void | [setFixedResolutionWidth](#fixedresolutionwidth-fixedresolutionheight) | C++ \| Lua |
+| unsigned int | [getFixedResolutionWidth](#fixedresolutionwidth-fixedresolutionheight) | C++ \| Lua |
+| void | [setFixedResolutionHeight](#fixedresolutionwidth-fixedresolutionheight) | C++ \| Lua |
+| unsigned int | [getFixedResolutionHeight](#fixedresolutionwidth-fixedresolutionheight) | C++ \| Lua |
+| void | [setFixedResolutionSize](#fixedresolutionwidth-fixedresolutionheight) | C++ \| Lua |
+| void | [setFixedResolutionFilter](#fixedresolutionfilter) | C++ \| Lua |
+| TextureFilter | [getFixedResolutionFilter](#fixedresolutionfilter) | C++ \| Lua |
 | void | [enableUIEvents](#enableuievents_1) | C++ \| Lua |
 | bool | [isEnableUIEvents](#isenableuievents) | C++ \| Lua |
 | bool | [canReceiveUIEvents](#canreceiveuievents) | C++ \| Lua |
@@ -347,6 +360,49 @@ Glossy blur amount in `[0..1]`. `0` keeps mirror-sharp reflections; higher value
 * *Getter:* `int getSSRDebugMode() const`
 
 Debug visualization of the SSR G-buffer, rendered full-screen: `0` off, `1` reflection buffer, `2` normal, `3` roughness, `4` metallic, `5` albedo, `6` IBL specular. Not serialized.
+
+---
+
+### fixedResolutionEnabled
+
+* *Setter:* `void setFixedResolutionEnabled(bool fixedResolutionEnabled)`
+* *Getter:* `bool isFixedResolutionEnabled() const`
+
+Renders the main camera into an internal buffer of [fixedResolutionWidth × fixedResolutionHeight](#fixedresolutionwidth-fixedresolutionheight) and upscales the result to the view rect, instead of rendering at the window's native resolution. Takes effect only when this scene is the Engine main scene; scenes added as layers always render at native resolution. Letterboxing, input mapping, and object coordinates keep following the canvas and scaling mode. In the editor, the fixed resolution is applied during play mode only. Toggling at runtime rebuilds the scene's render pipelines, which may cause a brief hitch — prefer changing the size instead. See [Multiple Resolutions](../../manual/multiple-resolutions.md#fixed-resolution).
+
+=== "C++"
+
+    ```cpp
+    scene.setFixedResolutionSize(320, 180);
+    scene.setFixedResolutionFilter(TextureFilter::NEAREST);
+    scene.setFixedResolutionEnabled(true);
+    ```
+
+=== "Lua"
+
+    ```lua
+    scene:setFixedResolutionSize(320, 180)
+    scene.fixedResolutionFilter = TextureFilter.NEAREST
+    scene.fixedResolutionEnabled = true
+    ```
+
+---
+
+### fixedResolutionWidth, fixedResolutionHeight
+
+* *Setters:* `void setFixedResolutionWidth(unsigned int width)`, `void setFixedResolutionHeight(unsigned int height)`, `void setFixedResolutionSize(unsigned int width, unsigned int height)`
+* *Getters:* `unsigned int getFixedResolutionWidth() const`, `unsigned int getFixedResolutionHeight() const`
+
+The internal render resolution in pixels used when [fixedResolutionEnabled](#fixedresolutionenabled) is on. Can be changed at any time — the internal buffer is recreated on the next frame with no interruption, which makes render-scale options and dynamic resolution scaling cheap. Keep the aspect ratio equal to the canvas aspect ratio to avoid non-square pixels. Defaults `640 × 360`.
+
+---
+
+### fixedResolutionFilter
+
+* *Setter:* `void setFixedResolutionFilter(TextureFilter filter)`
+* *Getter:* `TextureFilter getFixedResolutionFilter() const`
+
+Sampling filter used when the fixed-resolution image is upscaled to the view rect: `TextureFilter::NEAREST` (default) keeps hard pixel edges for a pixel-art look; `TextureFilter::LINEAR` interpolates smoothly, which suits fixed resolution used purely as a performance measure.
 
 ---
 

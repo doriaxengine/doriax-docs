@@ -232,6 +232,9 @@ Canvas size and scaling are configured on the global `Engine`, not on the scene:
     Engine::setScalingMode(Scaling::LETTERBOX);
     ```
 
+See [Multiple Resolutions](multiple-resolutions.md) for the full scaling guide,
+including how to keep the UI crisp over a scene that uses a fixed render resolution.
+
 ## Practical guidance
 
 - Design against a fixed canvas size (e.g. 1920×1080 or 1280×720) for predictable

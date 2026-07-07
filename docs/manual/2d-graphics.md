@@ -239,6 +239,10 @@ devices and window sizes — configure the canvas size and scaling behavior thro
 | `STRETCH` | Stretch to the output size |
 | `NATIVE` | Use the native output size |
 
+For a full guide to scaling — including the scene-level **fixed resolution** setting
+that renders the game at a fixed internal size and upscales it (ideal for pixel-art
+games), see [Multiple Resolutions](multiple-resolutions.md).
+
 ## Next steps
 
 For 3D rendering, see [3D Graphics](3d-graphics.md). To add interactions, see

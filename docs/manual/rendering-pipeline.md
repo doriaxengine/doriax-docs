@@ -374,6 +374,11 @@ panel onto it). The chosen camera is switched to render-to-texture and its outpu
 the slot — the basis for the manual mirror setup below. A camera used this way cannot
 also be the scene's main camera.
 
+A related mechanism lets the **main camera itself** render offscreen at a fixed
+internal resolution that is then upscaled to the window — for pixel-art rendering or
+GPU performance scaling. That is a scene setting rather than a camera one; see
+[Multiple Resolutions — Fixed resolution](multiple-resolutions.md#fixed-resolution).
+
 ## Mirrors and planar reflections
 
 A **Mirror** turns a flat surface into a true planar reflection — the kind used for
