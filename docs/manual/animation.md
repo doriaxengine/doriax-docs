@@ -260,6 +260,54 @@ simultaneously for layered animation blending.
     Properties window, or address the clip by index with `getAnimation(0)`. Requesting a
     name or index that doesn't exist raises an error, so guard lookups you're unsure of.
 
+### Smooth transitions (crossfading)
+
+Starting a clip with `start()` snaps the skeleton straight into that clip's pose. For
+character motion you almost always want a **crossfade** instead — when the player stops
+running, the skeleton should ease from the run cycle into idle over a fraction of a
+second rather than pop. Doriax blends this for you: while a transition is in progress
+both clips play and each bone's pose is a weight-normalized average of them.
+
+The simplest entry point is [`Model:playAnimation`](../reference/classes/model.md#playanimation-stopanimations),
+which fades out whatever is currently playing on the model and fades the requested clip
+in:
+
+=== "Lua"
+
+    ```lua
+    -- Hold looping clips; playAnimation manages the transition
+    self.model:findAnimation("Idle").loop = true
+    self.model:findAnimation("Run").loop = true
+    self.model:playAnimation("Idle")        -- uses each clip's Fade time
+
+    -- on input, later:
+    self.model:playAnimation("Run", 0.2)    -- crossfade over 0.2s
+    self.model:playAnimation("Die", 0.1)    -- quick blend into a one-shot
+    ```
+
+=== "C++"
+
+    ```cpp
+    model.findAnimation("Idle").setLoop(true);
+    model.findAnimation("Run").setLoop(true);
+    model.playAnimation("Idle");
+
+    model.playAnimation("Run", 0.2f);
+    model.playAnimation("Die", 0.1f);
+    ```
+
+When the fade time is omitted, each clip's authored **Fade time**
+([`defaultFadeTime`](../reference/classes/animation.md#defaultfadetime), set in the
+Properties window or in code) is used. Tune it per clip: ~0.2–0.3s for locomotion,
+shorter (~0.1s) for a snappy hit or death reaction. `playAnimation` works on clips of a
+single model; to crossfade arbitrary clips by hand, ramp their weights directly with
+[`Animation:fadeIn`](../reference/classes/animation.md#fadein-fadeout) and `fadeOut`, or
+set [`blendWeight`](../reference/classes/animation.md#blendweight) yourself for layered
+blending.
+
+You can preview a transition without running the game — see
+[Blending clips in the editor](../editor/animation.md#skeletal-animation).
+
 ## Keyframe tracks (timeline-authored)
 
 In the editor, the Animation Timeline writes keyframe data into component tracks. These

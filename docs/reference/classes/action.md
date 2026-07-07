@@ -22,6 +22,7 @@ An action operates on a *target* object. When started, the action applies its ef
 | Type | Name | Default | Langs |
 | --- | --- | --- | --- |
 | float | [speed](#speed) | `1.0` | C++ \| Lua |
+| float | [weight](#weight) | `1.0` | C++ \| Lua |
 | bool | [ownedTarget](#ownedtarget) | `false` | C++ \| Lua |
 
 ### Methods
@@ -46,6 +47,17 @@ An action operates on a *target* object. When started, the action applies its ef
 * *Getter*: float **getSpeed**() const
 
 Playback speed multiplier. `1.0` is normal speed, `2.0` plays twice as fast, `0.5` in slow motion. Negative values play the action in reverse (where supported by the subclass).
+
+---
+
+### weight
+
+* *Setter*: void **setWeight**(float weight)
+* *Getter*: float **getWeight**() const
+
+Blend weight (`0.0`–`1.0`) for this action's contribution when several actions drive the same target. When multiple skeletal clips animate the same bone, `ActionSystem` combines their sampled poses as a weight-normalized average rather than letting the last one win, which is what makes crossfades smooth.
+
+You rarely set this by hand. For [Animation](animation.md) clips it is driven automatically by [fadeIn](animation.md#fadein-fadeout) / [fadeOut](animation.md#fadein-fadeout) and by [Model::playAnimation()](model.md#playanimation-stopanimations); the manual control is [Animation::blendWeight](animation.md#blendweight) on the clip. Set it directly only for advanced layering of individual actions.
 
 ---
 

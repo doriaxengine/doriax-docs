@@ -22,6 +22,8 @@ A single GLTF file can contain multiple meshes, materials, textures, skeletons, 
 | bool | [loadGLTF](#loadobj-loadgltf) | C++ \| Lua |
 | [Animation](animation.md) | [getAnimation](#getanimation-findanimation) | C++ \| Lua |
 | [Animation](animation.md) | [findAnimation](#getanimation-findanimation) | C++ \| Lua |
+| void | [playAnimation](#playanimation-stopanimations) | C++ \| Lua |
+| void | [stopAnimations](#playanimation-stopanimations) | C++ \| Lua |
 | [Bone](bone.md) | [getBone](#getbone) | C++ \| Lua |
 | float | [getMorphWeight](#getmorphweight-setmorphweight) | C++ \| Lua |
 | void | [setMorphWeight](#getmorphweight-setmorphweight) | C++ \| Lua |
@@ -93,6 +95,54 @@ Retrieve a skeletal or morph-target animation embedded in the loaded model. `get
     walkAnim:setLoop(true)
     walkAnim:start()
     ```
+
+---
+
+### playAnimation / stopAnimations
+
+* void **playAnimation**(int index)
+* void **playAnimation**(int index, float fadeTime)
+* void **playAnimation**(const std::string& name)
+* void **playAnimation**(const std::string& name, float fadeTime)
+* void **stopAnimations**(float fadeTime)
+
+Switch the model's active clip with a **smooth crossfade** instead of an instant pose snap. `playAnimation()` fades out every other running clip on this model and fades the requested one in over `fadeTime` seconds; `stopAnimations()` fades all running clips out.
+
+This is the recommended way to change animation state at runtime (idle → run → jump → die). During the fade both clips play and their poses are blended by weight, so the character eases between motions rather than popping. When `fadeTime` is omitted, the target clip's authored [defaultFadeTime](animation.md#defaultfadetime) is used (set per-clip as **AnimationComponent → Fade time**). A `fadeTime` of `0` switches instantly.
+
+Unlike [getAnimation()](#getanimation-findanimation), which returns a handle you start yourself, `playAnimation()` manages the transition for you. Set looping on the clips you intend to hold (idle, run) via [Animation::loop](animation.md#loop).
+
+=== "C++"
+    ```cpp
+    Model hero(&scene);
+    hero.loadModel("characters/hero.glb");
+
+    // Make locomotion clips loop, then start on idle
+    hero.findAnimation("Idle").setLoop(true);
+    hero.findAnimation("Run").setLoop(true);
+    hero.playAnimation("Idle");          // uses each clip's Fade time
+
+    // Later, on input:
+    hero.playAnimation("Run", 0.2f);     // crossfade to run over 0.2s
+    hero.playAnimation("Die", 0.1f);     // snappy transition into a one-shot
+    ```
+
+=== "Lua"
+    ```lua
+    local hero = Model(scene)
+    hero:loadModel("characters/hero.glb")
+
+    hero:findAnimation("Idle").loop = true
+    hero:findAnimation("Run").loop = true
+    hero:playAnimation("Idle")           -- uses each clip's Fade time
+
+    -- Later, on input:
+    hero:playAnimation("Run", 0.2)       -- crossfade to run over 0.2s
+    hero:playAnimation("Die", 0.1)       -- snappy transition into a one-shot
+    ```
+
+!!! note "Crossfades assume full-skeleton clips"
+    The blend is a weight-normalized average per bone, so it looks best when both clips animate the whole skeleton (the usual case for GLTF character clips). A bone animated by only the outgoing clip holds its pose until that clip finishes fading rather than easing.
 
 ---
 

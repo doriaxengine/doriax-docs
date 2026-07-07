@@ -90,6 +90,30 @@ At runtime, look up a clip by name on the `Model` object:
     walk.start();
     ```
 
+### Previewing crossfades between clips
+
+At runtime you usually switch clips with a **crossfade** so the character eases from one
+motion into the next instead of snapping (see
+[Smooth transitions](../manual/animation.md#smooth-transitions-crossfading)). You can
+preview that blend directly in the timeline:
+
+1. Select an animation clip and press **Play** to preview it.
+2. In the toolbar, pick a clip in the **Blend to** dropdown.
+3. Click the **⇄** button. The playing clip fades out while the chosen clip fades in,
+   using the target clip's **Fade time**, and the viewport shows the blended result.
+
+Each clip carries a **Fade time** (`defaultFadeTime`) — the default crossfade duration
+used when [`Model:playAnimation`](../reference/classes/model.md#playanimation-stopanimations)
+is called without an explicit time. Edit it in the **Properties** window under
+**AnimationComponent → Fade time** (~0.2–0.3s reads well for locomotion, ~0.1s for a
+quick hit or death). Scrubbing the playhead exits the transition and returns to the
+single selected clip.
+
+!!! tip "Use looping clips to see the blend"
+    The blend reads best when you crossfade *from* a looping clip (idle, run). Blending
+    from a one-shot clip that has already finished will snap, because a finished clip no
+    longer contributes to the pose.
+
 ## Runtime action system
 
 For scripted one-shot and looping motion that does not need a full authored timeline,

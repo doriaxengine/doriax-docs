@@ -21,11 +21,15 @@ A timeline-based animation composed of `ActionFrame` entries. Each frame schedul
 | bool | [ownedActions](#ownedactions) | `false` | C++ \| Lua |
 | std::string | [name](#name) | `""` | C++ \| Lua |
 | float | [duration](#duration) | `0.0` | C++ \| Lua |
+| float | [blendWeight](#blendweight) | `1.0` | C++ \| Lua |
+| float | [defaultFadeTime](#defaultfadetime) | `0.15` | C++ \| Lua |
 
 ### Methods
 
 | Type | Name | Langs |
 | --- | --- | --- |
+| void | [fadeIn](#fadein-fadeout) | C++ \| Lua |
+| void | [fadeOut](#fadein-fadeout) | C++ \| Lua |
 | void | [addActionFrame](#addactionframe) | C++ \| Lua |
 | size_t | [getActionFrameSize](#getactionframesize) | C++ \| Lua |
 | [ActionFrame](actionframe.md) | [getActionFrame](#getactionframe) | C++ \| Lua |
@@ -72,7 +76,55 @@ Total length of the animation in **seconds**. When loading a model, this is set 
 
 ---
 
+### blendWeight
+
+* *Setter*: void **setBlendWeight**(float weight)
+* *Getter*: float **getBlendWeight**() const
+
+The clip's current blend weight (`0.0`–`1.0`). When several clips animate the same skeleton, each bone's final pose is the weight-normalized average of the running clips, so weights let you layer or crossfade animations smoothly.
+
+Setting `blendWeight` cancels any in-progress fade and holds the weight at the given value. For time-based transitions prefer [fadeIn / fadeOut](#fadein-fadeout), which animate this value for you. Reading it returns the live weight while a fade is running.
+
+---
+
+### defaultFadeTime
+
+* *Setter*: void **setDefaultFadeTime**(float seconds)
+* *Getter*: float **getDefaultFadeTime**() const
+
+The crossfade duration (in **seconds**) used by [Model::playAnimation()](model.md#playanimation-stopanimations) when it is called without an explicit fade time. Authored per-clip and saved with the scene — set it in the **Properties** window (**AnimationComponent → Fade time**) or in code. Defaults to `0.15`.
+
+---
+
 ## Method details
+
+### fadeIn / fadeOut
+
+* void **fadeIn**(float duration)
+* void **fadeOut**(float duration)
+
+Crossfade primitives that ramp the clip's [blendWeight](#blendweight) over `duration` seconds.
+
+* `fadeIn(duration)` starts the clip (if not already running) and ramps its weight from `0` up to `1`. A `duration` of `0` starts it instantly at full weight.
+* `fadeOut(duration)` ramps a running clip's weight down to `0` and stops it when it reaches zero. A `duration` of `0` stops it immediately.
+
+To transition between two clips, fade one out while fading the other in. For clips on the same [Model](model.md), [Model::playAnimation()](model.md#playanimation-stopanimations) does this for you.
+
+=== "C++"
+    ```cpp
+    // Manual crossfade from run to idle over 0.25s
+    runAnim.fadeOut(0.25f);
+    idleAnim.fadeIn(0.25f);
+    ```
+
+=== "Lua"
+    ```lua
+    -- Manual crossfade from run to idle over 0.25s
+    runAnim:fadeOut(0.25)
+    idleAnim:fadeIn(0.25)
+    ```
+
+---
 
 ### addActionFrame
 
