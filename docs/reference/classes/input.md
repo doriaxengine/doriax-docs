@@ -184,6 +184,8 @@ Returns `true` while the mouse cursor is inside the canvas boundary.
 
 Current cursor position in canvas coordinates. Updated every frame; use for hover detection in `onUpdate`.
 
+This value can also be set manually with [Engine.setMousePosition](engine.md#setmouseposition). When [Engine.mouseLocked](engine.md#mouselocked) is enabled, the position is a virtual canvas-space position accumulated from relative mouse movement and may move outside the normal canvas range.
+
 === "C++"
 
     ```cpp

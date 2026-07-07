@@ -100,6 +100,75 @@ held down. For click and release edges use the
 | `getMousePosition()` | Current cursor position in canvas coordinates |
 | `getMouseScroll()` | Accumulated scroll wheel delta `(x, y)` since last frame |
 
+### Cursor visibility, locking, and positioning
+
+Use `Input` to read the current mouse state. Use `Engine` to control how the OS cursor behaves:
+
+| API | Purpose |
+| --- | --- |
+| `Engine.showCursor` / `Engine::setShowCursor(bool)` | Show or hide the OS cursor |
+| `Engine.mouseLocked` / `Engine::setMouseLocked(bool)` | Capture the mouse for relative movement |
+| `Engine.setMousePosition(x, y)` / `Engine::setMousePosition(x, y)` | Set the mouse position in canvas coordinates |
+
+Hiding the cursor does not lock it. For first-person cameras or free-look controls, lock the mouse so movement keeps generating input without letting the pointer escape the window.
+
+=== "Lua"
+
+    ```lua
+    function PlayerLook:init()
+        Engine.showCursor = false
+        Engine.mouseLocked = true
+        RegisterEngineEvent(self, "onMouseMove")
+    end
+
+    function PlayerLook:onMouseMove(x, y, mods)
+        local pos = Input.getMousePosition()
+        -- Compare pos with the previous frame, or use the event values directly.
+    end
+    ```
+
+=== "C++"
+
+    ```cpp
+    class PlayerLook : public doriax::ScriptBase {
+    public:
+        PlayerLook(doriax::Scene* scene, doriax::Entity entity)
+            : ScriptBase(scene, entity) {
+            Engine::setShowCursor(false);
+            Engine::setMouseLocked(true);
+            REGISTER_ENGINE_EVENT(onMouseMove);
+        }
+
+        ~PlayerLook() {
+            UNREGISTER_ENGINE_EVENT(onMouseMove);
+        }
+
+        void onMouseMove(float x, float y, int mods) {
+            Vector2 pos = Input::getMousePosition();
+            // Compare pos with the previous frame, or use x/y directly.
+        }
+    };
+    ```
+
+To place the cursor manually, pass logical canvas coordinates:
+
+=== "Lua"
+
+    ```lua
+    Engine.setMousePosition(Engine.canvasWidth * 0.5, Engine.canvasHeight * 0.5)
+    ```
+
+=== "C++"
+
+    ```cpp
+    Engine::setMousePosition(
+        Engine::getCanvasWidth() * 0.5f,
+        Engine::getCanvasHeight() * 0.5f
+    );
+    ```
+
+Desktop GLFW builds also move the OS cursor. On platforms that do not expose cursor warping, the engine updates its internal input position and the next real mouse event may replace it.
+
 ### Mouse button constants
 
 | C++ macro | Lua property | Button |

@@ -58,7 +58,9 @@ Control engine properties and define defaults used across the whole project. `En
 | static [GraphicBackend](#graphicbackend) | [graphicBackend](#graphicbackend_1) | — | C++ \| Lua |
 | static bool | [openGL](#opengl) | — | C++ \| Lua |
 | static bool | [asyncLoading](#asyncloading) | `false` | C++ \| Lua |
+| static bool | [showCursor](#showcursor) | `true` | C++ \| Lua |
 | static [CursorType](#cursortype) | [mouseCursor](#mousecursor) | `ARROW` | C++ \| Lua |
+| static bool | [mouseLocked](#mouselocked) | `false` | C++ \| Lua |
 | static Framebuffer* | [framebuffer](#framebuffer) | — | C++ \| Lua |
 
 ### Methods
@@ -78,6 +80,7 @@ Control engine properties and define defaults used across the whole project. `En
 | static void | [pauseGameEvents](#pausegameevents) | C++ \| Lua |
 | static void | [setCanvasSize](#setcanvassize) | C++ \| Lua |
 | static Rect | [getViewRect](#getviewrect) | C++ \| Lua |
+| static void | [setMousePosition](#setmouseposition) | C++ \| Lua |
 | static void | [setUpdateTimeMS](#setupdatetimems) | C++ \| Lua |
 | static bool | [isUIEventReceived](#isuieventreceived) | C++ \| Lua |
 | static bool | [isViewLoaded](#isviewloaded) | C++ \| Lua |
@@ -341,12 +344,47 @@ Enable background resource loading. When active, GPU resource creation must be c
 
 ---
 
+### showCursor
+
+* *Setter:* `static void setShowCursor(bool showCursor)`
+* *Getter:* `static bool isShowCursor()`
+
+Shows or hides the OS mouse cursor. This only changes visibility; it does not capture the mouse or prevent it from leaving the window. For FPS-style camera controls, use [mouseLocked](#mouselocked).
+
+---
+
 ### mouseCursor
 
 * *Setter:* `static void setMouseCursor(CursorType type)`
 * *Getter:* `static CursorType getMouseCursor()`
 
 Changes the OS mouse cursor shape. See [CursorType](#cursortype).
+
+---
+
+### mouseLocked
+
+* *Setter:* `static void setMouseLocked(bool mouseLocked)`
+* *Getter:* `static bool isMouseLocked()`
+
+Captures the mouse for relative movement. When enabled, the platform hides/locks the pointer so it cannot leave the window or canvas during movement. This is the preferred mode for first-person cameras, free-look controls, and any interaction that uses mouse deltas instead of an absolute pointer.
+
+While locked, mouse move events continue to be delivered even if the virtual mouse position moves outside the canvas bounds.
+
+=== "Lua"
+
+    ```lua
+    Engine.mouseLocked = true
+    ```
+
+=== "C++"
+
+    ```cpp
+    Engine::setMouseLocked(true);
+    ```
+
+!!! note
+    Browser builds use the Pointer Lock API, so locking may only take effect after a user gesture such as a click.
 
 ---
 
@@ -460,6 +498,31 @@ Sets the preferred logical canvas dimensions. The actual [canvasWidth](#canvaswi
 * `static Rect getViewRect()`
 
 Returns the viewport rectangle calculated from canvas size, window size, and scaling mode.
+
+---
+
+### setMousePosition
+
+* `static void setMousePosition(float x, float y)`
+
+Sets the mouse position in logical canvas coordinates and updates `Input.getMousePosition()`.
+
+On desktop GLFW builds this also moves the OS cursor. On platforms that do not expose cursor warping, the engine still updates its internal input position, and the next real mouse event may replace it with the platform-reported position.
+
+=== "Lua"
+
+    ```lua
+    Engine.setMousePosition(Engine.canvasWidth * 0.5, Engine.canvasHeight * 0.5)
+    ```
+
+=== "C++"
+
+    ```cpp
+    Engine::setMousePosition(
+        Engine::getCanvasWidth() * 0.5f,
+        Engine::getCanvasHeight() * 0.5f
+    );
+    ```
 
 ---
 
@@ -693,6 +756,8 @@ Called when a mouse button is released.
     * **mods** — Modifier key bitmask.
 
 Called when the mouse cursor moves. Also called outside the canvas when [allowEventsOutCanvas](#alloweventsoutcanvas) is `true`.
+
+When [mouseLocked](#mouselocked) is `true`, this event keeps firing from relative mouse movement, and `x`/`y` can represent a virtual position outside the normal canvas range.
 
 ---
 
