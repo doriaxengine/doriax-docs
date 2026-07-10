@@ -68,6 +68,10 @@ GLTF models can include one or more named skeletal animation clips. The timeline
 lets you preview and blend these clips on the **Model** entity. Use the **Bone** view
 to inspect and edit individual joint transforms.
 
+The animation selector uses each animation entity's name. Imported clips start with the
+name authored in the GLTF; you can rename the entity in the Structure panel. Runtime
+`Model:findAnimation` and `Model:playAnimation` string lookups use that same entity name.
+
 ![Bone tools](../assets/screenshots/editor-bones.png)
 
 At runtime, look up a clip by name on the `Model` object:

@@ -74,7 +74,16 @@ Format-specific loaders. Use these when you want to be explicit about the format
 * [Animation](animation.md) **getAnimation**(int index)
 * [Animation](animation.md) **findAnimation**(const std::string& name)
 
-Retrieve a skeletal or morph-target animation embedded in the loaded model. `getAnimation()` accesses by zero-based index; `findAnimation()` searches by name as exported from the DCC tool. Both return an [Animation](animation.md) object that can be started, stopped, and configured for looping.
+Retrieve a skeletal or morph-target animation embedded in the loaded model.
+`getAnimation()` accesses by zero-based index; `findAnimation()` searches the animation
+entity name. GLTF import initializes that entity name from the clip name exported by the
+DCC tool, and an unnamed imported clip receives a generated name such as `"Animation 0"`.
+Both methods return an [Animation](animation.md) object that can be started, stopped, and
+configured for looping.
+
+Renaming an animation entity changes the string accepted by `findAnimation()` and the
+named [playAnimation()](#playanimation-stopanimations) overloads. The
+`AnimationComponent` itself has no separate name property.
 
 === "C++"
     ```cpp

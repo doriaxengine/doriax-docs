@@ -13,9 +13,12 @@ description: AnimationComponent API reference (C++ and Lua).
 | `actions` | C++ \| Lua |
 | `ownedActions` | C++ \| Lua |
 | `loop` | C++ \| Lua |
-| `name` | C++ \| Lua |
 | `duration` | C++ \| Lua |
 | `defaultFadeTime` | C++ \| Lua |
+
+`AnimationComponent` does not store a separate name. Animations are entities, so their
+display and lookup name comes from the inherited
+[`Animation::name`](animation.md#name) entity property.
 
 `defaultFadeTime` is the crossfade duration (seconds) used by
 [Model::playAnimation()](model.md#playanimation-stopanimations) when no explicit fade

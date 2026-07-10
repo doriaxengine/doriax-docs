@@ -253,12 +253,13 @@ the **single-argument** constructor and then `loadGLTF`. This *creates a new ent
 GLTF can carry multiple named clips in a single file. You can play several clips
 simultaneously for layered animation blending.
 
-!!! note "Clip names come from the GLTF, not the Structure panel"
-    `findAnimation` matches the clip's name as authored in the GLTF (often Mixamo-style,
-    e.g. `mixamo.com`), which is independent of the entity name you see in the editor. If
-    a name lookup fails, check the clip's **AnimationComponent → Name** field in the
-    Properties window, or address the clip by index with `getAnimation(0)`. Requesting a
-    name or index that doesn't exist raises an error, so guard lookups you're unsure of.
+!!! note "Clip lookup uses the animation entity name"
+    GLTF import initially names each animation entity from the authored clip name (often
+    Mixamo-style, e.g. `mixamo.com`). `findAnimation` searches that entity name—the same
+    name shown in the Structure panel and animation selector. If you rename the entity,
+    use the new name in `findAnimation` and `playAnimation`. You can also address the clip
+    by index with `getAnimation(0)`. Requesting a name or index that doesn't exist raises
+    an error, so guard lookups you're unsure of.
 
 ### Smooth transitions (crossfading)
 

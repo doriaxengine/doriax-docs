@@ -60,10 +60,19 @@ When `true`, all child [Action](action.md) entities referenced by the animation'
 
 ### name
 
-* *Setter*: void **setName**(const std::string& name)
-* *Getter*: const std::string& **getName**() const
+*Inherited from:* [EntityHandle](entityhandle.md#name)
 
-Human-readable animation name (e.g. `"Walk"`, `"Attack"`, `"Idle"`). This is the name used by [Model::findAnimation()](model.md#getanimation-findanimation) to look up an animation by string.
+* *Setter*: void **setName**(const std::string& name)
+* *Getter*: std::string **getName**() const
+
+The animation entity's human-readable name (for example `"Walk"`, `"Attack"`, or
+`"Idle"`). The editor displays this name in the Structure panel and animation selectors,
+and [Model::findAnimation()](model.md#getanimation-findanimation) and the string overloads
+of [Model::playAnimation()](model.md#playanimation-stopanimations) use it for lookup.
+
+Imported GLTF clips initialize their animation entity name from the source clip name.
+Renaming the entity also changes the string used to find or play that clip. There is no
+separate name stored in `AnimationComponent`.
 
 ---
 
