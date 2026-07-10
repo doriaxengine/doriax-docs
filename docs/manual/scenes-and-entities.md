@@ -143,6 +143,7 @@ Every scene owns rendering and interaction state that affects all entities withi
 | Shadow quality | PCF filtering level for smoother shadow edges (`NONE` to `HIGH`) |
 | Light state | `OFF`, `ON`, or `AUTO` (auto-detects lights in the scene) |
 | Global illumination | Ambient light color and intensity |
+| Physics gravity | Per-world gravity in m/s² — 2D (Box2D) and 3D (Jolt) are independent — see [Physics](physics.md#gravity) |
 | UI events | Enables/disables UI input processing for the scene |
 | Default shaders | Per-type custom shaders (Mesh, UI, Sky, Points, Lines) used by every component of that type without its own custom shader — see [Custom Shaders](../editor/custom-shaders.md#scene-default-shaders) |
 | Canvas size | Logical resolution for 2D and UI scenes |

@@ -40,6 +40,35 @@ workflow.
 You can react to collisions in your game logic to trigger gameplay events such as
 damage, pickups, or sounds.
 
+## Gravity
+
+Each scene has its own gravity, and the 2D and 3D worlds are independent: `gravity2D`
+drives the Box2D world and `gravity3D` drives the Jolt world. Both default to
+`(0, -9.81)` m/s².
+
+In the editor, select the scene in the Properties window and set **Gravity** in the
+**Physics** section — 2D scenes edit the 2D world, 3D scenes the 3D world. The value is
+saved with the scene and applied in exported projects.
+
+=== "C++"
+
+    ```cpp
+    scene.setGravity2D(Vector2(0, -20));       // snappier platformer fall
+    scene.setGravity3D(Vector3(0, -3.7f, 0));  // Mars
+    ```
+
+=== "Lua"
+
+    ```lua
+    scene.gravity2D = Vector2(0, -20)
+    scene.gravity3D = Vector3(0, -3.7, 0)
+    ```
+
+Scale the response per body with [Body2D — gravityScale](../reference/classes/body2d.md#gravityscale)
+or [Body3D — gravityFactor](../reference/classes/body3d.md#gravityfactor). Changing
+gravity at runtime does not wake sleeping bodies — they pick up the new value when
+something wakes them.
+
 ## 2D physics
 
 2D physics uses Box2D. A body can contain up to `MAX_SHAPES` shapes and each shape can

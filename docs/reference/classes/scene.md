@@ -43,6 +43,8 @@ A `Scene` is the root container for all objects, systems, and resources in a pro
 | float | [ambientLight2DIntensity](#ambientlight2dintensity) | `1.0` | C++ \| Lua |
 | Vector3 | [ambientLight2DColor](#ambientlight2dcolor) | `(1,1,1)` | C++ \| Lua |
 | [ShadowQuality](#shadowquality) | [shadow2DQuality](#shadow2dquality) | `LOW` | C++ \| Lua |
+| Vector2 | [gravity2D](#gravity2d) | `(0,-9.81)` | C++ \| Lua |
+| Vector3 | [gravity3D](#gravity3d) | `(0,-9.81,0)` | C++ \| Lua |
 | bool | [ssaoEnabled](#ssaoenabled) | `false` | C++ \| Lua |
 | float | [ssaoRadius](#ssaoradius) | `0.5` | C++ \| Lua |
 | float | [ssaoIntensity](#ssaointensity) | `1.0` | C++ \| Lua |
@@ -91,6 +93,10 @@ A `Scene` is the root container for all objects, systems, and resources in a pro
 | Vector3 | [getAmbientLight2DColor](#setambientlight2d) | C++ \| Lua |
 | void | [setShadow2DQuality](#shadow2dquality) | C++ |
 | ShadowQuality | [getShadow2DQuality](#shadow2dquality) | C++ |
+| void | [setGravity2D](#gravity2d) | C++ \| Lua |
+| Vector2 | [getGravity2D](#gravity2d) | C++ \| Lua |
+| void | [setGravity3D](#gravity3d) | C++ \| Lua |
+| Vector3 | [getGravity3D](#gravity3d) | C++ \| Lua |
 | void | [setSSAOEnabled](#ssaoenabled) | C++ \| Lua |
 | bool | [isSSAOEnabled](#ssaoenabled) | C++ \| Lua |
 | void | [setSSAORadius](#ssaoradius) | C++ \| Lua |
@@ -251,6 +257,48 @@ Filter quality of 2D light shadows (PCF taps along the 1D polar shadow map). Mor
 
     ```lua
     scene.shadow2DQuality = ShadowQuality.MEDIUM
+    ```
+
+---
+
+### gravity2D
+
+* *Setters:* `void setGravity2D(Vector2 gravity)`, `void setGravity2D(float x, float y)`
+* *Getter:* `Vector2 getGravity2D() const`
+
+Gravity of the **2D physics world** (Box2D), in meters per second squared. Affects every dynamic [Body2D](body2d.md) in the scene, scaled per body by [gravityScale](body2d.md#gravityscale). Independent from [gravity3D](#gravity3d). Changing it at runtime does not wake sleeping bodies. Forwards to the scene's [PhysicsSystem](physicssystem.md). Default `(0, -9.81)`.
+
+=== "C++"
+
+    ```cpp
+    scene.setGravity2D(Vector2(0, -20));
+    ```
+
+=== "Lua"
+
+    ```lua
+    scene.gravity2D = Vector2(0, -20)
+    ```
+
+---
+
+### gravity3D
+
+* *Setters:* `void setGravity3D(Vector3 gravity)`, `void setGravity3D(float x, float y, float z)`
+* *Getter:* `Vector3 getGravity3D() const`
+
+Gravity of the **3D physics world** (Jolt), in meters per second squared. Affects every dynamic [Body3D](body3d.md) in the scene, scaled per body by [gravityFactor](body3d.md#gravityfactor). Independent from [gravity2D](#gravity2d). Changing it at runtime does not wake sleeping bodies. Forwards to the scene's [PhysicsSystem](physicssystem.md). Default `(0, -9.81, 0)`.
+
+=== "C++"
+
+    ```cpp
+    scene.setGravity3D(Vector3(0, -3.7f, 0)); // Mars
+    ```
+
+=== "Lua"
+
+    ```lua
+    scene.gravity3D = Vector3(0, -3.7, 0) -- Mars
     ```
 
 ---
