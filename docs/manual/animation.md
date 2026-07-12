@@ -322,6 +322,45 @@ track types available are:
 | `ScaleTracks` | Entity scale over time |
 | `MorphTracks` | Morph target weights for shape blending |
 
+Create track entities from the **Structure panel** (**Create entity → Animation →
+Translate/Rotate/Scale/Morph Tracks**) or from the Animation Timeline's **+ Add
+Action** menu. A track entity holds a shared key-time list plus one value per key,
+and animates the entity set as its action target. `TranslateTracks` paths can also
+be edited visually in the scene view — see
+[Editing movement paths](../editor/scene-view.md#editing-movement-paths-translatetracks).
+
+### Per-segment easing
+
+Each segment between two consecutive keys can have its own easing curve: segment `i`
+shapes the interpolation from key `i` to key `i+1`, using any
+[`EaseType`](../reference/classes/timedaction.md). Unset segments are linear — GLTF-imported
+clips leave the list empty and always play back linearly. Edit easing in the
+**Properties** window under **KeyframeTracks → Easing**, or in code:
+
+=== "Lua"
+
+    ```lua
+    local path = TranslateTracks(scene)
+    path:setTarget(box:getEntity())
+    path:setTimes({0.0, 1.0, 2.5, 3.0})
+    path:setValues({Vector3(0,0,0), Vector3(5,0,0), Vector3(5,0,5), Vector3(0,0,0)})
+    path:setEasing(0, EaseType.QUAD_IN_OUT) -- key 0 -> key 1
+    path:setEasing(2, EaseType.BOUNCE_OUT)  -- key 2 -> key 3
+    path:start()
+    ```
+
+=== "C++"
+
+    ```cpp
+    TranslateTracks path(&scene);
+    path.setTarget(box.getEntity());
+    path.setTimes({0.0f, 1.0f, 2.5f, 3.0f});
+    path.setValues({Vector3(0,0,0), Vector3(5,0,0), Vector3(5,0,5), Vector3(0,0,0)});
+    path.setEasing(0, EaseType::QUAD_IN_OUT); // key 0 -> key 1
+    path.setEasing(2, EaseType::BOUNCE_OUT);  // key 2 -> key 3
+    path.start();
+    ```
+
 ## Morph targets
 
 Morph targets (blend shapes) are authored in a 3D tool such as Blender and exported

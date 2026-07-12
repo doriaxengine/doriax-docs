@@ -169,14 +169,19 @@ the runtime action system provides lightweight action types:
 | `SpriteAnimation` | Cycle through sprite frames |
 | `Animation` | Play a skeletal or keyframe clip |
 | `Particles` | Drive particle playback |
+| `TranslateTracks` / `RotateTracks` / `ScaleTracks` / `MorphTracks` | Multi-keyframe tracks with per-segment easing |
 
 All actions support easing curves. See [TimedAction](../reference/classes/timedaction.md)
 for the full list of `EaseType` values.
 
 ## Easing curves
 
-Apply easing in the timeline by right-clicking a keyframe, or set it on runtime actions
-with `setFunctionType()`. Common choices:
+Timed actions (`PositionAction`, `RotationAction`, …) have a single **Ease** property in
+the **Properties** window (`setFunctionType()` in code). Keyframe tracks ease **per
+segment**: with a tracks entity selected, the Properties window shows an **Easing**
+combo for each pair of consecutive keys (`Ease 0 - 1`, `Ease 1 - 2`, …). Unset segments
+are linear, and GLTF-imported clips always play back linearly — see
+[Per-segment easing](../manual/animation.md#per-segment-easing). Common choices:
 
 | Curve | Best for |
 | --- | --- |

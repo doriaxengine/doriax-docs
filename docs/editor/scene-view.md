@@ -141,6 +141,22 @@ polygon's bounds. See [2D Graphics — 2D shadows](../manual/2d-graphics.md#2d-s
 camera and the game camera preview to check framing. Use the **F** key to center the
 view on a selected entity.
 
+## Editing movement paths (TranslateTracks)
+
+Selecting a **TranslateTracks** entity draws its movement path in the viewport: a
+polyline through the keyframe positions with a handle at each point, shown in the
+space the values play back in (the action target's parent space). The path renders
+on top of scene geometry, so waypoints lying on floors or inside meshes stay visible.
+
+- **Click a handle** to select that point — it highlights and the translate gizmo
+  (move cross in 2D scenes) jumps to it.
+- **Drag the gizmo** to move the point. The drag is a single undo step, respects
+  snap-to-grid, and updates the track's `values` list live in the Properties window.
+- **Click empty space** or another entity to return to normal selection.
+
+Keyframe *times* and per-segment easing are edited in the **Properties** window; see
+[Keyframe tracks](../manual/animation.md#keyframe-tracks-timeline-authored).
+
 ## UI scene editing
 
 UI scenes display the canvas in screen-space overlay mode. Anchor gizmos show the
