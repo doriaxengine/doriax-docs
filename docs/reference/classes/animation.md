@@ -144,7 +144,9 @@ Several overloads are available:
 * void **addActionFrame**(float startTime, float duration, Entity action)
 * void **addActionFrame**(float startTime, Entity timedAction)
 
-Adds a frame to the animation timeline. `startTime` is the offset in seconds from the animation start. `duration` overrides the action's own duration. When `target` is omitted, the animation's own target is used.
+Adds a frame to the animation timeline. `startTime` is the offset in seconds from the animation start. `duration` overrides the action's own duration; a `duration` of `0` (or lower) means **auto** — the frame follows the action's own duration. The overloads without a `duration` parameter use auto. When `target` is omitted, the animation's own target is used.
+
+An animation cannot contain itself, directly or through nested animations: a call that would create such a cycle is rejected with an error log.
 
 === "C++"
     ```cpp
@@ -200,7 +202,7 @@ Returns a reference to the [ActionFrame](actionframe.md) at the given zero-based
 * void **setActionFrameStartTime**(unsigned int index, float startTime)
 * void **setActionFrameDuration**(unsigned int index, float duration)
 
-Modify the start time or duration of an existing frame by index.
+Modify the start time or duration of an existing frame by index. Setting `duration` to `0` (or lower) switches the frame to **auto**: it follows the action's own duration.
 
 ---
 

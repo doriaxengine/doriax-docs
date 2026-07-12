@@ -121,6 +121,7 @@ Drag and drop also crosses window boundaries:
 | Entity (or selection) from Structure | Resources Browser | Saves the hierarchy as a `.bundle` file and replaces it with a bundle instance |
 | Entity from Structure | Entity-reference field in Properties | Assigns the entity to that field |
 | Entity from Structure | Script file in the Code Editor | Inserts an entity reference property ([details](code-editor.md#drag-entities-into-your-code)) |
+| Action entity from Structure | [Animation Timeline](animation.md#action-frames) tracks | Adds an action frame at the dropped track and time |
 | `.bundle` file from Resources | Scene root or an entity with `Transform` | Creates a bundle instance there |
 | `.scene` file from Resources | Scene root | Adds it as a child scene |
 

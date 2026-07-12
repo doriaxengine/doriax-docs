@@ -33,6 +33,41 @@ targets, and runtime action components — all driven by the `ActionSystem` at r
 | **Morph weights** | Blend shape weights for facial or deformation animation |
 | **Particle playback** | Play/stop state of a `Particles` action |
 
+## Action frames
+
+An animation is a list of **action frames**. Each frame schedules an action entity to
+run at a **start time** on a **track** (a timeline lane, used only for visual
+organization — overlapping frames are re-laned automatically).
+
+Add frames with the **+ Add Action** button (which creates a new action entity of the
+chosen type), or **drag an action entity from the Structure panel onto the tracks
+area** — a ghost block previews the target track, the grid-snapped start time, and the
+frame length before you drop. Invalid drops are rejected with an explanatory tooltip:
+entities without an `ActionComponent`, entities from another scene, and anything that
+would make an animation contain itself, directly or through nested animations.
+
+| Operation | How |
+| --- | --- |
+| Select a frame | Click the block (details appear in the toolbar) |
+| Move a frame | Drag the block; dragging vertically changes track |
+| Resize a frame | Drag the block's left or right edge |
+| Open the action | Double-click the block to select the action entity |
+| Remove a frame | **Properties → AnimationComponent → Actions** → trash button |
+
+### Automatic duration
+
+A frame whose duration is `0` is **auto**: it follows the action's own length — a
+`SpriteAnimation` lasts as long as its frame sequence, a `TimedAction` uses its
+duration, a nested `Animation` its own total length. Frames created in the editor
+default to auto, so configuring the action later updates the timeline block
+automatically.
+
+Resizing a block in the timeline converts it to an **explicit** duration. To switch
+back and forth, use the checkbox next to **Duration** in the Properties window
+(**AnimationComponent → Actions**): checking it stores `0` (auto) and displays the
+resolved duration read-only; unchecking freezes the current resolved value as an
+editable number.
+
 ## Creating a clip
 
 1. Select an entity in the **Structure panel** or **Scene view**.
