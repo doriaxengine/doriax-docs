@@ -1,12 +1,12 @@
 ---
-description: Keyboard, mouse, touch, modifier input, and UI event handling in Doriax.
+description: Keyboard, mouse, touch, gamepad, modifier input, and UI event handling in Doriax.
 ---
 
 # Input
 
 Doriax exposes all input through the static `Input` class. It covers keyboard, mouse,
-touch, and modifier state for desktop, mobile, and web targets. All polling APIs are
-safe to call from any script or system update.
+touch, gamepad, and modifier state for desktop, mobile, and web targets. All polling APIs
+are safe to call from any script or system update.
 
 ## Key and button constants
 
@@ -215,6 +215,181 @@ single-touch to also fire mouse events.
 | `numTouches()` | Number of active touch points |
 | `getTouchPosition(index)` | Position of a touch point by index |
 | `getTouches()` | Array of all active touch records |
+
+## Gamepad
+
+Gamepad (controller) input is available on desktop (Windows, Linux, macOS), mobile
+(Android, iOS), and web. Buttons and axes follow the standard Xbox-style layout, so a
+single code path works across controllers and platforms.
+
+Each connected controller has a numeric **id**. Poll a specific controller by id, or
+subscribe to the [`Engine.onGamepad*`](../reference/classes/engine.md#callback-events)
+events for connect/disconnect and button/axis edges.
+
+=== "Lua"
+
+    ```lua
+    -- Poll the first controller (id 0)
+    if Input.isGamepadConnected(0) then
+        if Input.isGamepadButtonPressed(0, Input.GAMEPAD_BUTTON_A) then
+            player:jump()
+        end
+
+        local moveX = Input.getGamepadAxis(0, Input.GAMEPAD_AXIS_LEFT_X)
+        local moveY = Input.getGamepadAxis(0, Input.GAMEPAD_AXIS_LEFT_Y)
+        player:move(moveX, moveY)
+    end
+    ```
+
+=== "C++"
+
+    ```cpp
+    if (Input::isGamepadConnected(0)) {
+        if (Input::isGamepadButtonPressed(0, D_GAMEPAD_BUTTON_A)) {
+            player.jump();
+        }
+
+        float moveX = Input::getGamepadAxis(0, D_GAMEPAD_AXIS_LEFT_X);
+        float moveY = Input::getGamepadAxis(0, D_GAMEPAD_AXIS_LEFT_Y);
+        player.move(moveX, moveY);
+    }
+    ```
+
+### Enumerating connected controllers
+
+Gamepad ids are **sparse** — after a controller disconnects, the remaining ids can have
+gaps (for example ids `0` and `2` with `1` missing). `numGamepads()` is a *count*, not
+the highest id, so never loop `for i = 0, numGamepads() - 1` and treat `i` as an id.
+Instead map a dense index to a real id with `getGamepadId(index)`:
+
+=== "Lua"
+
+    ```lua
+    for i = 0, Input.numGamepads() - 1 do
+        local id = Input.getGamepadId(i)
+        if Input.isGamepadButtonPressed(id, Input.GAMEPAD_BUTTON_START) then
+            pauseGame()
+        end
+    end
+    ```
+
+=== "C++"
+
+    ```cpp
+    for (size_t i = 0; i < Input::numGamepads(); i++) {
+        int id = Input::getGamepadId(i);
+        if (Input::isGamepadButtonPressed(id, D_GAMEPAD_BUTTON_START)) {
+            pauseGame();
+        }
+    }
+    ```
+
+### Events
+
+For one-shot press/release and connect/disconnect notifications, subscribe to the engine
+events instead of polling:
+
+=== "Lua"
+
+    ```lua
+    function Controller:init()
+        RegisterEngineEvent(self, "onGamepadConnect")
+        RegisterEngineEvent(self, "onGamepadButtonDown")
+    end
+
+    function Controller:onGamepadConnect(gamepad)
+        print("Controller connected: " .. Input.getGamepadName(gamepad))
+    end
+
+    function Controller:onGamepadButtonDown(gamepad, button)
+        if button == Input.GAMEPAD_BUTTON_A then
+            player:jump()
+        end
+    end
+    ```
+
+=== "C++"
+
+    ```cpp
+    class Controller : public doriax::ScriptBase {
+    public:
+        Controller(doriax::Scene* scene, doriax::Entity entity)
+            : ScriptBase(scene, entity) {
+            REGISTER_ENGINE_EVENT(onGamepadConnect);
+            REGISTER_ENGINE_EVENT(onGamepadButtonDown);
+        }
+
+        ~Controller() {
+            UNREGISTER_ENGINE_EVENT(onGamepadConnect);
+            UNREGISTER_ENGINE_EVENT(onGamepadButtonDown);
+        }
+
+        void onGamepadConnect(int gamepad) { /* ... */ }
+
+        void onGamepadButtonDown(int gamepad, int button) {
+            if (button == D_GAMEPAD_BUTTON_A) player.jump();
+        }
+    };
+    ```
+
+The full event list is `onGamepadConnect`, `onGamepadDisconnect`, `onGamepadButtonDown`,
+`onGamepadButtonUp`, and `onGamepadAxisMove` — see
+[Engine](../reference/classes/engine.md#callback-events).
+
+### Gamepad methods
+
+| Method | Purpose |
+| --- | --- |
+| `isGamepadConnected(id)` | True while a controller with this id is connected |
+| `getGamepadName(id)` | Human-readable controller name |
+| `isGamepadButtonPressed(id, button)` | Button is currently held down |
+| `getGamepadAxis(id, axis)` | Current axis value, `-1.0`…`1.0` |
+| `numGamepads()` | Number of connected controllers |
+| `getGamepadId(index)` | Real id of the `index`-th connected controller (`-1` if out of range) |
+
+### Gamepad button constants
+
+Buttons use the standard Xbox layout. In Lua, replace the `D_GAMEPAD_BUTTON_` prefix with
+`Input.GAMEPAD_BUTTON_`. PlayStation-style aliases map to the same values.
+
+| C++ constant | Value | Xbox | PlayStation alias |
+| --- | --- | --- | --- |
+| `D_GAMEPAD_BUTTON_A` | 0 | A | `D_GAMEPAD_BUTTON_CROSS` |
+| `D_GAMEPAD_BUTTON_B` | 1 | B | `D_GAMEPAD_BUTTON_CIRCLE` |
+| `D_GAMEPAD_BUTTON_X` | 2 | X | `D_GAMEPAD_BUTTON_SQUARE` |
+| `D_GAMEPAD_BUTTON_Y` | 3 | Y | `D_GAMEPAD_BUTTON_TRIANGLE` |
+| `D_GAMEPAD_BUTTON_LEFT_BUMPER` | 4 | LB | L1 |
+| `D_GAMEPAD_BUTTON_RIGHT_BUMPER` | 5 | RB | R1 |
+| `D_GAMEPAD_BUTTON_BACK` | 6 | View / Back | Share |
+| `D_GAMEPAD_BUTTON_START` | 7 | Menu / Start | Options |
+| `D_GAMEPAD_BUTTON_GUIDE` | 8 | Guide | PS |
+| `D_GAMEPAD_BUTTON_LEFT_THUMB` | 9 | Left stick click | L3 |
+| `D_GAMEPAD_BUTTON_RIGHT_THUMB` | 10 | Right stick click | R3 |
+| `D_GAMEPAD_BUTTON_DPAD_UP` | 11 | D-pad up | |
+| `D_GAMEPAD_BUTTON_DPAD_RIGHT` | 12 | D-pad right | |
+| `D_GAMEPAD_BUTTON_DPAD_DOWN` | 13 | D-pad down | |
+| `D_GAMEPAD_BUTTON_DPAD_LEFT` | 14 | D-pad left | |
+
+### Gamepad axis constants
+
+Axis values range from `-1.0` to `1.0`. In Lua, replace `D_GAMEPAD_AXIS_` with
+`Input.GAMEPAD_AXIS_`.
+
+| C++ constant | Value | Range |
+| --- | --- | --- |
+| `D_GAMEPAD_AXIS_LEFT_X` | 0 | Left stick, `-1` left … `+1` right |
+| `D_GAMEPAD_AXIS_LEFT_Y` | 1 | Left stick, `-1` up … `+1` down |
+| `D_GAMEPAD_AXIS_RIGHT_X` | 2 | Right stick, `-1` left … `+1` right |
+| `D_GAMEPAD_AXIS_RIGHT_Y` | 3 | Right stick, `-1` up … `+1` down |
+| `D_GAMEPAD_AXIS_LEFT_TRIGGER` | 4 | Left trigger, `-1` released … `+1` pressed |
+| `D_GAMEPAD_AXIS_RIGHT_TRIGGER` | 5 | Right trigger, `-1` released … `+1` pressed |
+
+!!! note "Stick and trigger conventions"
+    The Y axes are **down-positive** (up is `-1`), matching screen coordinates.
+    **Triggers rest at `-1`** and reach `+1` when fully pressed — a released trigger reads
+    `-1`, not `0`, and this holds from the moment a controller connects. Apply a small dead
+    zone to the sticks (for example, ignore values under `0.15`) to avoid drift from analog
+    noise.
 
 ## Modifiers
 

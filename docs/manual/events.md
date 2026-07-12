@@ -70,6 +70,9 @@ optionally reported through a global crash handler.
 | `onMouseEnter/Leave` | `void()` | Pointer enters/leaves view |
 | `onKeyDown/Up` | `void(int, bool, int)` | Key, repeat flag, modifiers |
 | `onCharInput` | `void(wchar_t)` | Text input codepoint |
+| `onGamepadConnect/Disconnect` | `void(int)` | Gamepad id connected/disconnected |
+| `onGamepadButtonDown/Up` | `void(int, int)` | Gamepad id, button index |
+| `onGamepadAxisMove` | `void(int, int, float)` | Gamepad id, axis index, value `-1`…`1` |
 
 ### Input routing options
 

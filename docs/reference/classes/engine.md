@@ -121,6 +121,11 @@ Control engine properties and define defaults used across the whole project. `En
 | void(int,bool,int) | [onKeyDown](#onkeydown) | C++ \| Lua |
 | void(int,bool,int) | [onKeyUp](#onkeyup) | C++ \| Lua |
 | void(wchar_t) | [onCharInput](#oncharinput) | C++ \| Lua |
+| void(int) | [onGamepadConnect](#ongamepadconnect) | C++ \| Lua |
+| void(int) | [onGamepadDisconnect](#ongamepaddisconnect) | C++ \| Lua |
+| void(int,int) | [onGamepadButtonDown](#ongamepadbuttondown) | C++ \| Lua |
+| void(int,int) | [onGamepadButtonUp](#ongamepadbuttonup) | C++ \| Lua |
+| void(int,int,float) | [onGamepadAxisMove](#ongamepadaxismove) | C++ \| Lua |
 
 ## Enumerations
 
@@ -855,3 +860,57 @@ Called when any keyboard key is released.
     * **codepoint** — Unicode code point of the typed character, including composed/accented characters.
 
 Called for text input. Prefer this over [onKeyDown](#onkeydown) when implementing text fields.
+
+---
+
+### onGamepadConnect
+
+* `static FunctionSubscribe<void(int)> onGamepadConnect`
+* Callback: `void(int gamepad)`
+    * **gamepad** — Id of the controller that connected.
+
+Called when a controller is connected (and once for each controller already connected at startup). Query its name with [Input.getGamepadName](input.md#getgamepadname).
+
+---
+
+### onGamepadDisconnect
+
+* `static FunctionSubscribe<void(int)> onGamepadDisconnect`
+* Callback: `void(int gamepad)`
+    * **gamepad** — Id of the controller that disconnected.
+
+Called when a controller is disconnected. After this fires, [Input.isGamepadConnected](input.md#isgamepadconnected) returns `false` for that id.
+
+---
+
+### onGamepadButtonDown
+
+* `static FunctionSubscribe<void(int,int)> onGamepadButtonDown`
+* Callback: `void(int gamepad, int button)`
+    * **gamepad** — Id of the controller.
+    * **button** — Button index; see [Input](input.md#gamepad-buttons) constants (`D_GAMEPAD_BUTTON_*` in C++, `Input.GAMEPAD_BUTTON_*` in Lua).
+
+Called when a controller button is pressed.
+
+---
+
+### onGamepadButtonUp
+
+* `static FunctionSubscribe<void(int,int)> onGamepadButtonUp`
+* Callback: `void(int gamepad, int button)`
+    * **gamepad** — Id of the controller.
+    * **button** — Button index.
+
+Called when a controller button is released.
+
+---
+
+### onGamepadAxisMove
+
+* `static FunctionSubscribe<void(int,int,float)> onGamepadAxisMove`
+* Callback: `void(int gamepad, int axis, float value)`
+    * **gamepad** — Id of the controller.
+    * **axis** — Axis index; see [Input](input.md#gamepad-axes) constants (`D_GAMEPAD_AXIS_*` in C++, `Input.GAMEPAD_AXIS_*` in Lua).
+    * **value** — Axis value in `-1.0`…`1.0`. Sticks are down-positive on the Y axis; triggers rest at `-1` and reach `+1` when fully pressed.
+
+Called when an analog axis (stick or trigger) changes. For always-on movement, polling [Input.getGamepadAxis](input.md#getgamepadaxis) in `onUpdate` is usually simpler than tracking this event.

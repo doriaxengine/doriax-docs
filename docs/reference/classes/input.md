@@ -1,18 +1,18 @@
 ---
-description: Input API reference — keyboard, mouse, and touch polling, modifiers, and key/button constants.
+description: Input API reference — keyboard, mouse, touch, and gamepad polling, modifiers, and key/button constants.
 ---
 
 # Input
 
 ## Description
 
-`Input` is a static polling class that provides the current keyboard, mouse, and touch state at any point during a frame. Use it inside `onUpdate` or `onFixedUpdate` to check whether a key or button is held down. For event-based input (press/release notifications), subscribe to the [Engine](engine.md) callback events instead.
+`Input` is a static polling class that provides the current keyboard, mouse, touch, and gamepad state at any point during a frame. Use it inside `onUpdate` or `onFixedUpdate` to check whether a key or button is held down. For event-based input (press/release and controller connect/disconnect notifications), subscribe to the [Engine](engine.md) callback events instead.
 
 !!! note "Constant naming differs by language"
-    Key, mouse-button, and modifier constants are C++ preprocessor macros prefixed `D_`
-    (e.g. `D_KEY_SPACE`, `D_MOUSE_BUTTON_LEFT`). In Lua they are static properties on the
-    `Input` class with the `D_` prefix dropped (e.g. `Input.KEY_SPACE`,
-    `Input.MOUSE_BUTTON_LEFT`).
+    Key, mouse-button, gamepad, and modifier constants are C++ preprocessor macros prefixed
+    `D_` (e.g. `D_KEY_SPACE`, `D_MOUSE_BUTTON_LEFT`, `D_GAMEPAD_BUTTON_A`). In Lua they are
+    static properties on the `Input` class with the `D_` prefix dropped (e.g.
+    `Input.KEY_SPACE`, `Input.MOUSE_BUTTON_LEFT`, `Input.GAMEPAD_BUTTON_A`).
 
 === "C++"
 
@@ -48,8 +48,16 @@ description: Input API reference — keyboard, mouse, and touch polling, modifie
 | static Vector2 | [getTouchPosition](#gettouchposition) | C++ \| Lua |
 | static std::vector\<Touch\> | [getTouches](#gettouches) | C++ \| Lua |
 | static size_t | [numTouches](#numtouches) | C++ \| Lua |
+| static bool | [isGamepadConnected](#isgamepadconnected) | C++ \| Lua |
+| static std::string | [getGamepadName](#getgamepadname) | C++ \| Lua |
+| static bool | [isGamepadButtonPressed](#isgamepadbuttonpressed) | C++ \| Lua |
+| static float | [getGamepadAxis](#getgamepadaxis) | C++ \| Lua |
+| static std::vector\<Gamepad\> | [getGamepads](#getgamepads) | C++ |
+| static size_t | [numGamepads](#numgamepads) | C++ \| Lua |
+| static int | [getGamepadId](#getgamepadid) | C++ \| Lua |
 | static int | [getModifiers](#getmodifiers) | C++ \| Lua |
 | static size_t | [findTouchIndex](#findtouchindex) | C++ \| Lua |
+| static size_t | [findGamepadIndex](#findgamepadindex) | C++ |
 
 ## Keys
 
@@ -111,6 +119,43 @@ Modifier bits returned by [getModifiers](#getmodifiers) and passed to key/mouse 
 | `D_MODIFIER_SUPER` | `Input.MODIFIER_SUPER` | `0x0008` | Super (Win/Cmd) held |
 | `D_MODIFIER_CAPS_LOCK` | `Input.MODIFIER_CAPS_LOCK` | `0x0010` | Caps Lock active |
 | `D_MODIFIER_NUM_LOCK` | `Input.MODIFIER_NUM_LOCK` | `0x0020` | Num Lock active |
+
+## Gamepad buttons
+
+Button indices follow the standard Xbox-style layout. In Lua, replace the `D_GAMEPAD_BUTTON_` prefix with `Input.GAMEPAD_BUTTON_`. The PlayStation-style aliases are the same underlying values.
+
+| C++ constant | Lua property | Value | Description |
+| --- | --- | --- | --- |
+| `D_GAMEPAD_BUTTON_A` | `Input.GAMEPAD_BUTTON_A` | 0 | A (alias `CROSS`) |
+| `D_GAMEPAD_BUTTON_B` | `Input.GAMEPAD_BUTTON_B` | 1 | B (alias `CIRCLE`) |
+| `D_GAMEPAD_BUTTON_X` | `Input.GAMEPAD_BUTTON_X` | 2 | X (alias `SQUARE`) |
+| `D_GAMEPAD_BUTTON_Y` | `Input.GAMEPAD_BUTTON_Y` | 3 | Y (alias `TRIANGLE`) |
+| `D_GAMEPAD_BUTTON_LEFT_BUMPER` | `Input.GAMEPAD_BUTTON_LEFT_BUMPER` | 4 | Left bumper / L1 |
+| `D_GAMEPAD_BUTTON_RIGHT_BUMPER` | `Input.GAMEPAD_BUTTON_RIGHT_BUMPER` | 5 | Right bumper / R1 |
+| `D_GAMEPAD_BUTTON_BACK` | `Input.GAMEPAD_BUTTON_BACK` | 6 | View / Back / Share |
+| `D_GAMEPAD_BUTTON_START` | `Input.GAMEPAD_BUTTON_START` | 7 | Menu / Start / Options |
+| `D_GAMEPAD_BUTTON_GUIDE` | `Input.GAMEPAD_BUTTON_GUIDE` | 8 | Guide / PS button |
+| `D_GAMEPAD_BUTTON_LEFT_THUMB` | `Input.GAMEPAD_BUTTON_LEFT_THUMB` | 9 | Left stick click / L3 |
+| `D_GAMEPAD_BUTTON_RIGHT_THUMB` | `Input.GAMEPAD_BUTTON_RIGHT_THUMB` | 10 | Right stick click / R3 |
+| `D_GAMEPAD_BUTTON_DPAD_UP` | `Input.GAMEPAD_BUTTON_DPAD_UP` | 11 | D-pad up |
+| `D_GAMEPAD_BUTTON_DPAD_RIGHT` | `Input.GAMEPAD_BUTTON_DPAD_RIGHT` | 12 | D-pad right |
+| `D_GAMEPAD_BUTTON_DPAD_DOWN` | `Input.GAMEPAD_BUTTON_DPAD_DOWN` | 13 | D-pad down |
+| `D_GAMEPAD_BUTTON_DPAD_LEFT` | `Input.GAMEPAD_BUTTON_DPAD_LEFT` | 14 | D-pad left |
+
+The aliases `D_GAMEPAD_BUTTON_CROSS`, `CIRCLE`, `SQUARE`, and `TRIANGLE` (Lua `Input.GAMEPAD_BUTTON_CROSS`, …) resolve to `A`, `B`, `X`, and `Y` respectively.
+
+## Gamepad axes
+
+Axis values range from `-1.0` to `1.0`. Sticks are **down-positive** on the Y axis (up is `-1`), and triggers **rest at `-1`**, reaching `+1` when fully pressed. In Lua, replace the `D_GAMEPAD_AXIS_` prefix with `Input.GAMEPAD_AXIS_`.
+
+| C++ constant | Lua property | Value | Range |
+| --- | --- | --- | --- |
+| `D_GAMEPAD_AXIS_LEFT_X` | `Input.GAMEPAD_AXIS_LEFT_X` | 0 | Left stick X: `-1` left … `+1` right |
+| `D_GAMEPAD_AXIS_LEFT_Y` | `Input.GAMEPAD_AXIS_LEFT_Y` | 1 | Left stick Y: `-1` up … `+1` down |
+| `D_GAMEPAD_AXIS_RIGHT_X` | `Input.GAMEPAD_AXIS_RIGHT_X` | 2 | Right stick X: `-1` left … `+1` right |
+| `D_GAMEPAD_AXIS_RIGHT_Y` | `Input.GAMEPAD_AXIS_RIGHT_Y` | 3 | Right stick Y: `-1` up … `+1` down |
+| `D_GAMEPAD_AXIS_LEFT_TRIGGER` | `Input.GAMEPAD_AXIS_LEFT_TRIGGER` | 4 | Left trigger: `-1` released … `+1` pressed |
+| `D_GAMEPAD_AXIS_RIGHT_TRIGGER` | `Input.GAMEPAD_AXIS_RIGHT_TRIGGER` | 5 | Right trigger: `-1` released … `+1` pressed |
 
 ## Method details
 
@@ -249,6 +294,133 @@ Returns the count of currently active touch contacts.
 
 ---
 
+### isGamepadConnected
+
+* `static bool isGamepadConnected(int id)`
+
+Returns `true` while a controller with the given id is connected. Ids are assigned per platform and are **sparse** — enumerate connected controllers with [getGamepadId](#getgamepadid), not by assuming ids `0..numGamepads()-1`.
+
+=== "C++"
+
+    ```cpp
+    if (Input::isGamepadConnected(0)) {
+        // controller 0 is present
+    }
+    ```
+
+=== "Lua"
+
+    ```lua
+    if Input.isGamepadConnected(0) then
+        -- controller 0 is present
+    end
+    ```
+
+---
+
+### getGamepadName
+
+* `static std::string getGamepadName(int id)`
+
+Returns the human-readable name of the controller with the given id, or an empty string if it is not connected.
+
+---
+
+### isGamepadButtonPressed
+
+* `static bool isGamepadButtonPressed(int id, int button)`
+
+Returns `true` while the given button is held down on controller `id`. Use `D_GAMEPAD_BUTTON_*` constants in C++ and `Input.GAMEPAD_BUTTON_*` in Lua. Returns `false` for an unknown controller.
+
+=== "C++"
+
+    ```cpp
+    if (Input::isGamepadButtonPressed(0, D_GAMEPAD_BUTTON_A)) {
+        player.jump();
+    }
+    ```
+
+=== "Lua"
+
+    ```lua
+    if Input.isGamepadButtonPressed(0, Input.GAMEPAD_BUTTON_A) then
+        player:jump()
+    end
+    ```
+
+---
+
+### getGamepadAxis
+
+* `static float getGamepadAxis(int id, int axis)`
+
+Returns the current value of an analog axis on controller `id`, in the range `-1.0`…`1.0`. Use `D_GAMEPAD_AXIS_*` constants in C++ and `Input.GAMEPAD_AXIS_*` in Lua. Returns `0.0` for an unknown controller.
+
+Sticks are down-positive on the Y axis (up is `-1`). **Triggers rest at `-1`** and reach `+1` when fully pressed — a released trigger reads `-1` from the moment the controller connects, not `0`.
+
+=== "C++"
+
+    ```cpp
+    float x = Input::getGamepadAxis(0, D_GAMEPAD_AXIS_LEFT_X);
+    if (fabsf(x) > 0.15f) {  // dead zone
+        player.strafe(x);
+    }
+    ```
+
+=== "Lua"
+
+    ```lua
+    local x = Input.getGamepadAxis(0, Input.GAMEPAD_AXIS_LEFT_X)
+    if math.abs(x) > 0.15 then  -- dead zone
+        player:strafe(x)
+    end
+    ```
+
+---
+
+### getGamepads
+
+* `static std::vector<Gamepad> getGamepads()`
+* C++ only
+
+Returns all connected controllers. Each `Gamepad` holds an `int id`, a `std::string name`, and the current button and axis state. In Lua, iterate with [numGamepads](#numgamepads) and [getGamepadId](#getgamepadid) instead.
+
+---
+
+### numGamepads
+
+* `static size_t numGamepads()`
+
+Returns the count of currently connected controllers. This is a count, **not** the highest id — combine it with [getGamepadId](#getgamepadid) to iterate.
+
+---
+
+### getGamepadId
+
+* `static int getGamepadId(size_t index)`
+
+Returns the real id of the `index`-th connected controller, or `-1` if `index` is out of range. Because gamepad ids are sparse (they can have gaps after a disconnect), this is the correct way to enumerate connected controllers:
+
+=== "C++"
+
+    ```cpp
+    for (size_t i = 0; i < Input::numGamepads(); i++) {
+        int id = Input::getGamepadId(i);
+        // poll controller `id`
+    }
+    ```
+
+=== "Lua"
+
+    ```lua
+    for i = 0, Input.numGamepads() - 1 do
+        local id = Input.getGamepadId(i)
+        -- poll controller `id`
+    end
+    ```
+
+---
+
 ### getModifiers
 
 * `static int getModifiers()`
@@ -280,3 +452,12 @@ Returns the current modifier key bitmask. Check individual modifiers with bitwis
 * `static size_t findTouchIndex(int pointer)`
 
 Returns the index into the [getTouches](#gettouches) array for the given pointer ID. Returns `SIZE_MAX` if not found.
+
+---
+
+### findGamepadIndex
+
+* `static size_t findGamepadIndex(int id)`
+* C++ only
+
+Returns the internal index of the controller with the given id, or `SIZE_MAX` if it is not connected. Most code should use [isGamepadConnected](#isgamepadconnected) and [getGamepadId](#getgamepadid) instead.
