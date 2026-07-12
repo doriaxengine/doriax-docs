@@ -86,6 +86,8 @@ Control engine properties and define defaults used across the whole project. `En
 | static bool | [isViewLoaded](#isviewloaded) | C++ \| Lua |
 | static void | [setMaxResourceLoadingThreads](#setmaxresourceloadingthreads) | C++ \| Lua |
 | static size_t | [getQueuedResourceCount](#getqueuedresourcecount) | C++ \| Lua |
+| static void | [clearPools](#clearpools) | C++ |
+| static void | [clearUnusedPools](#clearunusedpools) | C++ |
 | static void | [clearAllSubscriptions](#clearallsubscriptions) | C++ \| Lua |
 | static void | [startAsyncThread](#startasyncthread-committhreadqueue-endasyncthread-isasyncthread) | C++ \| Lua |
 | static void | [commitThreadQueue](#startasyncthread-committhreadqueue-endasyncthread-isasyncthread) | C++ \| Lua |
@@ -425,7 +427,7 @@ Renders an additional scene as a layer on top of the main scene. Commonly used f
 
 * `static void executeSceneOnce(Scene* scene)`
 
-Adds a scene that runs for exactly one update/draw cycle, then is automatically removed. Useful for single-frame splash transitions.
+Adds a scene that runs for exactly one update/draw cycle, then is automatically removed. Useful for single-frame splash transitions. Passing `nullptr` has no effect.
 
 ---
 
@@ -433,7 +435,9 @@ Adds a scene that runs for exactly one update/draw cycle, then is automatically 
 
 * `static void removeScene(Scene* scene)`
 
-Removes a specific scene from the active scene stack.
+Removes a specific scene from the active scene stack. If it was queued with
+[executeSceneOnce](#executesceneonce), the pending one-shot execution is cancelled so
+the scene can be destroyed safely after this method returns.
 
 ---
 
@@ -571,6 +575,35 @@ Sets the maximum number of worker threads used for background asset loading.
 * `static size_t getQueuedResourceCount()`
 
 Returns the number of resources still waiting to be loaded on background threads.
+
+---
+
+### clearPools
+
+* `static void clearPools()`
+* C++ only
+
+Fully clears the texture, texture-data, model, shader, sound, and font caches. This
+also destroys pooled GPU textures and shaders, including entries that are still
+referenced elsewhere. Use it for engine or graphics-view teardown, not routine level
+unloading.
+
+Before clearing during a project or runtime-context switch, stop work that can still
+write into the pools, such as pending asynchronous model loads.
+
+---
+
+### clearUnusedPools
+
+* `static void clearUnusedPools()`
+* C++ only
+
+Removes cache entries that are no longer referenced outside their pool while keeping
+resources that active scenes or engine objects still own. Pending sound and decoded
+texture-data work is allowed to finish before those caches are swept. Shader
+missing/failed state and custom-shader registrations are also reset.
+
+This is the safer cleanup option after destroying a scene or switching projects.
 
 ---
 

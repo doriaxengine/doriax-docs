@@ -142,6 +142,22 @@ Pools are managed internally. You normally interact with them through high-level
 (`Sprite`, `Model`, `Sound`), but you can query pool state or pre-warm a pool
 for level loading.
 
+For C++ teardown code, `Engine::clearUnusedPools()` releases entries that are owned
+only by their pool and preserves resources still referenced by active scenes or engine
+objects. `Engine::clearPools()` empties every pool and destroys pooled GPU textures and
+shaders, so reserve it for engine or graphics-view shutdown. If asynchronous model
+loads may still be running, call `MeshSystem::cancelAllAsyncModelLoads()` before either
+cleanup operation; cancellation waits for the active worker tasks to finish before it
+returns.
+
+The editor performs the safe sequence automatically when you switch projects: it
+quiesces project-specific background work, destroys the old scenes, and then clears
+unreferenced pool entries.
+
+See [Engine](../reference/classes/engine.md#clearunusedpools) and
+[MeshSystem](../reference/classes/meshsystem.md#asynchronous-model-load-control) for the
+complete C++ API.
+
 ## File I/O
 
 `FileData` is the abstract base for byte-level access; `File` reads and writes files on
