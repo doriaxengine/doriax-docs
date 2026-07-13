@@ -99,6 +99,7 @@ choices:
 | EaseType | Best for |
 | --- | --- |
 | `LINEAR` | Constant-speed motion, debug |
+| `STEP` | Held poses — stop-motion and stepped, pose-to-pose motion |
 | `QUAD_IN_OUT` | UI transitions and camera moves |
 | `BOUNCE_OUT` | Playful jumps and pop-in effects |
 | `BACK_IN` | Anticipation before a jump |
@@ -107,7 +108,8 @@ choices:
 
 The full set covers `QUAD`, `CUBIC`, `QUART`, `QUINT`, `SINE`, `EXPO`, `CIRC`,
 `ELASTIC`, `BACK`, and `BOUNCE`, each with `_IN`, `_OUT`, and `_IN_OUT` variants, plus
-`CUSTOM` for supplying your own curve function.
+`STEP` (hold the start value and jump at the end) and `CUSTOM` for supplying your own
+curve function.
 
 ## Sprite animation
 
@@ -261,6 +263,24 @@ simultaneously for layered animation blending.
     by index with `getAnimation(0)`. Requesting a name or index that doesn't exist raises
     an error, so guard lookups you're unsure of.
 
+### Interpolation modes
+
+Imported clips honor the GLTF sampler's `interpolation` setting, following the glTF 2.0
+specification:
+
+| GLTF mode | Playback in Doriax |
+| --- | --- |
+| `LINEAR` (default) | Linear interpolation between keys; rotations use spherical linear interpolation (slerp) |
+| `STEP` | Each key's value holds until the next key — imported as per-segment `STEP` easing |
+| `CUBICSPLINE` | Cubic Hermite interpolation from the clip's per-key in/out tangents; interpolated rotations are normalized |
+
+`CUBICSPLINE` tangents are stored on the track components (`inTangents` / `outTangents`)
+and survive scene saves and code export. Editing an imported cubic track keeps the
+tangents aligned with its keys: a key added in the timeline or the Properties window
+gets zero tangents — its two neighboring segments flatten toward it while the rest of
+the clip keeps its imported shape. If a track's tangents ever fall out of sync with its
+values, playback degrades safely to linear.
+
 ### Smooth transitions (crossfading)
 
 Starting a clip with `start()` snaps the skeleton straight into that clip's pose. For
@@ -335,9 +355,12 @@ the target — see [Recording (auto-key)](../editor/animation.md#recording-auto-
 
 Each segment between two consecutive keys can have its own easing curve: segment `i`
 shapes the interpolation from key `i` to key `i+1`, using any
-[`EaseType`](../reference/classes/timedaction.md). Unset segments are linear — GLTF-imported
-clips leave the list empty and always play back linearly. Edit easing in the
-**Properties** window under **KeyframeTracks → Easing**, or in code:
+[`EaseType`](../reference/classes/timedaction.md). Unset segments are linear. `STEP`
+holds key `i`'s value for the whole segment — useful for stepped, pose-to-pose motion.
+GLTF-imported clips arrive with easing matching their sampler: `LINEAR` clips leave the
+list empty, `STEP` clips fill every segment with `STEP`, and `CUBICSPLINE` clips carry
+per-key tangents instead (see [Interpolation modes](#interpolation-modes)). Edit easing
+in the **Properties** window under **KeyframeTracks → Easing**, or in code:
 
 === "Lua"
 

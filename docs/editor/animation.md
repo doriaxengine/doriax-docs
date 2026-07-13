@@ -114,7 +114,7 @@ its block to select it):
 | Move a keyframe in time | Edit its entry in the **KeyframeTracks** values list |
 | Change a keyed value | Edit the entry in the track component's values list |
 | Change interpolation | Pick a curve under **KeyframeTracks → Easing** (`Ease 0 - 1`, …) |
-| Delete a keyframe | Trash button next to the time entry (easings stay aligned) |
+| Delete a keyframe | Trash button next to the time entry (easings and cubic tangents stay aligned) |
 | Move position keys visually | Drag the path handles in the [scene view](scene-view.md#editing-movement-paths-translatetracks) |
 
 ## Sprite animation
@@ -209,12 +209,16 @@ Timed actions (`PositionAction`, `RotationAction`, …) have a single **Ease** p
 the **Properties** window (`setFunctionType()` in code). Keyframe tracks ease **per
 segment**: with a tracks entity selected, the Properties window shows an **Easing**
 combo for each pair of consecutive keys (`Ease 0 - 1`, `Ease 1 - 2`, …). Unset segments
-are linear, and GLTF-imported clips always play back linearly — see
-[Per-segment easing](../manual/animation.md#per-segment-easing). Common choices:
+are linear. GLTF-imported clips match their authored sampler mode: `LINEAR` clips leave
+easing unset, `STEP` clips import with every segment set to `Step`, and `CUBICSPLINE`
+clips interpolate from imported tangents instead — see
+[Per-segment easing](../manual/animation.md#per-segment-easing) and
+[Interpolation modes](../manual/animation.md#interpolation-modes). Common choices:
 
 | Curve | Best for |
 | --- | --- |
 | `LINEAR` | Constant-speed motion, debug |
+| `STEP` | Held poses — stop-motion and stepped, pose-to-pose motion |
 | `QUAD_IN_OUT` | UI transitions and camera moves |
 | `BOUNCE_OUT` | Playful jumps and pop-in effects |
 | `BACK_IN` | Anticipation before a jump |

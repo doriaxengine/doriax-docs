@@ -49,6 +49,8 @@ Controls the interpolation curve applied to the tween.
 * **ELASTIC_IN / ELASTIC_OUT / ELASTIC_IN_OUT** — Elastic spring overshoot.
 * **BACK_IN / BACK_OUT / BACK_IN_OUT** — Slight overshoot (anticipation).
 * **BOUNCE_IN / BOUNCE_OUT / BOUNCE_IN_OUT** — Bouncing ball effect.
+* **STEP** — Hold the start value and jump at the end; on keyframe tracks, holds each
+  key's value until the next key (how GLTF `STEP` clips import).
 * **CUSTOM** — Provide your own ease function via the `Ease` overloads.
 
 ---
