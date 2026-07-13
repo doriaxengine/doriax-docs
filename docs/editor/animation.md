@@ -70,23 +70,52 @@ editable number.
 
 ## Creating a clip
 
-1. Select an entity in the **Structure panel** or **Scene view**.
-2. Open the **Animation Timeline** panel.
-3. Click **+ New Clip** and enter a name.
-4. Click **+ Track** and select the property to animate.
-5. Move the playhead to a time and set a keyframe value in the Properties window.
-6. Move the playhead and set another keyframe.
-7. Press **Play** in the timeline to preview the clip.
+1. In the **Structure panel**, create an **Animation** entity (**Create entity →
+   Animation → Animation**). Creating it as a child of the entity to animate sets
+   that entity as the animation's target; otherwise set **Target** in the
+   Properties window (**ActionComponent → Target**).
+2. Open the **Animation Timeline** and pick the animation in the clip selector.
+3. Author the motion: press the red **Record** button and pose the target
+   (see [Recording](#recording-auto-key)), or add action frames manually with
+   **+ Add Action** / by dragging action entities from the Structure panel.
+4. Toggle **Record** off and press **Play** in the timeline to preview the clip.
+
+## Recording (auto-key)
+
+The **Record** button turns the timeline into an auto-key editor:
+
+1. Press **Record** — the button turns red.
+2. Scrub the playhead to a time. While recording the playhead may go past the
+   current duration, so a fresh clip can grow key by key.
+3. Move, rotate or scale the animation's target in the scene view (or edit its
+   transform in Properties). When the change settles, a keyframe is written at
+   the playhead for each changed channel.
+4. Repeat pose by pose, then toggle **Record** off and press **Play**.
+
+The needed `TranslateTracks` / `RotateTracks` / `ScaleTracks` actions are created
+on demand — targeted at the moved entity and added to the timeline as
+auto-duration frames, so blocks grow as keys extend. Keyframes appear as small
+**diamonds** along the bottom of track blocks.
+
+!!! note "Pose to pose"
+    The engine preview does not run while recording: entities stay where you pose
+    them instead of following already-recorded keys. Every recorded key is a
+    normal undoable command — but toggle Record off before undoing transform
+    edits, since live recording re-keys reverted values.
 
 ## Editing keyframes
 
+Keyframes of track actions show as diamonds on their timeline blocks. Editing
+happens in the **Properties** window with the track entity selected (double-click
+its block to select it):
+
 | Operation | How |
 | --- | --- |
-| Select keyframe | Click the diamond marker on the track |
-| Move keyframe | Drag the marker, or type a time in the selection panel |
-| Change value | Edit the value in the Properties window or right-click the marker |
-| Change interpolation | Right-click a keyframe and pick a curve type |
-| Delete keyframe | Select and press **Delete** |
+| Move a keyframe in time | Edit its entry in the **KeyframeTracks** values list |
+| Change a keyed value | Edit the entry in the track component's values list |
+| Change interpolation | Pick a curve under **KeyframeTracks → Easing** (`Ease 0 - 1`, …) |
+| Delete a keyframe | Trash button next to the time entry (easings stay aligned) |
+| Move position keys visually | Drag the path handles in the [scene view](scene-view.md#editing-movement-paths-translatetracks) |
 
 ## Sprite animation
 

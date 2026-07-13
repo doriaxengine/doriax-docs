@@ -325,8 +325,10 @@ track types available are:
 Create track entities from the **Structure panel** (**Create entity → Animation →
 Translate/Rotate/Scale/Morph Tracks**) or from the Animation Timeline's **+ Add
 Action** menu. A track entity holds a shared key-time list plus one value per key,
-and animates the entity set as its action target. `TranslateTracks` paths can also
-be edited visually in the scene view — see
+and animates the entity set as its action target. The fastest way to author them
+is the Animation Timeline's record mode, which creates tracks and keys as you pose
+the target — see [Recording (auto-key)](../editor/animation.md#recording-auto-key).
+`TranslateTracks` paths can also be edited visually in the scene view — see
 [Editing movement paths](../editor/scene-view.md#editing-movement-paths-translatetracks).
 
 ### Per-segment easing
