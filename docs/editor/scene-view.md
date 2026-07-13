@@ -179,3 +179,7 @@ Press **Play** to run the scene inside the viewport. All input and logic operate
 normally. When you press **Stop**, the scene is restored to the pre-play snapshot.
 Use play mode for fast local iteration; export to a real build for platform-specific
 testing.
+
+Play mode follows **Project → Project Settings → VSync**. With VSync disabled, the
+editor render loop is uncapped only while a scene is running; it returns to synchronized
+rendering after you stop. See [Project Workflow — VSync](project-workflow.md#vsync).

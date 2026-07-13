@@ -126,13 +126,36 @@ See [BundleManager](../reference/classes/bundlemanager.md) for the complete API.
 | Settings area | What it stores |
 | --- | --- |
 | **Editor settings** | Window size, maximized state, recent projects, Resources Browser preferences |
-| **Project settings** | Startup scene reference, canvas size, export targets, asset/Lua/shader directories |
+| **Project settings** | Startup scene reference, canvas size, scaling, VSync, compiler, and asset/Lua/shader directories |
 | **Export settings** | Platform targets, shader backend, output folder, included asset folders |
 
 Project settings include two shader directories (both default to `shaders`): the
 **Shaders Directory** for compiled `.sdat` output (engine-facing) and the **Shader
 Sources Directory** for forked shader sources (editor-only). See
 [Custom Shaders](custom-shaders.md#project-settings).
+
+### VSync
+
+Open **Project → Project Settings** and use **VSync** to choose whether Play mode and
+supported desktop builds synchronize frames to the display refresh rate. It is enabled
+by default. Disable it when profiling the maximum frame rate; leave it enabled for
+normal use to avoid tearing and unnecessary GPU load.
+
+The value is saved as `vsync` in `project.yaml` and travels with the project. Older
+projects without the field default to enabled.
+
+| Runtime path | VSync off behavior |
+| --- | --- |
+| Editor Play mode | Uncaps the editor render loop while a scene is running; normal editing remains synchronized |
+| Generated standalone GLFW build | Uses swap interval `0` |
+| Exported Linux GLFW, Windows/Linux Sokol OpenGL, or Windows Direct3D 11 build | Uses swap interval `0` |
+| Exported Vulkan build | Prefers Immediate presentation, then Mailbox; falls back to FIFO if neither is supported by the system |
+| Exported macOS Metal build | Remains synchronized; the generated CMake project prints a warning |
+
+!!! note "Platform control"
+    A graphics driver, compositor, or window system may still impose presentation
+    limits after VSync is disabled. Compare a standalone build when collecting final
+    performance numbers because the editor adds its own rendering overhead.
 
 ## Save strategy
 

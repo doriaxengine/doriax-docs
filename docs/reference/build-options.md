@@ -49,6 +49,24 @@ cmake --build build --config Debug
 | `ENABLE_OPT` | Enable SPIR-V optimizer support when available |
 | `EMSCRIPTEN_THREAD_SUPPORT` | Enable pthread support for Emscripten builds |
 
+## Runtime project options
+
+| Option | Default | Effect |
+| --- | --- | --- |
+| `DORIAX_VSYNC_ENABLED` | `ON` | Synchronize supported desktop presentation backends to the display refresh rate. Set to `OFF` to request an uncapped build. macOS Metal remains synchronized. |
+
+The editor writes this option into exported CMake projects from **Project Settings →
+VSync**. For a manually configured standalone runtime, override it at configure time:
+
+```bash
+cmake -S engine -B build-runtime \
+  -DPROJECT_ROOT=/path/to/project \
+  -DDORIAX_VSYNC_ENABLED=OFF
+```
+
+Vulkan treats `OFF` as a request for Immediate presentation, with Mailbox and then FIFO
+as fallbacks according to surface support.
+
 ## Graphics backend
 
 | Option value | Target |

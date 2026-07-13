@@ -65,3 +65,9 @@ cmake --build build-xcode --config Release --target doriax-project
 ```
 
 The engine sets the macOS deployment target to 10.15 for runtime builds.
+
+!!! note "VSync"
+    The project **VSync** setting applies to editor Play mode and supported desktop
+    backends, but macOS Metal runtime builds currently remain synchronized. Configuring
+    an exported Metal project with VSync disabled prints a CMake warning instead of
+    selecting an unsafe zero swap interval.

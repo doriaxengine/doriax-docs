@@ -93,6 +93,18 @@ After export, build the generated project with the appropriate native toolchain:
 | **iOS** | Xcode workspace | Requires a Mac with Xcode |
 | **HTML5 / Web** | Emscripten | Requires `emcmake cmake` |
 
+## VSync in desktop exports
+
+The project-level **VSync** option is written into exported desktop CMake projects.
+With VSync disabled, Linux GLFW, Windows/Linux Sokol OpenGL, and Windows Direct3D 11
+builds use swap interval `0`. Vulkan builds prefer Immediate presentation, use Mailbox
+when Immediate is unavailable, and fall back to the always-supported FIFO mode when
+required by the driver or surface.
+
+macOS Metal currently has no uncapped application-loop path in Doriax. Metal exports
+therefore remain synchronized and emit a CMake warning when project VSync is disabled.
+See [Project Workflow — VSync](project-workflow.md#vsync) for the full behavior table.
+
 ## Exporting from the command line
 
 The same export pipeline is available headlessly through the `doriax-editor` CLI, which
