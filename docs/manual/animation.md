@@ -345,9 +345,10 @@ track types available are:
 Create track entities from the **Structure panel** (**Create entity → Animation →
 Translate/Rotate/Scale/Morph Tracks**) or from the Animation Timeline's **+ Add
 Action** menu. A track entity holds a shared key-time list plus one value per key,
-and animates the entity set as its action target. The fastest way to author them
-is the Animation Timeline's record mode, which creates tracks and keys as you pose
-the target — see [Recording (auto-key)](../editor/animation.md#recording-auto-key).
+and animates the entity set as its action target. In the Animation Timeline,
+right-click empty track space to create and key transform tracks on demand, then use
+the camera **Snapshot** button to store the complete pose across existing tracks as one
+undo step. See [Keying transforms](../editor/animation.md#keying-transforms).
 `TranslateTracks` paths can also be edited visually in the scene view — see
 [Editing movement paths](../editor/scene-view.md#editing-movement-paths-translatetracks).
 
@@ -359,8 +360,11 @@ shapes the interpolation from key `i` to key `i+1`, using any
 holds key `i`'s value for the whole segment — useful for stepped, pose-to-pose motion.
 GLTF-imported clips arrive with easing matching their sampler: `LINEAR` clips leave the
 list empty, `STEP` clips fill every segment with `STEP`, and `CUBICSPLINE` clips carry
-per-key tangents instead (see [Interpolation modes](#interpolation-modes)). Edit easing
-in the **Properties** window under **KeyframeTracks → Easing**, or in code:
+per-key tangents instead (see [Interpolation modes](#interpolation-modes)). In the
+**Properties** window, **KeyframeTracks → Easing** is a collapsible, sparse list:
+**Add Ease** appends the next explicit segment entry, up to the number of key pairs,
+and the trash button removes an entry and shifts later entries to preceding segments.
+Missing trailing entries remain linear. You can also edit easing in code:
 
 === "Lua"
 

@@ -51,8 +51,17 @@ would make an animation contain itself, directly or through nested animations.
 | Select a frame | Click the block (details appear in the toolbar) |
 | Move a frame | Drag the block; dragging vertically changes track |
 | Resize a frame | Drag the block's left or right edge |
+| Scroll tracks vertically | When the track stack exceeds the viewport, use its vertical scrollbar or the mouse wheel |
+| Zoom the timeline | Use the mouse wheel over the visible time ruler |
+| Scroll a long timeline | When blocks, the authored duration, or the playhead exceed the viewport, use the horizontal scrollbar; its range includes trailing space |
 | Open the action | Double-click the block to select the action entity |
 | Remove a frame | **Properties → AnimationComponent → Actions** → trash button |
+
+Frame moving and resizing remain available while a timeline preview is paused. After
+the edit, the preview is evaluated again at the current playhead time. Timeline
+editing remains locked during active animation playback and scene play mode. If
+playback or preview shutdown interrupts an active timeline drag, the pending edit is
+finalized as its normal undo step before the timeline locks.
 
 ### Automatic duration
 
@@ -75,45 +84,96 @@ editable number.
    that entity as the animation's target; otherwise set **Target** in the
    Properties window (**ActionComponent → Target**).
 2. Open the **Animation Timeline** and pick the animation in the clip selector.
-3. Author the motion: press the red **Record** button and pose the target
-   (see [Recording](#recording-auto-key)), or add action frames manually with
-   **+ Add Action** / by dragging action entities from the Structure panel.
-4. Toggle **Record** off and press **Play** in the timeline to preview the clip.
+3. Right-click empty track space at the first key time and choose **Key Position**,
+   **Key Rotation**, **Key Scale**, or **Key Transform**. Missing transform tracks
+   are created automatically as auto-duration action frames.
+4. Scrub to another time, pose the target in the scene view or Properties, and
+   click the camera **Snapshot** button. Repeat for each pose.
+5. Press **Play** in the timeline to preview the clip.
 
-## Recording (auto-key)
+You can also create action frames manually with **+ Add Action** or by dragging action
+entities from the Structure panel.
 
-The **Record** button turns the timeline into an auto-key editor:
+## Keying transforms
 
-1. Press **Record** — the button turns red.
-2. Scrub the playhead to a time. While recording the playhead may go past the
-   current duration, so a fresh clip can grow key by key.
-3. Move, rotate or scale the animation's target in the scene view (or edit its
-   transform in Properties). When the change settles, a keyframe is written at
-   the playhead for each changed channel.
-4. Repeat pose by pose, then toggle **Record** off and press **Play**.
+Transform keying has two complementary controls: **Snapshot** for the complete pose at
+the playhead, and right-click keying for one block or selected channels.
 
-The needed `TranslateTracks` / `RotateTracks` / `ScaleTracks` actions are created
-on demand — targeted at the moved entity and added to the timeline as
-auto-duration frames, so blocks grow as keys extend. Keyframes appear as small
-**diamonds** along the bottom of track blocks.
+### Snapshot
 
-!!! note "Pose to pose"
-    The engine preview does not run while recording: entities stay where you pose
-    them instead of following already-recorded keys. Every recorded key is a
-    normal undoable command — but toggle Record off before undoing transform
-    edits, since live recording re-keys reverted values.
+The camera **Snapshot** button next to **Stop** stores the current position, rotation,
+and scale values of every transform keyframe track reached by the playhead. All writes
+are grouped into **one undo step**.
+
+A track is included when its action frame starts at or before the playhead:
+
+- An **auto-duration** frame (`duration <= 0`) remains keyable after its current last
+  key. Adding the key extends the action and grows its block.
+- An **explicit-duration** frame is included only while the playhead is inside its
+  fixed span, including the end. Snapshot does not extend it.
+- Keys use time local to their own frame (`playhead time - frame start`), so moving a
+  block along the timeline does not change where its keys belong.
+
+Snapshot only keys tracks already present in the animation. If no eligible transform
+track is under the playhead, the button is disabled and its tooltip says **No keyframe
+tracks under the playhead to snapshot**. Use empty-area right-click keying when you
+want to create missing tracks.
+
+Scrubbing starts a paused preview, and Snapshot remains available in that state. It is
+disabled during active animation playback and scene play mode. The button tooltip
+shows the exact snapshot time or explains why the action is disabled. Snapshot does
+not reset the displayed pose, and its keys remain after you stop previewing.
+
+### Right-click keying
+
+Right-click while the scene is stopped and animation playback is paused:
+
+| Where | Result |
+| --- | --- |
+| A transform-track block | Inserts that block's position, rotation, or scale value at the clicked block-local time |
+| Empty track space | Keys the animation target's position, rotation, scale, or complete transform |
+
+Block keying always targets the **clicked action**, even when same-channel blocks
+overlap. Its clicked time must be inside an explicit-duration block's real span; the
+menu disables insertion when the block's minimum visual width extends beyond that
+span.
+
+Empty-area keying reuses the latest matching block active at the clicked time. It can
+extend auto-duration blocks, but it will not write past an explicit block's end. When
+the requested channel does not exist yet, it creates the track and an auto-duration
+action frame. **Key Transform**, including any track creation, is one undo step;
+single-channel keying is one undo step as well.
+
+### Authoring past the current end
+
+The playhead and time field can move beyond the current clip duration (up to one hour),
+so auto-duration tracks can grow. Preview evaluation still stops at the clip's current
+end, however: until you extend it, the object holds its **end pose** at the later
+authoring time. The Snapshot tooltip and right-click menu warn when this happens.
+
+This held pose is useful for pose-to-pose authoring, but it is not a newly evaluated
+future pose. After scrubbing past the end, adjust the target before keying if you want
+different values there.
+
+Keyframes appear as small **diamonds** along the bottom of track blocks.
 
 ## Editing keyframes
 
-Keyframes of track actions show as diamonds on their timeline blocks. Editing
-happens in the **Properties** window with the track entity selected (double-click
-its block to select it):
+Keyframes of track actions show as diamonds on their timeline blocks. Click a diamond
+to select it; the selected key is highlighted. Drag it horizontally to change its
+track-local time using the current timeline snap interval. A key cannot cross its
+neighbors or move outside an explicit-duration block, and the completed drag is one
+undo step. Auto-duration blocks grow when their last key moves later.
+
+Values, interpolation, and deletion are edited in the **Properties** window with the
+track entity selected (double-click its block to select it):
 
 | Operation | How |
 | --- | --- |
-| Move a keyframe in time | Edit its entry in the **KeyframeTracks** values list |
+| Move a keyframe in time | Drag its timeline diamond horizontally, or edit its **KeyframeTracks** time entry |
 | Change a keyed value | Edit the entry in the track component's values list |
-| Change interpolation | Pick a curve under **KeyframeTracks → Easing** (`Ease 0 - 1`, …) |
+| Change interpolation | Under **KeyframeTracks → Easing**, click **Add Ease**, expand the list, and pick a curve (`Ease 0 - 1`, …) |
+| Remove explicit easing | Expand **Easing** and use the trash button beside the entry; later entries shift to the preceding segments |
 | Delete a keyframe | Trash button next to the time entry (easings and cubic tangents stay aligned) |
 | Move position keys visually | Drag the path handles in the [scene view](scene-view.md#editing-movement-paths-translatetracks) |
 
@@ -207,11 +267,13 @@ for the full list of `EaseType` values.
 
 Timed actions (`PositionAction`, `RotationAction`, …) have a single **Ease** property in
 the **Properties** window (`setFunctionType()` in code). Keyframe tracks ease **per
-segment**: with a tracks entity selected, the Properties window shows an **Easing**
-combo for each pair of consecutive keys (`Ease 0 - 1`, `Ease 1 - 2`, …). Unset segments
-are linear. GLTF-imported clips match their authored sampler mode: `LINEAR` clips leave
-easing unset, `STEP` clips import with every segment set to `Step`, and `CUBICSPLINE`
-clips interpolate from imported tangents instead — see
+segment** through a collapsible, sparse **Easing** list. **Add Ease** appends the next
+explicit segment entry, up to one entry per pair of consecutive keys; expand the list
+to edit or remove its `Ease 0 - 1`, `Ease 1 - 2`, … rows. Missing trailing entries are
+linear. Removing an entry shifts later entries to the preceding segments. GLTF-imported
+clips match their authored sampler mode: `LINEAR` clips leave easing unset, `STEP`
+clips import with every segment set to `Step`, and `CUBICSPLINE` clips interpolate from
+imported tangents instead — see
 [Per-segment easing](../manual/animation.md#per-segment-easing) and
 [Interpolation modes](../manual/animation.md#interpolation-modes). Common choices:
 
