@@ -59,6 +59,22 @@ output/
 └── ...              ← platform-specific files
 ```
 
+## Generated scene data
+
+Meshes backed by a model file keep their geometry in the exported asset and load it at
+runtime. Meshes without a model file, including geometry created directly in the
+editor, embed their vertex and index buffers in the generated scene or bundle C++ as
+read-only static data. The scene factory copies those bytes into the runtime buffers
+without placing the full geometry blob on the thread stack.
+
+Generated factories also construct large fixed-capacity components, such as mesh,
+tilemap, and 3D physics body data, in temporary heap storage before inserting them into
+the ECS. This prevents those payloads from inflating the scene factory's stack frame.
+
+Large inline meshes still increase the generated source size, executable size, and C++
+compile time. Prefer a GLTF or OBJ asset for multi-megabyte geometry that does not need
+to be stored directly in the scene.
+
 ## Shader compilation
 
 The shader builder translates shader source for the selected graphics backend. Supported

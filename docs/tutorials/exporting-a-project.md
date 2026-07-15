@@ -59,6 +59,7 @@ Android, iOS, macOS, and HTML5 have additional platform requirements. See the
 | Missing textures | Resource folder, texture path case, unsupported source format |
 | Script starts twice | `NO_CPP_INIT` / `NO_LUA_INIT` configuration |
 | Shader errors | Target backend, shader compiler output, generated shader files |
+| Slow or unusually large C++ build | Large inline mesh data; prefer a GLTF or OBJ asset |
 
 ## Exporting without the GUI
 

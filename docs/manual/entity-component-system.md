@@ -28,14 +28,25 @@ components it has.
 ```cpp
 Entity player = scene.createUserEntity();
 
-scene.addComponent<Transform>(player, {});
-scene.addComponent<MeshComponent>(player, {});
-scene.addComponent<Body2DComponent>(player, {});
-scene.addComponent<ScriptComponent>(player, {});
+scene.addComponent<Transform>(player);
+scene.addComponent<MeshComponent>(player);
+scene.addComponent<Body2DComponent>(player);
+scene.addComponent<ScriptComponent>(player);
 ```
 
 This entity is now spatial, renderable, physical, and scriptable because those
 components exist. Remove one component and that part of the behavior goes away.
+
+The one-argument form default-constructs the component directly in ECS storage. Prefer
+it over passing `{}`, especially for components with large fixed-capacity data. To
+attach an already configured component, pass the value instead; its type can be
+deduced:
+
+```cpp
+Transform transform;
+transform.position = Vector3(0.0f, 2.0f, 0.0f);
+scene.addComponent(player, transform);
+```
 
 ## System
 
@@ -56,7 +67,8 @@ Important registry methods:
 | `createUserEntity()` | Create a user entity, starting at `EntityManager::firstUserEntity()` |
 | `createSystemEntity()` | Create a system entity from the reserved system range |
 | `destroyEntity(entity)` | Destroy an entity and remove its components |
-| `addComponent<T>(entity, value)` | Attach component data |
+| `addComponent<T>(entity)` | Default-construct a component directly in ECS storage |
+| `addComponent(entity, value)` | Attach configured component data; the type is deduced |
 | `removeComponent<T>(entity)` | Remove component data |
 | `findComponent<T>(entity)` | Return a nullable component pointer |
 | `getComponent<T>(entity)` | Return a component reference |
