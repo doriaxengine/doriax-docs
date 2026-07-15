@@ -62,10 +62,12 @@ output/
 ## Generated scene data
 
 Meshes backed by a model file keep their geometry in the exported asset and load it at
-runtime. Meshes without a model file, including geometry created directly in the
-editor, embed their vertex and index buffers in the generated scene or bundle C++ as
-read-only static data. The scene factory copies those bytes into the runtime buffers
-without placing the full geometry blob on the thread stack.
+runtime. Terrain meshes with a configured heightmap also rebuild their runtime buffers
+from `TerrainComponent` settings and the exported heightmap. Other meshes without a
+runtime geometry source, including geometry created directly in the editor, embed their
+vertex and index buffers in the generated scene or bundle C++ as read-only static data.
+The scene factory copies those bytes into the runtime buffers without placing the full
+geometry blob on the thread stack.
 
 Generated factories also construct large fixed-capacity components, such as mesh,
 tilemap, and 3D physics body data, in temporary heap storage before inserting them into
