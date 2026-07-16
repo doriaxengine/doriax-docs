@@ -106,18 +106,16 @@ Use `Input` to read the current mouse state. Use `Engine` to control how the OS 
 
 | API | Purpose |
 | --- | --- |
-| `Engine.showCursor` / `Engine::setShowCursor(bool)` | Show or hide the OS cursor |
-| `Engine.mouseLocked` / `Engine::setMouseLocked(bool)` | Capture the mouse for relative movement |
+| `Engine.mouseMode` / `Engine::setMouseMode(MouseMode)` | Set how the cursor behaves: `NORMAL`, `HIDDEN`, `CAPTURED`, or `CONFINED` |
 | `Engine.setMousePosition(x, y)` / `Engine::setMousePosition(x, y)` | Set the mouse position in canvas coordinates |
 
-Hiding the cursor does not lock it. For first-person cameras or free-look controls, lock the mouse so movement keeps generating input without letting the pointer escape the window.
+A single mouse mode covers both cursor visibility and movement. `HIDDEN` only hides the cursor — it still moves freely. For first-person cameras or free-look controls use `CAPTURED`, which hides and locks the pointer so movement keeps generating input without letting it escape the window. `CONFINED` keeps a visible cursor trapped inside the window without switching to relative motion.
 
 === "Lua"
 
     ```lua
     function PlayerLook:init()
-        Engine.showCursor = false
-        Engine.mouseLocked = true
+        Engine.mouseMode = MouseMode.CAPTURED
         RegisterEngineEvent(self, "onMouseMove")
     end
 
@@ -134,8 +132,7 @@ Hiding the cursor does not lock it. For first-person cameras or free-look contro
     public:
         PlayerLook(doriax::Scene* scene, doriax::Entity entity)
             : ScriptBase(scene, entity) {
-            Engine::setShowCursor(false);
-            Engine::setMouseLocked(true);
+            Engine::setMouseMode(MouseMode::CAPTURED);
             REGISTER_ENGINE_EVENT(onMouseMove);
         }
 

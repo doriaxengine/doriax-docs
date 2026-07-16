@@ -58,9 +58,8 @@ Control engine properties and define defaults used across the whole project. `En
 | static [GraphicBackend](#graphicbackend) | [graphicBackend](#graphicbackend_1) | — | C++ \| Lua |
 | static bool | [openGL](#opengl) | — | C++ \| Lua |
 | static bool | [asyncLoading](#asyncloading) | `false` | C++ \| Lua |
-| static bool | [showCursor](#showcursor) | `true` | C++ \| Lua |
 | static [CursorType](#cursortype) | [mouseCursor](#mousecursor) | `ARROW` | C++ \| Lua |
-| static bool | [mouseLocked](#mouselocked) | `false` | C++ \| Lua |
+| static [MouseMode](#mousemode) | [mouseMode](#mousemode_1) | `NORMAL` | C++ \| Lua |
 | static Framebuffer* | [framebuffer](#framebuffer) | — | C++ \| Lua |
 
 ### Methods
@@ -173,6 +172,17 @@ Control engine properties and define defaults used across the whole project. `En
 ### CursorType
 
 `ARROW`, `IBEAM`, `CROSSHAIR`, `POINTING_HAND`, `RESIZE_EW`, `RESIZE_NS`, `RESIZE_NWSE`, `RESIZE_NESW`, `RESIZE_ALL`, `NOT_ALLOWED`
+
+---
+
+### MouseMode
+
+| Value | Cursor | Movement |
+| --- | --- | --- |
+| `NORMAL` | visible | moves freely (default) |
+| `HIDDEN` | hidden | moves freely; absolute position still reported |
+| `CAPTURED` | hidden | locked to the window; relative motion only (mouse-look) |
+| `CONFINED` | visible | cannot leave the window bounds |
 
 ## Property details
 
@@ -351,15 +361,6 @@ Enable background resource loading. When active, GPU resource creation must be c
 
 ---
 
-### showCursor
-
-* *Setter:* `static void setShowCursor(bool showCursor)`
-* *Getter:* `static bool isShowCursor()`
-
-Shows or hides the OS mouse cursor. This only changes visibility; it does not capture the mouse or prevent it from leaving the window. For FPS-style camera controls, use [mouseLocked](#mouselocked).
-
----
-
 ### mouseCursor
 
 * *Setter:* `static void setMouseCursor(CursorType type)`
@@ -369,29 +370,29 @@ Changes the OS mouse cursor shape. See [CursorType](#cursortype).
 
 ---
 
-### mouseLocked
+### mouseMode
 
-* *Setter:* `static void setMouseLocked(bool mouseLocked)`
-* *Getter:* `static bool isMouseLocked()`
+* *Setter:* `static void setMouseMode(MouseMode mode)`
+* *Getter:* `static MouseMode getMouseMode()`
 
-Captures the mouse for relative movement. When enabled, the platform hides/locks the pointer so it cannot leave the window or canvas during movement. This is the preferred mode for first-person cameras, free-look controls, and any interaction that uses mouse deltas instead of an absolute pointer.
+Sets how the mouse cursor behaves — a single state that covers both its visibility and whether it is free, locked, or confined. See [MouseMode](#mousemode) for every value.
 
-While locked, mouse move events continue to be delivered even if the virtual mouse position moves outside the canvas bounds.
+Use `CAPTURED` for first-person cameras, free-look controls, and any interaction that uses mouse deltas instead of an absolute pointer: the pointer is hidden and locked to the window, so it cannot escape while moving. While captured, mouse move events keep firing even when the virtual mouse position moves outside the canvas bounds. Use `CONFINED` to keep a visible cursor from leaving the window without switching to relative motion.
 
 === "Lua"
 
     ```lua
-    Engine.mouseLocked = true
+    Engine.mouseMode = MouseMode.CAPTURED
     ```
 
 === "C++"
 
     ```cpp
-    Engine::setMouseLocked(true);
+    Engine::setMouseMode(MouseMode::CAPTURED);
     ```
 
 !!! note
-    Browser builds use the Pointer Lock API, so locking may only take effect after a user gesture such as a click.
+    `CONFINED` needs cursor confinement from the platform (desktop GLFW 3.4+); where it isn't available it falls back to `NORMAL`. Browser builds implement `CAPTURED` with the Pointer Lock API, so it may only take effect after a user gesture such as a click.
 
 ---
 
@@ -795,7 +796,7 @@ Called when a mouse button is released.
 
 Called when the mouse cursor moves. Also called outside the canvas when [allowEventsOutCanvas](#alloweventsoutcanvas) is `true`.
 
-When [mouseLocked](#mouselocked) is `true`, this event keeps firing from relative mouse movement, and `x`/`y` can represent a virtual position outside the normal canvas range.
+When [mouseMode](#mousemode_1) is `CAPTURED`, this event keeps firing from relative mouse movement, and `x`/`y` can represent a virtual position outside the normal canvas range.
 
 ---
 
