@@ -58,8 +58,8 @@ This distinction matters because the entity itself owns nothing. Components deci
 the ID can do.
 
 The rest of the create menu adds ready-configured entities (camera, light, sky, fog,
-sound, **mirror**), basic shapes, 2D and UI objects, physics bodies, and more — each one
-is just an entity with the right components already attached.
+sound, **mirror**, **reflection probe**), basic shapes, 2D and UI objects, physics
+bodies, and more — each one is just an entity with the right components already attached.
 
 The **2D** submenu includes **2D Light** and **2D Occluder** for the 2D lighting
 system — see [2D Graphics — 2D lighting](../manual/2d-graphics.md#2d-lighting).
@@ -78,6 +78,15 @@ backdrops, and mirror surfaces. You can change a mesh's geometry later from the
 [Mirror component](properties.md#mirror-component) already attached, giving an upright
 planar-reflection surface with no camera or texture setup. See
 [Rendering Pipeline — Mirrors](../manual/rendering-pipeline.md#mirrors-and-planar-reflections).
+
+### Reflection Probe
+
+**Reflection Probe** creates an entity with a Transform and a
+[Reflection Probe component](properties.md#reflection-probe-component): a box-shaped
+volume that gives the meshes inside it a local reflection environment instead of the
+global sky. Size the box to the room it represents in
+[Properties](properties.md#reflection-probe-component). See
+[Rendering Pipeline — Reflection probes](../manual/rendering-pipeline.md#reflection-probes).
 
 ## Hierarchical area
 

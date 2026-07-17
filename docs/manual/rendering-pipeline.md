@@ -231,6 +231,97 @@ toggled, so you can compare lit-only vs environment-lit looks before play mode.
     The render system uses the first Sky component in the scene for both drawing and IBL
     generation. Keep a single active sky environment unless you know you are replacing it.
 
+## Reflection probes
+
+[IBL](#image-based-lighting-ibl) reflects one sky environment everywhere, which reads as
+"outdoors" on every surface. A **Reflection Probe** captures the environment *at a point
+in the scene* and applies it to meshes inside a box-shaped influence volume — chrome in a
+garage reflects the garage, not the sky. Probe reflections are **box-projected**
+(parallax-corrected): reflection rays are projected onto the influence box, so the
+reflection stays anchored to the room's walls as objects and the camera move, instead of
+floating at infinity.
+
+The simplest way to add one is the **Reflection Probe** entry in the Structure panel's
+create menu. Size its **Box Size** to the room or area it represents, and enable
+**Receive IBL** (plus **Receive Lights**) on the meshes inside — probes use the same
+per-mesh opt-in as sky IBL. A Sky is not required: probes supply the specular
+(reflection) term on their own, while diffuse ambient still comes from the sky
+irradiance when one is present.
+
+### Static and dynamic probes
+
+| Mode | Behaviour |
+| --- | --- |
+| **Static** | Uses an authored cubemap when one is assigned; otherwise captures the scene once at load (or when **Refresh Probe** is pressed) and keeps that result. |
+| **Dynamic** | Re-captures the scene at runtime according to its update policy. |
+
+An authored cubemap is the best-quality and cheapest option: it is GGX-prefiltered and
+cached like the sky environment, so rough surfaces get correct blurry reflections.
+Runtime captures have no prefiltered mip chain — rough surfaces approximate the blur
+with a small angular filter — so prefer static probes with authored cubemaps for
+strongly rough materials.
+
+Dynamic probes choose when to re-capture with **Update**:
+
+| Update | When it captures |
+| --- | --- |
+| **On Load** | Once when the scene starts |
+| **On Move** | Whenever the probe entity moves |
+| **Interval** | Every **Update Interval** seconds |
+| **Manual** | Only when requested — the **Refresh Probe** button in the editor, or setting `needUpdate = true` from code |
+
+Runtime captures share a strict budget of **one cubemap face per frame**: a full refresh
+takes six frames, and multiple pending probes take turns. Even several dynamic probes
+therefore cost a fraction of a [mirror's](#mirrors-and-planar-reflections) full extra
+scene render per frame — the trade-off is latency, not throughput.
+
+### Influence volume and blending
+
+| Property | Purpose |
+| --- | --- |
+| **Box Size** | The influence volume's size, scaled by the entity's world scale. The box is world-axis-aligned and centred on the entity. |
+| **Box Offset** | Moves the influence box in the entity's local space. The cubemap is still captured at the entity origin (shown as a gold marker in the viewport when they differ). |
+| **Blend Distance** | Fade band inside the box edges where the probe blends into the sky IBL, hiding the seam at the volume boundary. Runtime blending is limited to the box's smallest half-extent. |
+| **Intensity** | Multiplier on the probe's reflection contribution. |
+| **Priority** | When influence boxes overlap, the higher-priority probe wins; on a tie, the probe whose centre is nearest the mesh wins. |
+
+The engine picks **one probe per mesh** (using the mesh's world-bounds centre), so keep
+volumes room-sized rather than object-sized: a mesh is either inside a probe's box or it
+falls back to the sky environment.
+
+### Capture settings
+
+| Property | Purpose |
+| --- | --- |
+| **Cubemap** | *(static only)* Authored six-face cubemap. Leave empty to capture at load instead. |
+| **Resolution** | Capture cubemap face size (16–1024, default 128). |
+| **Near / Far** | Clip planes of the capture cameras. |
+| **Include Sky** | Whether the sky (and scene background colour) appears in the capture. |
+
+```cpp
+// C++: a dynamic probe covering a 12x6x12 room
+Entity probeEntity = scene.createEntity();
+scene.addComponent<Transform>(probeEntity, {});
+scene.addComponent<ReflectionProbeComponent>(probeEntity, {});
+
+ReflectionProbeComponent& probe = scene.getComponent<ReflectionProbeComponent>(probeEntity);
+probe.mode = ReflectionProbeMode::DYNAMIC;
+probe.updateMode = ReflectionProbeUpdateMode::MANUAL;
+probe.boxSize = Vector3(12, 6, 12);
+probe.needUpdate = true;   // manual refresh from code
+```
+
+With [SSR](#screen-space-reflections-ssr) enabled, surfaces lit by a local probe keep
+their probe reflection and SSR adds on-screen detail on top; only sky-IBL surfaces use
+SSR's energy-conserving replace path.
+
+!!! note "Capture scope and limitations"
+    Runtime captures render opaque meshes and (optionally) the sky. Transparent meshes,
+    UI, and particles are skipped. Point and spot shadows are reused in captures, but
+    directional shadow cascades are fitted to the main camera, so their coverage inside a
+    capture can be partial. A probe never appears in its own capture, and captures do not
+    include other probes' reflections (no recursion).
+
 ## Ambient occlusion (SSAO)
 
 Screen-space ambient occlusion darkens creases, corners, and contact areas where ambient

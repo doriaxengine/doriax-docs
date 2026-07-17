@@ -85,6 +85,8 @@ Add atmosphere to your scenes with:
 - **Fog** — depth-based atmospheric fog
 - **Sky system** — a configurable cubemap background that also drives **image-based
   lighting (IBL)** for reflective surfaces
+- **Reflection probes** — local, box-shaped reflection environments for interiors and
+  enclosed areas
 
 ### Sky and reflections
 
@@ -98,7 +100,18 @@ Use **Visible** on the Sky component when you want IBL without drawing the sky d
 irradiance and prefiltered maps either way.
 
 IBL gives soft, environment-wide reflections suited to curved and rough surfaces. For a
-**sharp, mirror-like reflection on a flat surface**, add a **Mirror** instead — see below.
+**local environment** (a room, garage, or cave) use a **Reflection Probe**; for a
+**sharp, mirror-like reflection on a flat surface**, add a **Mirror** — see below.
+
+### Reflection probes
+
+Sky IBL reflects the same environment everywhere, which looks wrong indoors. A
+**Reflection Probe** (Structure panel's create menu) captures the scene at its own
+position and applies that environment to meshes inside a box-shaped influence volume,
+with box-projected (parallax-corrected) reflections that stay anchored to the room.
+Probes can be **static** — an authored cubemap or a one-time capture at load — or
+**dynamic**, re-capturing at runtime on move, on an interval, or on demand. See
+[Rendering Pipeline — Reflection probes](rendering-pipeline.md#reflection-probes).
 
 ### Mirrors
 

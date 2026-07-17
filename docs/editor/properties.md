@@ -28,7 +28,7 @@ the entity immediately and their defaults appear in the panel for editing.
 
 | Group | Typical components |
 | --- | --- |
-| **Spatial** | Transform, Camera, Light, Fog, Skybox, Mirror |
+| **Spatial** | Transform, Camera, Light, Fog, Skybox, Mirror, Reflection Probe |
 | **2D** | Sprite, Sprite Animation, Tilemap, Polygon, 2D Light, 2D Occluder |
 | **3D** | Mesh, Model, Instanced Mesh, Terrain, Bone |
 | **Physics** | Body2D, Body3D, Joint2D, Joint3D |
@@ -159,6 +159,32 @@ The reflection camera is created and managed by the engine — there is nothing 
 wire. If the reflection is clipped on the wrong side, flip the sign of **Normal**. See
 [Rendering Pipeline — Mirrors and planar reflections](../manual/rendering-pipeline.md#mirrors-and-planar-reflections)
 for how it works and its cost.
+
+## Reflection Probe component
+
+The **Reflection Probe** component gives meshes inside its box-shaped influence volume a
+local reflection environment instead of the global sky — see
+[Rendering Pipeline — Reflection probes](../manual/rendering-pipeline.md#reflection-probes)
+for how probes are selected, blended, and captured.
+
+| Property | Purpose |
+| --- | --- |
+| **Mode** | **Static** (authored cubemap, or captured once at load) or **Dynamic** (re-captured at runtime). |
+| **Update** | *(dynamic)* Capture policy: On Load, On Move, Interval, or Manual. |
+| **Update Interval** | *(dynamic, Interval)* Seconds between captures. |
+| **Cubemap** | *(static)* Authored six-face cubemap; leave empty to capture at load. |
+| **Intensity** | Reflection strength multiplier. |
+| **Priority** | Higher-priority probes win where influence boxes overlap. |
+| **Box Offset / Box Size** | The influence volume, in the entity's local space. The cubemap is always captured at the entity origin. |
+| **Blend Distance** | Fade band at the box edges where the probe blends into the sky IBL. |
+| **Resolution** | Capture face size (16–1024). |
+| **Near / Far** | Capture camera clip planes. |
+| **Include Sky** | Whether the sky appears in captures. |
+
+Selecting the probe draws its influence box in the viewport — cyan for static, purple for
+dynamic — with a gold marker at the capture origin when **Box Offset** moves the box away
+from it. The **Refresh Probe** button forces a re-capture (or re-bake of the authored
+cubemap) regardless of mode.
 
 ## Scripts
 
