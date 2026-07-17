@@ -99,6 +99,7 @@ See also [Enumerations](enums.md) and [Build Options](build-options.md).
 - [Object](classes/object.md)
 - [Occluder2D](classes/occluder2d.md)
 - [Points](classes/points.md)
+- [ReflectionProbe](classes/reflectionprobe.md)
 - [Shape](classes/shape.md)
 - [SkyBox](classes/skybox.md)
 - [Sound](classes/sound.md)

@@ -126,7 +126,7 @@ See [BundleManager](../reference/classes/bundlemanager.md) for the complete API.
 | Settings area | What it stores |
 | --- | --- |
 | **Editor settings** | Window size, maximized state, recent projects, Resources Browser preferences |
-| **Project settings** | Startup scene reference, canvas size, scaling, VSync, compiler, and asset/Lua/shader directories |
+| **Project settings** | Startup scene reference, canvas size, scaling, VSync, window mode/size/title, compiler, and asset/Lua/shader directories |
 | **Export settings** | Platform targets, shader backend, output folder, included asset folders |
 
 Project settings include two shader directories (both default to `shaders`): the
@@ -156,6 +156,37 @@ projects without the field default to enabled.
     A graphics driver, compositor, or window system may still impose presentation
     limits after VSync is disabled. Compare a standalone build when collecting final
     performance numbers because the editor adds its own rendering overhead.
+
+### Window
+
+Open **Project → Project Settings** to control the OS window that desktop builds
+create at startup:
+
+| Setting | Default | Effect |
+| --- | --- | --- |
+| **Window Mode** | Windowed | Initial window state: `Windowed`, `Maximized`, or `Fullscreen` |
+| **Window Width / Height** | Canvas size | Initial window size in pixels, and the size restored when leaving fullscreen |
+| **Window Resizable** | Enabled | Whether the player can resize the window |
+| **Window Title** | Project name | Title-bar text; leave empty to use the project name |
+
+The values are saved as `windowMode`, `windowWidth`, `windowHeight`,
+`windowResizable`, and `windowTitle` in `project.yaml` and travel with the project.
+Projects saved before these fields existed start windowed at their canvas size.
+
+`Fullscreen` starts the game on the primary monitor at the current desktop video mode
+(borderless-style, no display mode switch) and falls back to windowed when no monitor
+is available. Scripts can still toggle fullscreen at runtime with
+[`requestFullscreen` / `exitFullscreen`](../reference/classes/system.md#isfullscreen-requestfullscreen-exitfullscreen);
+leaving fullscreen restores the configured window size.
+
+| Runtime path | Behavior |
+| --- | --- |
+| Editor Play mode | Not affected — Play renders inside the editor viewport |
+| Generated standalone GLFW build | All settings honored |
+| Exported Linux GLFW build | All settings honored |
+| Exported Windows/macOS Sokol build | Size, title, and fullscreen honored; `Maximized` falls back to windowed and the window is always resizable |
+| Exported macOS Xcode (apple backend) build | Uses the storyboard-defined window; project window settings are not applied |
+| Web, Android, iOS | Ignored — the game always fills the browser canvas or the device screen |
 
 ## Save strategy
 

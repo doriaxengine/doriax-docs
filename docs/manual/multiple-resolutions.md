@@ -43,6 +43,11 @@ game runs on:
 In editor projects, the canvas size and scaling mode are set in **Project Settings**
 and applied automatically to exported builds.
 
+The canvas is independent of the OS window itself: the initial window size, state
+(windowed, maximized, or fullscreen), resizability, and title of a desktop build are
+separate project settings. See
+[Project Workflow — Window](../editor/project-workflow.md#window).
+
 ## Scaling modes
 
 The scaling mode decides what happens when the window's aspect ratio does not match

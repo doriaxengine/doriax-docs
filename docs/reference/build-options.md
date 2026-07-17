@@ -54,14 +54,22 @@ cmake --build build --config Debug
 | Option | Default | Effect |
 | --- | --- | --- |
 | `DORIAX_VSYNC_ENABLED` | `ON` | Synchronize supported desktop presentation backends to the display refresh rate. Set to `OFF` to request an uncapped build. macOS Metal remains synchronized. |
+| `DORIAX_WINDOW_WIDTH` | `960` | Initial window width in pixels for desktop builds |
+| `DORIAX_WINDOW_HEIGHT` | `540` | Initial window height in pixels for desktop builds |
+| `DORIAX_WINDOW_MODE` | `0` | Initial window state: `0` windowed, `1` maximized, `2` fullscreen. The Sokol app backend has no maximized support and treats `1` as windowed. |
+| `DORIAX_WINDOW_RESIZABLE` | `ON` | Allow resizing the window. Ignored by the Sokol app backend, whose windows are always resizable. |
+| `DORIAX_WINDOW_TITLE` | `"Doriax"` | Window title-bar text |
 
-The editor writes this option into exported CMake projects from **Project Settings →
-VSync**. For a manually configured standalone runtime, override it at configure time:
+The editor writes these options into exported CMake projects from **Project
+Settings** (VSync and the Window settings). For a manually configured standalone
+runtime, override them at configure time:
 
 ```bash
 cmake -S engine -B build-runtime \
   -DPROJECT_ROOT=/path/to/project \
-  -DDORIAX_VSYNC_ENABLED=OFF
+  -DDORIAX_VSYNC_ENABLED=OFF \
+  -DDORIAX_WINDOW_MODE=2 \
+  -DDORIAX_WINDOW_TITLE="My Game"
 ```
 
 Vulkan treats `OFF` as a request for Immediate presentation, with Mailbox and then FIFO

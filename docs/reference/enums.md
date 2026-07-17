@@ -25,6 +25,8 @@ See [Engine](classes/engine.md) for `Scaling`, `Platform`, and `GraphicBackend`.
 | `SoundState` / `SoundAttenuation` | Audio |
 | `ActionState` | Action playback |
 | `FogType` | Fog mode |
+| `ReflectionProbeMode` | Reflection probe source (`STATIC`, `DYNAMIC`) |
+| `ReflectionProbeUpdateMode` | Dynamic probe capture policy (`ON_LOAD`, `ON_MOVE`, `INTERVAL`, `MANUAL`) |
 | `LightState` / `UIEventState` | Scene flags |
 | `PrimitiveType` / `CullingMode` / `WindingOrder` | Rendering |
 | `TextureFilter` / `TextureWrap` / `TextureType` | Textures |

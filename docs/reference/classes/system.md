@@ -129,6 +129,8 @@ Dismisses the on-screen keyboard.
 
 Query and control fullscreen mode. On desktop platforms, `requestFullscreen()` typically toggles borderless fullscreen; on web, it requests the Fullscreen API. Has no effect on mobile (always fullscreen).
 
+Whether a desktop build *starts* fullscreen is a project setting (see [Project Workflow — Window](../../editor/project-workflow.md#window)); `exitFullscreen()` restores the window size configured there.
+
 === "C++"
 
     ```cpp

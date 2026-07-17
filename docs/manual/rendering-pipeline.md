@@ -300,15 +300,21 @@ falls back to the sky environment.
 
 ```cpp
 // C++: a dynamic probe covering a 12x6x12 room
-Entity probeEntity = scene.createEntity();
-scene.addComponent<Transform>(probeEntity, {});
-scene.addComponent<ReflectionProbeComponent>(probeEntity, {});
+ReflectionProbe probe(&scene);
+probe.setPosition(0.0f, 2.0f, 0.0f);
+probe.setBoxSize(12.0f, 6.0f, 12.0f);
+probe.setMode(ReflectionProbeMode::DYNAMIC);
+probe.setUpdateMode(ReflectionProbeUpdateMode::MANUAL);
+probe.refresh();   // manual re-capture from code
+```
 
-ReflectionProbeComponent& probe = scene.getComponent<ReflectionProbeComponent>(probeEntity);
-probe.mode = ReflectionProbeMode::DYNAMIC;
-probe.updateMode = ReflectionProbeUpdateMode::MANUAL;
-probe.boxSize = Vector3(12, 6, 12);
-probe.needUpdate = true;   // manual refresh from code
+```lua
+local probe = ReflectionProbe(scene)
+probe:setPosition(0, 2, 0)
+probe:setBoxSize(12, 6, 12)
+probe.mode = ReflectionProbeMode.DYNAMIC
+probe.updateMode = ReflectionProbeUpdateMode.MANUAL
+probe:refresh()   -- manual re-capture from code
 ```
 
 With [SSR](#screen-space-reflections-ssr) enabled, surfaces lit by a local probe keep
@@ -588,5 +594,6 @@ Instances can be modified later with `updateInstance(index, ...)` and read back 
 - [Texture](../reference/classes/texture.md)
 - [Fog](../reference/classes/fog.md)
 - [Skybox](../reference/classes/skybox.md)
+- [ReflectionProbe](../reference/classes/reflectionprobe.md)
 - [Mesh](../reference/classes/mesh.md)
 - [RenderSystem](../reference/classes/rendersystem.md)

@@ -123,6 +123,15 @@ macOS Metal currently has no uncapped application-loop path in Doriax. Metal exp
 therefore remain synchronized and emit a CMake warning when project VSync is disabled.
 See [Project Workflow — VSync](project-workflow.md#vsync) for the full behavior table.
 
+## Window settings in desktop exports
+
+The project-level **Window** settings (mode, size, resizable, title) are written into
+exported desktop CMake projects the same way. Linux GLFW builds honor all of them.
+Windows and macOS Sokol builds honor the size, title, and fullscreen mode, but have no
+maximized or non-resizable window support. Web, Android, and iOS exports ignore window
+settings entirely — the game always fills the browser canvas or the device screen. See
+[Project Workflow — Window](project-workflow.md#window) for the full behavior table.
+
 ## Exporting from the command line
 
 The same export pipeline is available headlessly through the `doriax-editor` CLI, which
