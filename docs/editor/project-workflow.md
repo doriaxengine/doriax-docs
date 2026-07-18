@@ -126,7 +126,7 @@ See [BundleManager](../reference/classes/bundlemanager.md) for the complete API.
 | Settings area | What it stores |
 | --- | --- |
 | **Editor settings** | Window size, maximized state, recent projects, Resources Browser preferences |
-| **Project settings** | Startup scene reference, canvas size, scaling, VSync, window mode/size/title, compiler, and asset/Lua/shader directories |
+| **Project settings** | Startup scene reference, canvas size, scaling, VSync, window mode/size/title, compiler, parallel build jobs, and asset/Lua/shader directories |
 | **Export settings** | Platform targets, shader backend, output folder, included asset folders |
 
 Project settings include two shader directories (both default to `shaders`): the
