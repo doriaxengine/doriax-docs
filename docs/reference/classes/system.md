@@ -41,6 +41,13 @@ Each target platform provides its own concrete `System` subclass; the engine inj
 | bool | [isFullscreen](#isfullscreen-requestfullscreen-exitfullscreen) | C++ \| Lua |
 | void | [requestFullscreen](#isfullscreen-requestfullscreen-exitfullscreen) | C++ \| Lua |
 | void | [exitFullscreen](#isfullscreen-requestfullscreen-exitfullscreen) | C++ \| Lua |
+| bool | [isWindowMaximized](#window-control) | C++ \| Lua |
+| void | [maximizeWindow](#window-control) | C++ \| Lua |
+| void | [restoreWindow](#window-control) | C++ \| Lua |
+| void | [setWindowSize](#window-control) | C++ \| Lua |
+| bool | [isWindowResizable](#window-control) | C++ \| Lua |
+| void | [setWindowResizable](#window-control) | C++ \| Lua |
+| void | [setWindowTitle](#window-control) | C++ \| Lua |
 | char | [getDirSeparator](#getdirseparator) | C++ \| Lua |
 | std::string | [getAssetPath](#getassetpath) | C++ \| Lua |
 | std::string | [getUserDataPath](#getuserdatapath) | C++ \| Lua |
@@ -144,6 +151,44 @@ Whether a desktop build *starts* fullscreen is a project setting (see [Project W
     ```lua
     if not System.isFullscreen() then
         System.requestFullscreen()
+    end
+    ```
+
+---
+
+### Window control {#window-control}
+
+* `virtual bool isWindowMaximized()`
+* `virtual void maximizeWindow()`
+* `virtual void restoreWindow()`
+* `virtual void setWindowSize(int width, int height)`
+* `virtual bool isWindowResizable()`
+* `virtual void setWindowResizable(bool resizable)`
+* `virtual void setWindowTitle(const std::string& title)`
+
+Control the OS window of desktop builds at runtime. `maximizeWindow()`/`restoreWindow()` toggle the maximized state, `setWindowSize()` resizes the window in screen coordinates (while fullscreen it instead updates the size restored by `exitFullscreen()`), and `setWindowTitle()` changes the title-bar text. The initial values come from the project's [Window settings](../../editor/project-workflow.md#window).
+
+Note that `setWindowSize()` takes *window* coordinates while [getScreenWidth/getScreenHeight](#getscreenwidth-getscreenheight) report *framebuffer* pixels — on HiDPI/scaled displays these differ by the content scale, so the two do not round-trip 1:1.
+
+Platform support: fully implemented on GLFW-based desktop builds (generated desktop projects and Linux exports). Windows/macOS Sokol exports support only `setWindowTitle()` — the other calls are no-ops there. On web, `setWindowTitle()` sets the browser tab title and the rest are no-ops. All are no-ops on mobile.
+
+=== "C++"
+
+    ```cpp
+    System::instance().setWindowTitle("My Game — Level 2");
+    System::instance().setWindowSize(1600, 900);
+    if (!System::instance().isWindowMaximized()) {
+        System::instance().maximizeWindow();
+    }
+    ```
+
+=== "Lua"
+
+    ```lua
+    System.setWindowTitle("My Game — Level 2")
+    System.setWindowSize(1600, 900)
+    if not System.isWindowMaximized() then
+        System.maximizeWindow()
     end
     ```
 
