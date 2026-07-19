@@ -54,6 +54,19 @@ The bundle owns the component data. All instances read from it, so:
 The instance root's `Transform` is always per-instance (that is what lets you place
 each copy somewhere different), and it cannot be removed.
 
+### References to entities outside the bundle
+
+A component or script property on a bundle member can point at an entity that is
+**not part of the bundle** (some other entity in the scene). That wiring is
+**per-instance**: it is not stored in the `.bundle` file and does not propagate to
+other instances — each instance in each scene keeps its own assignment, and a
+freshly placed instance starts with the field set to **None**. References to
+entities **inside** the bundle stay shared as usual, including clearing them.
+
+Per-instance references are not yet persisted across scene reloads: unless the
+component is a local override (**Make Unique**), the field comes back as **None**
+when the scene is reopened and needs to be reassigned.
+
 ## Adding and removing member entities
 
 Right-click entities in the Structure panel to change what belongs to the bundle:
