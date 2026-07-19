@@ -88,11 +88,26 @@ The destination folder receives:
 destination/
 ├── MyProject            ← the executable (MyProject.exe on Windows)
 ├── assets/              ← runtime resources
-└── lua/                 ← runtime Lua scripts
+├── lua/                 ← runtime Lua scripts
+├── icon.png             ← (Linux, with a project icon set)
+└── MyProject.desktop    ← (Linux, with a project icon set)
 ```
 
 Run the executable from that folder — it resolves `assets/` and `lua/` relative to its
 working directory.
+
+### Application icon
+
+Set a **project icon** in **Project Settings → Window → Icon** (square PNG, 256×256 or
+larger recommended) and desktop exports use it automatically:
+
+- **Windows** — embedded into the executable (Explorer, taskbar, and window icon).
+- **Linux (X11)** — window and taskbar icon at runtime. Executable files on Linux
+  cannot carry icons, so the export also ships `icon.png` and a ready-made
+  `.desktop` launcher entry; install it with
+  `cp MyProject.desktop ~/.local/share/applications/` to get the icon in menus and
+  docks — and on **Wayland**, where windows only receive icons through that entry.
+- **macOS** — dock icon at runtime.
 
 !!! note "Requirements"
     Desktop mode needs **CMake** and a C++ compiler installed. The window warns you with
