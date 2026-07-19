@@ -7,6 +7,12 @@ description: Targeting the web (HTML5) with Doriax using Emscripten.
 Doriax can export to the **web** (HTML5) using [Emscripten](https://emscripten.org/),
 producing JavaScript and WebAssembly output that runs in the browser.
 
+!!! tip "Let the editor build it"
+    The Export Window's **Web** mode runs this entire build for you — it locates the
+    Emscripten SDK, compiles the project, and copies the `.html`/`.js`/`.wasm`/`.data`
+    files to your destination folder. The manual steps below are for Source Code
+    exports and custom setups. See [Export Window](../editor/export.md#web-mode).
+
 ## 1. Install Emscripten
 
 Download and install the Emscripten SDK by following the official

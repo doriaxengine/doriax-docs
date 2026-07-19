@@ -1,12 +1,13 @@
 ---
-description: Export settings, generated files, shader compilation, and platform builds in the Doriax editor.
+description: Export modes (Source Code, Desktop, Web), settings, generated files, shader compilation, and platform builds in the Doriax editor.
 ---
 
 # Export Window
 
-The **Export Window** prepares a Doriax project for a target platform. It collects
+The **Export Window** turns a Doriax project into something you can ship. It collects
 scene data, resources, scripts, generated C++ glue, engine runtime files, and compiled
-shaders into a self-contained buildable project directory.
+shaders — and, depending on the mode, also compiles the result into a ready-to-run
+build.
 
 ![Export window](../assets/screenshots/editor-export-window.png)
 
@@ -15,49 +16,142 @@ shaders into a self-contained buildable project directory.
 Choose **File → Export** from the menu bar, or press the **Export** button in the
 toolbar.
 
-## Export inputs
+## Export modes
 
-| Input | Source |
+The window opens with three modes to choose from:
+
+| Mode | Output | Use it when |
+| --- | --- | --- |
+| **Source Code** | A self-contained buildable C++ project (engine source included) for all supported platforms | You want full control of the build, target mobile platforms, or integrate with CI |
+| **Desktop** | A ready-to-run native executable for the machine you are on (Linux, Windows, or macOS) | You want a playable desktop build without touching a compiler |
+| **Web** | HTML + JavaScript + WebAssembly via [Emscripten](https://emscripten.org/) | You want a browser build without running `emcmake` yourself |
+
+Selecting a mode opens its settings screen; the **Back** button returns to the mode
+selection.
+
+**Desktop** and **Web** run the Source Code pipeline internally: they generate the full
+project into a build cache inside your project (`.doriax/export/desktop` or
+`.doriax/export/web`), compile it there, and copy only the final artifacts to your
+chosen destination folder.
+
+## Common settings
+
+All modes share these settings:
+
+| Setting | Meaning |
 | --- | --- |
-| **Scenes** | Saved project scene YAML files |
-| **Bundles** | Reusable entity hierarchy files |
-| **Resources** | Asset folders (textures, models, audio, fonts) |
-| **Lua scripts** | Project Lua script files |
-| **C++ scripts** | Project source files and editor-generated glue code |
-| **Shaders** | Shader builder output and platform backend settings |
-| **Platform settings** | Target platform, output directory, build options |
+| **Target / Destination Directory** | Where the output goes. Source Code requires an empty directory; Desktop and Web overwrite existing files in the destination |
+| **Assets Directory** | Project folder copied as the game's assets |
+| **Lua Directory** | Project folder copied as the game's Lua scripts |
+| **Start Scene** | Scene loaded when the exported game launches |
+| **Shaders** | The shader variants compiled into the build (pre-filled from your scenes; add or remove entries as needed) |
 
-## Export steps
+The shader list is populated automatically from every saved scene, including a live scan
+of the currently open scenes — so a component added since the last save (for example a
+shadow-casting 2D light) is already accounted for. Use **Add** if your game enables a
+feature only at runtime from scripts (say, turning on SSR) so its shaders ship too.
 
-1. Open the Export Window and select a **target platform**.
-2. Review the included asset folders and script paths.
-3. Choose a **build output directory** (outside the source project).
-4. Click **Export**.
+## Source Code mode
 
-The exporter runs through the following phases:
+Exactly the classic export: choose the **platforms** to include (Linux, Windows, macOS,
+iOS, Web, Android) — this decides which shader formats are compiled in — and get a
+buildable CMake project in the target directory.
+
+### Generated output structure
+
+```
+output/
+├── CMakeLists.txt       ← build system entry point
+├── core/  libs/  platform/  renders/  workspaces/
+│                        ← engine runtime source (copied from the editor's SDK)
+├── shaders/             ← compiled shader headers for the selected platforms
+└── project/
+    ├── main.cpp         ← generated startup entry point
+    ├── *.cpp            ← generated scene and bundle factory sources
+    ├── assets/          ← copied resources
+    ├── lua/             ← copied Lua scripts
+    └── scripts/         ← your registered C++ scripts
+```
+
+Build it afterwards with the appropriate [platform toolchain](#platform-toolchains).
+
+## Desktop mode
+
+Builds a native executable for the operating system the editor is running on, using
+CMake and the **compiler kit configured in Project Settings** (or the system default
+toolchain when none is selected). The window shows the effective compiler and parallel
+job count; change them in **Project Settings → Build**.
+
+The destination folder receives:
+
+```
+destination/
+├── MyProject            ← the executable (MyProject.exe on Windows)
+├── assets/              ← runtime resources
+└── lua/                 ← runtime Lua scripts
+```
+
+Run the executable from that folder — it resolves `assets/` and `lua/` relative to its
+working directory.
+
+!!! note "Requirements"
+    Desktop mode needs **CMake** and a C++ compiler installed. The window warns you with
+    install instructions when either is missing. On macOS the **Xcode generator** is not
+    supported for this mode (it produces an app bundle instead of a plain executable);
+    use the default toolchain.
+
+## Web mode
+
+Builds the project with Emscripten and copies `MyProject.html`, `.js`, `.wasm`, and
+`.data` (the packed assets) to the destination.
+
+The editor locates the Emscripten SDK automatically from the `EMSDK` environment
+variable or `emcmake` on `PATH`. If neither is set, use **Browse** in the settings to
+point at your `emsdk` folder once — the path is remembered in the editor settings across
+projects. **Auto** returns to automatic detection.
+
+!!! tip "Testing the build"
+    Browsers do not load WebAssembly from `file://`. Serve the destination folder with
+    any local web server, for example:
+
+    ```bash
+    python3 -m http.server --directory /path/to/destination
+    ```
+
+See [Building for HTML5](../building/html5.md) for Emscripten installation and advanced
+options such as thread support.
+
+## Build progress and cancellation
+
+While exporting, the window shows each phase, a progress bar (driven by the compiler's
+own progress output during Desktop/Web builds), and the last build log line. The full
+log streams to the **Output** panel. **Cancel** stops the export and terminates the
+running compiler processes.
+
+## The build cache
+
+Desktop and Web modes keep their generated project and CMake build tree inside your
+project under `.doriax/export/desktop` and `.doriax/export/web`. The first export
+compiles the whole engine and takes a while; subsequent exports only rebuild what
+changed — typically just your scenes and scripts, finishing in seconds.
+
+- Changing the compiler kit, generator, or Emscripten SDK wipes the cache's build tree
+  automatically (CMake cannot switch toolchains in place).
+- The cache is safe to delete at any time; the next export simply starts from scratch.
+- Keep `.doriax/` out of version control.
+
+## Export phases
 
 | Phase | Output |
 | --- | --- |
 | Scene serialization | Converts scene YAML to runtime-loadable data |
 | Bundle factory generation | Generates C++ factory functions for each bundle |
-| Shader compilation | Translates shaders for the selected graphics backend |
 | Asset packaging | Copies and organizes resource files |
 | Startup code generation | Generates `main.cpp` / entry point with scene registration |
-| Engine template copy | Copies the runtime engine library and CMake/build files |
-
-## Generated output structure
-
-```
-output/
-├── assets/          ← copied and processed resources
-├── shaders/         ← compiled shader data for the target backend
-├── src/
-│   ├── main.cpp     ← generated startup entry point
-│   ├── scenes/      ← generated scene factory C++ files
-│   └── bundles/     ← generated bundle factory C++ files
-├── CMakeLists.txt   ← build system entry point
-└── ...              ← platform-specific files
-```
+| Engine template copy | Copies the runtime engine source and CMake/build files |
+| Shader compilation | Translates shaders for the selected graphics backends |
+| Configure & build *(Desktop/Web)* | Runs CMake and the compiler on the build cache |
+| Collect artifacts *(Desktop/Web)* | Copies the executable or web files to the destination |
 
 ## Generated scene data
 
@@ -79,8 +173,9 @@ to be stored directly in the scene.
 
 ## Shader compilation
 
-The shader builder translates shader source for the selected graphics backend. Supported
-backends:
+The shader builder translates shader source for the selected graphics backend. In
+Desktop and Web modes the formats are chosen automatically for the target; in Source
+Code mode they follow the selected platforms:
 
 | Backend | Platforms |
 | --- | --- |
@@ -100,7 +195,7 @@ project's **Shaders Directory**. See [Custom Shaders — Export and runtime](cus
 
 ## Platform toolchains
 
-After export, build the generated project with the appropriate native toolchain:
+Source Code exports are built afterwards with the appropriate native toolchain:
 
 | Target platform | Toolchain | Notes |
 | --- | --- | --- |
@@ -110,6 +205,8 @@ After export, build the generated project with the appropriate native toolchain:
 | **Android** | Gradle + Android NDK | Requires Android Studio or SDK command-line tools |
 | **iOS** | Xcode workspace | Requires a Mac with Xcode |
 | **HTML5 / Web** | Emscripten | Requires `emcmake cmake` |
+
+Desktop and Web modes run the Linux/Windows/macOS and Emscripten toolchains for you.
 
 ## VSync in desktop exports
 
@@ -134,7 +231,7 @@ settings entirely — the game always fills the browser canvas or the device scr
 
 ## Exporting from the command line
 
-The same export pipeline is available headlessly through the `doriax-editor` CLI, which
+The Source Code pipeline is available headlessly through the `doriax-editor` CLI, which
 is ideal for build servers and CI/CD:
 
 ```bash
@@ -150,10 +247,8 @@ compile-time defines you can set to control engine features in the export.
 
 ## Tips
 
-- Keep the export output directory separate from your source project so version control
-  does not track generated files.
-- Export a clean build before submitting to an app store or sharing a release build.
-- Use the **Development** export mode while iterating; switch to **Release** for final
-  builds (enables optimizations, strips debug symbols).
+- Keep export destinations and the `.doriax/` folder out of version control.
 - Test exported builds on actual devices — some graphics, input, and memory behaviors
   differ between the editor's desktop preview and the target platform.
+- If a shader is reported missing at runtime, re-export (the scene shader list refreshes
+  automatically) or add the named shader manually with **Add** in the Shaders section.

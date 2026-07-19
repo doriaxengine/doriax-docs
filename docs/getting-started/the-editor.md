@@ -58,7 +58,9 @@ physics interactively, then return to editing.
 ## Export pipeline
 
 The editor includes a shader-aware export pipeline that prepares scenes, assets,
-scripts, engine files, and compiled shaders for your target platform. See the [Export Window](../editor/export.md) for details on platforms and output options.
+scripts, engine files, and compiled shaders for your target platform — and can compile
+ready-to-run desktop and web builds directly. See the [Export Window](../editor/export.md)
+for the export modes and output options.
 
 !!! note "Editor coverage"
     Terrain sculpting/painting has a dedicated **Terrain Editor** window, and particle

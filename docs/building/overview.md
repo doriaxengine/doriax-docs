@@ -11,6 +11,11 @@ There are two things you might "build" with Doriax:
 
 This section focuses on building from source and the per-platform requirements.
 
+!!! tip "Desktop and Web builds without a manual toolchain step"
+    The Export Window's **Desktop** and **Web** modes compile your game for you — the
+    manual per-platform steps here apply to **Source Code** exports and to building the
+    editor or engine itself. See [Export Window](../editor/export.md#export-modes).
+
 !!! note "Transition in progress"
     Doriax is the continuation of Supernova Engine. Some platform tooling and folder
     names are still being refreshed under the Doriax name, so a few steps may reference

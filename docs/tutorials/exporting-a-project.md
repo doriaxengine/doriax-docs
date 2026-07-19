@@ -4,8 +4,27 @@ description: Export a Doriax project from the editor and prepare it for a target
 
 # Exporting a Project
 
-Exporting turns editor-authored scenes, resources, scripts, and shaders into a buildable
-runtime project for a target platform.
+Exporting turns editor-authored scenes, resources, scripts, and shaders into a
+shippable build — either a buildable source project or a compiled binary, depending on
+the mode you choose.
+
+## Choose an export mode
+
+**File → Export** opens with three modes:
+
+- **Source Code** — generates a self-contained C++ project (engine included) you build
+  yourself with CMake or the platform toolchain. Pick this for Android/iOS, CI
+  pipelines, or when you want to customize the build.
+- **Desktop** — compiles a ready-to-run executable for the OS the editor runs on and
+  copies it, with `assets/` and `lua/`, to your destination folder. Needs CMake and a
+  C++ compiler installed.
+- **Web** — compiles an HTML + JavaScript + WebAssembly build with Emscripten. Needs the
+  [Emscripten SDK](https://emscripten.org/) installed (auto-detected, or point the
+  window at your `emsdk` folder once).
+
+Desktop and Web reuse the Source Code pipeline internally, building inside
+`.doriax/export/` in your project — the first export compiles the engine and is slow,
+later ones are incremental and fast.
 
 ## Export checklist
 
@@ -39,12 +58,15 @@ custom build step.
 
 ## Build after export
 
-Desktop exports are generally built with CMake:
+**Desktop** and **Web** mode exports are already built — run the executable from the
+destination folder, or serve the web files with any local web server
+(`python3 -m http.server`).
+
+**Source Code** exports are built with CMake:
 
 ```bash
 cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
 cmake --build build --config Release
-cmake --install build --config Release
 ```
 
 Android, iOS, macOS, and HTML5 have additional platform requirements. See the
