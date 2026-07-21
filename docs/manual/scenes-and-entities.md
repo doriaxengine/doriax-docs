@@ -143,10 +143,21 @@ Every scene owns rendering and interaction state that affects all entities withi
 | Shadow quality | PCF filtering level for smoother shadow edges (`NONE` to `HIGH`) |
 | Light state | `OFF`, `ON`, or `AUTO` (auto-detects lights in the scene) |
 | Global illumination | Ambient light color and intensity |
+| Ambient occlusion (SSAO) | Screen-space ambient occlusion — enable plus radius, intensity, and bias — see [Rendering Pipeline](rendering-pipeline.md#ambient-occlusion-ssao) |
+| Reflections (SSR) | Screen-space reflections — enable plus distance, thickness, intensity, and glossy blur — see [Rendering Pipeline](rendering-pipeline.md#screen-space-reflections-ssr) |
+| Ambient light (2D) | Flat ambient color and intensity for 2D scenes, with its own 2D shadow quality — see [2D lighting](2d-graphics.md#2d-lighting) |
 | Physics gravity | Per-world gravity in m/s² — 2D (Box2D) and 3D (Jolt) are independent — see [Physics](physics.md#gravity) |
+| Fixed resolution | Render the main scene at a fixed internal size and upscale it to the window — see [Multiple Resolutions](multiple-resolutions.md#fixed-resolution) |
 | UI events | Enables/disables UI input processing for the scene |
 | Default shaders | Per-type custom shaders (Mesh, UI, Sky, Points, Lines) used by every component of that type without its own custom shader — see [Custom Shaders](../editor/custom-shaders.md#scene-default-shaders) |
 | Canvas size | Logical resolution for 2D and UI scenes |
+
+Edit these in the editor by selecting the scene root in the [Structure panel](../editor/structure.md)
+with no entity selected; the settings appear in the [Properties window](../editor/properties.md).
+Which sections are shown depends on the scene type — 2D and UI scenes hide 3D-only options such
+as SSAO and SSR. As with component fields, any setting changed from its default shows a small
+**reset arrow** next to its label that restores the default, and every change is saved with the
+scene and undoable.
 
 ## Scene stacks
 
