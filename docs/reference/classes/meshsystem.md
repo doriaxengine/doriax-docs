@@ -16,6 +16,7 @@ Creates meshes, loads models, builds sprites and tilemaps.
 | `createCylinder` | C++ \| Lua |
 | `createCapsule` | C++ \| Lua |
 | `createTorus` | C++ \| Lua |
+| `canMergeStaticModel` | C++ |
 | `loadGLTF` | C++ \| Lua |
 | `loadOBJ` | C++ \| Lua |
 | `createInstancedMesh` | C++ \| Lua |
@@ -25,6 +26,10 @@ Creates meshes, loads models, builds sprites and tilemaps.
 | `cancelAsyncModelLoad` | C++ |
 | `cancelAsyncModelLoads` | C++ |
 | `cancelAllAsyncModelLoads` | C++ |
+
+## Merging static models
+
+`bool canMergeStaticModel(const ModelComponent& model, std::string* reason = nullptr) const` reports whether a loaded GLTF can flatten its mesh nodes into the root entity (`ModelComponent::mergeStaticMeshes`). Returns `false` with an optional reason for skinned, animated, morph-target, or single-node models, and when the flatten would exceed the root submesh limit. See [3D Graphics — Merging static model meshes](../../manual/3d-graphics.md#merging-static-model-meshes).
 
 ## Asynchronous model-load control
 

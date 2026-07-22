@@ -303,6 +303,8 @@ Returns the number of submeshes. Each submesh can have its own material, primiti
 
 Enables GPU instancing for this mesh. After calling this, use [addInstance](#addinstance) / [updateInstance](#updateinstance) to populate the instance list, then [updateInstances](#updateinstances) to flush changes to the GPU.
 
+Instancing draws geometry on this entity only. Multi-node GLTF models that keep child mesh entities need [static merge](../../manual/3d-graphics.md#merging-static-model-meshes) first (or use a single-mesh / procedural mesh).
+
 === "C++"
 
     ```cpp

@@ -83,6 +83,37 @@ default, and the settings are saved with the scene and applied in exported proje
 [Vector images (SVG)](../manual/resources-and-assets.md#vector-images-svg) for the
 underlying behavior.
 
+## Model component
+
+The **Model** component loads a GLTF/GLB/OBJ file onto the entity. Multi-node GLTF
+files usually create child mesh entities under the model root.
+
+| Control | Purpose |
+| --- | --- |
+| **Model File** | Path to the model asset (browse or drag from Resources) |
+| **Skeleton** | Optional skeleton entity reference |
+| **Animations** | Clips imported with the model |
+
+For static multi-node models that need same-entity features such as
+[Instanced Mesh](#instanced-mesh), use **Merge static model** on the entity in
+[Structure](structure.md#merge-static-model) (or **Restore model mesh children** to undo).
+That sets the serialized `mergeStaticMeshes` flag and reloads the model in one undoable
+step. See [3D Graphics — Merging static model meshes](../manual/3d-graphics.md#merging-static-model-meshes).
+
+## Instanced Mesh
+
+**Instanced Mesh** draws many copies of the *same entity's* mesh geometry with per-instance
+transforms. Add it from **Add Component**, then populate the instance list in Properties
+or from script via `Mesh::createInstancedMesh` / `addInstance`.
+
+Instancing only uses geometry on the entity that owns the component. If a Model still
+stores its meshes as child entities (the default multi-node GLTF layout), the editor
+shows a warning and writes to the Output panel: instances will not render until you
+[merge the static model](structure.md#merge-static-model).
+
+A clone mark next to the entity in Structure indicates the instance count. See
+[Rendering Pipeline — GPU instancing](../manual/rendering-pipeline.md#gpu-instancing).
+
 ## Mesh materials and IBL
 
 The **Mesh** component exposes rendering flags beyond per-submesh material slots:

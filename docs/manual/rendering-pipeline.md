@@ -572,6 +572,12 @@ for (int i = 0; i < 500; i++) {
 Instances can be modified later with `updateInstance(index, ...)` and read back with
 `getInstance(index)`.
 
+Instancing uses geometry on the **same entity** as the instanced mesh. Multi-node GLTF
+models that keep child mesh entities will not draw instances until you
+[merge static model meshes](3d-graphics.md#merging-static-model-meshes) into the root
+(or build instances on a single-mesh entity / basic shape). In the editor, the Instanced
+Mesh panel warns when a model still uses the child-mesh layout.
+
 ## Performance guidelines
 
 | Area | Guideline |

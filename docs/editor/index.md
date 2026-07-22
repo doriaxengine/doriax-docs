@@ -68,8 +68,8 @@ web memory limits, native graphics), test with a proper exported build.
 
 All edits made in the scene view, Properties window, and hierarchy are recorded in the
 command history. Use **Ctrl+Z** / **Ctrl+Y** to step back and forward through changes.
-Undo is available across transforms, component edits, hierarchy reparenting, and
-resource assignments.
+Undo is available across transforms, component edits, hierarchy reparenting, resource
+assignments, and cascade deletes (a parent and its children restore together).
 
 ## Keyboard shortcuts
 

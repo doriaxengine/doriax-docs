@@ -13,6 +13,8 @@ Loads and displays 3D model files in a scene. `Model` extends [Mesh](mesh.md) an
 
 A single GLTF file can contain multiple meshes, materials, textures, skeletons, and animations; Doriax imports all of them into the scene hierarchy and makes each accessible through the API. Use [getAnimation()](#getanimation-findanimation) and [getBone()](#getbone) to drive skeletal playback, and [setMorphWeight()](#getmorphweight-setmorphweight) to control blend shapes.
 
+For static multi-node GLTFs that need [GPU instancing](../../manual/rendering-pipeline.md#gpu-instancing) on the root entity, set `ModelComponent::mergeStaticMeshes` (or use **Merge static model** in the editor) so child transforms bake into the root mesh instead of creating child mesh entities. See [3D Graphics — Merging static model meshes](../../manual/3d-graphics.md#merging-static-model-meshes).
+
 ### Methods
 
 | Type | Name | Langs |

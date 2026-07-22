@@ -17,7 +17,7 @@ scene is expanded inline, its entities are shown under that child scene node.
 
 A scene can reference other scenes as **child scenes** so they load and run together as
 one [scene stack](../manual/scenes-and-entities.md#scene-stacks). Child scene nodes appear
-above the parent's entities, tinted to set them apart.
+above the parent's entities, tinted soft teal to set them apart.
 
 **Add a child scene** in one of two ways:
 
@@ -32,9 +32,11 @@ above the parent's entities, tinted to set them apart.
 | **Start active** | Toggles whether the child scene is added to the engine automatically when the parent loads. On (the default) means it runs immediately; off means it is built but hidden until you call `SceneManager.addChildScene` at runtime. |
 | **Remove child scene** | Detaches the reference (it does not delete the scene file). |
 
-Click the **eye icon** on a child scene node to load it *inline* — its entities appear
-nested under the node so you can view and edit them in the parent's context. This is an
-editing convenience and does not affect runtime behavior.
+Each child scene row also shows a small **play** or **pause** mark next to the name:
+play means **Start active** is on; pause means it starts inactive. Hover the mark for a
+tooltip. Click the **eye icon** on a child scene node to load it *inline* — its entities
+appear nested under the node so you can view and edit them in the parent's context. This
+is an editing convenience and does not affect runtime behavior.
 
 **Order matters:** scenes render as layers, with the main scene at the bottom and each
 child scene drawn on top of the ones listed above it — so the last child scene is the
@@ -96,6 +98,40 @@ a parent updates child world transforms through that parent chain.
 
 Common entities in this area include objects, sprites, models, cameras, lights, 3D
 sounds, physics bodies, UI widgets, points, lines, terrain, and mesh polygons.
+
+### Tree marks and collapse
+
+| Mark | Meaning |
+| --- | --- |
+| Clone icon | The entity has an [Instanced Mesh](properties.md#instanced-mesh) with one or more instances (tooltip shows the count) |
+| Play / pause | Child scene **Start active** on / off (see [Child scenes](#child-scenes)) |
+
+Imported **Model** entities with child mesh nodes start **collapsed** once their
+children finish loading, so multi-mesh GLTFs do not flood the tree. Bones also start
+collapsed. Expand a row when you need to edit children.
+
+When a parent is collapsed in Structure, clicking its hidden children in the
+[Scene view](scene-view.md#selection) selects the nearest expanded ancestor instead —
+so picking in the viewport matches what you can see in the tree. Expand the model (or
+other parent) if you need to select a specific child mesh.
+
+### Merge static model
+
+Multi-node GLTF models normally create one child mesh entity per mesh node. Instanced
+Mesh (and other same-entity mesh features) only draw geometry that lives on the root
+entity, so those models need a flatten step first.
+
+Right-click a Model entity in Structure:
+
+| Action | Effect |
+| --- | --- |
+| **Merge static model** | Bakes child mesh transforms into the root `MeshComponent`, removes the child mesh entities, and sets the model's `mergeStaticMeshes` flag. Undoable. |
+| **Restore model mesh children** | Reloads the model with the hierarchy restored (available after a merge). |
+
+Merge is only available for static multi-mesh models. It is disabled (with a tooltip)
+when the model is skinned, animated, has morph targets, has fewer than two mesh nodes,
+or would exceed the root submesh limit. See
+[3D Graphics — Merging static model meshes](../manual/3d-graphics.md#merging-static-model-meshes).
 
 ## Non-hierarchical area
 

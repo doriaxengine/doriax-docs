@@ -21,6 +21,25 @@ Models support:
 
 ![Bone and skeletal animation tools](../assets/screenshots/editor-bones.png)
 
+### Merging static model meshes
+
+A GLTF with several mesh nodes normally becomes a root Model entity plus one child mesh
+entity per node. That hierarchy is useful for editing parts separately, but
+[GPU instancing](rendering-pipeline.md#gpu-instancing) draws only the geometry on the
+entity that owns `InstancedMeshComponent`.
+
+For static props (no skinning, morph targets, or embedded animations), bake the children
+into the root:
+
+1. Select the Model in the [Structure panel](../editor/structure.md#merge-static-model).
+2. Right-click and choose **Merge static model**.
+3. Add **Instanced Mesh** (or set `ModelComponent::mergeStaticMeshes` before reload in
+   C++ / exported project code).
+
+**Restore model mesh children** reverses the flatten. Merge is refused for skinned,
+animated, or morph-target models, and when the flattened result would exceed the root
+submesh limit.
+
 ## PBR materials
 
 Rendering is **physically based (PBR)**, producing realistic surfaces that respond
