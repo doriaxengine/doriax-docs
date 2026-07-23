@@ -35,8 +35,8 @@ Linked materials reload when the file changes on disk. See
 | Vector4 | [baseColorFactor](#basecolorfactor) | `(1,1,1,1)` | C++ \| Lua |
 | float | [metallicFactor](#metallicfactor-roughnessfactor) | `1.0` | C++ \| Lua |
 | float | [roughnessFactor](#metallicfactor-roughnessfactor) | `1.0` | C++ \| Lua |
-| MaterialAlphaMode | [alphaMode](#alphamode-alphacutoff) | `AUTO` | C++ |
-| float | [alphaCutoff](#alphamode-alphacutoff) | `0.5` | C++ |
+| MaterialAlphaMode | [alphaMode](#alphamode-alphacutoff) | `AUTO` | C++ \| Lua |
+| float | [alphaCutoff](#alphamode-alphacutoff) | `0.5` | C++ \| Lua |
 | Vector3 | [emissiveFactor](#emissivefactor) | `(0,0,0)` | C++ \| Lua |
 | [Texture](texture.md) | [baseColorTexture](#basecolortexture) | empty | C++ \| Lua |
 | [Texture](texture.md) | [emissiveTexture](#emissivetexture) | empty | C++ \| Lua |
@@ -89,6 +89,14 @@ leaves.baseColorTexture = Texture("textures/leaves.png");
 leaves.alphaMode = MaterialAlphaMode::MASK;
 leaves.alphaCutoff = 0.35f;
 mesh.setMaterial(leaves);
+```
+
+```lua
+local leaves = Material()
+leaves.baseColorTexture = Texture("textures/leaves.png")
+leaves.alphaMode = MaterialAlphaMode.MASK
+leaves.alphaCutoff = 0.35
+mesh:setMaterial(leaves)
 ```
 
 GLTF/GLB loading maps the source material's `OPAQUE`, `MASK`, or `BLEND` mode directly.

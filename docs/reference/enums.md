@@ -30,7 +30,7 @@ types. C++-only enums are noted below. See [Engine](classes/engine.md) for `Scal
 | `ReflectionProbeUpdateMode` | Dynamic probe capture policy (`ON_LOAD`, `ON_MOVE`, `INTERVAL`, `MANUAL`) |
 | `LightState` / `UIEventState` | Scene flags |
 | `PrimitiveType` / `CullingMode` / `WindingOrder` | Rendering |
-| `MaterialAlphaMode` *(C++ only)* | Material alpha handling (`AUTO`, `OPAQUE`, `MASK`, `BLEND`) |
+| `MaterialAlphaMode` | Material alpha handling (`AUTO`, `OPAQUE`, `MASK`, `BLEND`) |
 | `TextureFilter` / `TextureWrap` / `TextureType` | Textures |
 | `CursorType` | Mouse cursor |
 | `ResourceLoadState` | Async loading |
