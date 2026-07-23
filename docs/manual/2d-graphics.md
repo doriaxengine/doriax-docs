@@ -78,7 +78,9 @@ tilemap in the scene view.
 
 Tilemaps are designed for large grids of repeated texture regions. Keep individual
 tiles consistent in size, place collision on separate bodies when possible, and split
-very large worlds into scenes or chunks so editing and export remain fast.
+very large worlds into scenes or chunks so editing and export remain fast. In the
+editor, turn on **Snap tile** in the scene view settings to snap placed tiles to their
+own size so they group edge-to-edge — see [Scene View](../editor/scene-view.md#placing-and-grouping-tiles).
 
 ## 2D lighting
 

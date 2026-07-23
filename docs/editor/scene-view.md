@@ -38,6 +38,23 @@ Select a gizmo mode from the toolbar or with the keyboard:
 Hold **Ctrl** while transforming to snap to the configured grid interval. Hold **Alt**
 to move in world space instead of local space.
 
+## Viewport settings
+
+Open the **gear** button on the scene view toolbar to toggle display and snap options
+for the current scene. Settings are saved with the project.
+
+| Setting | Applies to | Purpose |
+| --- | --- | --- |
+| **Snap to grid** | All scene types | Snap transforms to the configured grid spacing |
+| **Snap tile** | 2D / UI | Snap Tilemap tiles to their own width and height so they pack edge-to-edge |
+| **Snap rotation** | All scene types | Snap rotations to the configured step (degrees) |
+| **Show grid** | All scene types | Draw the editor grid overlay |
+| **Grid spacing** | All scene types | Interval used by the grid and by **Snap to grid** |
+
+**Snap tile** takes priority over **Snap to grid** while you move or resize an
+individual tile inside a Tilemap. Turn it on when laying out floors, walls, or other
+tiled content that should sit flush without relying on the global grid.
+
 ## Selection
 
 Click an entity in the viewport to select it; the Properties window updates
@@ -122,6 +139,18 @@ Tilemap cells can be painted directly in the scene view when a Tilemap entity is
 selected and the tile-paint mode is active.
 
 ![Tilemap in scene](../assets/screenshots/editor-2d-tilemap.png)
+
+### Placing and grouping tiles
+
+Drag a tile rect from the Tilemap palette onto the viewport to place it. With
+**Snap tile** enabled in the viewport settings:
+
+- Dropped tiles snap to multiples of their own size in the tilemap's local space.
+- Dragging or resizing a selected tile with the Object2D gizmo snaps the same way, so
+  neighboring tiles line up edge-to-edge.
+
+Use **Snap to grid** instead when tiles should align to the scene grid rather than to
+each other. See also [Tileset Slicer](tileset-slicer.md).
 
 ### 2D lights and occluders
 

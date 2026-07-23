@@ -62,6 +62,10 @@ directly onto the canvas:
 3. Pick a tile from the tile palette (the sliced grid preview).
 4. Click or drag over the canvas to paint cells.
 
+When arranging placed tiles in the [Scene View](scene-view.md), enable **Snap tile**
+in the viewport gear menu so drops and gizmo moves snap to each tile's width and
+height — useful for packing tiles flush without tuning the global grid.
+
 ## Collision tiles
 
 Mark individual tile IDs as **solid** or assign them a collision category in the slicer
@@ -81,6 +85,7 @@ collision. This avoids having to manually define collision shapes for every tile
 ## See also
 
 - [Sprite Slicer](sprite-slicer.md)
+- [Scene View](scene-view.md#placing-and-grouping-tiles)
 - [Tilemap](../reference/classes/tilemap.md)
 - [TileData](../reference/classes/tiledata.md)
 - [TileRectData](../reference/classes/tilerectdata.md)
