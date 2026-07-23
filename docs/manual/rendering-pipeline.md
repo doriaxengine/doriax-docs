@@ -56,7 +56,7 @@ texture slots and scalar properties:
 | Slot / Property | Controls |
 | --- | --- |
 | `baseColorTexture` + `baseColorFactor` | Base surface color (albedo) |
-| `alphaMode` | Alpha handling: `AUTO`, `OPAQUE`, `MASK`, or `BLEND` |
+| `alphaMode` | Alpha handling: `AUTO`, `ALPHA_OPAQUE`, `MASK`, or `BLEND` |
 | `alphaCutoff` | Cutout threshold for `MASK` materials (default `0.5`) |
 | `normalTexture` | Surface micro-detail |
 | `metallicRoughnessTexture` + `metallicFactor` | Surface reflectivity (0 = dielectric, 1 = metal) |
@@ -68,7 +68,7 @@ Metallic and roughness share one texture, following the GLTF convention (roughne
 the green channel, metallic in the blue channel).
 
 Alpha is the product of `baseColorFactor.a` and the base-colour texture's alpha.
-`OPAQUE` forces the result opaque, `MASK` discards pixels below `alphaCutoff`, and
+`ALPHA_OPAQUE` forces the result opaque, `MASK` discards pixels below `alphaCutoff`, and
 `BLEND` preserves partial alpha for transparent rendering. `AUTO` keeps the historical
 Doriax texture-alpha detection used by editor-created materials. Imported GLTF/GLB
 materials preserve their explicit alpha mode.

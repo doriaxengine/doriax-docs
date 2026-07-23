@@ -75,7 +75,7 @@ texture is rendered:
 | Mode | Behaviour |
 | --- | --- |
 | `MaterialAlphaMode::AUTO` | Legacy Doriax behaviour. `autoTransparency` selects the transparent pass when the texture or base-colour factor contains transparency. The submesh's **Texture Shadow** option remains a manual cutout control. |
-| `MaterialAlphaMode::OPAQUE` | Ignores material alpha and renders every surviving fragment fully opaque. |
+| `MaterialAlphaMode::ALPHA_OPAQUE` | Ignores material alpha and renders every surviving fragment fully opaque. |
 | `MaterialAlphaMode::MASK` | Discards fragments whose combined alpha is below `alphaCutoff`; surviving fragments are fully opaque. |
 | `MaterialAlphaMode::BLEND` | Preserves alpha for conventional transparency and selects the transparent pass when `autoTransparency` is enabled. |
 
@@ -99,7 +99,8 @@ leaves.alphaCutoff = 0.35
 mesh:setMaterial(leaves)
 ```
 
-GLTF/GLB loading maps the source material's `OPAQUE`, `MASK`, or `BLEND` mode directly.
+GLTF/GLB loading maps the source material's `OPAQUE`, `MASK`, or `BLEND` mode directly
+onto `MaterialAlphaMode::ALPHA_OPAQUE`, `MASK`, and `BLEND`.
 Editor-created materials default to `AUTO` for compatibility with older projects.
 
 ---
