@@ -183,8 +183,9 @@ For 2D frame animation, add a **Sprite Frame** track and set keyframes to specif
 frame names or indices from the sliced sprite sheet. Keep frame intervals consistent
 for smooth playback.
 
-The runtime equivalent is `SpriteAnimation`. See the
-[Sprite Slicer](sprite-slicer.md) page for how to prepare a sprite sheet.
+The runtime equivalent is `SpriteAnimation`. Identify a sprite animation by its
+**entity name** (Structure panel) — `SpriteAnimationComponent` has no separate Name
+field. See the [Sprite Slicer](sprite-slicer.md) page for how to prepare a sprite sheet.
 
 ## Skeletal animation
 

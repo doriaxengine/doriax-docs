@@ -154,6 +154,11 @@ sprite:startAnimation(0, 7, 80, true)
 sprite:stopAnimation()
 ```
 
+!!! note "Lookup uses the sprite animation entity name"
+    `SpriteAnimationComponent` has no separate name. Rename the action entity in the
+    Structure panel (or call `setName`) and find it with `Scene:findEntity` when you need
+    to look it up by name.
+
 ## Skeletal animation from GLTF
 
 A `Model` exposes the animation clips embedded in its GLTF file, addressable by name or
@@ -417,6 +422,7 @@ model.setMorphWeight("blink", 1.0f);
 - [Action](../reference/classes/action.md) — base action class
 - [TimedAction](../reference/classes/timedaction.md) — duration-based base
 - [SpriteAnimation](../reference/classes/spriteanimation.md)
+- [SpriteAnimationComponent](../reference/classes/spriteanimationcomponent.md)
 - [Animation](../reference/classes/animation.md)
 - [Particles](../reference/classes/particles.md)
 - [Animation Timeline](../editor/animation.md) — editor authoring

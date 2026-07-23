@@ -11,11 +11,32 @@ description: SpriteAnimation API reference (C++ and Lua).
 
 Cycles through a sequence of texture atlas frames on its target [Sprite](sprite.md), creating flip-book-style 2D animation. This is distinct from skeletal animation ([Animation](animation.md)); `SpriteAnimation` only advances the active frame of a sprite sheet.
 
+### Properties
+
+| Type | Name | Default | Langs |
+| --- | --- | --- | --- |
+| std::string | [name](#name) | `""` | C++ \| Lua |
+
 ### Methods
 
 | Type | Name | Langs |
 | --- | --- | --- |
 | void | [setAnimation](#setanimation) | C++ \| Lua |
+
+## Property details
+
+### name
+
+*Inherited from:* [EntityHandle](entityhandle.md#name)
+
+* *Setter*: void **setName**(const std::string& name)
+* *Getter*: std::string **getName**() const
+
+The sprite animation entity's human-readable name. The editor shows this name in the
+Structure panel. There is no separate name stored in
+[`SpriteAnimationComponent`](spriteanimationcomponent.md) — rename the entity (or call
+`setName`) when you need a label for lookup with
+[`Scene::findEntity`](entityregistry.md#findentity).
 
 ## Method details
 
@@ -62,3 +83,9 @@ Configure the frame sequence.
     walk:setAnimation(4, 7, 120, true)
     walk:start()
     ```
+
+## See also
+
+- [SpriteAnimationComponent](spriteanimationcomponent.md)
+- [Sprite](sprite.md)
+- [Action](action.md)

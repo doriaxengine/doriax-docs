@@ -38,7 +38,8 @@ characters, explosion effects, or item icons.
    between cells) if your sheet has padding.
 3. Click **Slice** — the tool fills the frame list with all cells that fit.
 4. Rename frames as needed. Frame names are used by `Sprite::setFrame(name)` and
-   `SpriteAnimation`.
+   `Sprite::startAnimation(name, …)`. `SpriteAnimation::setAnimation` uses frame
+   indices; identify the action entity by its entity name if you need a searchable label.
 5. Click **Save** to commit the slice data to the texture resource.
 
 ## Free slicing

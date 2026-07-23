@@ -29,6 +29,7 @@ See also [Enumerations](enums.md) and [Build Options](build-options.md).
 - [RotationAction](classes/rotationaction.md)
 - [ScaleAction](classes/scaleaction.md)
 - [ScaleTracks](classes/scaletracks.md)
+- [SpriteAnimation](classes/spriteanimation.md)
 - [TimedAction](classes/timedaction.md)
 - [TranslateTracks](classes/translatetracks.md)
 
@@ -42,6 +43,7 @@ See also [Enumerations](enums.md) and [Build Options](build-options.md).
 - [ProgressbarComponent](classes/progressbarcomponent.md)
 - [ScrollbarComponent](classes/scrollbarcomponent.md)
 - [SoundComponent](classes/soundcomponent.md)
+- [SpriteAnimationComponent](classes/spriteanimationcomponent.md)
 - [TextEditComponent](classes/texteditcomponent.md)
 - [TilemapComponent](classes/tilemapcomponent.md)
 - [TimedActionComponent](classes/timedactioncomponent.md)
@@ -135,7 +137,6 @@ See also [Enumerations](enums.md) and [Build Options](build-options.md).
 - [RayReturn](classes/rayreturn.md)
 - [ResourceBuildInfo](classes/resourcebuildinfo.md)
 - [ResourceProgress](classes/resourceprogress.md)
-- [SpriteAnimation](classes/spriteanimation.md)
 - [TextureLoadResult](classes/textureloadresult.md)
 - [TextureRender](classes/texturerender.md)
 - [ThreadPoolManager](classes/threadpoolmanager.md)
