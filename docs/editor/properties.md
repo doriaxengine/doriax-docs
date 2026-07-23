@@ -128,6 +128,25 @@ Each **Submesh** section contains a **Material** row with a shaded preview spher
 preview reflects the current **Receive IBL** setting so you can see environment
 reflections before entering play mode.
 
+Expand the Material row to edit **Alpha Mode** and **Alpha Cutoff** alongside the base
+colour, textures, metallic, and roughness controls:
+
+| Alpha mode | Use |
+| --- | --- |
+| **Auto** | Compatibility mode for editor-created and older materials. Texture/factor alpha can select transparent rendering automatically. |
+| **Opaque** | Render the material fully opaque, regardless of base-colour alpha. |
+| **Mask** | Cut out pixels below **Alpha Cutoff**; useful for leaves, hair cards, fences, and similarly sharp-edged transparency. |
+| **Blend** | Render smooth or partial transparency through the transparent pass. |
+
+**Alpha Cutoff** ranges from `0` to `1`, defaults to `0.5`, and only affects **Mask**.
+Masked cutouts use the same threshold in the visible surface, shadows, depth, and SSR
+G-buffer.
+
+For explicit **Opaque**, **Mask**, and **Blend** modes, the engine derives **Texture
+Shadow** from the alpha mode: it is enabled for Mask and disabled for the other two.
+The separate **Texture Shadow** checkbox remains meaningful in **Auto** mode for legacy
+materials and sprites.
+
 ### Linking material files
 
 The Material row supports three workflows:

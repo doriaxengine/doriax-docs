@@ -4,8 +4,9 @@ description: Doriax API enumerations exposed to C++ and Lua.
 
 # Enumerations
 
-Enums are exposed as Lua namespaces (`Scaling.FITWIDTH`) and C++ `enum class` types.
-See [Engine](classes/engine.md) for `Scaling`, `Platform`, and `GraphicBackend`.
+Most enums are exposed as Lua namespaces (`Scaling.FITWIDTH`) and C++ `enum class`
+types. C++-only enums are noted below. See [Engine](classes/engine.md) for `Scaling`,
+`Platform`, and `GraphicBackend`.
 
 | Enum | Typical use |
 | --- | --- |
@@ -29,6 +30,7 @@ See [Engine](classes/engine.md) for `Scaling`, `Platform`, and `GraphicBackend`.
 | `ReflectionProbeUpdateMode` | Dynamic probe capture policy (`ON_LOAD`, `ON_MOVE`, `INTERVAL`, `MANUAL`) |
 | `LightState` / `UIEventState` | Scene flags |
 | `PrimitiveType` / `CullingMode` / `WindingOrder` | Rendering |
+| `MaterialAlphaMode` *(C++ only)* | Material alpha handling (`AUTO`, `OPAQUE`, `MASK`, `BLEND`) |
 | `TextureFilter` / `TextureWrap` / `TextureType` | Textures |
 | `CursorType` | Mouse cursor |
 | `ResourceLoadState` | Async loading |

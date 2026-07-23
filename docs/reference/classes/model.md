@@ -31,6 +31,24 @@ For static multi-node GLTFs that need [GPU instancing](../../manual/rendering-pi
 | void | [setMorphWeight](#getmorphweight-setmorphweight) | C++ \| Lua |
 | void | [resetToBindPose](#resettobindpose) | C++ \| Lua |
 
+## GLTF import support and limits
+
+| Feature | Import behaviour |
+| --- | --- |
+| Skinning | Up to **128 joints per skin**. A GLTF skin above this limit is rejected and the loader writes an error to the log. |
+| Position-only morph targets | Up to **8** targets per mesh primitive. |
+| Position + normal or position + tangent morph targets | Up to **4** targets per mesh primitive. |
+| Position + normal + tangent morph targets | Up to **2** targets per mesh primitive. |
+| Sparse morph accessors | Supported. The loader expands sparse target data into a dense GPU buffer, including accessors that omit the optional base `bufferView` and therefore start from zeroes. |
+
+The morph limit is derived from the leading target prefix that the loader actually
+binds. Extra trailing targets are ignored; semantics that appear only after that loaded
+prefix do not reduce its shader capacity. Keep the same morph semantics on every target
+when exporting from a DCC tool for predictable results.
+
+Imported PBR materials also preserve GLTF `OPAQUE`, `MASK`, and `BLEND` alpha modes and
+the `alphaCutoff` value used by masked materials. See [Material](material.md#alphamode-alphacutoff).
+
 ## Method details
 
 ### loadModel

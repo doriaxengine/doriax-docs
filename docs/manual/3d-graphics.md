@@ -21,6 +21,23 @@ Models support:
 
 ![Bone and skeletal animation tools](../assets/screenshots/editor-bones.png)
 
+### GLTF compatibility and limits
+
+Skinned GLTF models support up to **128 joints per skin**. Morph-target capacity is per
+mesh primitive and depends on the data exported for each target:
+
+| Morph data | Maximum loaded targets |
+| --- | --- |
+| Position only | 8 |
+| Position plus normal or tangent | 4 |
+| Position, normal, and tangent | 2 |
+
+The importer bases that capacity on the leading targets it actually loads and ignores
+the unsupported tail. Sparse GLTF accessors are supported for morph-target attributes,
+including sparse accessors without a dense base `bufferView`; Doriax expands them into
+dense GPU vertex data during loading. See the [Model reference](../reference/classes/model.md#gltf-import-support-and-limits)
+for the exact import behaviour.
+
 ### Merging static model meshes
 
 A GLTF with several mesh nodes normally becomes a root Model entity plus one child mesh
@@ -50,6 +67,13 @@ Materials can use albedo, normal, roughness, metallic, and emission data. Import
 GLTF materials are converted into the engine material representation during loading;
 editor-created materials are serialized with the project and baked into exported
 output.
+
+GLTF `OPAQUE`, `MASK`, and `BLEND` alpha modes are preserved. For masked materials,
+the GLTF `alphaCutoff` value (default `0.5`) controls the combined base-colour factor
+and texture alpha test in both the visible surface and its shadow/depth passes. In the
+editor, expand **Mesh → Submesh → Material** to change **Alpha Mode** and **Alpha
+Cutoff**. See the [Material reference](../reference/classes/material.md#alphamode-alphacutoff)
+for the mode behaviours.
 
 ### Shared material files (`.material`)
 

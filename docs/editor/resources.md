@@ -70,9 +70,10 @@ viewport behaviors in detail.
 ## Material files
 
 A **`.material`** file stores a PBR material as YAML: base colour factor, metallic and
-roughness factors, and texture paths for albedo, normal, metallic-roughness, occlusion,
-and emissive slots. Material files live anywhere under the project and appear in the
-Resources Browser with a shaded-sphere thumbnail preview.
+roughness factors, alpha mode and cutoff, per-texture UV sets, and texture paths for
+albedo, normal, metallic-roughness, occlusion, and emissive slots. Material files live
+anywhere under the project and appear in the Resources Browser with a shaded-sphere
+thumbnail preview.
 
 ### Creating a material file
 
@@ -96,7 +97,8 @@ This is the fastest way to turn a tuned material into a reusable project asset.
 | Stop sharing | Click the **unlink** button next to the material name in Properties |
 
 Linked materials are tracked per submesh. The scene stores the link; the `.material` file
-is the single source of truth for colour factors and texture paths.
+is the single source of truth for colour factors, alpha settings, UV selections, and
+texture paths.
 
 !!! tip "Organize shared materials"
     Keep reusable `.material` files under something like `assets/materials/` and link

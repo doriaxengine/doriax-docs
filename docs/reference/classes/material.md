@@ -35,6 +35,8 @@ Linked materials reload when the file changes on disk. See
 | Vector4 | [baseColorFactor](#basecolorfactor) | `(1,1,1,1)` | C++ \| Lua |
 | float | [metallicFactor](#metallicfactor-roughnessfactor) | `1.0` | C++ \| Lua |
 | float | [roughnessFactor](#metallicfactor-roughnessfactor) | `1.0` | C++ \| Lua |
+| MaterialAlphaMode | [alphaMode](#alphamode-alphacutoff) | `AUTO` | C++ |
+| float | [alphaCutoff](#alphamode-alphacutoff) | `0.5` | C++ |
 | Vector3 | [emissiveFactor](#emissivefactor) | `(0,0,0)` | C++ \| Lua |
 | [Texture](texture.md) | [baseColorTexture](#basecolortexture) | empty | C++ \| Lua |
 | [Texture](texture.md) | [emissiveTexture](#emissivetexture) | empty | C++ \| Lua |
@@ -47,7 +49,7 @@ Linked materials reload when the file changes on disk. See
 
 ### baseColorFactor
 
-The base linear-space RGBA colour multiplied with `baseColorTexture`. When no texture is assigned, this is the solid colour of the surface. Alpha below `1.0` makes the surface semi-transparent (requires [transparent](mesh.md#transparent-autotransparency) on the mesh).
+The base linear-space RGBA colour multiplied with `baseColorTexture`. When no texture is assigned, this is the solid colour of the surface. How the combined alpha is interpreted depends on [alphaMode](#alphamode-alphacutoff).
 
 === "C++"
     ```cpp
@@ -62,6 +64,35 @@ The base linear-space RGBA colour multiplied with `baseColorTexture`. When no te
     mat.baseColorFactor = Vector4(1.0, 0.0, 0.0, 1.0)
     mesh:setMaterial(mat)
     ```
+
+---
+
+### alphaMode / alphaCutoff
+
+`alphaMode` controls how the combined alpha from `baseColorFactor.a` and the base-colour
+texture is rendered:
+
+| Mode | Behaviour |
+| --- | --- |
+| `MaterialAlphaMode::AUTO` | Legacy Doriax behaviour. `autoTransparency` selects the transparent pass when the texture or base-colour factor contains transparency. The submesh's **Texture Shadow** option remains a manual cutout control. |
+| `MaterialAlphaMode::OPAQUE` | Ignores material alpha and renders every surviving fragment fully opaque. |
+| `MaterialAlphaMode::MASK` | Discards fragments whose combined alpha is below `alphaCutoff`; surviving fragments are fully opaque. |
+| `MaterialAlphaMode::BLEND` | Preserves alpha for conventional transparency and selects the transparent pass when `autoTransparency` is enabled. |
+
+`alphaCutoff` is used only by `MASK` and defaults to `0.5`. The same combined-alpha
+test is used by the lit pass, shadow/depth pass, and SSR G-buffer, so the visible
+surface, its shadow, and screen-space effects keep the same silhouette.
+
+```cpp
+Material leaves;
+leaves.baseColorTexture = Texture("textures/leaves.png");
+leaves.alphaMode = MaterialAlphaMode::MASK;
+leaves.alphaCutoff = 0.35f;
+mesh.setMaterial(leaves);
+```
+
+GLTF/GLB loading maps the source material's `OPAQUE`, `MASK`, or `BLEND` mode directly.
+Editor-created materials default to `AUTO` for compatibility with older projects.
 
 ---
 

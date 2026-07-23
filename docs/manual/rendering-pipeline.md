@@ -56,6 +56,8 @@ texture slots and scalar properties:
 | Slot / Property | Controls |
 | --- | --- |
 | `baseColorTexture` + `baseColorFactor` | Base surface color (albedo) |
+| `alphaMode` | Alpha handling: `AUTO`, `OPAQUE`, `MASK`, or `BLEND` |
+| `alphaCutoff` | Cutout threshold for `MASK` materials (default `0.5`) |
 | `normalTexture` | Surface micro-detail |
 | `metallicRoughnessTexture` + `metallicFactor` | Surface reflectivity (0 = dielectric, 1 = metal) |
 | `metallicRoughnessTexture` + `roughnessFactor` | Highlight spread (0 = mirror-smooth, 1 = fully rough) |
@@ -64,6 +66,16 @@ texture slots and scalar properties:
 
 Metallic and roughness share one texture, following the GLTF convention (roughness in
 the green channel, metallic in the blue channel).
+
+Alpha is the product of `baseColorFactor.a` and the base-colour texture's alpha.
+`OPAQUE` forces the result opaque, `MASK` discards pixels below `alphaCutoff`, and
+`BLEND` preserves partial alpha for transparent rendering. `AUTO` keeps the historical
+Doriax texture-alpha detection used by editor-created materials. Imported GLTF/GLB
+materials preserve their explicit alpha mode.
+
+The `MASK` test is identical in the lit, shadow/depth, and SSR G-buffer passes. A cutout
+therefore casts and contributes to screen-space effects with the same silhouette that
+is visible in the colour pass.
 
 ```cpp
 Material mat;
@@ -543,6 +555,17 @@ you can **fork** any of them — per component, or as a scene-wide default for t
 and edit the GLSL; the engine keeps driving the variant system, lighting, and
 depth/shadow/G-buffer passes. A shader set on the component wins over the scene default,
 which wins over the built-in. See [Custom Shaders](../editor/custom-shaders.md).
+
+Built-in skinned variants use the engine's `MAX_BONES` value consistently in the colour,
+depth/shadow, and G-buffer passes; the default capacity is **128 bone matrices**. The
+editor revisions its compiled shader cache when this built-in shader interface changes,
+so an updated editor does not reuse incompatible older skinned variants.
+
+GPU pipeline creation can be deferred by the graphics backend. If a pipeline variant
+fails creation or validation, Doriax skips that draw instead of submitting its uniform,
+binding, and draw commands against the failed handle. Diagnose the original pipeline
+creation message in the Output panel; the dependent validation-error cascade is
+suppressed.
 
 Supported graphics backends (`GraphicBackend` enum):
 
