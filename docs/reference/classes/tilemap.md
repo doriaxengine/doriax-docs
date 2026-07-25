@@ -9,19 +9,21 @@ description: Tilemap API reference (C++ and Lua).
 
 ## Description
 
-Renders a 2D tile grid using a single batched draw call. `Tilemap` works with two concepts:
+Renders a 2D tile grid as batched geometry. `Tilemap` works with two concepts:
 
 * **Rect** — a named sub-region of a texture atlas (the source rectangle of a tile graphic).
 * **Tile** — an instance placed in the world, referencing a `Rect` and specifying its position and size.
 
-This two-level design lets you define each atlas frame once and place it any number of times with no additional GPU cost. All tiles sharing the same texture atlas are batched together.
+This two-level design lets you define each atlas frame once and place it any number of times with no additional GPU cost. All tiles sharing the same texture atlas are batched together, and larger maps are additionally split into spatial chunks that are [frustum-culled](../../manual/rendering-pipeline.md#high-level-render-flow) individually, so tiles outside the camera view are never submitted.
+
+A single tilemap can render at most **16 383** tiles — the index buffer is 16-bit and each tile is a four-vertex quad. Tiles beyond that limit are dropped with an error in the log; split larger worlds across several tilemaps or scenes.
 
 ### Properties
 
 | Type | Name | Default | Langs |
 | --- | --- | --- | --- |
 | float | [textureScaleFactor](#texturescalefactor) | `1.0` | C++ \| Lua |
-| unsigned int | [reserveTiles](#reservetiles) | `100` | C++ \| Lua |
+| unsigned int | [reserveTiles](#reservetiles) | `10` | C++ \| Lua |
 
 ### Methods
 

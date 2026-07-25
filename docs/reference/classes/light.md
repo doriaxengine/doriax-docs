@@ -9,7 +9,7 @@ description: Light API reference (C++ and Lua).
 
 ## Description
 
-Represents a light source in a 3D scene. Doriax supports three light types — directional, point, and spot — all sharing the same `Light` class. The light type determines which properties have effect: a directional light uses `direction` and an unlimited `range`, a point light radiates in all directions with a finite `range`, and a spot light uses both `direction` and cone angles.
+Represents a light source in a 3D scene. Doriax supports three light types — directional, point, and spot — all sharing the same `Light` class. The light type determines which properties have effect: a directional light uses `direction` and an unlimited `range`, a point light radiates in all directions with a finite `range`, and a spot light uses `direction` with either cone angles or an optional projected mask.
 
 Shadows are opt-in per-light and render via a shadow map. Cascaded shadow maps (CSM) are available for directional lights to spread shadow quality across a large view distance.
 
@@ -24,6 +24,7 @@ Shadows are opt-in per-light and render via a shadow map. Cascaded shadow maps (
 | float | [intensity](#intensity) | `1.0` | C++ \| Lua |
 | float | [innerConeAngle](#innerconeangle-outerconeangle) | `10°` | C++ \| Lua |
 | float | [outerConeAngle](#innerconeangle-outerconeangle) | `45°` | C++ \| Lua |
+| [Texture](texture.md) | [spotMask](#spotmask) | empty | C++ \| Lua |
 | bool | [shadows](#shadows) | `false` | C++ \| Lua |
 | float | [bias](#bias) | `0.005` | C++ \| Lua |
 | unsigned int | [shadowMapSize](#shadowmapsize) | `1024` | C++ \| Lua |
@@ -51,6 +52,9 @@ Shadows are opt-in per-light and render via a shadow map. Cascaded shadow maps (
 | float | [getInnerConeAngle](#innerconeangle-outerconeangle) | C++ \| Lua |
 | void | [setOuterConeAngle](#innerconeangle-outerconeangle) | C++ \| Lua |
 | float | [getOuterConeAngle](#innerconeangle-outerconeangle) | C++ \| Lua |
+| void | [setSpotMask](#spotmask) | C++ \| Lua |
+| void | [clearSpotMask](#spotmask) | C++ \| Lua |
+| [Texture](texture.md) | [getSpotMask](#spotmask) | C++ \| Lua |
 | void | [setShadows](#shadows) | C++ \| Lua |
 | bool | [isShadows](#shadows) | C++ \| Lua |
 | void | [setBias](#bias) | C++ \| Lua |
@@ -73,7 +77,7 @@ Shadows are opt-in per-light and render via a shadow map. Cascaded shadow maps (
 
 * **DIRECTIONAL** - A light that shines uniformly in one direction from infinitely far away, like the sun. Position is irrelevant; only `direction` matters.
 * **POINT** - A light that radiates equally in all directions from its world-space position, like a light bulb. Use `range` and `intensity` to control reach.
-* **SPOT** - A cone-shaped light emanating from its world-space position in the given `direction`. Use `innerConeAngle` and `outerConeAngle` to shape the cone.
+* **SPOT** - A projected light emanating from its world-space position in the given `direction`. Use `innerConeAngle` and `outerConeAngle` for the default circular cone, or assign a [spotMask](#spotmask) for an arbitrary shape.
 
 ---
 
@@ -155,6 +159,8 @@ Define the shape of a `SPOT` light. The angle is specified in degrees (or radian
 
 `setConeAngle()` sets both values at once.
 
+When a [spotMask](#spotmask) is assigned, `outerConeAngle` controls the mask's vertical projection angle and the image aspect ratio controls its width. `innerConeAngle` is ignored until the mask is cleared.
+
 === "C++"
     ```cpp
     Light torch(&scene);
@@ -167,6 +173,43 @@ Define the shape of a `SPOT` light. The angle is specified in degrees (or radian
     local torch = Light(scene)
     torch:setType(LightType.SPOT)
     torch:setConeAngle(15.0, 40.0)
+    ```
+
+---
+
+### spotMask
+
+* *Setter*: void **setSpotMask**(const std::string& path)
+* *Setter*: void **setSpotMask**(const std::string& id, [TextureData](texturedata.md) data)
+* *Clearer*: void **clearSpotMask**()
+* *Getter*: [Texture](texture.md) **getSpotMask**() const
+
+An optional image projected by a `SPOT` light. It replaces the default circular cone attenuation, allowing shapes such as windows, logos, arrows, and soft-edged patterns without a separate spot-shape setting.
+
+For an image with transparency, alpha controls the light intensity. Otherwise, the image luminance is used. Black produces no light, white produces full light, and intermediate values produce partial intensity. The source aspect ratio is preserved, and spot-light shadows use the same projection frame and aspect ratio.
+
+Camera/framebuffer textures are not supported as spot masks. Call `clearSpotMask()` to return to the normal inner/outer circular cone.
+
+=== "C++"
+    ```cpp
+    Light projector(&scene);
+    projector.setType(LightType::SPOT);
+    projector.setOuterConeAngle(50.0f);
+    projector.setSpotMask("textures/window-mask.png");
+
+    // Restore the default circular cone.
+    projector.clearSpotMask();
+    ```
+
+=== "Lua"
+    ```lua
+    local projector = Light(scene)
+    projector:setType(LightType.SPOT)
+    projector:setOuterConeAngle(50.0)
+    projector:setSpotMask("textures/window-mask.png")
+
+    -- Restore the default circular cone.
+    projector:clearSpotMask()
     ```
 
 ---

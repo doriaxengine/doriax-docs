@@ -117,6 +117,21 @@ The runtime supports up to six active lights and cascaded shadow maps for direct
 lighting. Tune edge smoothness with `Scene::setShadowQuality` (`NONE` / `LOW` / `MEDIUM` /
 `HIGH` PCF filtering).
 
+### Projected spot-light masks
+
+A spot light uses a circular inner/outer cone by default. To project an arbitrary shape,
+select the spot light and assign an image to **Light → Mask**. No separate shape mode is
+needed: an assigned mask automatically becomes the complete light shape, and clearing it
+restores the circular cone.
+
+Mask alpha controls light intensity when the image contains transparency; otherwise the
+engine uses luminance (black is unlit and white is fully lit). The **Angle Cone** property
+sets the vertical projection angle, while the image aspect ratio sets its width. The scene
+gizmo and spot shadow frustum use that same orientation and aspect ratio.
+
+For C++ and Lua setup, in-memory masks, and clearing a mask at runtime, see
+[Light.spotMask](../reference/classes/light.md#spotmask).
+
 Enable **screen-space ambient occlusion** with `Scene::setSSAOEnabled(true)` to add soft
 contact shading in creases and corners. It affects ambient/indirect light only — see
 [Rendering Pipeline — Ambient occlusion (SSAO)](rendering-pipeline.md#ambient-occlusion-ssao).

@@ -14,7 +14,9 @@ Each frame, the engine runs the following phases in order:
 
 1. **Camera update** — The active scene camera computes the view matrix and projection
    matrix.
-2. **Frustum culling** — Renderables outside the camera frustum are excluded.
+2. **Frustum culling** — Renderables outside the camera frustum are excluded. Terrain
+   and tilemaps cull below entity level: only the terrain nodes and tilemap chunks that
+   the camera can see are submitted.
 3. **Opaque pass** — Opaque geometry is sorted front-to-back and drawn with depth
    testing enabled for early-Z efficiency.
 4. **Lighting and shadows** — Shadow maps are rendered for each shadow-casting light,
@@ -609,6 +611,7 @@ Mesh panel warns when a model still uses the child-mesh layout.
 | IBL cost | Environment maps are rebuilt when the sky texture changes; disable **Receive IBL** on distant or unimportant meshes |
 | Shadow casters | Limit shadow-casting lights; cascade only when needed |
 | Transparent objects | Keep transparent draw counts low; sort correctly |
+| Tilemaps | Chunk culling is automatic, so map size costs little; a tilemap is capped at 16 383 tiles |
 | Mobile shaders | Simplify PBR (skip normal maps, lower cascade count) |
 | Render targets | Minimize framebuffer resolution for off-screen effects |
 | Mirrors | Each mirror re-renders the scene once per frame; keep one hero reflection and lower its target resolution if needed |

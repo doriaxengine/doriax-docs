@@ -82,6 +82,11 @@ very large worlds into scenes or chunks so editing and export remain fast. In th
 editor, turn on **Snap tile** in the scene view settings to snap placed tiles to their
 own size so they group edge-to-edge — see [Scene View](../editor/scene-view.md#placing-and-grouping-tiles).
 
+Rendering cost follows what the camera sees, not the size of the map: tiles are batched
+by texture and, on larger maps, grouped into spatial chunks that are frustum-culled
+individually, so a world far bigger than the screen only submits the chunks in view. A
+single tilemap renders up to 16 383 tiles — use several tilemaps beyond that.
+
 ## 2D lighting
 
 2D scenes have their own lighting model, separate from the 3D PBR path: a **Light2D**
