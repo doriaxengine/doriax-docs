@@ -13,14 +13,16 @@ the mode you choose.
 **File → Export** opens with three modes:
 
 - **Source Code** — generates a self-contained C++ project (engine included) you build
-  yourself with CMake or the platform toolchain. Pick this for Android/iOS, CI
-  pipelines, or when you want to customize the build.
+  yourself with CMake or the platform toolchain. It supports Android, iOS, Web,
+  Windows, macOS, and Linux. Pick this for mobile targets, CI pipelines, or when you
+  want to customize the build.
 - **Desktop** — compiles a ready-to-run executable for the OS the editor runs on and
   copies it, with `assets/` and `lua/`, to your destination folder. Needs CMake and a
-  C++ compiler installed.
+  C++ compiler installed. Choose OpenGL or Vulkan on Linux; Direct3D 11, Vulkan, or
+  OpenGL on Windows; and Metal or OpenGL on macOS.
 - **Web** — compiles an HTML + JavaScript + WebAssembly build with Emscripten. Needs the
   [Emscripten SDK](https://emscripten.org/) installed (auto-detected, or point the
-  window at your `emsdk` folder once).
+  window at your `emsdk` folder once) and uses WebGL 2.
 
 Desktop and Web reuse the Source Code pipeline internally, building inside
 `.doriax/export/` in your project — the first export compiles the engine and is slow,

@@ -77,6 +77,10 @@ as fallbacks according to surface support.
 
 ## Graphics backend
 
+Set `GRAPHIC_BACKEND` when configuring a standalone runtime project. The editor's
+Desktop export selector passes the corresponding value automatically; Web exports use
+`gles3`.
+
 | Option value | Target |
 | --- | --- |
 | `glcore` | Desktop OpenGL Core |

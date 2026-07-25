@@ -22,7 +22,7 @@ The window opens with three modes to choose from:
 
 | Mode | Output | Use it when |
 | --- | --- | --- |
-| **Source Code** | A self-contained buildable C++ project (engine source included) for all supported platforms | You want full control of the build, target mobile platforms, or integrate with CI |
+| **Source Code** | A self-contained buildable C++ project (engine source included) for Android, iOS, Web, Windows, macOS, and Linux | You want full control of the build, target mobile platforms, or integrate with CI |
 | **Desktop** | A ready-to-run native executable for the machine you are on (Linux, Windows, or macOS) | You want a playable desktop build without touching a compiler |
 | **Web** | HTML + JavaScript + WebAssembly via [Emscripten](https://emscripten.org/) | You want a browser build without running `emcmake` yourself |
 
@@ -82,6 +82,19 @@ CMake and the **compiler kit configured in Project Settings** (or the system def
 toolchain when none is selected). The window shows the effective compiler and parallel
 job count; change them in **Project Settings → Build**.
 
+Choose the **Graphic Backend** before exporting. The available choices follow the host
+operating system:
+
+| Host | Backends |
+| --- | --- |
+| **Linux** | OpenGL *(default)*, Vulkan |
+| **Windows** | Direct3D 11 *(default)*, Vulkan, OpenGL |
+| **macOS** | Metal *(default)*, OpenGL |
+
+The exporter passes the selection to CMake and compiles only the shader format needed
+by that backend. Vulkan builds require the Vulkan development files or SDK to be
+available to the compiler.
+
 The destination folder receives:
 
 ```
@@ -118,12 +131,15 @@ larger recommended) and desktop exports use it automatically:
 ## Web mode
 
 Builds the project with Emscripten and copies `MyProject.html`, `.js`, `.wasm`, and
-`.data` (the packed assets) to the destination.
+`.data` (the packed assets) to the destination. The Web graphic backend is fixed to
+**WebGL 2 (OpenGL ES 3)**.
 
 The editor locates the Emscripten SDK automatically from the `EMSDK` environment
 variable or `emcmake` on `PATH`. If neither is set, use **Browse** in the settings to
 point at your `emsdk` folder once — the path is remembered in the editor settings across
-projects. **Auto** returns to automatic detection.
+projects. **Auto** returns to automatic detection. The status icon beside
+**Emscripten SDK** shows whether detection succeeded; hover it to see where the SDK was
+found or how to resolve a missing SDK.
 
 !!! tip "Testing the build"
     Browsers do not load WebAssembly from `file://`. Serve the destination folder with
@@ -150,8 +166,8 @@ project under `.doriax/export/desktop` and `.doriax/export/web`. The first expor
 compiles the whole engine and takes a while; subsequent exports only rebuild what
 changed — typically just your scenes and scripts, finishing in seconds.
 
-- Changing the compiler kit, generator, or Emscripten SDK wipes the cache's build tree
-  automatically (CMake cannot switch toolchains in place).
+- Changing the graphics backend, compiler kit, generator, or Emscripten SDK wipes the
+  cache's build tree automatically (CMake cannot switch these settings in place).
 - The cache is safe to delete at any time; the next export simply starts from scratch.
 - Keep `.doriax/` out of version control.
 
@@ -188,9 +204,9 @@ to be stored directly in the scene.
 
 ## Shader compilation
 
-The shader builder translates shader source for the selected graphics backend. In
-Desktop and Web modes the formats are chosen automatically for the target; in Source
-Code mode they follow the selected platforms:
+The shader builder translates shader source for the selected graphics backend. Desktop
+mode uses the **Graphic Backend** selection, Web uses WebGL 2, and Source Code mode
+includes the formats supported by each selected platform:
 
 | Backend | Platforms |
 | --- | --- |
