@@ -120,18 +120,24 @@ time):
 | Constant | Default | Controls |
 | --- | --- | --- |
 | `MAX_LIGHTS` | 6 | Max simultaneous lights |
-| `MAX_SHADOWSMAP` | 6 | 2D shadow maps (directional/spot) |
-| `MAX_SHADOWSCUBEMAP` | 1 | Cube shadow maps (point lights) |
+| `MAX_SHADOW_ATLAS_SLOTS` | 9 | Projective atlas slots (one per spot light or directional cascade) |
+| `MAX_POINT_SHADOW_ATLAS_SLOTS` | 24 | Point atlas slots, `SHADOW_CUBE_FACES` (6) per light |
+| `MAX_POINT_SHADOW_LIGHTS` | 4 | Shadow-casting point lights (derived from the two above) |
 | `MAX_SHADOWCASCADES` | 4 | Cascades for directional CSM |
 
 Shadow edge smoothness is a per-scene setting, `Scene::setShadowQuality`, with
-**Percentage Closer Filtering (PCF)** kernels of `NONE` (1 tap, hard edges), `LOW`
+**Percentage Closer Filtering (PCF)** kernels of `NONE` (1 tap), `LOW`
 (3x3, default), `MEDIUM` (5x5), or `HIGH` (7x7). The kernel size is uniform-driven, so
 changing it applies instantly without shader rebuilds:
 
 ```cpp
 scene.setShadowQuality(ShadowQuality::MEDIUM);
 ```
+
+Directional and spot shadows sample a depth atlas through a hardware comparison
+sampler, so every tap is already filtered across a 2x2 neighbourhood: `NONE` still
+softens edges slightly rather than producing hard ones. Point lights keep a packed
+colour depth map and stay hard-edged at `NONE`.
 
 ## 2D lighting and shadows
 
