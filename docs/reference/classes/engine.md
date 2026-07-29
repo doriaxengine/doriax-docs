@@ -74,6 +74,7 @@ Control engine properties and define defaults used across the whole project. `En
 | static void | [removeAllSceneLayers](#removeallscenelayers) | C++ \| Lua |
 | static void | [removeAllScenes](#removeallscenes) | C++ \| Lua |
 | static bool | [isSceneRunning](#isscenerunning) | C++ \| Lua |
+| static bool | [hasScenesToExecuteOnce](#hasscenestoexecuteonce) | C++ \| Lua |
 | static Scene* | [getMainScene](#getmainscene) | C++ \| Lua |
 | static Scene* | [getLastScene](#getlastscene) | C++ \| Lua |
 | static void | [pauseGameEvents](#pausegameevents) | C++ \| Lua |
@@ -433,7 +434,13 @@ Renders an additional scene as a layer on top of the main scene. Commonly used f
 
 * `static void executeSceneOnce(Scene* scene)`
 
-Adds a scene that runs for exactly one update/draw cycle, then is automatically removed. Useful for single-frame splash transitions. Passing `nullptr` has no effect.
+Adds a scene that runs for a single draw, then is automatically removed. Useful for
+rendering a scene to a texture on demand, such as a thumbnail or a preview image.
+Passing `nullptr` has no effect.
+
+The scene keeps drawing on every frame until its resources finish loading, so with
+asynchronous loading it may take several frames before it is removed. Use
+[hasScenesToExecuteOnce](#hasscenestoexecuteonce) to tell whether any are still pending.
 
 ---
 
@@ -468,6 +475,34 @@ Removes all scenes, including the main scene and all layers.
 * `static bool isSceneRunning(Scene* scene)`
 
 Returns `true` if the given scene is currently in the active scene stack.
+
+---
+
+### hasScenesToExecuteOnce
+
+* `static bool hasScenesToExecuteOnce()`
+
+Returns `true` while any scene queued with [executeSceneOnce](#executesceneonce) is still
+waiting to be drawn. Useful when the draw loop only runs on demand: a renderer that skips
+idle frames must keep drawing while this is `true`, or the queued scenes never render.
+
+=== "C++"
+
+    ```cpp
+    Engine::executeSceneOnce(&previewScene);
+    if (Engine::hasScenesToExecuteOnce()) {
+        // Keep the draw loop running this frame.
+    }
+    ```
+
+=== "Lua"
+
+    ```lua
+    Engine.executeSceneOnce(previewScene)
+    if Engine.hasScenesToExecuteOnce() then
+        -- Keep the draw loop running this frame.
+    end
+    ```
 
 ---
 
