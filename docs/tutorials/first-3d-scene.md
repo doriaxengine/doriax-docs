@@ -21,9 +21,10 @@ By the end of this tutorial you will have:
 
 ## 1. Create the project and scene
 
-1. Open the editor and choose **New Project**.
-2. Select the **3D** template and pick an empty folder.
-3. Save the default scene immediately (**Ctrl+S**) and name it `main`.
+1. Open the editor and choose **File → New Project** to start with a fresh temporary
+   project and its initial 3D scene.
+2. Choose **File → Save Project**, enter a project name, and select an empty directory.
+3. Save the initial scene separately: press **Ctrl+S** and name it `main`.
 
 ## 2. Set up the camera
 

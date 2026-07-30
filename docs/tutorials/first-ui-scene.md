@@ -23,7 +23,7 @@ By the end of this tutorial you will have:
 
 1. Open the editor and open or create a project that already has a gameplay scene
    (`main` or `level_01`).
-2. Choose **File → New Scene** and select the **UI** template.
+2. Choose **File → New Scene → UI Scene**.
 3. Save it as `scenes/hud.scene`.
 
 The UI template sets up an orthographic camera and a canvas root entity.

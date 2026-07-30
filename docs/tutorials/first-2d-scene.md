@@ -21,11 +21,13 @@ By the end of this tutorial you will have:
 
 ## 1. Create the project and scene
 
-1. Open the editor and choose **New Project**.
-2. Select the **2D** template and pick an empty folder.
-3. The editor creates a default scene. If it is not already open, double-click it in
-   the **Resources Browser**.
-4. Save the scene immediately: **Ctrl+S**, name it `main`.
+1. Open the editor and choose **File → New Project** to start with a fresh temporary
+   project.
+2. Choose **File → Save Project**, enter a project name, and select an empty directory.
+3. Choose **File → New Scene → 2D Scene**.
+4. Save the new scene immediately: press **Ctrl+S** and name it `main`.
+5. If you do not need the initial 3D scene, select its tab and choose
+   **Scene → Remove**.
 
 ## 2. Add a sprite entity
 

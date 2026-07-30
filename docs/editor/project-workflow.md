@@ -11,9 +11,27 @@ separated so teams can iterate and collaborate effectively.
 
 ## Creating a project
 
-Launch the editor and choose **New Project** from the startup dialog. Select a project
-template (empty, 2D, 3D, or UI) and pick an empty folder. The editor creates the
-initial folder structure and a default scene file.
+Doriax does not display a startup dialog. When the editor launches, it reopens the
+last saved project if that project is still available. Otherwise, it opens a temporary
+project named `MyDoriaxProject` with a new 3D scene so you can begin editing
+immediately. **File → New Project** also replaces the current project with a fresh
+temporary project.
+
+To keep a temporary project:
+
+1. Choose **File → Save Project**.
+2. Enter the project name, click **Browse**, and select an empty directory.
+3. Click **Save**. The editor moves the temporary project into that directory and
+   writes its `project.yaml` file.
+4. Save the initial scene separately with **File → Save** or **Ctrl+S**, choosing a
+   location inside the project directory.
+
+Temporary projects are stored in the operating system's temporary directory. Save the
+project to another directory before relying on it as permanent work.
+
+New projects begin with a 3D scene. To add a different scene type, choose
+**File → New Scene → 2D Scene** or **File → New Scene → UI Scene**. Doriax does not
+use project templates.
 
 ## Project anatomy
 
@@ -26,7 +44,7 @@ initial folder structure and a default scene file.
 | `bundles/` | Reusable entity hierarchy files |
 | `settings/` | Scene startup references, build target settings, and export configuration |
 
-Folder names may differ by template. The structure is a convention, not a strict
+Folder names may differ by project. The structure is a convention, not a strict
 requirement — you can reorganize asset folders and update resource paths accordingly.
 
 ## Scene files
