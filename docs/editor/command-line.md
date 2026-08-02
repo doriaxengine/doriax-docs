@@ -13,12 +13,21 @@ doriax-editor export   --project <path> --out <dir> [options]
 doriax-editor shaders  --out <dir> --shader <spec> [options]
 ```
 
-Running `doriax-editor` with **no subcommand** launches the normal graphical editor.
+Running `doriax-editor` with **no arguments** launches the normal graphical editor.
+`--help`, `-h` or `help` print the top-level usage. Anything else is reported as an
+unrecognized argument and exits with code `2`, so a mistyped subcommand fails instead of
+opening a window.
 
-!!! note "Same binary, no GUI"
-    There is no separate command-line build. The subcommands run before the window
-    backend starts, so they work on headless machines. On Windows the GUI binary
-    re-attaches to the parent console so output appears in your terminal.
+!!! note "Windows: two executables"
+    Windows builds ship both. `doriax-editor.exe` is a GUI application — it re-attaches
+    to the parent console so subcommand output still appears in your terminal, but `cmd`
+    and PowerShell do not wait for a GUI application, so the prompt returns before the
+    command finishes and its exit code never reaches you. `doriax-editor-cmd.exe` is the
+    same program linked as a console application: use it for scripting and CI. Both
+    accept the same subcommands, and both open the editor when given no arguments.
+
+On Linux and macOS there is a single binary, and the subcommands run before the window
+backend starts, so they work on headless machines.
 
 ## `export` — build a project to a target
 
@@ -128,12 +137,14 @@ doriax-editor shaders --out ./shaders \
 | --- | --- |
 | `0` | Success. |
 | `1` | Runtime failure (project failed to load, export/shader build error). The error is printed to `stderr`. |
-| `2` | Invalid arguments. Usage is printed to `stderr`. |
+| `2` | Invalid or unrecognized arguments. The error is printed to `stderr`, usage to `stdout`. |
 
 ## Use in CI/CD
 
 Because the commands are headless and return meaningful exit codes, they drop straight
-into a pipeline. Example GitHub Actions step:
+into a pipeline. On Windows runners call `doriax-editor-cmd`: the default PowerShell
+shell does not wait for the GUI binary, so the step can pass even when the export
+failed. Example GitHub Actions step:
 
 ```yaml
 - name: Export game (Linux + Web)

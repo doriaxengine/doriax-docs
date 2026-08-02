@@ -24,8 +24,15 @@ cmake --build build --config Release --target doriax-editor
 cmake --install build --config Release --strip
 ```
 
-On Windows, the build may also provide a console-oriented `doriax-editor-cmd` target
-for automation and easier terminal output.
+On Windows the build also provides `doriax-editor-cmd`, the same editor linked as a
+console application for automation and terminal output. It is excluded from the default
+build, so request it by name:
+
+```bash
+cmake --build build --config Release --target doriax-editor-cmd
+```
+
+See [Command-Line Tools](../editor/command-line.md).
 
 ## Runtime build
 

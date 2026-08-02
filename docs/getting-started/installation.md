@@ -27,6 +27,10 @@ Builds are available for:
     **not stable releases**. Expect bugs, incomplete features, and breaking changes.
     Use them at your own risk.
 
+The Windows download contains two executables: run `doriax-editor.exe` to open the
+editor, and use `doriax-editor-cmd.exe` for scripting and CI. See
+[Command-Line Tools](../editor/command-line.md).
+
 ## Build from source
 
 Doriax is built with **CMake**. The root project builds the desktop editor target
