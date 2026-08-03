@@ -226,7 +226,9 @@ return PlayerController
 1. `lua://lua/myscript.lua`
 2. `lua://myscript.lua`
 
-`ScriptComponent` entries store a relative path loaded as `lua://` + path.
+`ScriptComponent` entries store the path relative to the
+[Lua directory](../editor/project-workflow.md#assets-and-lua-directories) and load it as
+`lua://` + path.
 
 ## Referencing other entities
 

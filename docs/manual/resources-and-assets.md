@@ -21,6 +21,26 @@ then loaded on demand by the runtime as needed.
 | **Scenes** | YAML scene files | `SceneManager` |
 | **Bundles** | YAML bundle files | `BundleManager` |
 
+## Path roots
+
+A path handed to the engine is resolved against a root, chosen by its scheme:
+
+| Scheme | Root | Holds |
+| --- | --- | --- |
+| `asset://`, or no scheme | Assets directory | Textures, models, sounds, fonts |
+| `lua://` | Lua directory | Lua modules and script entries |
+| `shader://` | Compiled shader directory | `.sdat` shader data |
+| `data://` | Writable user data directory | Saves and settings |
+
+Both project directories are set in
+[Project Settings](../editor/project-workflow.md#assets-and-lua-directories) and default to
+the project root. Paths are stored relative to their root, so `sprites/hero.png` means
+`<assets directory>/sprites/hero.png` in the editor and `assets/sprites/hero.png` next to
+an exported executable. Absolute paths are used as given.
+
+A leading `..` never escapes a root: it is dropped while the path is normalized, so keep
+every referenced file inside the assets directory.
+
 ## Loading assets at runtime
 
 Most high-level objects accept a file path and load the resource automatically:
@@ -187,10 +207,11 @@ disk and `Data` wraps an in-memory buffer. All three share `readString`, `writeS
     file.close();
     ```
 
-File paths support both project-relative and absolute paths. On mobile and web,
+File paths follow the same roots as the rest of the engine: a relative path resolves
+against the assets directory, and absolute paths are used as given. On mobile and web,
 write-accessible directories are separate from read-only resource paths — use
-`System.getUserDataPath()` for player save data, and `System.getAssetPath()` for
-read-only bundled assets.
+`System.getUserDataPath()` (`data://`) for player save data, and `System.getAssetPath()`
+for read-only bundled assets.
 
 ## User settings
 
@@ -228,15 +249,17 @@ Keep heavy save data (inventory, world state) in custom binary or JSON files. Re
 | Use lowercase file names | Avoids case-sensitivity issues on Linux and Android |
 | No spaces in paths | Prevents build and script path parsing issues |
 | Keep source and generated output separate | Generated export data should not be committed to version control |
-| Use relative paths from the project root | Paths remain valid across different machines |
+| Use relative paths from the assets directory | Paths remain valid across machines and in exported builds |
+| Keep referenced files inside the assets directory | A path outside it cannot be stored or shipped |
 | Prefer GLTF for animated 3D assets | Carries mesh, materials, skeleton, animations, and morph targets |
 | Compress textures for mobile and web | Keeps bundle sizes manageable |
 
 ## Export and asset packaging
 
-At export time, the editor copies and processes assets into the output directory. File
-formats may be converted, textures compressed, and shaders compiled for the target
-platform. The source project folder is not modified.
+At export time the editor copies the **contents** of the assets and Lua directories into
+the `assets` and `lua` folders of the output, which is what the runtime reads relative to
+the executable. Shaders are compiled for the target platform. The source project folder is
+not modified.
 
 See [Export Window](../editor/export.md) for details on the export pipeline.
 

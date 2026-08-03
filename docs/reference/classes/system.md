@@ -206,7 +206,7 @@ Returns the platform path directory separator: `'/'` on Unix/macOS/iOS/Android/W
 
 * `virtual std::string getAssetPath()`
 
-Returns the root path for read-only assets bundled with the project. Prepend this to asset file names when opening files directly from C++. In Lua and the high-level C++ loaders (`setTexture`, etc.), paths are automatically resolved relative to the asset root.
+Returns the root path for read-only assets bundled with the project: the project's assets directory in the editor, and the `assets` folder beside the executable in an exported build. Prepend this to asset file names when opening files directly from C++. In Lua and the high-level C++ loaders (`setTexture`, etc.), paths are automatically resolved relative to the asset root.
 
 === "C++"
 
@@ -234,7 +234,7 @@ Returns a writable per-user data directory (Documents on iOS, internal storage o
 
 * `virtual std::string getLuaPath()`
 
-Returns the base path prepended when Lua `require()` looks for script modules.
+Returns the base path prepended when Lua `require()` looks for script modules and when a `ScriptComponent` entry is loaded: the project's Lua directory in the editor, and the `lua` folder beside the executable in an exported build.
 
 ---
 

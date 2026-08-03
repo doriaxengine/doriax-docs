@@ -41,10 +41,13 @@ All modes share these settings:
 | Setting | Meaning |
 | --- | --- |
 | **Target / Destination Directory** | Where the output goes. Source Code requires an empty directory; Desktop and Web overwrite existing files in the destination |
-| **Assets Directory** | Project folder copied as the game's assets |
-| **Lua Directory** | Project folder copied as the game's Lua scripts |
 | **Start Scene** | Scene loaded when the exported game launches |
 | **Shaders** | The shader variants compiled into the build (pre-filled from your scenes; add or remove entries as needed) |
+
+The assets and Lua folders that ship with the build come from
+[Project Settings](project-workflow.md#assets-and-lua-directories), not from this window:
+stored references are relative to those directories, so exporting a different one would
+break every path in the scenes.
 
 The shader list is populated automatically from every saved scene, including a live scan
 of the currently open scenes — so a component added since the last save (for example a
@@ -68,8 +71,8 @@ output/
 └── project/
     ├── main.cpp         ← generated startup entry point
     ├── *.cpp            ← generated scene and bundle factory sources
-    ├── assets/          ← copied resources
-    ├── lua/             ← copied Lua scripts
+    ├── assets/          ← contents of the project's assets directory
+    ├── lua/             ← contents of the project's Lua directory
     └── scripts/         ← your registered C++ scripts
 ```
 

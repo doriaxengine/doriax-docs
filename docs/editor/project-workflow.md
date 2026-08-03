@@ -37,7 +37,7 @@ use project templates.
 
 | Area | Purpose |
 | --- | --- |
-| `assets/` (or `resources/`) | Textures, models, fonts, sounds, materials, and other imported files |
+| `assets/` (or `resources/`) | Textures, models, fonts, sounds, materials, and other imported files. The folder chosen as the [assets directory](#assets-and-lua-directories) is the root every asset reference is stored against |
 | `scenes/` | YAML scene files edited by the visual editor |
 | `scripts/` | Lua scripts and C++ source files |
 | `shaders/` | Forked shader sources (`.vert`/`.frag`/`.glsl`) — see [Custom Shaders](custom-shaders.md) |
@@ -151,6 +151,33 @@ Project settings include two shader directories (both default to `shaders`): the
 **Shaders Directory** for compiled `.sdat` output (engine-facing) and the **Shader
 Sources Directory** for forked shader sources (editor-only). See
 [Custom Shaders](custom-shaders.md#project-settings).
+
+### Assets and Lua directories
+
+**Project → Project Settings → Directories** picks the two folders the running game reads
+from. Both default to `<Project root>`, which keeps the whole project as the root.
+
+| Setting | Root for | Resolved at runtime through |
+| --- | --- | --- |
+| **Assets Directory** | Textures, models, sounds, fonts | `asset://`, and every plain relative path |
+| **Lua Directory** | Lua script entries and the data files they read | `lua://` |
+
+References are stored **relative to these roots**, not to the project. With the assets
+directory set to `assets`, a texture in `assets/textures/hero.png` is stored as
+`textures/hero.png`, which is exactly what the exported game finds next to its executable.
+
+Changing either directory migrates the project in one step:
+
+- referenced files that would fall outside the new root are **moved into it**, keeping
+  their folder layout so a model still finds its `.bin` and textures;
+- every reference is rewritten in scenes, bundles and `.material` files — scenes that are
+  not open are loaded for the rewrite and closed again;
+- files that could not be moved keep their old path and are listed in the Output panel.
+
+Because a reference cannot leave its root, the editor only accepts assets from inside the
+assets directory: dropping a file from elsewhere previews it but shows a warning instead of
+assigning it. Maps painted in the Terrain editor and assets downloaded by the AI assistant
+are created under the assets root for the same reason.
 
 ### VSync
 

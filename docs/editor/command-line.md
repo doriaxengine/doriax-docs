@@ -47,6 +47,10 @@ doriax-editor export --project ./MyGame --out ./build/MyGame --platform linux
 | `-o`, `--out <path>` | **Required** (unless `--list-scenes`). Destination directory. Must be empty. |
 | `--assets <path>` | Asset directory, relative to the project or absolute. Defaults to the project's asset directory. |
 | `--lua <path>` | Lua directory, relative to the project or absolute. Defaults to the project's Lua directory. |
+
+Asset references are stored relative to the directories configured in the project, so
+`--assets` and `--lua` only make sense when they point at those same folders. Exporting a
+different root ships files the stored paths do not resolve against.
 | `--start-scene <id\|name>` | Override the start scene by numeric ID, scene name, or file stem. |
 | `--platform <list>` | Target platform(s). Repeatable, or a list (see below). Defaults to **all** supported platforms. |
 | `--shader <spec>` | Shader(s) to compile. Repeatable (see [Shader specs](#shader-specs)). If omitted, shaders discovered while regenerating scenes are exported. |

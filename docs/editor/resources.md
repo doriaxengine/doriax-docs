@@ -64,6 +64,12 @@ Files dragged from the Resources Browser are accepted by several editor windows:
 | `.scene` file | Structure panel, scene root | Adds the scene as a child scene |
 | `.bundle` file | Structure panel | Creates a bundle instance (as child of the target entity, or at the root) |
 
+Only files inside the
+[assets directory](project-workflow.md#assets-and-lua-directories) can be assigned. One
+from elsewhere in the project still previews while you drag, but the drop is refused with
+a warning, since its path could not be stored or exported. Material files are project
+files and are not affected.
+
 See [Scene View](scene-view.md#drag-and-drop-from-the-resources-browser) for the
 viewport behaviors in detail.
 
