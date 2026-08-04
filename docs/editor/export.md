@@ -225,7 +225,7 @@ and the compiler error. Fix the shader source and re-export.
 
 Custom (forked) shaders are compiled and shipped through this same pipeline — the Header
 output embeds them into the build, while the `.sdat`/JSON output writes them to the
-project's **Shaders Directory**. See [Custom Shaders — Export and runtime](custom-shaders.md#export-and-runtime).
+project's **Shader Binaries Directory**. See [Custom Shaders — Export and runtime](custom-shaders.md#export-and-runtime).
 
 ## Platform toolchains
 

@@ -170,10 +170,10 @@ texture without replacing the rest of the material.
 ## Custom shaders
 
 Mesh, UI, Points, Lines, and Sky components expose a **Shader** row. By default it shows
-**Built-in**; click **Customize** to fork the built-in shader into your project and edit
-its GLSL in the Code Editor. **Edit** reopens the assigned shader and **Reset to
-Built-in** returns to the engine default. You can also drag an existing `.vert`/`.frag`
-from the Resources Browser onto the row.
+**Built-in**; **Fork** opens a dialog to choose where the fork is created and what it is
+called, then writes it and opens the GLSL in the Code Editor. The remaining buttons pick
+the `.vert`/`.frag` files, reopen the assigned shader, and reset to the engine default.
+You can also drag an existing `.vert`/`.frag` from the Resources Browser onto the row.
 
 A scene can also define a **default custom shader per type** (in the scene settings'
 **Default Shaders** section); components whose Shader row shows **Built-in** inherit it.

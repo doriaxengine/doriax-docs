@@ -40,7 +40,7 @@ use project templates.
 | `assets/` (or `resources/`) | Textures, models, fonts, sounds, materials, and other imported files. The folder chosen as the [assets directory](#assets-and-lua-directories) is the root every asset reference is stored against |
 | `scenes/` | YAML scene files edited by the visual editor |
 | `scripts/` | Lua scripts and C++ source files |
-| `shaders/` | Forked shader sources (`.vert`/`.frag`/`.glsl`) — see [Custom Shaders](custom-shaders.md) |
+| `shaders/` | Default location for forked shader sources (`.vert`/`.frag`/`.glsl`), and where compiled `.sdat` output goes — see [Custom Shaders](custom-shaders.md) |
 | `bundles/` | Reusable entity hierarchy files |
 | `settings/` | Scene startup references, build target settings, and export configuration |
 
@@ -147,10 +147,9 @@ See [BundleManager](../reference/classes/bundlemanager.md) for the complete API.
 | **Project settings** | Startup scene reference, canvas size, scaling, VSync, window mode/size/title, compiler, parallel build jobs, and asset/Lua/shader directories |
 | **Export settings** | Platform targets, shader backend, output folder, included asset folders |
 
-Project settings include two shader directories (both default to `shaders`): the
-**Shaders Directory** for compiled `.sdat` output (engine-facing) and the **Shader
-Sources Directory** for forked shader sources (editor-only). See
-[Custom Shaders](custom-shaders.md#project-settings).
+Project settings include the **Shader Binaries Directory** (default `shaders`) for
+compiled `.sdat` output. Shader *sources* have no setting — each fork picks its own
+location when you create it. See [Custom Shaders](custom-shaders.md#project-settings).
 
 ### Assets and Lua directories
 
