@@ -171,12 +171,14 @@ Changing either directory migrates the project in one step:
   their folder layout so a model still finds its `.bin` and textures;
 - every reference is rewritten in scenes, bundles and `.material` files — scenes that are
   not open are loaded for the rewrite and closed again;
-- files that could not be moved keep their old path and are listed in the Output panel.
+- if any file cannot be moved, every move is undone and the directories are left
+  unchanged, so the project is never half-migrated.
 
 Because a reference cannot leave its root, the editor only accepts assets from inside the
 assets directory: dropping a file from elsewhere previews it but shows a warning instead of
 assigning it. Maps painted in the Terrain editor and assets downloaded by the AI assistant
-are created under the assets root for the same reason.
+are created under the assets root for the same reason. Moving a referenced file out of the
+assets directory clears the references to it, exactly like deleting it.
 
 ### VSync
 
