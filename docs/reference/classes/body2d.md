@@ -43,6 +43,8 @@ description: Body2D API reference — 2D physics body powered by Box2D, shapes, 
 | Type | Name | Default | Languages |
 | --- | --- | --- | --- |
 | [BodyType](#bodytype) | [type](#type) | `STATIC` | C++ \| Lua |
+| Vector2 | [position](#position-angle) | — | C++ \| Lua |
+| float | [angle](#position-angle) | — | C++ \| Lua |
 | Vector2 | [linearVelocity](#linearvelocity) | `(0,0)` | C++ \| Lua |
 | float | [angularVelocity](#angularvelocity) | `0` | C++ \| Lua |
 | float | [linearDamping](#lineardamping-angulardamping) | `0` | C++ \| Lua |
@@ -125,6 +127,52 @@ description: Body2D API reference — 2D physics body powered by Box2D, shapes, 
 * *Getter:* `BodyType getType() const`
 
 Sets the body simulation mode. See [BodyType](#bodytype). Must be set before calling [load](#load) or changed at runtime by re-loading the body.
+
+---
+
+### position / angle
+
+* *Setters:* `void setPosition(Vector2)` / `void setAngle(float angle)`
+* *Getters:* `Vector2 getPosition() const` / `float getAngle() const`
+
+The body's own pose in **world space**, read from and written straight to the simulation, and the only way to place a body from `onFixedUpdate`. Setting either also updates the entity [Object](object.md) transform so rendering follows and the next step does not undo the move. Both wake the body. Box2D owns only X and Y, so the Transform's Z is left untouched.
+
+Use these for teleports — respawns, checkpoints, portals. For continuous movement prefer [linearVelocity](#linearvelocity) or [applyForce](#applyforce), which let the solver resolve collisions instead of pushing bodies through walls.
+
+!!! note "Parented bodies"
+
+    The world pose is converted to the entity's local space using the parent's transform as
+    of the last variable-timestep sync. Moving a body's **parent** and teleporting the body
+    in the same callback therefore places it relative to the parent's *previous* pose — do
+    one or the other per frame. Bodies with no parent, the common case, are exact.
+
+=== "C++"
+
+    ```cpp
+    Body2D body = object.getBody2D();
+
+    body.setPosition(Vector2(0, 240));     // respawn
+    body.setLinearVelocity(Vector2::ZERO); // stop residual motion
+    ```
+
+=== "Lua"
+
+    ```lua
+    local body = object:getBody2D()
+
+    body.position = Vector2(0, 240)
+    body.linearVelocity = Vector2(0, 0)
+    ```
+
+!!! warning "Do not use Object::setPosition from onFixedUpdate"
+
+    Writing an entity's [Object](object.md) transform only reaches the body between fixed
+    steps. Inside `onFixedUpdate` the physics system syncs the body from the transform
+    *before* stepping and writes the stepped pose back *after*, so a transform written
+    there is discarded unless you also call [updateTransform](object.md#updatetransform)
+    to refresh the world transform the sync reads. Prefer `Body2D::setPosition` /
+    `setAngle`: one call, and it writes the simulation directly.
+    `Object::setPosition` is fine from `onUpdate` and outside the update callbacks.
 
 ---
 

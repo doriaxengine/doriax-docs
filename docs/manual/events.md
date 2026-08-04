@@ -315,6 +315,9 @@ Always unregister in C++ destructors when the object can outlive a scene reload.
 - Register in a constructor or Lua `init()`. Never register in hot per-frame code.
 - Unregister in destructors (C++) or rely on Lua cleanup for script components.
 - Use `onFixedUpdate` for physics-sensitive simulation, not `onUpdate`.
+- Inside `onFixedUpdate`, move physics bodies with `Body2D`/`Body3D` `setPosition` or
+  velocities — an `Object::setPosition` on a body-carrying entity is discarded there.
+  See [Moving a body](physics.md#moving-a-body).
 - Enable `setIgnoreEventsHandledByUI(true)` when UI and gameplay share screen space.
 - Return `false` from `preSolve2D` or `shouldCollide*` filters to implement one-way
   platforms, team filters, or trigger volumes.

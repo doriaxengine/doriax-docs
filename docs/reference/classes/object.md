@@ -98,6 +98,8 @@ description: Object API reference — transform, hierarchy, visibility, billboar
 
 Local position relative to the parent object (or world origin if no parent). Changing position does not automatically update children — that is handled by the scene's transform system each frame.
 
+On an entity with a physics body this is not the way to move it from `onFixedUpdate` — see [Body2D](body2d.md#position-angle) / [Body3D](body3d.md#position-rotation) `position`.
+
 === "C++"
 
     ```cpp
@@ -364,7 +366,7 @@ Enables billboard mode. The three-argument overload allows setting `fake` and `c
 
 * `void updateTransform()`
 
-Forces an immediate recalculation of the world transform. The engine handles this automatically each frame; call only when you need an up-to-date transform outside the normal update order.
+Forces an immediate recalculation of the world transform. The engine handles this automatically each frame; call only when you need an up-to-date transform outside the normal update order. Writing a transform from `onFixedUpdate` is one such case: the physics step reads the world transform, which is otherwise only refreshed once per frame.
 
 ---
 

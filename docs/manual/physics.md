@@ -108,6 +108,76 @@ body.setType(BodyType::DYNAMIC);
 body.setAllowedDOFs2DPlane();
 ```
 
+## Moving a body
+
+A physics body owns its own pose. The engine syncs it with the entity's transform once
+per fixed step: **transform → body** before the step, **body → transform** after it. Which
+API you use depends on where your code runs.
+
+| Where | Continuous movement | Teleport |
+| --- | --- | --- |
+| `onFixedUpdate` | `setLinearVelocity` / `applyForce` | `Body2D`/`Body3D` `setPosition` |
+| `onUpdate` | not recommended for bodies | `Object::setPosition` also works |
+
+!!! warning "Transform positions and rotations written in onFixedUpdate are discarded"
+
+    `Engine::onFixedUpdate` runs **between** those two syncs. A position or rotation
+    written to the transform there is read back over by the post-step sync before
+    anything renders it, so the write silently does nothing — no error, no warning,
+    unless you also call `Object::updateTransform()` to refresh the world transform the
+    pre-step sync reads. Moving a **parent** of a body-carrying entity has the same
+    effect on the body. The body pose API below avoids the whole ordering question.
+
+    The exact scope is worth knowing:
+
+    - **3D bodies** — always. The post-step sync writes back every body each step.
+    - **2D bodies** — only when Box2D reports the body as moved. A sleeping or static
+      `Body2D` produces no move event, so a transform write there survives and reaches
+      the body on the next sync. Do not rely on it: whether a body sleeps is the
+      simulation's decision, not yours.
+    - **Scale** — not affected. Neither path writes scale back, so `Object::setScale`
+      persists. Only its effect is delayed: the collider is resized once the world
+      scale refreshes in the next variable-timestep pass.
+
+Use the body's own pose API instead. It writes to the simulation directly and updates
+the transform for you, so it works from any callback:
+
+=== "C++"
+
+    ```cpp
+    void Player::onFixedUpdate() {
+        // Continuous movement: let the solver do the work
+        body.setLinearVelocity(Vector3(input.x * speed, body.getLinearVelocity().y, input.z * speed));
+
+        // Teleport: write the body pose, never the transform
+        if (fellOffTheMap) {
+            body.setPosition(spawnPoint);
+            body.setLinearVelocity(Vector3::ZERO);
+        }
+    }
+    ```
+
+=== "Lua"
+
+    ```lua
+    function Player:onFixedUpdate()
+        body.linearVelocity = Vector3(input.x * speed, body.linearVelocity.y, input.z * speed)
+
+        if fellOffTheMap then
+            body.position = spawnPoint
+            body.linearVelocity = Vector3(0, 0, 0)
+        end
+    end
+    ```
+
+Entities **without** a physics body have no such restriction — `Object::setPosition`
+works from `onFixedUpdate` as usual.
+
+Prefer velocities and forces over teleporting whenever the motion is continuous.
+Teleporting skips collision detection between the old and new pose, so a body can pass
+straight through walls. Do not scale forces or torques by `Engine::getDeltatime()`: the
+solver already integrates them over the fixed step.
+
 ## Contacts and filtering
 
 The physics system exposes contact subscriptions so you can react to collisions in game

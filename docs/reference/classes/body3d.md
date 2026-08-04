@@ -40,6 +40,8 @@ description: Body3D API reference — 3D physics body powered by Jolt Physics, s
 | --- | --- | --- | --- |
 | [BodyType](#bodytype) | [type](#type) | `STATIC` | C++ \| Lua |
 | [Body3DMotionQuality](#body3dmotionquality) | [motionQuality](#motionquality) | `DISCRETE` | C++ \| Lua |
+| Vector3 | [position](#position-rotation) | — | C++ \| Lua |
+| Quaternion | [rotation](#position-rotation) | — | C++ \| Lua |
 | float | [mass](#mass) | — | C++ \| Lua |
 | float | [gravityFactor](#gravityfactor) | `1.0` | C++ \| Lua |
 | float | [friction](#friction-restitution) | `0.2` | C++ \| Lua |
@@ -159,6 +161,52 @@ Scales the global gravity for this body. `0` = gravity-free, `2` = double gravit
 * *Getters:* `float getFriction() const` / `float getRestitution() const`
 
 Surface material properties shared across all shapes on this body. Friction `[0, ∞)` controls sliding resistance; restitution `[0, 1]` controls bounciness.
+
+---
+
+### position / rotation
+
+* *Setters:* `void setPosition(Vector3)` / `void setRotation(Quaternion)`
+* *Getters:* `Vector3 getPosition() const` / `Quaternion getRotation() const`
+
+The body's own pose in **world space**, read from and written straight to the simulation, and the only way to place a body from `onFixedUpdate`. Setting either also updates the entity [Object](object.md) transform so rendering follows and the next step does not undo the move. Both wake the body.
+
+Use these for teleports — respawns, checkpoints, portals. For continuous movement prefer [linearVelocity](#linearvelocity-angularvelocity) or [applyForce](#applyforce), which let the solver resolve collisions instead of pushing bodies through walls.
+
+!!! note "Parented bodies"
+
+    The world pose is converted to the entity's local space using the parent's transform as
+    of the last variable-timestep sync. Moving a body's **parent** and teleporting the body
+    in the same callback therefore places it relative to the parent's *previous* pose — do
+    one or the other per frame. Bodies with no parent, the common case, are exact.
+
+=== "C++"
+
+    ```cpp
+    Body3D body = object.getBody3D();
+
+    body.setPosition(Vector3(0, 10, 0));   // respawn
+    body.setLinearVelocity(Vector3::ZERO); // stop residual motion
+    ```
+
+=== "Lua"
+
+    ```lua
+    local body = object:getBody3D()
+
+    body.position = Vector3(0, 10, 0)
+    body.linearVelocity = Vector3(0, 0, 0)
+    ```
+
+!!! warning "Do not use Object::setPosition from onFixedUpdate"
+
+    Writing an entity's [Object](object.md) transform only reaches the body between fixed
+    steps. Inside `onFixedUpdate` the physics system syncs the body from the transform
+    *before* stepping and writes the stepped pose back *after*, so a transform written
+    there is discarded unless you also call [updateTransform](object.md#updatetransform)
+    to refresh the world transform the sync reads. Prefer `Body3D::setPosition` /
+    `setRotation`: one call, and it writes the simulation directly.
+    `Object::setPosition` is fine from `onUpdate` and outside the update callbacks.
 
 ---
 
