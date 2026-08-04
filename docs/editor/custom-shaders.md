@@ -154,35 +154,31 @@ holds, which is why forking includes moves the shader into a folder of its own.
     into a folder with a different `includes/` changes what it resolves to, which is what
     makes overrides opt-in per location.
 
-## Project settings
+## Shader locations
 
-One shader directory is configurable in **Project Settings → Directories**:
+Shaders have no directory settings. Sources live wherever you fork them — each fork
+chooses its own location in the [Fork Shader dialog](#the-fork-shader-dialog) — and the
+engine never reads them anyway. It only consumes compiled `.sdat`.
 
-| Setting | Role |
-| --- | --- |
-| **Shader Binaries Directory** | Where compiled `.sdat` shaders are written and loaded. Engine/build-facing; defaults to `shaders`. |
-
-Shader *sources* have no setting — each fork chooses its own location in the
-[Fork Shader dialog](#the-fork-shader-dialog), and the engine never reads them anyway. It
-only consumes compiled `.sdat`.
+Compiled `.sdat` output goes to the project's `shaders` folder, the fixed location the
+engine reads through `System::getShaderPath()`.
 
 ## Export and runtime
 
 Forked shaders flow through the same export pipeline as the built-in ones (see
 [Export Window — Shader compilation](export.md#shader-compilation)):
 
-- With the default **Header** output, every used shader — including your forks — is
-  compiled and embedded into the build for the target backends. The shader *sources* are
-  not needed at runtime.
-- With **`.sdat`/JSON** output, the compiled files are written to the project's **Shader
-  Binaries Directory** and loaded at runtime.
+- Every used shader — including your forks — is compiled and embedded into the build for
+  the target backends. The shader *sources* are not needed at runtime.
+- To get loose `.sdat` or JSON files instead, use the
+  [`shaders` CLI command](command-line.md#shaders-generate-shader-files-standalone), which
+  writes them straight into its `--out` directory.
 
 At runtime the engine identifies a component's shader from the value saved on it and loads
 the matching compiled `.sdat` — it never reads the source files. Because the engine only
 cares about the compiled output, your shader sources can be organized however you like.
 
 !!! note "Compiled vs. source location"
-    The standalone runtime loads compiled shaders from the assets' `shaders` folder. For a
-    loose `.sdat` export, keep the **Shader Binaries Directory** at `shaders` so the
-    runtime finds them. The default **Header** export embeds shaders into the build and does not read a
-    shader directory at runtime.
+    The standalone runtime loads compiled shaders from the assets' `shaders` folder, and
+    never reads shader sources. An export embeds them into the build instead, so it reads
+    no shader directory at runtime.

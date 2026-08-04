@@ -242,7 +242,7 @@ Returns the base path prepended when Lua `require()` looks for script modules an
 
 * `virtual std::string getShaderPath()`
 
-Returns the path where compiled shader binaries are expected. Relevant for custom shader loading.
+Returns the directory holding compiled `.sdat` shader binaries, and the root for `shader://` paths: the project's `shaders` folder in the editor, and `assets/shaders` beside the executable in an exported build. The folder name is fixed, not configurable.
 
 ---
 
