@@ -97,6 +97,7 @@ See also [Enumerations](enums.md) and [Build Options](build-options.md).
 - [Light2D](classes/light2d.md)
 - [Lines](classes/lines.md)
 - [Mesh](classes/mesh.md)
+- [Mirror](classes/mirror.md)
 - [Model](classes/model.md)
 - [Object](classes/object.md)
 - [Occluder2D](classes/occluder2d.md)

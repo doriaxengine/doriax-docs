@@ -184,9 +184,10 @@ both Lua files and C++ headers, and does three things at once:
    table, or a `DPROPERTY` line plus pointer member after the last existing `DPROPERTY`
    in the C++ header.
 2. **Picks the type from the dropped entity** — the entity's script class name if it has
-   an enabled script of the matching language, otherwise the wrapper type detected from
-   its components (`Object`, `Mesh`, `Camera`, etc.). For C++ subclass types the editor
-   also adds the missing `#include`.
+   an enabled script of the matching language, otherwise the most specific wrapper type
+   detected from its components (`Mesh`, `Camera`, `Terrain`, `Button`, etc.). In C++ the
+   editor also adds the missing `#include`, whether the type is a script class or an
+   engine one.
 3. **Assigns the value** — every entity already using this script gets the dropped
    entity linked as the property value, so it shows up wired in the Properties window
    immediately.

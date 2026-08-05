@@ -277,6 +277,10 @@ target to the mesh's base texture — no camera setup is required. Set `receiveL
     mirror.receiveLights = false
     ```
 
+Use these to make an existing mesh reflective. To create a mirror outright, the
+[Mirror](mirror.md) class does both steps at once and exposes the surface normal as a
+property.
+
 ---
 
 ### getAABB / getVerticesAABB / getWorldAABB

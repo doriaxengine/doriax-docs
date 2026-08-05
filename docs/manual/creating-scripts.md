@@ -84,20 +84,31 @@ another. All edits are undoable.
 | Type | Enum value | Generated base | Best use |
 | --- | --- | --- | --- |
 | Lua Script | `SCRIPT_LUA` | Lua table module | Fast iteration, UI glue, triggers, controllers |
-| C++ Subclass | `SUBCLASS` | `Object`, `Mesh`, `Camera`, `Light`, or `EntityHandle` | Behavior that calls wrapper methods like `getPosition()` |
+| C++ Subclass | `SUBCLASS` | The wrapper class matching the entity (`Mesh`, `Camera`, `Terrain`, `Button`, …) | Behavior that calls wrapper methods like `getPosition()` |
 | C++ Script Class | `SCRIPT_CLASS` | `ScriptBase` | Logic that accesses scene/entity explicitly without a wrapper |
 
 ### How the editor picks a C++ subclass base
 
-The editor inspects the selected entity's components:
+The editor inspects the selected entity's components and picks the **most specific**
+wrapper class for it — the same class it uses when you drag that entity into a header as
+an [entity reference property](script-properties.md#insert-entity-references-by-drag-and-drop).
+A few examples:
 
 | Entity has | Default base class |
 | --- | --- |
+| `TerrainComponent` | `Terrain` |
+| `ModelComponent` | `Model` |
+| `MeshComponent` (and none of the above) | `Mesh` |
+| `ButtonComponent` | `Button` |
 | `CameraComponent` | `Camera` |
-| `MeshComponent` / `ModelComponent` | `Mesh` |
-| `LightComponent` | `Light` |
-| `Transform` (and none of the above) | `Object` |
+| `Body3DComponent` | `Body3D` |
+| `Transform` (and no recognized component) | `Object` |
 | None of the above | `EntityHandle` |
+
+!!! note "Not every base has a transform"
+    Wrappers such as `Body3D`, `Sound`, and the action classes derive from `EntityHandle`
+    rather than `Object`, so they have no `getPosition()` / `setPosition()` and the
+    generated skeleton leaves the movement example out.
 
 ### C++ Subclass vs. C++ Script Class
 
@@ -127,8 +138,10 @@ Yes — exactly as you'd expect: a subclass created on a **Camera** entity inher
 
 ```
 EntityHandle  →  Object  →  Camera
-                         →  Mesh
                          →  Light
+                         →  Mesh   →  Shape   →  Mirror
+                                   →  Terrain
+              →  Body3D
 ```
 
 So a `Camera` subclass also has every `Object` method (`getPosition`, `setRotation`, …)
@@ -153,7 +166,7 @@ class ScoreTracker : public doriax::ScriptBase {
 
 | | C++ Subclass | C++ Script Class |
 | --- | --- | --- |
-| Base class | Closest wrapper (`Camera` / `Mesh` / `Light` / `Object` / `EntityHandle`) | `ScriptBase` |
+| Base class | Closest wrapper (`Camera` / `Terrain` / `Mesh` / `Object` / `EntityHandle`) | `ScriptBase` |
 | Reaching the entity | Call methods on `this` directly | Construct a wrapper from `getScene()` / `getEntity()` |
 | Implies an object type | Yes — matches the entity | No |
 | Best when | The script's job *is* this entity | The script coordinates other entities or holds non-entity logic |

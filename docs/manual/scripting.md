@@ -29,7 +29,7 @@ instance pointer.
 
 | Script type | Use it for |
 | --- | --- |
-| `SUBCLASS` | C++ class derived from an object wrapper such as `Object`, `Mesh`, `Camera`, or `Light` |
+| `SUBCLASS` | C++ class derived from the entity's object wrapper (`Object`, `Mesh`, `Camera`, `Terrain`, …) |
 | `SCRIPT_CLASS` | C++ class derived from `ScriptBase` |
 | `SCRIPT_LUA` | Lua module returning a script table |
 

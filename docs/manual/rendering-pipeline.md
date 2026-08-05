@@ -509,17 +509,29 @@ The simplest way to add one is the **Mirror** entry in the Structure panel's cre
 `MirrorComponent` already attached. No camera or texture wiring is required — the
 component manages its own reflection camera internally.
 
-```cpp
-// C++: a wall mesh that reflects the scene
-Shape mirror(&scene);
-mirror.createWall(10.0f, 10.0f);   // vertical quad, +Z normal (faces the camera)
-mirror.setAsMirror();              // one call — engine manages the reflection camera
-mirror.setReceiveLights(false);    // optional: show the reflection unshaded
-```
+In code, the [Mirror](../reference/classes/mirror.md) class is the same thing: it derives
+from `Shape`, so it builds its own surface and attaches the component in one step.
 
-`Mesh::setAsMirror()` works on any flat mesh; pass a normal — `setAsMirror(Vector3(0, 1, 0))`
-— when the surface isn't a Wall (for example a floor created with `createPlane`). Use
-`removeMirror()` / `isMirror()` to toggle or query it.
+=== "C++"
+
+    ```cpp
+    Mirror mirror(&scene);
+    mirror.createWall(10.0f, 10.0f);   // vertical quad, +Z normal (faces the camera)
+    mirror.setReceiveLights(false);    // optional: show the reflection unshaded
+    ```
+
+=== "Lua"
+
+    ```lua
+    local mirror = Mirror(scene)
+    mirror:createWall(10.0, 10.0)
+    mirror.receiveLights = false
+    ```
+
+To make an **existing** mesh reflective instead of creating a new one, use
+`Mesh::setAsMirror()`, which works on any flat mesh; pass a normal —
+`setAsMirror(Vector3(0, 1, 0))` — when the surface isn't a Wall (for example a floor
+created with `createPlane`). Use `removeMirror()` / `isMirror()` to toggle or query it.
 
 ### How it works
 
@@ -532,9 +544,10 @@ mirror.setReceiveLights(false);    // optional: show the reflection unshaded
 ### The Normal field
 
 `MirrorComponent` exposes a single **Normal** — the reflecting surface direction in the
-mesh's local space (default `+Z`, matching a Wall). It is transformed by the entity's
-rotation to build the world mirror plane, so rotating the mirror entity orients the
-reflection automatically.
+mesh's local space (default `+Z`, matching a Wall), reachable in scripts as
+[`Mirror::normal`](../reference/classes/mirror.md#normal). It is transformed by the
+entity's rotation to build the world mirror plane, so rotating the mirror entity orients
+the reflection automatically.
 
 !!! tip "If the reflection looks wrong"
     The reflection image is the same whichever way the normal points, but the

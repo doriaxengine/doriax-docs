@@ -129,6 +129,7 @@ nav:
           - Occluder2D: 'reference/classes/occluder2d.md'
           - Model: 'reference/classes/model.md'
           - Shape: 'reference/classes/shape.md'
+          - Mirror: 'reference/classes/mirror.md'
           - Sound: 'reference/classes/sound.md'
           - UI:
               - Button: 'reference/classes/button.md'

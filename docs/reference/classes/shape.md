@@ -32,4 +32,5 @@ wall.createWall(10.0f, 10.0f);       // width, height — vertical
 
 A **Wall** is the natural surface for a [mirror](../../manual/rendering-pipeline.md#mirrors-and-planar-reflections):
 its `+Z` normal matches the default `MirrorComponent` normal, so it reflects without any
-rotation.
+rotation. The [Mirror](mirror.md) subclass pairs the two — a `Shape` that is already
+reflective.
