@@ -128,6 +128,11 @@ Each **Submesh** section contains a **Material** row with a shaded preview spher
 preview reflects the current **Receive IBL** setting so you can see environment
 reflections before entering play mode.
 
+On a mesh that came from a model file, every field you change in the Submesh section is
+kept as an override on the model and re-applied whenever the file reloads, while the
+fields you leave alone keep following the file. See
+[3D Graphics — Editing an imported model's submeshes](../manual/3d-graphics.md#editing-an-imported-models-submeshes).
+
 Expand the Material row to edit **Alpha Mode** and **Alpha Cutoff** alongside the base
 colour, textures, metallic, and roughness controls:
 

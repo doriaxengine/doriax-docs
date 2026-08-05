@@ -104,7 +104,9 @@ This is the fastest way to turn a tuned material into a reusable project asset.
 
 Linked materials are tracked per submesh. The scene stores the link; the `.material` file
 is the single source of truth for colour factors, alpha settings, UV selections, and
-texture paths.
+texture paths. Linking a submesh of an imported model keeps the link across reloads of
+that model — see
+[3D Graphics — Editing an imported model's submeshes](../manual/3d-graphics.md#editing-an-imported-models-submeshes).
 
 !!! tip "Organize shared materials"
     Keep reusable `.material` files under something like `assets/materials/` and link

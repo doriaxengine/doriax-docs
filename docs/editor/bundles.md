@@ -54,6 +54,13 @@ The bundle owns the component data. All instances read from it, so:
 The instance root's `Transform` is always per-instance (that is what lets you place
 each copy somewhere different), and it cannot be removed.
 
+### Model materials inside a bundle
+
+Editing a submesh of an imported model stores the change on the member's **Model**
+component, so it follows that component's shared or unique state: shared reaches every
+instance and the `.bundle` file, **Make Unique** on the Model keeps it to one instance.
+See [3D Graphics — Editing an imported model's submeshes](../manual/3d-graphics.md#editing-an-imported-models-submeshes).
+
 ### References to entities outside the bundle
 
 A component or script property on a bundle member can point at an entity that is

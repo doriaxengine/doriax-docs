@@ -49,6 +49,13 @@ when exporting from a DCC tool for predictable results.
 Imported PBR materials also preserve GLTF `OPAQUE`, `MASK`, and `BLEND` alpha modes and
 the `alphaCutoff` value used by masked materials. See [Material](material.md#alphamode-alphacutoff).
 
+Loading rewrites every submesh, so submesh edits made outside the loader are kept in
+`ModelComponent::submeshOverrides` and re-applied at the end of each load. The editor
+fills that list when you change a submesh in Properties; in code you can add entries
+yourself, keyed by the GLTF node and primitive (`nodeIndex` / `primitiveIndex`, with
+`nodeIndex = -1` and the material index for OBJ) and a `fields` mask of the values to
+pin. See [3D Graphics — Editing an imported model's submeshes](../../manual/3d-graphics.md#editing-an-imported-models-submeshes).
+
 ## Method details
 
 ### loadModel

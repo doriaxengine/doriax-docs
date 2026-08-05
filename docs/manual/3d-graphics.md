@@ -75,6 +75,37 @@ editor, expand **Mesh → Submesh → Material** to change **Alpha Mode** and **
 Cutoff**. See the [Material reference](../reference/classes/material.md#alphamode-alphacutoff)
 for the mode behaviours.
 
+### Editing an imported model's submeshes
+
+A model's geometry and materials are rebuilt from its source file every time the scene
+loads, so the file — not the scene — is what the mesh normally follows. Editing a submesh
+property of an imported model in the editor records an **override** on the model: the
+edited field keeps your value across scene restarts, play/stop, and exported builds, while
+every field you left alone still follows the source file.
+
+That applies to the whole **Submesh** section — material values and textures, linked
+`.material` files, **Face Culling**, **Texture Shadow**, and **Primitive Type** — on the
+Model entity itself and on the child mesh entities a multi-node GLTF creates.
+
+Because only the edited fields are pinned, re-exporting the model from your DCC still
+propagates everything else. Change a texture in Blender and re-export: meshes where you
+only tweaked base colour pick up the new texture and keep your colour.
+
+Overrides are matched to the primitive they came from by its GLTF node and material name
+(the material name alone for OBJ), not by position. Reordering nodes or primitives in the
+source file therefore keeps each edit on the right geometry. When that identity no longer
+resolves to exactly one primitive — the node or material was renamed or removed, or two of
+them now share a name — the override is dropped instead of applied to whichever geometry
+took the old slot. Re-apply the edit after that kind of re-export.
+
+Assigning a **different** model file to the entity is a fresh import and clears the
+overrides. Reloading the same file — **Merge static model** or **Restore model mesh
+children** — keeps them.
+
+Scenes authored before overrides existed are migrated the first time they load: the values
+saved in the scene are compared against the source file, and only the fields that really
+differ become overrides.
+
 ### Shared material files (`.material`)
 
 Each mesh submesh can reference a standalone **`.material`** file in your project instead
