@@ -128,7 +128,7 @@ named [playAnimation()](#playanimation-stopanimations) overloads. The
     soldier:loadModel("soldiers/rifleman.glb")
 
     local walkAnim = soldier:findAnimation("Walk")
-    walkAnim:setLoop(true)
+    walkAnim.loop = true
     walkAnim:start()
     ```
 
@@ -198,7 +198,7 @@ Returns a [Bone](bone.md) handle by name or by index. A `Bone` inherits [Object]
 === "Lua"
     ```lua
     local head = soldier:getBone("Head")
-    head:setRotation(targetRotation)
+    head.rotation = targetRotation
     ```
 
 ---

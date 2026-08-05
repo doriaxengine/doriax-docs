@@ -76,13 +76,12 @@ The window title shown in the header bar. Setting a non-empty title automaticall
 === "Lua"
     ```lua
     local win = Panel(scene)
-    win:createImage()
     win:setTexture("ui/window_bg.png")
     win:setHeaderTexture("ui/window_header.png")
     win:setHeaderPatchMargin(8)
-    win:setTitle("Settings")
+    win.title = "Settings"
     win:setSize(400, 300)
-    win:setAnchorPreset(AnchorPreset.CENTER)
+    win.anchorPreset = AnchorPreset.CENTER
     ```
 
 ---

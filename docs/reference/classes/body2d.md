@@ -30,7 +30,6 @@ description: Body2D API reference — 2D physics body powered by Box2D, shapes, 
     local ball = Sprite(scene)
     ball:setTexture("ball.png")
     ball:setSize(32, 32)
-    ball:createSprite()
 
     local body = ball:getBody2D()
     body:createCircleShape(Vector2(16, 16), 16)

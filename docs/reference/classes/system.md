@@ -291,8 +291,9 @@ The system exposes a simple cross-platform persistent store backed by `NSUserDef
 === "Lua"
 
     ```lua
-    System.setIntegerForKey("highScore", score)
-    local best = System.getIntegerForKey("highScore", 0)
+    -- Preferences are exposed to Lua through UserSettings (not System).
+    UserSettings.setIntegerForKey("highScore", score)
+    local best = UserSettings.getIntegerForKey("highScore", 0)
     ```
 
 ## AdMob integration

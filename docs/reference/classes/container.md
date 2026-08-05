@@ -56,31 +56,27 @@ Layout direction.
     menu.setType(ContainerType::VERTICAL);
 
     Button btnPlay(&scene);
-    btnPlay.createImage();
     btnPlay.setSize(200, 48);
-    btnPlay.setParent(menu);
+    menu.addChild(&btnPlay);
 
     Button btnQuit(&scene);
-    btnQuit.createImage();
     btnQuit.setSize(200, 48);
-    btnQuit.setParent(menu);
+    menu.addChild(&btnQuit);
     ```
 
 === "Lua"
     ```lua
     local menu = Container(scene)
-    menu:setAnchorPreset(AnchorPreset.CENTER)
-    menu:setType(ContainerType.VERTICAL)
+    menu.anchorPreset = AnchorPreset.CENTER
+    menu.type = ContainerType.VERTICAL
 
     local btnPlay = Button(scene)
-    btnPlay:createImage()
     btnPlay:setSize(200, 48)
-    btnPlay:setParent(menu)
+    menu:addChild(btnPlay)
 
     local btnQuit = Button(scene)
-    btnQuit:createImage()
     btnQuit:setSize(200, 48)
-    btnQuit:setParent(menu)
+    menu:addChild(btnQuit)
     ```
 
 ---

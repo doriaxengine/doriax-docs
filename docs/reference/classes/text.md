@@ -32,7 +32,7 @@ Renders a unicode string with a TrueType or OpenType font. `Text` produces a qua
 
 | Type | Name | Langs |
 | --- | --- | --- |
-| bool | [createText](#createtext) | C++ \| Lua |
+| bool | [createText](#createtext) | C++ |
 | float | [getAscent](#getascent-getdescent-getlinegap-getlineheight) | C++ \| Lua |
 | float | [getDescent](#getascent-getdescent-getlinegap-getlineheight) | C++ \| Lua |
 | float | [getLineGap](#getascent-getdescent-getlinegap-getlineheight) | C++ \| Lua |
@@ -65,11 +65,10 @@ The string to render. Supports UTF-8 encoded unicode.
 === "Lua"
     ```lua
     local label = Text(scene)
-    label:createText()
-    label:setFont("fonts/Roboto-Regular.ttf")
-    label:setFontSize(24)
-    label:setText("Score: 0")
-    label:setAnchorPreset(AnchorPreset.TOP_LEFT)
+    label.font = "fonts/Roboto-Regular.ttf"
+    label.fontSize = 24
+    label.text = "Score: 0"
+    label.anchorPreset = AnchorPreset.TOP_LEFT
     ```
 
 ---
@@ -154,7 +153,9 @@ Controls the local-space pivot point. `pivotBaseline` moves the pivot to the tex
 
 * bool **createText**()
 
-Initialises the text rendering buffers. Must be called once before setting any text properties.
+Explicitly builds the text geometry and GPU buffers. This method is **C++ only** and
+is normally optional because the UI system builds and rebuilds text automatically.
+Use it when C++ code needs the geometry immediately.
 
 ---
 

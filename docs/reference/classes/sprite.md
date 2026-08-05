@@ -28,7 +28,6 @@ description: Sprite API reference — 2D images, texture atlas frames, pivot, an
     local sprite = Sprite(scene)
     sprite:setTexture("sprites/character.png")
     sprite:setSize(64, 64)
-    sprite:createSprite()
     ```
 
 ### Properties
@@ -46,7 +45,7 @@ description: Sprite API reference — 2D images, texture atlas frames, pivot, an
 
 | Returns | Name | Languages |
 | --- | --- | --- |
-| bool | [createSprite](#createsprite) | C++ \| Lua |
+| bool | [createSprite](#createsprite) | C++ |
 | [Occluder2D](occluder2d.md) | [getOccluder2D](#getoccluder2d) | C++ \| Lua |
 | void | [removeOccluder2D](#getoccluder2d) | C++ \| Lua |
 | void | [setSize](#setsize) | C++ \| Lua |
@@ -139,7 +138,9 @@ Sets the pivot (origin) point used for position placement and rotation. See [Piv
 
 * `bool createSprite()`
 
-Builds the quad geometry and uploads it to the GPU. Must be called at least once after setting the texture and size. Returns `true` on success.
+Builds the quad geometry and uploads it to the GPU. Optional in most cases — the mesh
+system rebuilds sprites automatically — but useful in C++ when you need the geometry
+immediately. **Not bound to Lua.**
 
 === "C++"
 
@@ -148,15 +149,6 @@ Builds the quad geometry and uploads it to the GPU. Must be called at least once
     sprite.setTexture("ui/button.png");
     sprite.setSize(128, 64);
     sprite.createSprite();
-    ```
-
-=== "Lua"
-
-    ```lua
-    local sprite = Sprite(scene)
-    sprite:setTexture("ui/button.png")
-    sprite:setSize(128, 64)
-    sprite:createSprite()
     ```
 
 ---

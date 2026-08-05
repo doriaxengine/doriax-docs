@@ -63,12 +63,11 @@ The current content of the input field.
 === "Lua"
     ```lua
     local nameField = TextEdit(scene)
-    nameField:createImage()
     nameField:setTexture("ui/input_bg.png")
     nameField:setPatchMargin(8)
     nameField:setSize(280, 36)
-    nameField:setPlaceholder("Enter your name...")
-    nameField:setFontSize(18)
+    nameField.placeholder = "Enter your name..."
+    nameField.fontSize = 18
     ```
 
 ---

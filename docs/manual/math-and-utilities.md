@@ -44,14 +44,14 @@ local dot    = pos:dotProduct(dir)
 quaternions over Euler angles for rotation interpolation and composition.
 
 ```lua
--- Create from Euler angles (in degrees if useDegrees is enabled)
+-- Create from Euler angles (ZYX order; degrees if useDegrees is enabled)
 local q = Quaternion(0, 90, 0)
 
 -- Interpolate (interpolation factor comes first)
 local result = Quaternion.slerp(0.5, q1, q2)
 
--- Apply to a vector
-local rotated = q * Vector3(1, 0, 0)
+-- Rotate a direction (C++: q * v). In Lua, use an axis helper:
+local rotated = q:xAxis()  -- local +X after applying q
 ```
 
 ## Matrix types
@@ -159,17 +159,30 @@ when you need to access transform data from a script without knowing the specifi
 object type.
 
 ```lua
-function onUpdate()
-    local obj = Object(self.scene, self.entity)
-    obj.position = obj.position + Vector3(0, speed * dt, 0)
+local Mover = {
+    properties = {
+        { name = "speed", displayName = "Speed", type = "float", default = 50.0 }
+    }
+}
+
+function Mover:init()
+    RegisterEngineEvent(self, "onUpdate")
 end
+
+function Mover:onUpdate()
+    local obj = Object(self.scene, self.entity)
+    local dt = Engine.deltatime
+    obj.position = obj.position + Vector3(0, self.speed * dt, 0)
+end
+
+return Mover
 ```
 
 ## Base64
 
 The [`Base64`](../reference/classes/base64.md) utility class encodes and decodes binary
 data as base64 strings. Useful for embedding small binary data in JSON or YAML, or for
-network/save serialization.
+network/save serialization. **C++ only** — `encode` / `decode` are not exposed to Lua yet.
 
 ## See also
 

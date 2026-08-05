@@ -10,7 +10,12 @@ description: Quaternion API reference (C++ and Lua).
 
 Represents a rotation in 3D space using the quaternion formalism. Quaternions avoid gimbal lock, support smooth slerp interpolation, and are more numerically stable than Euler-angle representations for concatenated rotations.
 
-In Doriax, all [Object](object.md) rotations are stored as quaternions. Euler angles, axis-angle, and matrix forms can be converted to/from quaternions using the provided static and instance methods.
+In Doriax, all [Object](object.md) rotations are stored as quaternions. Euler angles, axis-angle, and matrix forms can be converted to/from quaternions using the provided constructors and instance methods.
+
+!!! note "Lua components are writable"
+    Lua can read and assign `w`, `x`, `y`, and `z` directly. `obj.rotation` returns a
+    quaternion value, so assign a mutated value back to persist it. Component edits can
+    produce a non-unit quaternion; call `normalize()` before using it as a rotation.
 
 ### Properties
 
@@ -60,7 +65,8 @@ Controls the order in which Euler-angle rotations are applied when constructing 
 * **XYZ** — Roll, then Pitch, then Yaw
 * **XZY**, **YXZ**, **YZX**, **ZXY**, **ZYX** — Other standard combinations
 
-The most common order in Doriax is **XYZ**.
+The most common order in Doriax is **ZYX** — that is the default used by
+`Quaternion(xAngle, yAngle, zAngle)` and `Object::setRotation(x, y, z)`.
 
 ---
 
@@ -75,22 +81,22 @@ Constructs the quaternion from Euler angles. Angles are in degrees if `Engine::u
 === "C++"
     ```cpp
     Quaternion q;
-    q.fromEulerAngles(0.0f, 45.0f, 0.0f, RotationOrder::XYZ);
+    q.fromEulerAngles(0.0f, 45.0f, 0.0f, RotationOrder::ZYX);
     obj.setRotation(q);
     ```
 
 === "Lua"
     ```lua
     local q = Quaternion()
-    q:fromEulerAngles(0, 45, 0, RotationOrder.XYZ)
-    obj:setRotation(q)
+    q:fromEulerAngles(0, 45, 0, RotationOrder.ZYX)
+    obj.rotation = q
     ```
 
-There is also a shorthand constructor:
+There is also a shorthand constructor (defaults to **ZYX** order):
 
 === "C++"
     ```cpp
-    Quaternion q(0.0f, 45.0f, 0.0f);  // XYZ order, useDegrees aware
+    Quaternion q(0.0f, 45.0f, 0.0f);  // ZYX order, useDegrees aware
     ```
 
 === "Lua"

@@ -23,7 +23,7 @@ The `Lines` object maintains an internal dynamic buffer. Call `updateLines()` af
 
 | Type | Name | Langs |
 | --- | --- | --- |
-| bool | [load](#load) | C++ \| Lua |
+| bool | [load](#load) | C++ |
 | void | [addLine](#addline) | C++ \| Lua |
 | [LineData](linedata.md) | [getLine](#getline) | C++ \| Lua |
 | void | [updateLine](#updateline) | C++ \| Lua |
@@ -49,7 +49,8 @@ Pre-allocates buffer space for this many lines. Resize before calling `load()` f
 
 * bool **load**()
 
-Initialises the GPU buffer. Must be called once before lines are rendered.
+Explicitly initialises the GPU buffer. This method is **C++ only** and is normally
+optional because the render system initialises lines automatically.
 
 ---
 
@@ -78,7 +79,6 @@ Adds a new line segment. The last overload lets each endpoint have a different c
 === "Lua"
     ```lua
     local debug = Lines(scene)
-    debug:load()
     debug:addLine(Vector3(0,0,0), Vector3(1,0,0), Vector4(1,0,0,1))
     debug:addLine(Vector3(0,0,0), Vector3(0,1,0), Vector4(0,1,0,1))
     debug:addLine(Vector3(0,0,0), Vector3(0,0,1), Vector4(0,0,1,1))

@@ -72,13 +72,12 @@ Current fill amount. `0.0` = empty, `1.0` = full. Clamped to `[0, 1]`.
 === "Lua"
     ```lua
     local hp = Progressbar(scene)
-    hp:createImage()
     hp:setTexture("ui/progressbar_bg.png")
     hp:setFillTexture("ui/progressbar_fill.png")
     hp:setPatchMargin(6)
-    hp:setFillColor(Vector4(0.2, 0.8, 0.2, 1.0))
+    hp.fillColor = Vector4(0.2, 0.8, 0.2, 1.0)
     hp:setSize(200, 24)
-    hp:setValue(0.75)
+    hp.value = 0.75
     ```
 
 ---

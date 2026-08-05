@@ -130,7 +130,7 @@ Pixel offset between the track edges and the bar handle.
     vsb.setBarSize(0.3f);
     vsb.setSize(16, 300);
 
-    vsb.onChange.add([&](float value){
+    vsb.getComponent<ScrollbarComponent>().onChange.add("scroll", [&](float value){
         // value is in [0, 1]
         contentContainer.setPositionYOffset(-value * contentHeight);
     });
@@ -139,16 +139,16 @@ Pixel offset between the track edges and the bar handle.
 === "Lua"
     ```lua
     local vsb = Scrollbar(scene)
-    vsb:createImage()
     vsb:setTexture("ui/scrollbar_track.png")
     vsb:setBarTexture("ui/scrollbar_handle.png")
     vsb:setBarPatchMargin(4)
-    vsb:setBarSize(0.3)
+    vsb.barSize = 0.3
     vsb:setSize(16, 300)
 
-    vsb.onChange:add(function(value)
-        contentContainer:setPositionYOffset(-value * contentHeight)
-    end)
+    local vsbComp = vsb:getScrollbarComponent()
+    vsbComp.onChange = function(value)
+        contentContainer.positionYOffset = -value * contentHeight
+    end
     ```
 
 ---

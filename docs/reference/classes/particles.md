@@ -254,9 +254,9 @@ Bursts spawn a fixed number of particles at a specific time (in seconds) during 
 === "Lua"
     ```lua
     local explosion = Particles(scene)
-    explosion:setEmitter(false)
+    explosion.emitter = false
     explosion:addBurst(0.0, 50, 80)
-    explosion:setLoop(false)
+    explosion.loop = false
     explosion:start()
     ```
 

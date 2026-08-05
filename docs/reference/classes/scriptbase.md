@@ -8,9 +8,9 @@ description: ScriptBase API reference (C++ and Lua).
 
 ## Description
 
-The base class for all C++ gameplay scripts attached to entities. To create a component script in C++, inherit from `ScriptBase` and override the virtual update/event methods provided by the scripting system.
+The base class for all C++ gameplay scripts attached to entities. To create a component script in C++, inherit from `ScriptBase` and register engine events with `REGISTER_ENGINE_EVENT` (there are no virtual `update` overrides).
 
-In Lua, scripts are plain Lua tables with lifecycle functions (`init`, `update`, etc.) — the `ScriptBase` class itself is not exposed directly to Lua. See [Creating Scripts](../../manual/creating-scripts.md) for the full guide.
+In Lua, scripts are plain Lua tables with lifecycle functions (`init`, `onUpdate`, etc.) — the `ScriptBase` class itself is not exposed directly to Lua. See [Creating Scripts](../../manual/creating-scripts.md) for the full guide.
 
 ### Properties
 
@@ -40,12 +40,18 @@ The scene this script belongs to, and the entity it is attached to. Use these to
     class PlayerController : public ScriptBase {
     public:
         PlayerController(Scene* scene, Entity entity)
-            : ScriptBase(scene, entity) {}
+            : ScriptBase(scene, entity) {
+            REGISTER_ENGINE_EVENT(onUpdate);
+        }
 
-        void update(double deltaTime) {
-            Object obj(scene, entity);
-            if (Input::isKeyPressed(Key::KEY_W)) {
-                obj.move(0, 0, -5.0f * deltaTime);
+        ~PlayerController() {
+            UNREGISTER_ENGINE_EVENT(onUpdate);
+        }
+
+        void onUpdate() {
+            Object obj(getScene(), getEntity());
+            if (Input::isKeyPressed(D_KEY_W)) {
+                obj.setPosition(obj.getPosition() + Vector3(0, 0, -5.0f * Engine::getDeltatime()));
             }
         }
     };

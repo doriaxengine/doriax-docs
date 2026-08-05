@@ -30,8 +30,8 @@ Configures the tween. `startRotation` and `endRotation` are quaternion values. `
     RotationAction spin(&scene);
     spin.setTarget(&wheel);
     spin.setAction(
-        Quaternion::fromEuler(0, 0, 0),
-        Quaternion::fromEuler(0, 360, 0),
+        Quaternion(0.0f, 0.0f, 0.0f),
+        Quaternion(0.0f, 360.0f, 0.0f),
         2.0f, true
     );
     spin.start();
@@ -42,8 +42,8 @@ Configures the tween. `startRotation` and `endRotation` are quaternion values. `
     local spin = RotationAction(scene)
     spin:setTarget(wheel)
     spin:setAction(
-        Quaternion.fromEuler(0, 0, 0),
-        Quaternion.fromEuler(0, 360, 0),
+        Quaternion(0, 0, 0),
+        Quaternion(0, 360, 0),
         2.0, true
     )
     spin:start()

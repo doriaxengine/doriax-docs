@@ -29,7 +29,7 @@ description: Camera API reference — orthographic and perspective projection, t
     local cam = Camera(scene)
     cam:setPerspective(60, 1.333, 0.1, 1000)
     cam.position = Vector3(0, 2, 10)
-    cam:setTarget(Vector3(0, 0, 0))
+    cam.target = Vector3(0, 0, 0)
     cam:activate()
     ```
 
@@ -360,18 +360,18 @@ Converts a screen-space position (in canvas pixels) to a world-space [Ray](ray.m
 
     ```cpp
     // Pick on mouse click
-    Engine::onMouseDown += [&](int btn, float x, float y, int mods) {
+    Engine::onMouseDown.add("pick", [&](int btn, float x, float y, int mods) {
         Ray ray = cam.screenToRay(x, y);
         // test ray against physics or scene objects
-    };
+    });
     ```
 
 === "Lua"
 
     ```lua
-    Engine.onMouseDown:add(function(btn, x, y, mods)
+    Engine.onMouseDown = function(btn, x, y, mods)
         local ray = cam:screenToRay(x, y)
-    end)
+    end
     ```
 
 ---

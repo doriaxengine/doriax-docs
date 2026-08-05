@@ -71,9 +71,9 @@ Image header(&scene);
 header.setAnchorPreset(AnchorPreset::TOP_WIDE);  // stretches full width at the top
 ```
 
-Available presets include `TOP_LEFT`, `TOP_CENTER`, `TOP_RIGHT`, `CENTER_LEFT`,
-`CENTER`, `CENTER_RIGHT`, `BOTTOM_LEFT`, `BOTTOM_CENTER`, `BOTTOM_RIGHT`, `LEFT_WIDE`,
-`RIGHT_WIDE`, `TOP_WIDE`, `BOTTOM_WIDE`, and `FULL_RECT` (stretch to fill parent).
+Available presets include `TOP_LEFT`, `CENTER_TOP`, `TOP_RIGHT`, `CENTER_LEFT`,
+`CENTER`, `CENTER_RIGHT`, `BOTTOM_LEFT`, `CENTER_BOTTOM`, `BOTTOM_RIGHT`, `LEFT_WIDE`,
+`RIGHT_WIDE`, `TOP_WIDE`, `BOTTOM_WIDE`, and `FULL_LAYOUT` (stretch to fill parent).
 
 ### Manual anchors
 
@@ -107,14 +107,14 @@ calling `addChild` on the parent. Button click handlers live on the `ButtonCompo
     -- Label
     title = Text(scene)
     panel:addChild(title)
-    title.anchorPreset = AnchorPreset.TOP_CENTER
+    title.anchorPreset = AnchorPreset.CENTER_TOP
     title.text = "Game Over"
     title.fontSize = 36
 
     -- Button
     btn = Button(scene)
     panel:addChild(btn)
-    btn.anchorPreset = AnchorPreset.BOTTOM_CENTER
+    btn.anchorPreset = AnchorPreset.CENTER_BOTTOM
     btn.label = "Restart"
 
     local btnComp = btn:getButtonComponent()
@@ -137,13 +137,13 @@ calling `addChild` on the parent. Button click handlers live on the `ButtonCompo
 
     Text title(&uiScene);
     panel.addChild(&title);
-    title.setAnchorPreset(AnchorPreset::TOP_CENTER);
+    title.setAnchorPreset(AnchorPreset::CENTER_TOP);
     title.setText("Game Over");
     title.setFontSize(36);
 
     Button btn(&uiScene);
     panel.addChild(&btn);
-    btn.setAnchorPreset(AnchorPreset::BOTTOM_CENTER);
+    btn.setAnchorPreset(AnchorPreset::CENTER_BOTTOM);
     btn.setLabel("Restart");
 
     btn.getComponent<ButtonComponent>().onPress = []() {

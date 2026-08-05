@@ -329,7 +329,7 @@ Instancing draws geometry on this entity only. Multi-node GLTF models that keep 
     local tree = Mesh(scene)
     tree:setTexture("textures/tree.png")
     tree:createInstancedMesh()
-    tree:setMaxInstances(500)
+    tree.maxInstances = 500
 
     for i = 0, 499 do
         tree:addInstance(Vector3(i * 2, 0, 0))

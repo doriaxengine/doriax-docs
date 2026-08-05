@@ -29,7 +29,7 @@ A single tilemap can render at most **16 383** tiles — the index buffer is 16-
 
 | Type | Name | Langs |
 | --- | --- | --- |
-| bool | [createTilemap](#createtilemap) | C++ \| Lua |
+| bool | [createTilemap](#createtilemap) | C++ |
 | int | [findRectByString](#findrectbystring-findtilebystring) | C++ \| Lua |
 | int | [findTileByString](#findrectbystring-findtilebystring) | C++ \| Lua |
 | void | [addRect](#addrect) | C++ \| Lua |
@@ -60,7 +60,8 @@ A global scale applied to all UV coordinates. Increase this value to make the te
 * *Setter*: void **setReserveTiles**(unsigned int reserveTiles)
 * *Getter*: unsigned int **getReserveTiles**() const
 
-Pre-allocates GPU buffer space for this many tiles. If you know the maximum tile count in advance, set this before calling `createTilemap()` to avoid mid-game reallocations.
+Pre-allocates GPU buffer space for this many tiles. If you know the maximum tile count
+in advance, set this before the tilemap is first built to avoid mid-game reallocations.
 
 ---
 
@@ -70,21 +71,25 @@ Pre-allocates GPU buffer space for this many tiles. If you know the maximum tile
 
 * bool **createTilemap**()
 
-Initialises the tilemap's GPU buffers and submeshes. Must be called once before adding rects and tiles. Returns `true` on success.
+Explicitly builds or rebuilds the tilemap's geometry and GPU buffers. Configure the
+texture, rects, and tiles first, then call this method if C++ code needs the geometry
+immediately. It is **not bound to Lua**; the mesh system builds and rebuilds tilemaps
+automatically during rendering.
 
 === "C++"
     ```cpp
     Tilemap map(&scene);
-    map.createTilemap();
-    map.addRect("grass", "atlas.png", Rect(0, 0, 32, 32));
+    map.setTexture("tiles.png");
+    map.addRect("grass", 0, 0, 32, 32);
     map.addTile("grass", Vector2(64, 64), 32, 32);
+    map.createTilemap();
     ```
 
 === "Lua"
     ```lua
     local map = Tilemap(scene)
-    map:createTilemap()
-    map:addRect("grass", "atlas.png", Rect(0, 0, 32, 32))
+    map:setTexture("tiles.png")
+    map:addRect("grass", 0, 0, 32, 32)
     map:addTile("grass", Vector2(64, 64), 32, 32)
     ```
 

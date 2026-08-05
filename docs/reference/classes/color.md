@@ -64,5 +64,6 @@ Converts an sRGB colour to linear space. Use this before assigning a colour from
 === "Lua"
     ```lua
     local linearOrange = Color.sRGBToLinear(1.0, 0.502, 0.251)
-    mat.baseColorFactor = Vector4(linearOrange, 1.0)
+    -- Prefer assigning in C++ or via mesh:setColor; Material fields are read-only in Lua.
+    mesh:setColor(Vector4(linearOrange, 1.0))
     ```

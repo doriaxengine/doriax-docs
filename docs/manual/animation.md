@@ -375,7 +375,7 @@ Missing trailing entries remain linear. You can also edit easing in code:
 
     ```lua
     local path = TranslateTracks(scene)
-    path:setTarget(box:getEntity())
+    path:setTarget(box.entity)
     path:setTimes({0.0, 1.0, 2.5, 3.0})
     path:setValues({Vector3(0,0,0), Vector3(5,0,0), Vector3(5,0,5), Vector3(0,0,0)})
     path:setEasing(0, EaseType.QUAD_IN_OUT) -- key 0 -> key 1

@@ -109,8 +109,7 @@ Applies a [AnchorPreset](#anchorpreset) that sets `anchorPoints` automatically.
 === "Lua"
     ```lua
     local overlay = Image(scene)
-    overlay:createImage()
-    overlay:setAnchorPreset(AnchorPreset.FULL_LAYOUT)
+    overlay.anchorPreset = AnchorPreset.FULL_LAYOUT
     ```
 
 ---

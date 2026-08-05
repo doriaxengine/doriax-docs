@@ -88,19 +88,21 @@ Tips:
 2. Replace the body with:
 
     ```lua
-    local Rotator = {}
-    Rotator.__index = Rotator
+    local Rotator = {
+        properties = {
+            { name = "speed", displayName = "Speed", type = "float", default = 45.0 }
+        }
+    }
 
     function Rotator:init()
         RegisterEngineEvent(self, "onUpdate")
-        self.speed = 45  -- degrees per second
         self.angle = 0
     end
 
     function Rotator:onUpdate()
         local obj = Object(self.scene, self.entity)
         self.angle = self.angle + self.speed * Engine.deltatime
-        -- Quaternion(x, y, z) builds a rotation from Euler angles
+        -- Quaternion(x, y, z) builds a rotation from Euler angles in ZYX order
         -- (in degrees, since Engine.useDegrees is true by default).
         obj.rotation = Quaternion(0, self.angle, 0)
     end

@@ -25,7 +25,7 @@ Like [Lines](lines.md), `Points` uses a dynamic GPU buffer. Call `updatePoints()
 
 | Type | Name | Langs |
 | --- | --- | --- |
-| bool | [load](#load) | C++ \| Lua |
+| bool | [load](#load) | C++ |
 | void | [addPoint](#addpoint) | C++ \| Lua |
 | [PointData](pointdata.md) | [getPoint](#getpoint) | C++ \| Lua |
 | void | [updatePoint](#updatepoint) | C++ \| Lua |
@@ -65,7 +65,8 @@ Controls transparency rendering for this points object. See [Mesh](mesh.md#trans
 
 * bool **load**()
 
-Initialises the GPU buffer. Must be called once.
+Explicitly initialises the GPU buffer. This method is **C++ only** and is normally
+optional because the render system initialises points automatically.
 
 ---
 
@@ -102,8 +103,7 @@ Adds a new billboard point. The most complete overload specifies all visual attr
     ```lua
     local stars = Points(scene)
     stars:setTexture("particles/star.png")
-    stars:setMaxPoints(500)
-    stars:load()
+    stars.maxPoints = 500
 
     for i = 1, 500 do
         stars:addPoint(

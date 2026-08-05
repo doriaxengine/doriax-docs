@@ -12,6 +12,11 @@ A 2D vector with `float` components `x` and `y`. Used extensively for 2D positio
 
 All arithmetic operators (`+`, `-`, `*`, `/`) are available for both component-wise vector operations and scalar multiplication/division. Comparison operators (`<`, `>`, `==`) are also supported.
 
+!!! note "Lua components are writable"
+    Lua can read and assign `x` and `y` directly. Engine properties such as
+    `layout.positionOffset` return vector values, so assign a mutated value back to
+    persist it: `local p = layout.positionOffset; p.x = p.x + 1; layout.positionOffset = p`.
+
 ### Properties
 
 | Type | Name | Default | Langs |

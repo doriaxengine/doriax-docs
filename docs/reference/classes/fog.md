@@ -64,8 +64,8 @@ The fog calculation model.
 === "Lua"
     ```lua
     local fog = Fog(scene)
-    fog:setType(FogType.LINEAR)
-    fog:setColor(Vector3(0.7, 0.8, 0.9))
+    fog.type = FogType.LINEAR
+    fog.color = Vector3(0.7, 0.8, 0.9)
     fog:setLinearStartEnd(50, 200)
     ```
 

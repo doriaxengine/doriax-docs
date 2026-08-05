@@ -122,18 +122,19 @@ On an entity with a physics body this is not the way to move it from `onFixedUpd
 * *Setter:* `void setRotation(float xAngle, float yAngle, float zAngle)` *(Euler angles in degrees when `Engine::useDegrees` is true)*
 * *Getter:* `Quaternion getRotation() const`
 
-Local rotation relative to the parent. The Euler overload applies rotations in X → Y → Z order.
+Local rotation relative to the parent. The Euler overload uses the same default as
+`Quaternion(x, y, z)` — **ZYX** order (see [Quaternion](quaternion.md#fromeuler)).
 
 === "C++"
 
     ```cpp
-    obj.setRotation(0.0f, 45.0f, 0.0f);  // 45° around Y
+    obj.setRotation(0.0f, 45.0f, 0.0f);  // 45° around Y (ZYX order)
     ```
 
 === "Lua"
 
     ```lua
-    obj.rotation = Quaternion.fromEuler(0, 45, 0)
+    obj.rotation = Quaternion(0, 45, 0)
     ```
 
 ---

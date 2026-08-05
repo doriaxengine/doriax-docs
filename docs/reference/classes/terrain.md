@@ -29,7 +29,7 @@ The terrain geometry uses a *clipmap* style grid hierarchy (`rootGridSize` × `r
 
 | Type | Name | Langs |
 | --- | --- | --- |
-| bool | [createTerrain](#createterrain) | C++ \| Lua |
+| bool | [createTerrain](#createterrain) | C++ |
 | void | [setHeightMap](#setheightmap) | C++ \| Lua |
 | void | [setBlendMap](#setblendmap) | C++ \| Lua |
 | void | [setTextureDetailRed](#settexturedetailred-settexturedetailgreen-settexturedetailblue) | C++ \| Lua |
@@ -97,7 +97,9 @@ Number of LOD rings around the viewer. More levels cover a larger distance with 
 
 * bool **createTerrain**()
 
-Initialises the terrain geometry and GPU buffers. Must be called after setting the height map and before the terrain is rendered.
+Explicitly builds the terrain geometry and GPU buffers after its source properties have
+been configured. This method is **C++ only** and is normally optional because the mesh
+system builds and rebuilds terrain automatically.
 
 === "C++"
     ```cpp
@@ -122,9 +124,8 @@ Initialises the terrain geometry and GPU buffers. Must be called after setting t
     ground:setTextureDetailRed("terrain/rock.png")
     ground:setTextureDetailGreen("terrain/sand.png")
     ground:setTextureDetailBlue("terrain/snow.png")
-    ground:setSize(1000)
-    ground:setMaxHeight(80)
-    ground:createTerrain()
+    ground.size = 1000
+    ground.maxHeight = 80
     ```
 
 ---

@@ -10,7 +10,13 @@ description: Vector3 API reference (C++ and Lua).
 
 A 3D vector with `float` components `x`, `y`, and `z`. The primary type for 3D positions, directions, normals, colours (RGB), and velocity in Doriax.
 
-All arithmetic operators (`+`, `-`, `*`, `/`) support both component-wise vector and scalar operations. Comparison operators (`<`, `>`, `==`) are also available.
+Arithmetic operators `+`, `-`, and `*` support both vector and scalar operands. Division (`/`) is **scalar-only** (`Vector3 / float`). Comparison operators (`==`, `<`) are also available.
+
+!!! note "Lua components are writable"
+    Lua can read and assign `x`, `y`, and `z` directly. Engine properties such as
+    `obj.position` return vector values, so assign a mutated value back to persist it:
+    `local p = obj.position; p.x = p.x + 1; obj.position = p`. Whole-value arithmetic
+    such as `obj.position = obj.position + Vector3(1, 0, 0)` also works.
 
 ### Properties
 
@@ -45,8 +51,8 @@ All arithmetic operators (`+`, `-`, `*`, `/`) support both component-wise vector
 | Vector3 | [normalized](#normalize-normalized) | C++ \| Lua |
 | float | [normalizeL](#normalizel) | C++ \| Lua |
 | Vector3 | [midPoint](#midpoint) | C++ \| Lua |
-| Vector3 | [moveTowards](#movetowards) | C++ \| Lua |
-| Vector3 | [lerp](#lerp) | C++ \| Lua |
+| Vector3 | [moveTowards](#movetowards) | C++ |
+| Vector3 | [lerp](#lerp) | C++ |
 | Vector3 | [perpendicular](#perpendicular) | C++ \| Lua |
 | Vector3 | [reflect](#reflect) | C++ \| Lua |
 | void | [makeFloor](#makefloor-makeceil) | C++ \| Lua |
@@ -139,19 +145,31 @@ Returns the midpoint between this vector and `v`.
 
 Returns a point moved from `*this` toward `target` by at most `maxDistanceDelta`, **never overshooting** — once the remaining distance is within `maxDistanceDelta`, `target` is returned exactly. Pass `speed * deltatime` as `maxDistanceDelta` for frame-rate independent movement. This is the preferred way to move toward a target, since the naïve `direction * speed * deltatime` overshoots when the step is larger than the remaining distance (for example on the first, large [deltatime](engine.md#deltatime) frame). Equivalent to Unity's `Vector3.MoveTowards` and Godot's `Vector3.move_toward`.
 
+`moveTowards` is currently **C++ only** (not bound to Lua).
+
 === "C++"
     ```cpp
     void MyScript::onUpdate() {
+        Object obj(getScene(), getEntity());
         float step = speed * Engine::getDeltatime();
-        setPosition(getPosition().moveTowards(targetPosition, step));
+        obj.setPosition(obj.getPosition().moveTowards(targetPosition, step));
     }
     ```
 
 === "Lua"
     ```lua
     function MyScript:onUpdate()
-        local step = self.speed * Engine.getDeltatime()
-        self:setPosition(self:getPosition():moveTowards(self.targetPosition, step))
+        local obj = Object(self.scene, self.entity)
+        local cur = obj.position
+        local to = self.targetPosition
+        local step = self.speed * Engine.deltatime
+        local diff = to - cur
+        local dist = diff:length()
+        if dist <= step or dist == 0 then
+            obj.position = to
+        else
+            obj.position = cur + diff * (step / dist)
+        end
     end
     ```
 

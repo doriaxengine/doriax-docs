@@ -10,12 +10,16 @@ description: Sphere API reference (C++ and Lua).
 
 A bounding sphere defined by a `center` point and a `radius`. Used for fast intersection tests and as a coarse culling primitive.
 
+!!! note "Lua properties are read-only"
+    In Lua, `center` and `radius` can be read but not assigned. Construct a new sphere instead:
+    `local s = Sphere(Vector3(0, 1, 0), 2.5)`.
+
 ### Properties
 
 | Type | Name | Default | Langs |
 | --- | --- | --- | --- |
-| Vector3 | center | `(0,0,0)` | C++ \| Lua |
-| float | radius | `0.0` | C++ \| Lua |
+| Vector3 | center | `(0,0,0)` | C++ \| Lua (read-only) |
+| float | radius | `0.0` | C++ \| Lua (read-only) |
 
 ### Methods
 

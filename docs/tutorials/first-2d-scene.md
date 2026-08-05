@@ -55,8 +55,11 @@ Move the camera so the sprite is visible in the camera preview.
 3. Replace the body with the following movement code:
 
     ```lua
-    local Player = {}
-    Player.__index = Player
+    local Player = {
+        properties = {
+            { name = "speed", displayName = "Speed", type = "float", default = 200.0 }
+        }
+    }
 
     function Player:init()
         RegisterEngineEvent(self, "onUpdate")
@@ -64,17 +67,16 @@ Move the camera so the sprite is visible in the camera preview.
 
     function Player:onUpdate()
         local obj = Object(self.scene, self.entity)
-        local speed = 200  -- pixels per second
-
         local dt = Engine.deltatime
-        local pos = obj.position
+        local dx, dy = 0, 0
 
-        if Input.isKeyPressed(Input.KEY_LEFT)  then pos.x = pos.x - speed * dt end
-        if Input.isKeyPressed(Input.KEY_RIGHT) then pos.x = pos.x + speed * dt end
-        if Input.isKeyPressed(Input.KEY_UP)    then pos.y = pos.y + speed * dt end
-        if Input.isKeyPressed(Input.KEY_DOWN)  then pos.y = pos.y - speed * dt end
+        if Input.isKeyPressed(Input.KEY_LEFT)  then dx = dx - self.speed * dt end
+        if Input.isKeyPressed(Input.KEY_RIGHT) then dx = dx + self.speed * dt end
+        if Input.isKeyPressed(Input.KEY_UP)    then dy = dy + self.speed * dt end
+        if Input.isKeyPressed(Input.KEY_DOWN)  then dy = dy - self.speed * dt end
 
-        obj.position = pos
+        -- Object.position is returned by value; assign the updated vector back.
+        obj.position = obj.position + Vector3(dx, dy, 0)
     end
 
     return Player

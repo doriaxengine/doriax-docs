@@ -143,8 +143,11 @@ Sets the file path for a 2D texture. The file is not loaded immediately; loading
     ```lua
     local tex = Texture()
     tex:setPath("textures/wall.png")
-    material.baseColorTexture = tex
+    Log.print("Texture path: " .. tex:getPath())
     ```
+
+`Material` fields are read-only in Lua. To assign this path to a mesh, use
+`mesh:setTexture(tex:getPath())`.
 
 Alternatively, pass the path directly to the constructor: `Texture("textures/wall.png")`.
 
@@ -163,7 +166,7 @@ Creates a texture from in-memory pixel data ([TextureData](texturedata.md)). The
 === "C++"
     ```cpp
     TextureData td;
-    td.loadTextureData("textures/icon.png");
+    td.loadTextureFromFile("textures/icon.png");
 
     Texture tex;
     tex.setData("icon", td);
@@ -172,7 +175,7 @@ Creates a texture from in-memory pixel data ([TextureData](texturedata.md)). The
 === "Lua"
     ```lua
     local td = TextureData()
-    td:loadTextureData("textures/icon.png")
+    td:loadTextureFromFile("textures/icon.png")
 
     local tex = Texture()
     tex:setData("icon", td)

@@ -31,7 +31,7 @@ All UI elements also expose a rich set of pointer/focus callback events (inherit
 
 | Type | Name | Langs |
 | --- | --- | --- |
-| bool | [createImage](#createimage) | C++ \| Lua |
+| bool | [createImage](#createimage) | C++ |
 | void | [setTexture](#settexture) | C++ \| Lua |
 | void | [setPatchMargin](#patchmargin) | C++ \| Lua |
 | void | [setColor](#color) | C++ \| Lua |
@@ -100,7 +100,6 @@ Sets the 9-patch insets. When all four margins are zero (the default), the image
 === "Lua"
     ```lua
     local panel = Image(scene)
-    panel:createImage()
     panel:setTexture("ui/panel_bg.png")
     panel:setPatchMargin(20)
     panel:setSize(300, 200)
@@ -114,7 +113,9 @@ Sets the 9-patch insets. When all four margins are zero (the default), the image
 
 * bool **createImage**()
 
-Initialises GPU buffers for the image. Must be called once before the image is rendered or any visual properties are set.
+Explicitly builds the image geometry and GPU buffers. This method is **C++ only** and
+is normally optional because the UI system builds and rebuilds images automatically.
+Use it when C++ code needs the geometry immediately.
 
 ---
 
@@ -160,22 +161,23 @@ Called when the mouse pointer enters or leaves the element boundary.
     ```cpp
     Image btn(&scene);
     btn.createImage();
-    btn.onPointerEnter.add([&](float x, float y){
+    btn.getComponent<UIComponent>().onPointerEnter.add("enter", [&](float x, float y){
         btn.setColor(Vector4(0.8f, 0.8f, 1.0f, 1.0f));  // highlight
     });
-    btn.onPointerLeave.add([&](float x, float y){
+    btn.getComponent<UIComponent>().onPointerLeave.add("leave", [&](float x, float y){
         btn.setColor(Vector4(1.0f, 1.0f, 1.0f, 1.0f));  // reset
     });
     ```
 
 === "Lua"
     ```lua
-    btn.onPointerEnter:add(function(x, y)
-        btn:setColor(Vector4(0.8, 0.8, 1.0, 1.0))
-    end)
-    btn.onPointerLeave:add(function(x, y)
-        btn:setColor(Vector4(1.0, 1.0, 1.0, 1.0))
-    end)
+    local ui = btn:getUIComponent()
+    ui.onPointerEnter = function(x, y)
+        btn.color = Vector4(0.8, 0.8, 1.0, 1.0)
+    end
+    ui.onPointerLeave = function(x, y)
+        btn.color = Vector4(1.0, 1.0, 1.0, 1.0)
+    end
     ```
 
 ---

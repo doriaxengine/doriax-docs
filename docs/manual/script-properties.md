@@ -134,7 +134,7 @@ local Door = {
     properties = {
         { name = "openSpeed", displayName = "Open Speed", type = "float", default = 2.5 },
         { name = "startsOpen", displayName = "Starts Open", type = "bool", default = false },
-        { name = "linkedDoor", displayName = "Linked Door", type = "entity", default = nil }
+        { name = "linkedDoor", displayName = "Linked Door", type = "Object" }
     }
 }
 

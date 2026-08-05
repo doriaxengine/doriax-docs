@@ -20,7 +20,7 @@ A timeline-based animation composed of `ActionFrame` entries. Each frame schedul
 | bool | [loop](#loop) | `false` | C++ \| Lua |
 | bool | [ownedActions](#ownedactions) | `false` | C++ \| Lua |
 | std::string | [name](#name) | `""` | C++ \| Lua |
-| float | [duration](#duration) | `0.0` | C++ \| Lua |
+| float | [duration](#duration) | `0.0` | C++ |
 | float | [blendWeight](#blendweight) | `1.0` | C++ \| Lua |
 | float | [defaultFadeTime](#defaultfadetime) | `0.15` | C++ \| Lua |
 
@@ -36,7 +36,7 @@ A timeline-based animation composed of `ActionFrame` entries. Each frame schedul
 | void | [setActionFrameStartTime](#setactionframestarttime-setactionframeduration) | C++ \| Lua |
 | void | [setActionFrameDuration](#setactionframestarttime-setactionframeduration) | C++ \| Lua |
 | void | [setActionFrameEntity](#setactionframeentity) | C++ \| Lua |
-| void | [clearActionFrames](#clearactionframes) | C++ \| Lua |
+| void | [clearActionFrames](#clearactionframes) | C++ |
 
 ## Property details
 
@@ -81,7 +81,9 @@ separate name stored in `AnimationComponent`.
 * *Setter*: void **setDuration**(const float& duration)
 * *Getter*: const float& **getDuration**() const
 
-Total length of the animation in **seconds**. When loading a model, this is set automatically from the GLTF data.
+Total length of the animation in **seconds**. When loading a model, this is set
+automatically from the GLTF data. The getter and setter are not exposed to Lua;
+Lua-created sequences derive their duration from their action frames.
 
 ---
 
@@ -173,9 +175,8 @@ An animation cannot contain itself, directly or through nested animations: a cal
     moveUp:setAction(Vector3(5,0,0), Vector3(5,5,0), 1.0)
 
     local seq = Animation(scene)
-    seq:setDuration(2.0)
-    seq:addActionFrame(0.0, moveRight:getEntity(), mySprite:getEntity())
-    seq:addActionFrame(1.0, moveUp:getEntity(), mySprite:getEntity())
+    seq:addActionFrame(0.0, moveRight.entity, mySprite.entity)
+    seq:addActionFrame(1.0, moveUp.entity, mySprite.entity)
     seq:start()
     ```
 
@@ -218,4 +219,4 @@ Replace the action entity for a given frame.
 
 * void **clearActionFrames**()
 
-Removes all frames from the timeline.
+Removes all frames from the timeline. This method is not exposed to Lua.

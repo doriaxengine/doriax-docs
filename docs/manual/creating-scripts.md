@@ -511,9 +511,13 @@ void Trap::onBeginContact(Body2D bodyA, unsigned long shapeA, Body2D bodyB, unsi
 ```lua
 local Follower = {
     properties = {
-        { name = "target", displayName = "Target", type = "entity", default = nil }
+        { name = "target", displayName = "Target", type = "Object" }
     }
 }
+
+function Follower:init()
+    RegisterEngineEvent(self, "onUpdate")
+end
 
 function Follower:onUpdate()
     if self.target then

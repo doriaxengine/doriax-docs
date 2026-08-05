@@ -10,6 +10,10 @@ description: Vector4 API reference (C++ and Lua).
 
 A 4D vector with `float` components `x`, `y`, `z`, and `w`. Used for RGBA colours, homogeneous coordinates, and quaternion-adjacent math inside the engine. Provides full arithmetic operator support for both vector and scalar operations.
 
+!!! note "Lua components are writable"
+    Lua can read and assign `x`, `y`, `z`, and `w` directly. When a vector comes from
+    an engine property, mutate a local value and assign it back to persist the change.
+
 ### Properties
 
 | Type | Name | Default | Langs |

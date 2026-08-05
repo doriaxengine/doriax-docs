@@ -86,14 +86,13 @@ Per-state tint colours multiplied with the current state texture. Use these to c
 === "Lua"
     ```lua
     local btn = Button(scene)
-    btn:createImage()
     btn:setTexture("ui/button.png")
     btn:setPatchMargin(12)
     btn:setSize(160, 48)
-    btn:setLabel("Play")
-    btn:setColorNormal(Vector4(1.0, 1.0, 1.0, 1.0))
-    btn:setColorHovered(Vector4(0.85, 0.85, 1.0, 1.0))
-    btn:setColorPressed(Vector4(0.7, 0.7, 1.0, 1.0))
+    btn.label = "Play"
+    btn.colorNormal = Vector4(1.0, 1.0, 1.0, 1.0)
+    btn.colorHovered = Vector4(0.85, 0.85, 1.0, 1.0)
+    btn.colorPressed = Vector4(0.7, 0.7, 1.0, 1.0)
     ```
 
 ---
@@ -147,14 +146,15 @@ Returns a handle to the child [Text](text.md) entity. Useful for advanced label 
 
 === "C++"
     ```cpp
-    btn.onPress.add([&](){
+    btn.getComponent<ButtonComponent>().onPress.add("pressed", [&](){
         Log::print("Button pressed!");
     });
     ```
 
 === "Lua"
     ```lua
-    btn.onPress:add(function()
+    local btnComp = btn:getButtonComponent()
+    btnComp.onPress = function()
         Log.print("Button pressed!")
-    end)
+    end
     ```

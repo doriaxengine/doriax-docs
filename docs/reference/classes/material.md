@@ -1,5 +1,5 @@
 ---
-description: Material API reference (C++ and Lua).
+description: Material API reference (C++ writable; Lua read-only).
 ---
 
 # Material
@@ -11,6 +11,12 @@ description: Material API reference (C++ and Lua).
 A PBR (Physically Based Rendering) material definition that drives how a mesh surface looks under lighting. `Material` is a plain data struct — it holds colour factors, metallic/roughness values, and up to five texture slots that correspond to the standard glTF 2.0 PBR workflow.
 
 Materials are attached to [Mesh](mesh.md) objects (or individual sub-meshes) via `Mesh::setMaterial()`. When loading a [Model](model.md), each sub-mesh automatically receives the material defined in the source file.
+
+!!! note "Lua binding is read-only"
+    Lua can read material fields from `mesh:getMaterial()`, but there is no
+    `Material()` constructor and fields cannot be assigned from Lua. Create or edit
+    materials in C++, or use editor `.material` files and mesh colour helpers like
+    `mesh:setColor(...)`.
 
 ### Material files (`.material`)
 
@@ -32,18 +38,18 @@ Linked materials reload when the file changes on disk. See
 
 | Type | Name | Default | Langs |
 | --- | --- | --- | --- |
-| Vector4 | [baseColorFactor](#basecolorfactor) | `(1,1,1,1)` | C++ \| Lua |
-| float | [metallicFactor](#metallicfactor-roughnessfactor) | `1.0` | C++ \| Lua |
-| float | [roughnessFactor](#metallicfactor-roughnessfactor) | `1.0` | C++ \| Lua |
-| MaterialAlphaMode | [alphaMode](#alphamode-alphacutoff) | `AUTO` | C++ \| Lua |
-| float | [alphaCutoff](#alphamode-alphacutoff) | `0.5` | C++ \| Lua |
-| Vector3 | [emissiveFactor](#emissivefactor) | `(0,0,0)` | C++ \| Lua |
-| [Texture](texture.md) | [baseColorTexture](#basecolortexture) | empty | C++ \| Lua |
-| [Texture](texture.md) | [emissiveTexture](#emissivetexture) | empty | C++ \| Lua |
-| [Texture](texture.md) | [metallicRoughnessTexture](#metallicroughnesstexture) | empty | C++ \| Lua |
-| [Texture](texture.md) | [occlusionTexture](#occlusiontexture) | empty | C++ \| Lua |
-| [Texture](texture.md) | [normalTexture](#normaltexture) | empty | C++ \| Lua |
-| std::string | [name](#name) | `""` | C++ \| Lua |
+| Vector4 | [baseColorFactor](#basecolorfactor) | `(1,1,1,1)` | C++ \| Lua (read-only) |
+| float | [metallicFactor](#metallicfactor-roughnessfactor) | `1.0` | C++ \| Lua (read-only) |
+| float | [roughnessFactor](#metallicfactor-roughnessfactor) | `1.0` | C++ \| Lua (read-only) |
+| MaterialAlphaMode | [alphaMode](#alphamode-alphacutoff) | `AUTO` | C++ \| Lua (read-only) |
+| float | [alphaCutoff](#alphamode-alphacutoff) | `0.5` | C++ \| Lua (read-only) |
+| Vector3 | [emissiveFactor](#emissivefactor) | `(0,0,0)` | C++ \| Lua (read-only) |
+| [Texture](texture.md) | [baseColorTexture](#basecolortexture) | empty | C++ \| Lua (read-only) |
+| [Texture](texture.md) | [emissiveTexture](#emissivetexture) | empty | C++ \| Lua (read-only) |
+| [Texture](texture.md) | [metallicRoughnessTexture](#metallicroughnesstexture) | empty | C++ \| Lua (read-only) |
+| [Texture](texture.md) | [occlusionTexture](#occlusiontexture) | empty | C++ \| Lua (read-only) |
+| [Texture](texture.md) | [normalTexture](#normaltexture) | empty | C++ \| Lua (read-only) |
+| std::string | [name](#name) | `""` | C++ |
 
 ## Property details
 
@@ -60,9 +66,9 @@ The base linear-space RGBA colour multiplied with `baseColorTexture`. When no te
 
 === "Lua"
     ```lua
-    local mat = Material()
-    mat.baseColorFactor = Vector4(1.0, 0.0, 0.0, 1.0)
-    mesh:setMaterial(mat)
+    -- Materials cannot be constructed or mutated from Lua yet.
+    -- Prefer editor .material files, or tint with mesh:setColor(...).
+    mesh:setColor(Vector4(1.0, 0.0, 0.0, 1.0))
     ```
 
 ---
@@ -91,13 +97,8 @@ leaves.alphaCutoff = 0.35f;
 mesh.setMaterial(leaves);
 ```
 
-```lua
-local leaves = Material()
-leaves.baseColorTexture = Texture("textures/leaves.png")
-leaves.alphaMode = MaterialAlphaMode.MASK
-leaves.alphaCutoff = 0.35
-mesh:setMaterial(leaves)
-```
+Alpha-mode materials must be authored in C++ or as editor `.material` files; Lua cannot
+construct or mutate `Material` instances.
 
 GLTF/GLB loading maps the source material's `OPAQUE`, `MASK`, or `BLEND` mode directly
 onto `MaterialAlphaMode::ALPHA_OPAQUE`, `MASK`, and `BLEND`.
@@ -133,9 +134,9 @@ A [Texture](texture.md) that modulates the `baseColorFactor`. The texture's RGBA
 
 === "Lua"
     ```lua
-    local mat = Material()
-    mat.baseColorTexture = Texture("textures/ground_albedo.png")
-    mesh:setMaterial(mat)
+    -- Read an existing material; assignment is not supported from Lua.
+    local mat = mesh:getMaterial()
+    Log.print("Base color factor: " .. tostring(mat.baseColorFactor))
     ```
 
 ---

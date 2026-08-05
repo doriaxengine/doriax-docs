@@ -199,7 +199,7 @@ Loads an audio file from disk. Supported formats depend on the SoLoud build bund
     ```lua
     local bgm = Sound(scene)
     bgm:loadSound("sounds/music.ogg")
-    bgm:setLooping(true)
+    bgm.looping = true
     bgm:play()
     ```
 
@@ -230,7 +230,8 @@ Returns the `Object` component of this sound entity. Use this to set the world-s
     ```lua
     local footstep = Sound(scene, true)
     footstep:loadSound("sounds/step.wav")
-    footstep:getObject():setPosition(playerPos)
+    local source = footstep:getObject()
+    source.position = playerPos
     ```
 
 ---

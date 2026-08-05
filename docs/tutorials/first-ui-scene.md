@@ -42,8 +42,8 @@ across different screen sizes.
    - Set **Anchor Preset** to `TOP_LEFT`.
    - Set **Width** to `300` and **Height** to `24`.
    - Set the **Margin Left** and **Margin Top** to `20` each (inset from the edge).
-   - Set **Min Value** to `0` and **Max Value** to `100`.
-   - Set the initial **Value** to `80`.
+   - Set the initial **Value** to `0.8`. Progressbar values are normalized from
+     `0.0` (empty) to `1.0` (full).
    - Assign a fill texture or set a fill **Color** (e.g. green for health).
 3. The health bar appears in the top-left corner of the canvas.
 
@@ -64,10 +64,9 @@ Add a label inside the panel:
 Add a restart button:
 
 1. Right-click the panel → **Create → Button**.
-2. Set **Anchor Preset** to `BOTTOM_CENTER`.
+2. Set **Anchor Preset** to `CENTER_BOTTOM`.
 3. Set the **Label** text to `"Restart"`.
-4. In the Properties window, set the **On Press** callback to a Lua script function
-   (see the next step).
+4. The HUD script in the next step exposes a `restartButton` property for this button.
 
 ## 5. Write a HUD script
 
@@ -78,28 +77,36 @@ Create a Lua script `scripts/HUD.lua`:
 -- (DPROPERTY is a C++-only macro).
 local HUD = {
     properties = {
-        { name = "healthBarEntity", displayName = "Health Bar Entity", type = "entity", default = nil }
+        { name = "healthBar", displayName = "Health Bar", type = "Progressbar" },
+        { name = "restartButton", displayName = "Restart Button", type = "Button" }
     }
 }
 
 function HUD:init()
     RegisterEngineEvent(self, "onUpdate")
+    if self.restartButton then
+        local button = self.restartButton:getButtonComponent()
+        RegisterEvent(self, button.onPress, "onRestart")
+    end
 end
 
 function HUD:onUpdate()
     -- Read health from a shared value or an event
-    -- For demonstration, use a global updated by gameplay code
-    if GameState and GameState.health and self.healthBarEntity then
-        local bar = Progressbar(self.scene, self.healthBarEntity)
-        bar.value = GameState.health
+    -- For demonstration, GameState.health is a percentage from 0 to 100
+    if GameState and GameState.health and self.healthBar then
+        self.healthBar.value = GameState.health / 100
     end
+end
+
+function HUD:onRestart()
+    SceneManager.loadScene("Main")
 end
 
 return HUD
 ```
 
 Attach the script to the canvas root entity via **ScriptComponent**, and use the
-`healthBarEntity` property field to link the health bar entity.
+`healthBar` and `restartButton` property fields to link the corresponding entities.
 
 ## 6. Load the UI scene as a layer
 
