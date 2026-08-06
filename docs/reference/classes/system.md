@@ -48,6 +48,7 @@ Each target platform provides its own concrete `System` subclass; the engine inj
 | bool | [isWindowResizable](#window-control) | C++ \| Lua |
 | void | [setWindowResizable](#window-control) | C++ \| Lua |
 | void | [setWindowTitle](#window-control) | C++ \| Lua |
+| void | [quit](#quit) | C++ \| Lua |
 | char | [getDirSeparator](#getdirseparator) | C++ \| Lua |
 | std::string | [getAssetPath](#getassetpath) | C++ \| Lua |
 | std::string | [getUserDataPath](#getuserdatapath) | C++ \| Lua |
@@ -189,6 +190,34 @@ Platform support: fully implemented on GLFW-based desktop builds (generated desk
     System.setWindowSize(1600, 900)
     if not System.isWindowMaximized() then
         System.maximizeWindow()
+    end
+    ```
+
+---
+
+### quit
+
+* `virtual void quit()`
+
+Closes the application. The shutdown happens after the current frame ends, so it is safe to call from a button callback or any other script code, and [`Engine::onShutdown`](engine.md#onshutdown) still runs before the app goes away.
+
+Platform support: desktop builds close the window, web stops the render loop and shuts the engine down (writing pending [user data](#getuserdatapath) to IndexedDB first — the browser tab itself stays open), and Android finishes the activity. On iOS it is a no-op and logs a warning, since apps are not supposed to terminate themselves.
+
+Running a scene with Play in the editor stops play instead of closing the editor, so a quit button can be tested there.
+
+=== "C++"
+
+    ```cpp
+    void UI_MainMenu::onButtonClickQuit() {
+        System::instance().quit();
+    }
+    ```
+
+=== "Lua"
+
+    ```lua
+    function UI_MainMenu:onButtonClickQuit()
+        System.quit()
     end
     ```
 
