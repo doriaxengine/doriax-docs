@@ -17,7 +17,7 @@ Slicer.
 | Models | GLTF, GLB, OBJ | 3D meshes, skeletons, animations, morph targets |
 | Materials | `.material` (YAML) | Reusable PBR material definitions shared across meshes |
 | Audio | OGG, WAV, MP3, FLAC | Sound effects, music, 3D spatial audio |
-| Fonts | TTF, OTF | Text and UI rendering |
+| Fonts | TTF, OTF, TTC | Text and UI rendering |
 | Scenes | YAML scene files | Saved scenes and child scene references |
 | Bundles | YAML `.bundle` files | Reusable entity hierarchies — see [Bundles](bundles.md) |
 | Shaders | Shader data files | Built, serialized, and loaded shader programs |

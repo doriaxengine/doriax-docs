@@ -16,7 +16,7 @@ then loaded on demand by the runtime as needed.
 | **3D Models** | GLTF, GLB, OBJ | `Model`, `MeshSystem` |
 | **Materials** | Engine `.material` files (YAML) | `Material` struct, linked from mesh submeshes |
 | **Audio** | OGG, WAV, MP3, FLAC | `SoundPool`, `Sound` |
-| **Fonts** | TTF, OTF | Font pool, `Text` components |
+| **Fonts** | TTF, OTF, TTC | Font pool, `Text` components |
 | **Shaders** | Shader data (engine format) | `ShaderPool`, `RenderSystem` |
 | **Scenes** | YAML scene files | `SceneManager` |
 | **Bundles** | YAML bundle files | `BundleManager` |

@@ -43,7 +43,7 @@ Typical UI scene examples:
 | --- | --- |
 | [`UILayout`](../reference/classes/uilayout.md) | Base for all UI elements — anchors, size, and margin |
 | [`Image`](../reference/classes/image.md) | Textured or solid-color rectangular region, 9-patch scaling |
-| [`Text`](../reference/classes/text.md) | Unicode text with font, size, color, and multiline support |
+| [`Text`](../reference/classes/text.md) | Unicode text with font, size, color, and multiline support; shapes complex scripts and right-to-left |
 | [`Button`](../reference/classes/button.md) | Interactive button with normal/over/pressed state textures and label |
 | [`Panel`](../reference/classes/panel.md) | Framed or colored container with optional 9-patch background |
 | [`TextEdit`](../reference/classes/textedit.md) | Single-line text input with placeholder and password mode |
@@ -51,6 +51,43 @@ Typical UI scene examples:
 | [`Progressbar`](../reference/classes/progressbar.md) | Horizontal or vertical fill display |
 | [`Container`](../reference/classes/container.md) | Automatic layout for vertical, horizontal, or wrapped children |
 | [`Polygon`](../reference/classes/polygon.md) | Simple polygon drawing, usable in 2D and UI scenes |
+
+## Text and fonts
+
+Set a font with [`Text.font`](../reference/classes/text.md#font), pointing at a `.ttf`,
+`.otf` or `.ttc` file in the project. Leaving it unset uses the fonts built into the
+engine: a Latin subset of Roboto and an Arabic subset of Noto Sans Arabic.
+
+Those two always sit at the end of the chain, so a codepoint the chosen font does not
+carry is drawn from them. An Arabic-only font still renders Latin digits and labels, and
+a Latin-only font still renders Arabic. A codepoint no font covers is drawn as the
+missing-glyph box.
+
+For projects needing several custom faces at once, list the extra ones in
+[`fontFallbacks`](../reference/classes/text.md#fontfallbacks), separated by `;`:
+
+```lua
+label.font = "fonts/MyLatin.ttf"
+label.fontFallbacks = "fonts/NotoKufiArabic.ttf;fonts/NotoSansCJK.ttc"
+```
+
+### Complex scripts
+
+Strings are shaped before being drawn, so scripts that need contextual glyph forms work
+with no extra setup. Arabic letters take their initial, medial, final or isolated shape
+from their neighbours, ligatures and kerning are applied, and right-to-left runs are
+reordered by the Unicode Bidirectional Algorithm. A label mixing Arabic and Latin lays
+each run out in its own direction.
+
+Shaping is per font, so a run only joins within the font that covers it. If Arabic looks
+disconnected, the letters are most likely being drawn from a fallback that has no Arabic
+shaping rules — set an Arabic font explicitly and the joining returns.
+
+!!! note
+    A drawn glyph does not map one to one onto a codepoint. Shaping can merge several
+    codepoints into one ligature or expand one into a base plus marks, so
+    [`getNumChars`](../reference/classes/text.md#getnumchars) counts codepoints, not
+    glyphs.
 
 ## Anchors and layout
 
