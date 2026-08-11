@@ -367,9 +367,14 @@ Unlike simple duplication, bundles:
 ### Creating a bundle in the editor
 
 1. Build the entity hierarchy you want to reuse.
-2. Select the root entity in the Structure panel.
-3. Right-click and choose **Save as Bundle**.
-4. Name the bundle and save to the `bundles/` folder.
+2. In the Resources Browser, open the folder the bundle should be saved to.
+3. Right-click the root entity in the Structure panel and choose **Save as Bundle**
+   (dragging the entity onto the Resources Browser does the same thing).
+
+The editor writes `<EntityName>.bundle` into that folder and replaces the hierarchy in
+the scene with an instance of it; rename the file in the Resources Browser to change the
+bundle name. Bundles can live in any project folder — `bundles/` is just a convention.
+See [Bundles](../editor/bundles.md) for the full editor workflow.
 
 ### Using a bundle at runtime
 

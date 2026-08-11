@@ -172,11 +172,15 @@ Drag and drop also crosses window boundaries:
 
 ## Bundles in the tree
 
+Right-click any entity outside a bundle and choose **Save as Bundle** to turn its
+hierarchy into a new `.bundle` file (saved in the folder the Resources Browser is
+showing) — the same operation as dragging it onto the Resources Browser.
+
 A bundle instance appears as a root node with its member entities nested under it.
 Editing members edits the bundle (and every other instance); right-click menus on
 bundle nodes let you **Insert into bundle**, **Remove from bundle**, or move outside
-entities into a bundle with **Insert to Bundle**. See [Bundles](bundles.md) for the
-complete workflow.
+entities into an existing bundle with **Insert to Bundle**. See [Bundles](bundles.md)
+for the complete workflow.
 
 ## Practical model
 

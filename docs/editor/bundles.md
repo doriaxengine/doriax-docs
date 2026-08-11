@@ -14,11 +14,16 @@ organize bundles alongside the assets they use (`enemies/`, `ui/`, `props/`, etc
 
 ## Creating a bundle
 
-Drag an entity from the **Structure panel** into the **Resources Browser**:
-
 1. Build and configure the entity (and its children) in the scene.
 2. In the Resources Browser, navigate to the folder where the bundle should be saved.
-3. Drag the entity from the Structure panel and drop it on the Resources Browser.
+3. Either **right-click the entity** in the Structure panel and choose
+   **Save as Bundle**, or **drag the entity** from the Structure panel and drop it on
+   the Resources Browser.
+
+Both routes are the same operation, and both save into the folder the Resources Browser
+is currently showing — the **Save as Bundle** tooltip names that folder so you can check
+it before committing. The menu entry is disabled for locked entities and for entities
+without a `Transform`.
 
 The editor writes `<EntityName>.bundle` into the open folder (a numeric suffix is added
 if the name is taken) and **replaces the dragged hierarchy with an instance of the new
@@ -82,7 +87,8 @@ Right-click entities in the Structure panel to change what belongs to the bundle
 | --- | --- | --- |
 | **Insert into bundle** | A non-member child under a bundle instance | Entity becomes part of the bundle (appears in all instances) |
 | **Remove from bundle** | A member entity inside an instance | Entity leaves the bundle but stays in this scene as a regular entity |
-| **Insert to Bundle ▸** | Any entity outside a bundle | Moves the entity into one of the scene's existing bundles |
+| **Save as Bundle** | Any entity outside a bundle | Saves the hierarchy as a **new** `.bundle` file and replaces it with an instance |
+| **Insert to Bundle ▸** | Any entity outside a bundle | Moves the entity into one of the scene's **existing** bundles |
 
 New entities created under a bundle root from the Structure create menu can join the
 bundle directly. Nested bundle instances have matching *(nested)* menu entries to

@@ -101,14 +101,19 @@ components. They are defined visually in the editor and stored as YAML bundle fi
 ### Creating a bundle
 
 1. Build the entity hierarchy you want to reuse in any scene.
-2. Select the root entity in the Structure panel.
-3. Choose **Save as Bundle** from the context menu.
-4. Name the bundle and save to the `bundles/` folder.
+2. In the Resources Browser, open the folder the bundle should be saved to.
+3. Select the root entity in the Structure panel, right-click it and choose
+   **Save as Bundle** — or simply drag the entity onto the Resources Browser.
+
+Either way the editor writes `<EntityName>.bundle` into the open folder and replaces
+the hierarchy in the scene with an instance of the new bundle. Rename the file in the
+Resources Browser if you want a different name. A `.bundle` file can live in any
+project folder, so `bundles/` is a convention rather than a requirement.
 
 ### Placing bundles
 
-Drag a bundle file from the Resources Browser into the scene, or reference it in the
-Structure panel with **Add Bundle Instance**.
+Drag a `.bundle` file from the Resources Browser onto the Structure panel — drop it on
+the scene root, or on an entity with a `Transform` to parent the instance there.
 
 ### Runtime bundle usage
 
