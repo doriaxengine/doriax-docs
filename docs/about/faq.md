@@ -55,6 +55,35 @@ tooling; it focuses on a compact feature set — 2D, 3D, UI, physics (Box2D / Jo
 (SoLoud), particles, terrain, and skeletal animation — with both Lua and C++ as
 first-class languages.
 
+## Does Doriax use engine-specific asset formats?
+
+No. Doriax has no equivalent of Godot's `.scn`/`.res` or Unity's imported assets, and no
+import step that rewrites your files. The runtime opens standard formats directly —
+`.glb`/`.gltf`/`.obj` for models, PNG/JPG/TGA/BMP/HDR/PSD/SVG for textures,
+OGG/WAV/MP3/FLAC for audio, and TTF/OTF/TTC for fonts. The file your content tool produces
+is the file the game loads.
+
+Scenes, bundles, and materials are the exception. They are authored as YAML for the editor
+and converted at export into C++ that is compiled into your game, rather than shipped as
+data the runtime parses. See
+[Resources & Assets](../manual/resources-and-assets.md#asset-types).
+
+## Can I load assets at runtime?
+
+Yes, for media. Models, textures, sounds, and fonts can be loaded or swapped from any path
+at any point during gameplay, with `Engine.asyncLoading = true` moving the work to worker
+threads and [`ResourceProgress`](../reference/classes/resourceprogress.md) reporting how
+far along it is. Lua scripts also load from disk at runtime through the `lua://` root.
+
+Entity hierarchies work differently, because scenes and bundles are compiled rather than
+parsed. Spawning them on demand is fully supported through
+[`BundleManager.createBundle`](../reference/classes/bundlemanager.md#createbundle) for any
+bundle that existed at build time, but a scene or hierarchy contained in a file the
+executable was not built with cannot be loaded. That is a deliberate trade: it keeps entity
+setup statically typed, leaves reflection and deserialization out of the runtime, and keeps
+startup cost and binary size low on the web and mobile targets. If you need player-supplied
+or downloaded content, drive it with runtime media loading plus bundles composed in script.
+
 ## Where do my old Supernova projects stand?
 
 Supernova `0.5.5` was the last release of the legacy engine. The runtime API carried

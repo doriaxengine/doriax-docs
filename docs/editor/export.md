@@ -178,7 +178,7 @@ changed — typically just your scenes and scripts, finishing in seconds.
 
 | Phase | Output |
 | --- | --- |
-| Scene serialization | Converts scene YAML to runtime-loadable data |
+| Scene factory generation | Generates a C++ factory function for each scene from its YAML |
 | Bundle factory generation | Generates C++ factory functions for each bundle |
 | Asset packaging | Copies and organizes resource files |
 | Startup code generation | Generates `main.cpp` / entry point with scene registration |

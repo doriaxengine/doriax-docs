@@ -49,7 +49,7 @@ description: Body3D API reference — 3D physics body powered by Jolt Physics, s
 | Vector3 | [linearVelocity](#linearvelocity-angularvelocity) | `(0,0,0)` | C++ \| Lua |
 | Vector3 | [angularVelocity](#linearvelocity-angularvelocity) | `(0,0,0)` | C++ \| Lua |
 | bool | allowSleeping | `true` | C++ \| Lua |
-| bool | [isSensor](#issensor) | `false` | C++ \| Lua |
+| bool | [sensor](#sensor) | `false` | C++ \| Lua |
 | bool | [collideKinematicVsNonDynamic](#collidekinematicvsnondynamic) | `false` | C++ \| Lua |
 | uint16_t | [categoryBitsFilter](#categorybitsfilter-maskbitsfilter) | `0xFFFF` | C++ \| Lua |
 | uint16_t | [maskBitsFilter](#categorybitsfilter-maskbitsfilter) | `0xFFFF` | C++ \| Lua |
@@ -219,12 +219,41 @@ Current velocity vectors. Linear velocity is in world units/second; angular velo
 
 ---
 
-### isSensor
+### sensor
 
 * *Setter:* `void setIsSensor(bool sensor)`
 * *Getter:* `bool isSensor() const`
+* *Lua property:* `body.sensor`
 
-When `true`, the body acts as a trigger volume: overlapping bodies generate events but no physical impulse is applied.
+When `true`, the body acts as a trigger volume: overlapping bodies generate contact events but no physical impulse is applied.
+
+The flag is stored on the body component, not only on the live simulation body, so it can be set **before** `load()` and survives a body reload (a shape change, a body type change, or reopening the scene). In the editor it is the **Sensor** checkbox of the Body3D component, saved with the scene and applied in exported projects.
+
+=== "C++"
+
+    ```cpp
+    Body3D trigger = checkpoint.getBody3D();
+    trigger.createBoxShape(2, 2, 2);
+    trigger.setIsSensor(true);   // before load()
+    trigger.load();
+    ```
+
+=== "Lua"
+
+    ```lua
+    local trigger = checkpoint:getBody3D()
+    trigger:createBoxShape(2, 2, 2)
+    trigger.sensor = true
+    trigger:load()
+    ```
+
+!!! note "Which bodies a sensor detects"
+
+    A `STATIC` sensor is the cheapest option, but it only detects **awake** dynamic and
+    kinematic bodies — the contact is lost as soon as the other body falls asleep. Making
+    the sensor dynamic or kinematic (and activating it) also detects sleeping bodies, and
+    such a sensor never sleeps on its own. Keep dynamic and kinematic sensors on a
+    category/mask that excludes static bodies and other sensors to avoid broad-phase work.
 
 ---
 

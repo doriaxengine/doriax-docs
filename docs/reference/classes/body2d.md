@@ -349,7 +349,7 @@ Enable specific collision event callbacks for a shape. See [PhysicsSystem events
 * **HitEvents** — Fired when two shapes collide (one-shot, not sustained).
 * **ContactEvents** — Fired while shapes are in contact.
 * **PreSolveEvents** — Fired before the physics impulse is resolved; allows modifying or cancelling the collision.
-* **SensorEvents** — Marks the shape as a sensor (no physical response) but still fires overlap events.
+* **SensorEvents** — Lets the shape be reported when it overlaps a sensor shape. It does *not* turn the shape itself into a sensor, and it does not change the collision response.
 
 ---
 

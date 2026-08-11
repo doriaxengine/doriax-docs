@@ -5,21 +5,44 @@ description: Resource loading, asset formats, runtime pools, file I/O, and user 
 # Resources & Assets
 
 Doriax projects combine editor-managed resources with runtime pools and file helpers.
-Assets are authored or imported in the editor, copied and transformed during export,
-then loaded on demand by the runtime as needed.
+Media assets are ordinary files that the runtime opens directly, both in the editor and
+in an exported game. Export copies them unchanged, compiles shaders for the target
+backend, and turns scenes and bundles into generated C++.
 
 ## Asset types
+
+These are read from a file path by the runtime, on demand, at any point during gameplay:
 
 | Asset type | Formats | Loaded by |
 | --- | --- | --- |
 | **Textures** | PNG, JPG, TGA, BMP, PSD, HDR, SVG | `Texture`, texture pools |
 | **3D Models** | GLTF, GLB, OBJ | `Model`, `MeshSystem` |
-| **Materials** | Engine `.material` files (YAML) | `Material` struct, linked from mesh submeshes |
 | **Audio** | OGG, WAV, MP3, FLAC | `SoundPool`, `Sound` |
 | **Fonts** | TTF, OTF, TTC | Font pool, `Text` components |
-| **Shaders** | Shader data (engine format) | `ShaderPool`, `RenderSystem` |
-| **Scenes** | YAML scene files | `SceneManager` |
-| **Bundles** | YAML bundle files | `BundleManager` |
+| **Shaders** | `.sdat` shader data (engine format) | `ShaderPool`, `RenderSystem` |
+
+There is no import step and no engine-specific asset container: the `.glb` or `.png` you
+export from your content tool *is* the file the runtime opens, and no reprocessed copy is
+kept alongside it.
+
+### Authoring formats
+
+Scenes (`.scene`), bundles (`.bundle`), and materials (`.material`) are YAML files that
+only the **editor** reads. Export converts them into generated C++ that is compiled into
+your game, so the runtime never parses them:
+
+| Format | Becomes | Used at runtime through |
+| --- | --- | --- |
+| `.scene` | A scene factory function | `SceneManager` (by name or ID) |
+| `.bundle` | A bundle factory function | `BundleManager` (by name or ID) |
+| `.material` | Material values baked into the generated scene or bundle | `Material` on a mesh submesh |
+
+Because these become code rather than data, a scene or entity hierarchy cannot be loaded
+from a file the executable was not built with. Spawning hierarchies on demand is done with
+[`BundleManager.createBundle`](../reference/classes/bundlemanager.md#createbundle), which
+works for any bundle that existed at build time — see
+[Bundles](scenes-and-entities.md#bundles). Textures referenced by a material are shipped
+and loaded like any other texture.
 
 ## Path roots
 
@@ -73,6 +96,11 @@ Most high-level objects accept a file path and load the resource automatically:
     Sound sfx(&scene);
     sfx.loadSound("audio/jump.ogg");
     ```
+
+These calls are valid at any time, not just while a scene is being built, so models,
+textures, and sounds can be swapped in during gameplay. Set `Engine.asyncLoading = true`
+to move the parsing and decoding onto worker threads and keep the frame from stalling;
+see [Threading & Async Loading](threading-and-async-loading.md).
 
 ## Vector images (SVG)
 
@@ -141,8 +169,10 @@ to create a file, or drag an existing `.material` from the browser onto a mesh t
 it. Linked materials reload when the file changes. See
 [Resources Browser — Material files](../editor/resources.md#material-files).
 
-At runtime, linked materials are resolved when the scene loads; exported games bundle
-the referenced textures and material data like any other asset.
+Linking is an editor-side relationship: at export the material's values are written into
+the generated scene or bundle code, and the textures it references are copied like any
+other asset. The exported game does not read the `.material` file, so replacing one in a
+shipped build has no effect — re-export to pick up a change.
 
 ## Runtime pools
 
@@ -261,6 +291,12 @@ the `assets` and `lua` folders of the output, which is what the runtime reads re
 the executable. Shaders are compiled for the target platform. The source project folder is
 not modified.
 
+Scene and bundle YAML is not needed by the exported game, since export has already turned
+it into compiled code. Those files may still appear inside the output `assets` folder when
+your assets directory is the project root, because the copy takes the directory as it is;
+point the assets directory at a dedicated subfolder to keep authoring files out of the
+shipped build.
+
 See [Export Window](../editor/export.md) for details on the export pipeline.
 
 ## See also
@@ -271,4 +307,5 @@ See [Export Window](../editor/export.md) for details on the export pipeline.
 - [Data](../reference/classes/data.md)
 - [UserSettings](../reference/classes/usersettings.md)
 - [BundleManager](../reference/classes/bundlemanager.md)
+- [Threading & Async Loading](threading-and-async-loading.md)
 - [Resources Browser](../editor/resources.md)

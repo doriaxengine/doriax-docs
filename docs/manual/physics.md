@@ -108,6 +108,41 @@ body.setType(BodyType::DYNAMIC);
 body.setAllowedDOFs2DPlane();
 ```
 
+### 3D sensors
+
+A whole 3D body can be turned into a trigger volume with the **Sensor** flag: it still
+reports contacts, but produces no collision response. Use it for checkpoints, pickup
+volumes, damage zones, and detection areas.
+
+In the editor, tick **Sensor** in the Body3D component of the Properties window. The flag
+is stored on the component, so it is saved with the scene, applied in exported projects,
+and kept when the body is rebuilt (for example after changing shapes). From code, set it
+with [Body3D — sensor](../reference/classes/body3d.md#sensor) before or after `load()`:
+
+=== "C++"
+
+    ```cpp
+    Body3D trigger = checkpoint.getBody3D();
+    trigger.createBoxShape(2, 2, 2);
+    trigger.setIsSensor(true);
+    trigger.load();
+    ```
+
+=== "Lua"
+
+    ```lua
+    local trigger = checkpoint:getBody3D()
+    trigger:createBoxShape(2, 2, 2)
+    trigger.sensor = true
+    trigger:load()
+    ```
+
+Sensor overlaps arrive through the regular 3D contact events below, and the
+[Contact3D](../reference/classes/contact3d.md) passed to them carries a `sensor` flag so
+trigger contacts can be told apart from solid ones. A static sensor only sees **awake**
+dynamic and kinematic bodies; make the sensor itself dynamic or kinematic when it must
+also detect sleeping bodies.
+
 ## Moving a body
 
 A physics body owns its own pose. The engine syncs it with the entity's transform once
