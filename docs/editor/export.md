@@ -76,6 +76,23 @@ output/
     └── scripts/         ← your registered C++ scripts
 ```
 
+Those three trees are filtered rather than mirrored, which matters when the assets and Lua
+directories are left at their default `<Project root>` and all three come from the same
+folder:
+
+- **C++ sources and headers** only ever reach `scripts/`, at their path relative to the
+  project root — a script kept in `scripts/CharacterController.cpp` therefore exports as
+  `project/scripts/scripts/CharacterController.cpp`, which is the path the generated
+  `scene_scripts.cpp` includes it by.
+- **Lua sources** only reach `lua/`, the root `lua://` and `require` resolve against; they
+  are not copied to `assets/` as well. A Lua file outside the Lua directory has no other
+  home, so it still ships as an asset.
+- **Data files** a script may read through either prefix (`.json`, `.txt`, `.csv`, `.dat`
+  and similar) are copied to both trees.
+
+A folder appears in the export only when a file lands in it, so a folder holding nothing
+but scripts leaves no empty directory behind.
+
 Build it afterwards with the appropriate [platform toolchain](#platform-toolchains).
 
 ## Desktop mode
