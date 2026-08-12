@@ -56,9 +56,14 @@ feature only at runtime from scripts (say, turning on SSR) so its shaders ship t
 
 ## Source Code mode
 
-Exactly the classic export: choose the **platforms** to include (Linux, Windows, macOS,
-iOS, Web, Android) — this decides which shader formats are compiled in — and get a
-buildable CMake project in the target directory.
+Exactly the classic export: choose the **graphic backends** to include (OpenGL, OpenGL ES
+3, Direct3D 11, Metal for macOS and iOS, Vulkan) — this decides which shader formats are
+compiled in — and get a buildable CMake project in the target directory.
+
+The source builds for every supported operating system regardless of this choice; only the
+shaders are affected, so include every backend the project may eventually be built with.
+The backends your own machine can build are pre-selected. See
+[Shader compilation](#shader-compilation) for which target needs which backend.
 
 ### Generated output structure
 
@@ -67,7 +72,7 @@ output/
 ├── CMakeLists.txt       ← build system entry point
 ├── core/  libs/  platform/  renders/  workspaces/
 │                        ← engine runtime source (copied from the editor's SDK)
-├── shaders/             ← compiled shader headers for the selected platforms
+├── shaders/             ← compiled shader headers for the selected backends
 └── project/
     ├── main.cpp         ← generated startup entry point
     ├── *.cpp            ← generated scene and bundle factory sources
@@ -108,7 +113,7 @@ operating system:
 | Host | Backends |
 | --- | --- |
 | **Linux** | OpenGL *(default)*, Vulkan |
-| **Windows** | Direct3D 11 *(default)*, Vulkan, OpenGL |
+| **Windows** | OpenGL *(default)*, Vulkan, Direct3D 11 |
 | **macOS** | Metal *(default)*, OpenGL |
 
 The exporter passes the selection to CMake and compiles only the shader format needed
@@ -224,18 +229,38 @@ to be stored directly in the scene.
 
 ## Shader compilation
 
-The shader builder translates shader source for the selected graphics backend. Desktop
-mode uses the **Graphic Backend** selection, Web uses WebGL 2, and Source Code mode
-includes the formats supported by each selected platform:
+The shader builder translates shader source per graphics API, never per operating system.
+Desktop mode compiles only the format its **Graphic Backend** selection needs, Web uses
+WebGL 2, and Source Code mode compiles one format per backend you ticked:
 
-| Backend | Platforms |
+| Backend | Shader language | File suffix |
+| --- | --- | --- |
+| OpenGL | GLSL 4.10 | `glsl410` |
+| OpenGL ES 3 | GLSL ES 3.00 (also WebGL 2) | `glsl300es` |
+| Direct3D 11 | HLSL 5 | `hlsl5` |
+| Metal (macOS) | MSL 2.1 | `msl21macos` |
+| Metal (iOS) | MSL 2.1 | `msl21ios` |
+| Vulkan | SPIR-V 1.0 | `spirv10` |
+
+Metal is the one backend split by operating system, because the cross-compiler emits
+different MSL for macOS and iOS.
+
+### Choosing backends
+
+The runtime loads only the format matching the backend it was compiled with, so pick the
+backends by how the exported source will be built:
+
+| Target | Backends to include |
 | --- | --- |
-| OpenGL / GLSL | Windows, Linux, macOS |
-| OpenGL ES 3 / ESSL | Android, web |
-| Metal / MSL | iOS, macOS |
-| Direct3D 11 / HLSL | Windows |
-| WebGL / GLSL ES | HTML5 / Emscripten |
-| Vulkan / SPIR-V | Windows, Linux |
+| Linux | OpenGL, Vulkan |
+| Windows | OpenGL, Direct3D 11, Vulkan |
+| macOS | Metal (macOS), OpenGL |
+| iOS | Metal (iOS) |
+| Android, Web | OpenGL ES 3 |
+
+Including a backend you never build with only costs export time and file size. Leaving one
+out that you do build with makes the game report the shaders as missing at startup, with
+the `doriax-editor shaders` command needed to generate them.
 
 If shader compilation fails, the Output panel reports the shader name, stage, backend,
 and the compiler error. Fix the shader source and re-export.
@@ -285,7 +310,7 @@ The Source Code pipeline is available headlessly through the `doriax-editor` CLI
 is ideal for build servers and CI/CD:
 
 ```bash
-doriax-editor export --project ./MyGame --out ./build/MyGame --platform "linux,web"
+doriax-editor export --project ./MyGame --out ./build/MyGame --backend "vulkan,opengles"
 ```
 
 See [Command-Line Tools](command-line.md) for the full `export` and `shaders` reference.

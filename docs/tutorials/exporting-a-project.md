@@ -49,7 +49,7 @@ The editor export pipeline can prepare:
 | Scene code/data | Serialized scene hierarchy, components, bundles, and child scene references |
 | Resources | Textures, models, fonts, audio, and other project assets |
 | Scripts | Lua files and generated C++ glue for script entry points |
-| Shaders | Cross-platform shader data for the selected backend |
+| Shaders | Shader data compiled for each selected graphic backend |
 | Build files | CMake, Gradle, Xcode, Emscripten, or platform-specific project files |
 
 ## Shader output
@@ -91,7 +91,7 @@ You can run the same export from a terminal with the `doriax-editor` CLI — han
 build servers and automated releases:
 
 ```bash
-doriax-editor export --project ./MyGame --out ./build/MyGame --platform "linux,web"
+doriax-editor export --project ./MyGame --out ./build/MyGame --backend "vulkan,opengles"
 ```
 
 See [Command-Line Tools](../editor/command-line.md) for all options.

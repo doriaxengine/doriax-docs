@@ -36,7 +36,7 @@ assets and the engine runtime, and writes a self-contained, buildable project di
 the same output as the [Export Window](export.md), but scriptable.
 
 ```bash
-doriax-editor export --project ./MyGame --out ./build/MyGame --platform linux
+doriax-editor export --project ./MyGame --out ./build/MyGame --backend vulkan
 ```
 
 ### Options
@@ -47,15 +47,15 @@ doriax-editor export --project ./MyGame --out ./build/MyGame --platform linux
 | `-o`, `--out <path>` | **Required** (unless `--list-scenes`). Destination directory. Must be empty. |
 | `--assets <path>` | Asset directory, relative to the project or absolute. Defaults to the project's asset directory. |
 | `--lua <path>` | Lua directory, relative to the project or absolute. Defaults to the project's Lua directory. |
+| `--start-scene <id\|name>` | Override the start scene by numeric ID, scene name, or file stem. |
+| `--backend <list>` | Graphic backend(s) to compile shaders for. Repeatable, or a list (see below). Defaults to **all** supported backends. |
+| `--shader <spec>` | Shader(s) to compile. Repeatable (see [Shader specs](#shader-specs)). If omitted, shaders discovered while regenerating scenes are exported. |
+| `--list-scenes` | Print the project's scenes (`id`, `name`, `path`) and exit. |
+| `-h`, `--help` | Show usage for this subcommand. |
 
 Asset references are stored relative to the directories configured in the project, so
 `--assets` and `--lua` only make sense when they point at those same folders. Exporting a
 different root ships files the stored paths do not resolve against.
-| `--start-scene <id\|name>` | Override the start scene by numeric ID, scene name, or file stem. |
-| `--platform <list>` | Target platform(s). Repeatable, or a list (see below). Defaults to **all** supported platforms. |
-| `--shader <spec>` | Shader(s) to compile. Repeatable (see [Shader specs](#shader-specs)). If omitted, shaders discovered while regenerating scenes are exported. |
-| `--list-scenes` | Print the project's scenes (`id`, `name`, `path`) and exit. |
-| `-h`, `--help` | Show usage for this subcommand. |
 
 ### List a project's scenes
 
@@ -73,7 +73,7 @@ Compiles shader variants directly to an output directory, without exporting a wh
 project. Use it to pre-bake a shader cache or produce shader data for custom tooling.
 
 ```bash
-doriax-editor shaders --out ./shaders --shader mesh:Uv1,Nor --platform web
+doriax-editor shaders --out ./shaders --shader mesh:Uv1,Nor --backend opengles
 ```
 
 ### Options
@@ -82,30 +82,37 @@ doriax-editor shaders --out ./shaders --shader mesh:Uv1,Nor --platform web
 | --- | --- |
 | `-o`, `--out <path>` | **Required.** Destination directory for the generated shader files. |
 | `--format <format>` | Output format: `binary` (default, also `sdat`), `header`, or `json`. |
-| `--platform <list>` | Target platform(s). Repeatable or a list. Defaults to **all** supported platforms. |
+| `--backend <list>` | Graphic backend(s) to compile for. Repeatable or a list. Defaults to **all** supported backends. |
 | `--shader <spec>` | **Required.** Shader(s) to generate. Repeatable (see [Shader specs](#shader-specs)). |
 | `-h`, `--help` | Show usage for this subcommand. |
 
-## Platforms
+## Graphic backends
 
-Both subcommands accept these platform names (case-insensitive), with aliases:
+A shader is compiled for a **graphics API**, not for an operating system — a Windows build
+needs GLSL, HLSL, or SPIR-V depending only on how it was configured. Both subcommands
+accept these backend names (case-insensitive):
 
-| Value | Aliases |
-| --- | --- |
-| `linux` | |
-| `windows` | `win` |
-| `macos` | `mac` |
-| `ios` | |
-| `android` | |
-| `web` | `wasm`, `emscripten` |
-| `all` | selects every supported platform |
+| Value | Alias | Shader format |
+| --- | --- | --- |
+| `opengl` | `glcore` | `glsl410` |
+| `opengles` | `gles3` | `glsl300es` |
+| `d3d11` | | `hlsl5` |
+| `metal-macos` | `metal` | `msl21macos` |
+| `metal-ios` | | `msl21ios` |
+| `vulkan` | | `spirv10` |
+| `all` | | selects every supported backend |
 
-Pass `--platform` multiple times, or give a single list separated by `,`, `+`, `|`, or
+One file is written per shader and backend, named `<shader>_<format>`. At startup the
+runtime loads the format matching the backend it was built with, so an export must include
+every backend the final binary may use — see
+[Choosing backends](export.md#choosing-backends).
+
+Pass `--backend` multiple times, or give a single list separated by `,`, `+`, `|`, or
 `;`:
 
 ```bash
-doriax-editor export -p ./MyGame -o ./build --platform windows --platform linux
-doriax-editor export -p ./MyGame -o ./build --platform "windows,linux,web"
+doriax-editor export -p ./MyGame -o ./build --backend vulkan --backend opengl
+doriax-editor export -p ./MyGame -o ./build --backend "vulkan,opengl,opengles"
 ```
 
 ## Shader specs
@@ -128,11 +135,11 @@ property or type is reported as an error. Omit the properties to generate the ba
 variant of a type (e.g. `--shader depth`).
 
 ```bash
-# Base mesh shader plus a UV+normal variant, for web and Windows
+# Base mesh shader plus a UV+normal variant, for WebGL 2 and Direct3D 11
 doriax-editor shaders --out ./shaders \
   --shader mesh \
   --shader mesh:Uv1,Nor \
-  --platform web --platform windows
+  --backend opengles --backend d3d11
 ```
 
 ## Exit codes
@@ -151,12 +158,12 @@ shell does not wait for the GUI binary, so the step can pass even when the expor
 failed. Example GitHub Actions step:
 
 ```yaml
-- name: Export game (Linux + Web)
+- name: Export game (Vulkan + WebGL 2)
   run: |
     doriax-editor export \
       --project ./MyGame \
       --out ./build/MyGame \
-      --platform "linux,web"
+      --backend "vulkan,opengles"
 ```
 
 The exported directory still needs its native toolchain to produce final binaries — see
