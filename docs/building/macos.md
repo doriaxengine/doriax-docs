@@ -71,3 +71,32 @@ The engine sets the macOS deployment target to 10.15 for runtime builds.
     backends, but macOS Metal runtime builds currently remain synchronized. Configuring
     an exported Metal project with VSync disabled prints a CMake warning instead of
     selecting an unsafe zero swap interval.
+
+## Vulkan backend
+
+macOS has no native Vulkan driver. Vulkan runs through **MoltenVK**, a translation layer
+over Metal that ships with the [Vulkan SDK](https://vulkan.lunarg.com/). Passing
+`-DGRAPHIC_BACKEND=vulkan` builds the runtime against it, presenting to a `CAMetalLayer`
+through `VK_EXT_metal_surface`:
+
+```bash
+cmake -S engine -B build-vulkan \
+  -DPROJECT_ROOT=/path/to/project \
+  -DGRAPHIC_BACKEND=vulkan \
+  -DCMAKE_BUILD_TYPE=Release \
+  -G "Ninja"
+cmake --build build-vulkan --config Release --target doriax-project
+```
+
+If `VULKAN_SDK` is not set, the build looks for the SDK where its installer unpacks it
+(`~/VulkanSDK/<version>/macOS`), so an editor launched from the Dock — which inherits no
+shell environment — still finds it.
+
+!!! warning "Not runnable yet"
+    The renderer binds its resources through `VK_EXT_descriptor_buffer`, and MoltenVK does
+    not implement that extension. A macOS Vulkan build compiles and links, then exits at
+    startup with a message saying so, and the configure step prints a warning up front.
+    **Metal is the supported macOS backend**; Vulkan is here for the day a driver provides
+    the extension. This is also why Vulkan is not offered in the editor's Desktop export.
+
+Shaders for Vulkan projects are compiled to SPIR-V by the editor's shader builder.

@@ -96,6 +96,9 @@ Desktop export selector passes the corresponding value automatically; Web export
 | `metal` | macOS and iOS Metal |
 | `vulkan` | Vulkan (Linux and Windows; requires `APP_BACKEND=sokol`) |
 
+On macOS, `vulkan` builds through MoltenVK but cannot run yet — see
+[Vulkan backend](../building/macos.md#vulkan-backend).
+
 ## App backend
 
 | Backend | Target |

@@ -23,7 +23,19 @@ their own (compatible) open-source licenses. See [License & Credits](license.md)
 | --- | --- |
 | Editor | Windows, Linux, macOS |
 | Exported projects | Windows, Linux, macOS, Android, iOS, HTML5 (WebAssembly) |
-| Graphics backends | OpenGL, OpenGL ES 3, Metal, Direct3D 11, WebGPU |
+| Graphics backends | OpenGL, OpenGL ES 3, Vulkan, Metal, Direct3D 11, WebGPU |
+
+## Why can't I choose Vulkan when exporting on macOS?
+
+macOS has no native Vulkan driver. Vulkan runs there through MoltenVK, a translation
+layer on top of Metal, and MoltenVK does not yet implement `VK_EXT_descriptor_buffer` —
+the feature the renderer uses to bind textures, buffers and samplers. A macOS Vulkan
+build compiles and links, but exits at startup on every Mac tested so far.
+
+Rather than offer a build that cannot run, the export dialog lists **Metal** (the default
+and recommended choice) and **OpenGL**. The Vulkan backend itself is in the engine and can
+be built from the command line; see [Vulkan backend](../building/macos.md#vulkan-backend).
+Windows and Linux are unaffected — Vulkan is available on both.
 
 ## Lua or C++ — which should I use?
 

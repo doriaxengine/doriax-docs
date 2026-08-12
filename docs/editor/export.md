@@ -118,7 +118,9 @@ operating system:
 
 The exporter passes the selection to CMake and compiles only the shader format needed
 by that backend. Vulkan builds require the Vulkan development files or SDK to be
-available to the compiler.
+available to the compiler. macOS has no Vulkan option because its only driver, MoltenVK,
+is missing an extension the renderer needs — see
+[Vulkan backend](../building/macos.md#vulkan-backend).
 
 The destination folder receives:
 
