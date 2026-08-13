@@ -48,6 +48,7 @@ Most fields are edited with the mouse or keyboard directly in the panel:
 | Colors | Color picker with RGBA sliders |
 | Booleans | Toggle checkbox |
 | Strings | Inline text input |
+| Fonts | Pick or drag a TTF/OTF/TTC file for the main font; use the stacked layers button for ordered fallback fonts |
 | Textures / assets | Drag from the Resources Browser, type the asset path, or pick a **camera** as the source (camera button / drag a camera entity) for render-to-texture. For image sources, a sliders button opens the **Texture Settings** popup (filter, wrap, and SVG scale) |
 | Entity references | Drag an entity from the Structure panel |
 | Enumerations | Drop-down selection |
@@ -82,6 +83,33 @@ Like any other field, each row shows the reset arrow when it differs from the co
 default, and the settings are saved with the scene and applied in exported projects. See
 [Vector images (SVG)](../manual/resources-and-assets.md#vector-images-svg) for the
 underlying behavior.
+
+## Text fonts
+
+The Text component's **Font** row controls the main font. Pick a `.ttf`, `.otf`, or
+`.ttc` file with the folder button, drag one from the Resources Browser, or use the
+clear button to return to the built-in default. Font files must be inside the project's
+[assets directory](project-workflow.md#assets-and-lua-directories).
+
+The stacked layers button opens **Additional fonts** with three fallback slots. The
+engine tries **Fallback 1**, **Fallback 2**, and **Fallback 3** in order whenever the
+main font does not contain a character; empty slots are skipped, and the built-in Latin
+and Arabic fonts finish the chain. Each slot has its own picker, drag target, clear
+button, and reset action. A highlighted layers button means at least one fallback is
+configured.
+
+Dropping a font directly onto a Text entity in the Scene view replaces only the main
+font and keeps its fallbacks. The preview is live and the final assignment is undoable.
+Every slot is saved, generated into exported scene and bundle code, included in asset
+path updates, and copied with the project assets.
+
+The editor's AI assistant also treats a Font property as this ordered chain. A full-chain
+edit replaces the main font and fallbacks, clearing slots omitted from the request; a
+main-font-only edit preserves the current fallbacks. The assistant accepts only safe,
+project-relative font paths inside the assets directory.
+
+See [Text and fonts](../manual/user-interface.md#text-and-fonts) for runtime behavior and
+the [Text API](../reference/classes/text.md#font) for C++ and Lua access.
 
 ## Model component
 

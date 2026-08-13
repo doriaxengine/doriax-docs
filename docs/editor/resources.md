@@ -59,7 +59,7 @@ Files dragged from the Resources Browser are accepted by several editor windows:
 | Image | Scene view, onto a mesh or UI entity | Assigns the texture (base color / UI texture) with live preview |
 | Material | Scene view, onto a mesh entity | Applies the material to all submeshes with live preview |
 | Material (`.material`) | Properties → Material preview | Creates a new `.material` file in the open folder and links the source submesh |
-| Font | Scene view, onto a Text entity | Assigns the font with live preview |
+| Font | Scene view, onto a Text entity | Assigns the main font with live preview and preserves its fallback slots |
 | Texture / audio / asset | A component field in Properties | Assigns the file to that field |
 | `.scene` file | Structure panel, scene root | Adds the scene as a child scene |
 | `.bundle` file | Structure panel | Creates a bundle instance (as child of the target entity, or at the root) |

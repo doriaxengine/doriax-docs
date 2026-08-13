@@ -18,8 +18,7 @@ Text is shaped before it is drawn, so scripts that need contextual glyph forms w
 | Type | Name | Default | Langs |
 | --- | --- | --- | --- |
 | std::string | [text](#text) | `""` | C++ \| Lua |
-| std::string | [font](#font) | `""` (built-in) | C++ \| Lua |
-| std::string | [fontFallbacks](#fontfallbacks) | `""` | C++ \| Lua |
+| std::string | [font](#font) (slot 0) | `""` (built-in) | C++ \| Lua |
 | unsigned int | [fontSize](#fontsize) | `20` | C++ \| Lua |
 | bool | [multiline](#multiline) | `true` | C++ \| Lua |
 | unsigned int | [maxTextSize](#maxtextsize) | `100` | C++ \| Lua |
@@ -79,42 +78,64 @@ The string to render. Supports UTF-8 encoded unicode.
 ### font
 
 * *Setter*: void **setFont**(const std::string& font)
+* *Setter*: void **setFont**(unsigned int index, const std::string& font)
 * *Getter*: std::string **getFont**() const
+* *Getter*: std::string **getFont**(unsigned int index) const
 
-File path to the TTF/OTF font file, or a TrueType collection (`.ttc`).
+File path to a TTF/OTF font file, or a TrueType collection (`.ttc`). The `font`
+property and the overloads without an index read or write slot `0`, the main font.
+Setting the main font does not clear the fallback slots.
 
-Two fonts are built into the engine and always close the chain: a Latin subset of Roboto and an Arabic subset of Noto Sans Arabic. Any codepoint the chosen font does not cover is drawn from them, so setting an Arabic-only font still renders Latin, and leaving `font` unset still renders Arabic. A codepoint no font in the chain covers is drawn as the missing-glyph box.
+Doriax stores a fixed `FontArray` with `MAX_TEXT_FONTS` slots (four by default). Index
+`0` is the main font; indexes `1` through `3` are tried in order when an earlier font
+does not contain a character. Empty slots are skipped. Indexes are zero-based in both
+C++ and Lua.
 
----
+Two fonts are built into the engine and always close the chain: a Latin subset of Roboto
+and an Arabic subset of Noto Sans Arabic. Any codepoint the custom fonts do not cover is
+drawn from them, so setting an Arabic-only font still renders Latin, and leaving slot `0`
+unset still renders Arabic. A codepoint no font in the chain covers is drawn as the
+missing-glyph box.
 
-### fontFallbacks
+A missing main-font file prevents that atlas from loading. A missing fallback is logged
+and skipped, so later fallbacks and the built-in fonts can still render the text.
 
-* *Setter*: void **setFontFallbacks**(const std::string& fontFallbacks)
-* *Getter*: std::string **getFontFallbacks**() const
-
-Extra font paths tried, in order, for codepoints [font](#font) does not cover. Paths are separated by `;`, like a CSS `font-family` list, and surrounding blanks are ignored. The built-in fonts are still appended after them.
-
-Use it when a single project needs several custom fonts at once, for example a specific Arabic face beside a specific CJK face. A path that cannot be opened is logged and skipped, the rest of the chain still applies.
+Use the indexed overloads to assign fallback fonts:
 
 === "C++"
     ```cpp
     Text label(&scene);
     label.setFont("fonts/MyLatin.ttf");
-    label.setFontFallbacks("fonts/NotoKufiArabic.ttf;fonts/NotoSansCJK.ttc");
-    label.setText("hello مرحبا");
+    label.setFont(1, "fonts/NotoKufiArabic.ttf");
+    label.setFont(2, "fonts/NotoSansCJK.ttc");
+    label.setText("hello مرحبا 你好");
     ```
 
 === "Lua"
     ```lua
     local label = Text(scene)
     label.font = "fonts/MyLatin.ttf"
-    label.fontFallbacks = "fonts/NotoKufiArabic.ttf;fonts/NotoSansCJK.ttc"
-    label.text = "hello مرحبا"
+    label:setFont(1, "fonts/NotoKufiArabic.ttf")
+    label:setFont(2, "fonts/NotoSansCJK.ttc")
+    label.text = "hello مرحبا 你好"
     ```
 
 !!! note
-    Texts only share a glyph atlas when their whole chain matches, so keep the list
+    Texts only share a glyph atlas when their whole chain matches, so keep the slots
     identical across elements that use the same font.
+
+An out-of-range index is rejected and logged. `getFont(index)` returns an empty string
+for an invalid index.
+
+At the component level, `TextComponent::font` is the same `FontArray`, so direct C++
+component access uses `text.font[0]` for the main font and `text.font[1]` onward for
+fallbacks.
+
+!!! warning "Migrating from fontFallbacks"
+    The `fontFallbacks` property and `setFontFallbacks` / `getFontFallbacks` methods no
+    longer exist. Replace a semicolon-separated fallback list with one indexed
+    `setFont` call per font. The editor still accepts the former scalar `font` scene
+    field as slot `0`; newly saved scenes write `font` as an ordered sequence.
 
 ---
 

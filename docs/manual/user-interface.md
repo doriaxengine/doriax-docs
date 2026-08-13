@@ -63,13 +63,25 @@ carry is drawn from them. An Arabic-only font still renders Latin digits and lab
 a Latin-only font still renders Arabic. A codepoint no font covers is drawn as the
 missing-glyph box.
 
-For projects needing several custom faces at once, list the extra ones in
-[`fontFallbacks`](../reference/classes/text.md#fontfallbacks), separated by `;`:
+For projects needing several custom faces at once, assign up to three additional fonts
+to slots `1` through `3`. They are tried in numeric order and empty slots are skipped:
 
 ```lua
 label.font = "fonts/MyLatin.ttf"
-label.fontFallbacks = "fonts/NotoKufiArabic.ttf;fonts/NotoSansCJK.ttc"
+label:setFont(1, "fonts/NotoKufiArabic.ttf")
+label:setFont(2, "fonts/NotoSansCJK.ttc")
 ```
+
+The `font` property is an alias for slot `0`, so replacing it preserves the fallback
+chain. C++ has the same `setFont(index, path)` and `getFont(index)` overloads. At direct
+component level, `TextComponent::font` is a fixed four-element `FontArray`: the main
+font followed by the three fallbacks. See the [`Text.font`](../reference/classes/text.md#font)
+reference for all overloads and migration from the former `fontFallbacks` property.
+
+In the editor, set the main face in the Text component's **Font** row. Use the stacked
+layers button to open **Additional fonts**, where **Fallback 1–3** can each be browsed,
+cleared, or filled by dragging a font from Resources. All slots are saved and exported
+as one ordered chain.
 
 ### Complex scripts
 
