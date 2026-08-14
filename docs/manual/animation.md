@@ -16,7 +16,7 @@ actions.
 | --- | --- | --- |
 | **Actions** | Scripted one-shot or looping motion — position, rotation, scale, color, alpha | `ActionSystem`, `TimedAction` subclasses |
 | **Sprite animation** | 2D frame cycling through an atlas | `SpriteAnimation` |
-| **Skeletal / keyframe** | Imported GLTF character clips | `Animation`, `Model` |
+| **Skeletal / keyframe** | Imported GLTF character and node clips | `Animation`, `Model` |
 | **Keyframe tracks** | Authored transform and property curves on the timeline | `TranslateTracks`, `RotateTracks`, `ScaleTracks`, `MorphTracks` |
 | **Morph targets** | Blend shape deformation for facial animation | `MorphTracks` |
 | **Particles** | Time-based particle playback | `Particles` |
@@ -166,11 +166,18 @@ index. How you obtain the `Model` depends on whether the model is **already in y
 scene** or is being **created at runtime** — these are two different things, and mixing
 them up is the most common animation mistake.
 
+GLTF files that contain clips, or more than one skin, import the **full node tree** under
+the Model entity. Animation channels target those node entities — joints *and*
+transform-only helpers — so node animation authored in the DCC plays back, not only
+skeletal deformation. Models may use several skins; each skinned mesh keeps its own joint
+list and inverse-bind matrices. See
+[3D Graphics — GLTF node hierarchy](3d-graphics.md#gltf-node-hierarchy).
+
 ### Playing a clip on a model already in the scene
 
 This is the usual case: you imported the GLTF in the editor (so it appears as an entity
 in the Structure panel), and you want a script on that entity — or on a parent — to start
-its idle clip. **Do not reload the file.** The mesh, skeleton, and clips are already
+its idle clip. **Do not reload the file.** The mesh, nodes, and clips are already
 loaded; the script only needs to *reference* the existing entity and start the clip.
 
 The cleanest way to reach another entity is an [entity reference property](script-properties.md):

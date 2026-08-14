@@ -320,7 +320,10 @@ See [Command-Line Tools](command-line.md) for the full `export` and `shaders` re
 ## Build options
 
 See [Build Options](../reference/build-options.md) for a full list of CMake flags and
-compile-time defines you can set to control engine features in the export.
+compile-time defines you can set to control engine features in the export. Source Code
+export also writes engine capacity macros (`MAX_SUBMESHES`, `MAX_BONES`, and others)
+from the largest values used in your scenes — see
+[Engine capacity macros](../reference/build-options.md#engine-capacity-macros).
 
 ## Tips
 

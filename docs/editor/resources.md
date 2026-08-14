@@ -14,7 +14,7 @@ Slicer.
 | Type | Extensions | Typical use |
 | --- | --- | --- |
 | Textures | PNG, JPG, BMP, TGA, PSD, HDR, SVG | Sprites, UI images, albedo/normal/roughness/metallic maps, skyboxes |
-| Models | GLTF, GLB, OBJ | 3D meshes, skeletons, animations, morph targets |
+| Models | GLTF, GLB, OBJ | 3D meshes, skins, node hierarchy, animations, morph targets |
 | Materials | `.material` (YAML) | Reusable PBR material definitions shared across meshes |
 | Audio | OGG, WAV, MP3, FLAC | Sound effects, music, 3D spatial audio |
 | Fonts | TTF, OTF, TTC | Text and UI rendering |

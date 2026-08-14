@@ -83,7 +83,7 @@ texture is rendered:
 | `MaterialAlphaMode::AUTO` | Legacy Doriax behaviour. `autoTransparency` selects the transparent pass when the texture or base-colour factor contains transparency. The submesh's **Texture Shadow** option remains a manual cutout control. |
 | `MaterialAlphaMode::ALPHA_OPAQUE` | Ignores material alpha and renders every surviving fragment fully opaque. |
 | `MaterialAlphaMode::MASK` | Discards fragments whose combined alpha is below `alphaCutoff`; surviving fragments are fully opaque. |
-| `MaterialAlphaMode::BLEND` | Preserves alpha for conventional transparency and selects the transparent pass when `autoTransparency` is enabled. |
+| `MaterialAlphaMode::BLEND` | Preserves alpha for conventional transparency and selects the transparent pass when `autoTransparency` is enabled. Depth testing stays on; depth writes are disabled in the colour pass. |
 
 `alphaCutoff` is used only by `MASK` and defaults to `0.5`. The same combined-alpha
 test is used by the lit pass, shadow/depth pass, and SSR G-buffer, so the visible

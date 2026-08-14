@@ -106,20 +106,26 @@ sounds, physics bodies, UI widgets, points, lines, terrain, and mesh polygons.
 | Clone icon | The entity has an [Instanced Mesh](properties.md#instanced-mesh) with one or more instances (tooltip shows the count) |
 | Play / pause | Child scene **Start active** on / off (see [Child scenes](#child-scenes)) |
 
-Imported **Model** entities with child mesh nodes start **collapsed** once their
-children finish loading, so multi-mesh GLTFs do not flood the tree. Bones also start
-collapsed. Expand a row when you need to edit children.
+Imported **Model** entities with child nodes start **collapsed** once their children
+finish loading, so multi-mesh GLTFs and full node trees do not flood the tree. Bones also
+start collapsed. Expand a row when you need to edit children.
 
 When a parent is collapsed in Structure, clicking its hidden children in the
 [Scene view](scene-view.md#selection) selects the nearest expanded ancestor instead —
 so picking in the viewport matches what you can see in the tree. Expand the model (or
-other parent) if you need to select a specific child mesh.
+other parent) if you need to select a specific child mesh or node.
+
+GLTF files with animation clips, or more than one skin, import the **full node tree**
+under the Model (helpers, joints, and mesh nodes). Static multi-mesh files still create
+one child mesh entity per mesh node. See
+[3D Graphics — GLTF node hierarchy](../manual/3d-graphics.md#gltf-node-hierarchy).
 
 ### Merge static model
 
-Multi-node GLTF models normally create one child mesh entity per mesh node. Instanced
-Mesh (and other same-entity mesh features) only draw geometry that lives on the root
-entity, so those models need a flatten step first.
+Multi-node GLTF models normally keep geometry on child entities (the full node tree when
+the file is animated or has several skins, otherwise one child mesh per mesh node).
+Instanced Mesh (and other same-entity mesh features) only draw geometry that lives on the
+root entity, so those models need a flatten step first.
 
 Right-click a Model entity in Structure:
 

@@ -24,7 +24,11 @@ Each frame, the engine runs the following phases in order:
 5. **Skybox and IBL** — The sky cubemap is drawn (when visible). Environment maps derived
    from the sky feed **image-based lighting (IBL)** on meshes that opt in.
 6. **Transparent pass** — Objects with blending enabled are sorted back-to-front and
-   drawn after opaque geometry.
+   drawn after opaque geometry. Blended submeshes still depth-test, but they do **not**
+   write depth in the colour pass, so overlapping translucent surfaces composite instead
+   of punching holes in each other. A mesh marked transparent (including by
+   `autoTransparency`) is skipped by the SSAO depth pre-pass and the SSR G-buffer;
+   shadow maps still render it.
 7. **UI pass** — UI entities are rendered in screen-space canvas coordinates, on top of
    the 3D or 2D scene.
 8. **Post-processing** — Fog and other post effects are applied (if configured).
@@ -73,7 +77,8 @@ Alpha is the product of `baseColorFactor.a` and the base-colour texture's alpha.
 `ALPHA_OPAQUE` forces the result opaque, `MASK` discards pixels below `alphaCutoff`, and
 `BLEND` preserves partial alpha for transparent rendering. `AUTO` keeps the historical
 Doriax texture-alpha detection used by editor-created materials. Imported GLTF/GLB
-materials preserve their explicit alpha mode.
+materials preserve their explicit alpha mode. A blended submesh (`BLEND`, or `AUTO` when
+the texture or factor is translucent) disables depth writes on its colour pipeline.
 
 The `MASK` test is identical in the lit, shadow/depth, and SSR G-buffer passes. A cutout
 therefore casts and contributes to screen-space effects with the same silhouette that
@@ -577,10 +582,15 @@ and edit the GLSL; the engine keeps driving the variant system, lighting, and
 depth/shadow/G-buffer passes. A shader set on the component wins over the scene default,
 which wins over the built-in. See [Custom Shaders](../editor/custom-shaders.md).
 
-Built-in skinned variants use the engine's `MAX_BONES` value consistently in the colour,
-depth/shadow, and G-buffer passes; the default capacity is **128 bone matrices**. The
-editor revisions its compiled shader cache when this built-in shader interface changes,
-so an updated editor does not reuse incompatible older skinned variants.
+Built-in skinned variants bind bone matrices through a **storage buffer** (`sbo_skinning`)
+on Vulkan, Metal, and Direct3D 11, or through an **unfilterable RGBA32F bone texture**
+sampled with `texelFetch` on OpenGL / OpenGL ES. The colour, depth/shadow, and G-buffer
+passes share that path, so large skeletons are not capped by a uniform-block size. Shader
+reflection keeps the backend-specific storage-buffer bindings, which Metal requires for
+validation. The CPU array is still sized by `MAX_BONES` (default 128); see
+[3D Graphics — GLTF compatibility and limits](3d-graphics.md#gltf-compatibility-and-limits).
+The editor revisions its compiled shader cache when this built-in shader interface
+changes, so an updated editor does not reuse incompatible older skinned variants.
 
 GPU pipeline creation can be deferred by the graphics backend. If a pipeline variant
 fails creation or validation, Doriax skips that draw instead of submitting its uniform,

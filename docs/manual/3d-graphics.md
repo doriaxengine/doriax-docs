@@ -17,14 +17,29 @@ add it to a scene as an entity, then position it with its transform.
 Models support:
 
 - **Skeletal animation** — animate rigged characters via bones
+- **Node animation** — play transform clips on the imported glTF node tree
 - **Morph targets** — blend between mesh shapes for facial animation and deformation
 
 ![Bone and skeletal animation tools](../assets/screenshots/editor-bones.png)
 
 ### GLTF compatibility and limits
 
-Skinned GLTF models support up to **128 joints per skin**. Morph-target capacity is per
-mesh primitive and depends on the data exported for each target:
+Skinned GLTF models are not limited by a fixed-size shader uniform block. Bone matrices
+are uploaded each frame through a **storage buffer** (Vulkan, Metal, Direct3D 11) or an
+**unfilterable bone texture** (OpenGL / OpenGL ES), so large skeletons skin correctly on
+every backend.
+
+The CPU bone-matrix array still has a compile-time capacity, `MAX_BONES` (default
+**128**). The editor grows that array for larger skins; export then raises `MAX_BONES` in
+the generated CMake project to cover the largest skin in your scenes (never below 128).
+A model loaded only at runtime that exceeds the exported capacity is rejected and the
+loader writes an error to the log. Raise `MAX_BONES` yourself in a standalone engine
+build if you spawn such models from code. See the
+[Model reference](../reference/classes/model.md#gltf-import-support-and-limits) and
+[Build Options — Engine capacity macros](../reference/build-options.md#engine-capacity-macros).
+
+Morph-target capacity is per mesh primitive and depends on the data exported for each
+target:
 
 | Morph data | Maximum loaded targets |
 | --- | --- |
@@ -38,10 +53,30 @@ including sparse accessors without a dense base `bufferView`; Doriax expands the
 dense GPU vertex data during loading. See the [Model reference](../reference/classes/model.md#gltf-import-support-and-limits)
 for the exact import behaviour.
 
+### GLTF node hierarchy
+
+How a GLTF becomes entities depends on what the file contains:
+
+| File contents | Scene layout |
+| --- | --- |
+| Animation clips, or more than one skin | The **full node tree** is imported. Every glTF node becomes a child entity (transform-only helpers, joints, and mesh nodes), parented as in the file. |
+| Several mesh nodes, no clips and a single skin (or none) | One **child mesh entity per mesh node**, parented under the model root. Joints still use the legacy skeleton path when the file has one skin and no clips. |
+| A single static mesh | Geometry lives on the Model entity itself. |
+
+On the full-tree path, bone and mesh mappings point into those node entities rather than
+sitting in a separate skeleton. Animation channels target the node they were authored
+against, so transform-only nodes (not just joints) play back. Models may use **more than
+one skin**: each skinned mesh keeps its own joint order and inverse-bind matrices, and
+the renderer builds that mesh's bone matrices from those joints.
+
+Imported models with child nodes start collapsed in the
+[Structure panel](../editor/structure.md#tree-marks-and-collapse). Expand the model when
+you need to select a specific node, joint, or child mesh.
+
 ### Merging static model meshes
 
-A GLTF with several mesh nodes normally becomes a root Model entity plus one child mesh
-entity per node. That hierarchy is useful for editing parts separately, but
+A GLTF with several mesh nodes normally keeps those meshes on child entities. That
+hierarchy is useful for editing parts separately, but
 [GPU instancing](rendering-pipeline.md#gpu-instancing) draws only the geometry on the
 entity that owns `InstancedMeshComponent`.
 
@@ -70,10 +105,14 @@ output.
 
 GLTF `OPAQUE`, `MASK`, and `BLEND` alpha modes are preserved. For masked materials,
 the GLTF `alphaCutoff` value (default `0.5`) controls the combined base-colour factor
-and texture alpha test in both the visible surface and its shadow/depth passes. In the
-editor, expand **Mesh → Submesh → Material** to change **Alpha Mode** and **Alpha
-Cutoff**. See the [Material reference](../reference/classes/material.md#alphamode-alphacutoff)
-for the mode behaviours.
+and texture alpha test in both the visible surface and its shadow/depth passes. Blended
+submeshes keep depth testing but **disable depth writes** in the colour pass so overlapping
+translucent surfaces composite instead of occluding each other. When auto-transparency
+marks the mesh transparent, the SSAO depth pre-pass and SSR G-buffer skip it; shadow
+maps still render it. In the editor, expand **Mesh → Submesh → Material** to change
+**Alpha Mode** and **Alpha Cutoff**. See the
+[Material reference](../reference/classes/material.md#alphamode-alphacutoff) for the mode
+behaviours.
 
 ### Editing an imported model's submeshes
 

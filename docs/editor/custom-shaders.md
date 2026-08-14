@@ -19,6 +19,10 @@ project; you edit the shading code while the rest of the rendering contract stay
 - The **variant system** is unchanged — the engine still injects the same feature
   defines (skinning, normal maps, shadows, IBL, fog, instancing, …) based on the mesh,
   so your edited shader keeps working across all of those cases.
+- Skinned forks that `#include "includes/skinning.glsl"` bind bone matrices through a
+  storage buffer, or through a bone texture when the editor compiles for OpenGL / OpenGL
+  ES (`SKINNING_TEXTURE`). Re-fork that include if you copied an older `skinning.glsl`
+  that still declared `mat4 bonesMatrix[MAX_BONES]` in a uniform block.
 - The **depth, shadow, and G-buffer passes** keep using the built-in shaders, so shadow
   casting and screen-space effects continue to work.
 - `#include` directives still resolve against the engine's shader library, so you only

@@ -281,7 +281,7 @@ Keep heavy save data (inventory, world state) in custom binary or JSON files. Re
 | Keep source and generated output separate | Generated export data should not be committed to version control |
 | Use relative paths from the assets directory | Paths remain valid across machines and in exported builds |
 | Keep referenced files inside the assets directory | A path outside it cannot be stored or shipped |
-| Prefer GLTF for animated 3D assets | Carries mesh, materials, skeleton, animations, and morph targets |
+| Prefer GLTF for animated 3D assets | Carries mesh, materials, skins, node hierarchy, animations, and morph targets |
 | Compress textures for mobile and web | Keeps bundle sizes manageable |
 
 ## Export and asset packaging

@@ -63,7 +63,7 @@ immediately. Hold **Ctrl** and click to add to or remove from a multi-selection.
 Selection respects the [Structure panel](structure.md#tree-marks-and-collapse) expand
 state: if the hit entity is under a **collapsed** parent, the editor selects that
 visible ancestor instead of a hidden child. Expand the parent in Structure when you
-need to pick a specific child mesh (common with multi-node models).
+need to pick a specific child mesh or node (common with multi-node and animated models).
 
 For fine-grained selection in dense scenes, use the **Structure panel** — clicking a
 row there selects the entity without needing to click through overlapping objects.

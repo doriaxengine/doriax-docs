@@ -189,9 +189,11 @@ field. See the [Sprite Slicer](sprite-slicer.md) page for how to prepare a sprit
 
 ## Skeletal animation
 
-GLTF models can include one or more named skeletal animation clips. The timeline editor
-lets you preview and blend these clips on the **Model** entity. Use the **Bone** view
-to inspect and edit individual joint transforms.
+GLTF models can include one or more named skeletal animation clips. Files with clips, or
+more than one skin, import the **full node tree** under the Model, so transform-only nodes
+animate as well as joints. The timeline editor lets you preview and blend these clips on
+the **Model** entity. Use the **Bone** view to inspect and edit individual joint
+transforms.
 
 The animation selector uses each animation entity's name. Imported clips start with the
 name authored in the GLTF; you can rename the entity in the Structure panel. Runtime

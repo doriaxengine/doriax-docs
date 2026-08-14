@@ -210,7 +210,7 @@ with the scene. Metallic, low-roughness materials show the strongest reflections
 * *transparent Setter:* `void setTransparent(bool transparent)`
 * *autoTransparency Setter:* `void setAutoTransparency(bool autoTransparency)`
 
-`transparent` marks the mesh for the transparent render pass (sorted back-to-front). `autoTransparency` detects transparency from the material and enables the transparent pass automatically.
+`transparent` marks the mesh for the transparent render pass (sorted back-to-front). `autoTransparency` detects blending from the material (`BLEND`, or `AUTO` when the texture or factor is translucent) and enables the transparent pass automatically. A blended submesh keeps depth testing but disables depth writes in the colour pass so overlapping translucent surfaces composite correctly.
 
 ## Method details
 

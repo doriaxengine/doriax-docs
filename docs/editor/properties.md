@@ -114,7 +114,9 @@ the [Text API](../reference/classes/text.md#font) for C++ and Lua access.
 ## Model component
 
 The **Model** component loads a GLTF/GLB/OBJ file onto the entity. Multi-node GLTF
-files usually create child mesh entities under the model root.
+files usually create child entities under the model root — the full node tree when the
+file has animation clips or more than one skin, otherwise one child mesh per mesh node.
+See [3D Graphics — GLTF node hierarchy](../manual/3d-graphics.md#gltf-node-hierarchy).
 
 | Control | Purpose |
 | --- | --- |
@@ -135,8 +137,8 @@ transforms. Add it from **Add Component**, then populate the instance list in Pr
 or from script via `Mesh::createInstancedMesh` / `addInstance`.
 
 Instancing only uses geometry on the entity that owns the component. If a Model still
-stores its meshes as child entities (the default multi-node GLTF layout), the editor
-shows a warning and writes to the Output panel: instances will not render until you
+stores its meshes as child entities (the default multi-node or animated GLTF layout), the
+editor shows a warning and writes to the Output panel: instances will not render until you
 [merge the static model](structure.md#merge-static-model).
 
 A clone mark next to the entity in Structure indicates the instance count. See
@@ -169,7 +171,7 @@ colour, textures, metallic, and roughness controls:
 | **Auto** | Compatibility mode for editor-created and older materials. Texture/factor alpha can select transparent rendering automatically. |
 | **Opaque** | Render the material fully opaque, regardless of base-colour alpha. |
 | **Mask** | Cut out pixels below **Alpha Cutoff**; useful for leaves, hair cards, fences, and similarly sharp-edged transparency. |
-| **Blend** | Render smooth or partial transparency through the transparent pass. |
+| **Blend** | Render smooth or partial transparency through the transparent pass. Depth testing stays on; depth writes are off in the colour pass. |
 
 **Alpha Cutoff** ranges from `0` to `1`, defaults to `0.5`, and only affects **Mask**.
 Masked cutouts use the same threshold in the visible surface, shadows, depth, and SSR

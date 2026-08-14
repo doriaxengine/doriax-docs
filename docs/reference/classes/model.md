@@ -11,7 +11,7 @@ description: Model API reference (C++ and Lua).
 
 Loads and displays 3D model files in a scene. `Model` extends [Mesh](mesh.md) and adds support for loading OBJ and GLTF files (including binary GLB), including skeletal animation (via `Animation` / `Bone`), blend-shape morph targets, and PBR materials.
 
-A single GLTF file can contain multiple meshes, materials, textures, skeletons, and animations; Doriax imports all of them into the scene hierarchy and makes each accessible through the API. Use [getAnimation()](#getanimation-findanimation) and [getBone()](#getbone) to drive skeletal playback, and [setMorphWeight()](#getmorphweight-setmorphweight) to control blend shapes.
+A single GLTF file can contain multiple meshes, materials, textures, skins, and animations; Doriax imports them into the scene hierarchy and makes each accessible through the API. Files with animation clips, or more than one skin, import the **full glTF node tree** so joints, mesh nodes, and transform-only helpers keep the parentage authored in the file. Use [getAnimation()](#getanimation-findanimation) and [getBone()](#getbone) to drive skeletal playback, and [setMorphWeight()](#getmorphweight-setmorphweight) to control blend shapes. See [3D Graphics — GLTF node hierarchy](../../manual/3d-graphics.md#gltf-node-hierarchy).
 
 For static multi-node GLTFs that need [GPU instancing](../../manual/rendering-pipeline.md#gpu-instancing) on the root entity, set `ModelComponent::mergeStaticMeshes` (or use **Merge static model** in the editor) so child transforms bake into the root mesh instead of creating child mesh entities. See [3D Graphics — Merging static model meshes](../../manual/3d-graphics.md#merging-static-model-meshes).
 
@@ -35,7 +35,9 @@ For static multi-node GLTFs that need [GPU instancing](../../manual/rendering-pi
 
 | Feature | Import behaviour |
 | --- | --- |
-| Skinning | Up to **128 joints per skin**. A GLTF skin above this limit is rejected and the loader writes an error to the log. |
+| Skinning | Bone matrices are a storage buffer (Vulkan, Metal, Direct3D 11) or an unfilterable bone texture (OpenGL / OpenGL ES), so shader variants are not capped by a uniform-block size. The CPU array is still limited by `MAX_BONES` (default **128**). The editor grows past that for large skins; export raises `MAX_BONES` to the largest skin in the project's scenes. A runtime load above the compiled capacity is rejected and logged. |
+| Multiple skins | Supported. Each skinned mesh keeps its own joint order and inverse-bind matrices. |
+| Node hierarchy | Animation clips, or more than one skin, import every glTF node as a child entity. Animation channels target those nodes, including transform-only helpers. |
 | Position-only morph targets | Up to **8** targets per mesh primitive. |
 | Position + normal or position + tangent morph targets | Up to **4** targets per mesh primitive. |
 | Position + normal + tangent morph targets | Up to **2** targets per mesh primitive. |
@@ -47,7 +49,8 @@ prefix do not reduce its shader capacity. Keep the same morph semantics on every
 when exporting from a DCC tool for predictable results.
 
 Imported PBR materials also preserve GLTF `OPAQUE`, `MASK`, and `BLEND` alpha modes and
-the `alphaCutoff` value used by masked materials. See [Material](material.md#alphamode-alphacutoff).
+the `alphaCutoff` value used by masked materials. Blended submeshes disable depth writes
+in the colour pass. See [Material](material.md#alphamode-alphacutoff).
 
 Loading rewrites every submesh, so submesh edits made outside the loader are kept in
 `ModelComponent::submeshOverrides` and re-applied at the end of each load. The editor
@@ -187,7 +190,7 @@ Unlike [getAnimation()](#getanimation-findanimation), which returns a handle you
 * [Bone](bone.md) **getBone**(const std::string& name)
 * [Bone](bone.md) **getBone**(int id)
 
-Returns a [Bone](bone.md) handle by name or by index. A `Bone` inherits [Object](object.md) so you can read and write its local transform to override the skeleton. For example, you can aim a character's head bone toward a target while the rest of the body plays a walk cycle.
+Returns a [Bone](bone.md) handle by joint name or by glTF node index (`id`). That integer is the node's index in the glTF file, which can differ from its ordinal in a skin's joint list. A `Bone` inherits [Object](object.md) so you can read and write its local transform to override the skeleton. For example, you can aim a character's head bone toward a target while the rest of the body plays a walk cycle.
 
 === "C++"
     ```cpp
@@ -234,4 +237,4 @@ Read or write the weight of a blend-shape morph target. Weights range from `0.0`
 
 * void **resetToBindPose**()
 
-Resets all bones back to the bind pose defined in the model file, clearing any programmatic or animation-driven overrides. Useful when switching between animations or when stopping all playback.
+Resets every imported node (or, on the legacy skeleton path, every bone) back to the bind pose defined in the model file, clearing any programmatic or animation-driven overrides. Useful when switching between animations or when stopping all playback.

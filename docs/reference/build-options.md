@@ -118,6 +118,29 @@ On macOS, `vulkan` builds through MoltenVK but cannot run yet — see
 | `engine_api_suggestions.h` | Lua binding files parsed by `generate_api_suggestions.py` |
 | Copied engine directory | Editor export/build support |
 
+## Engine capacity macros
+
+Exported CMake projects receive compiler defines for the largest per-scene capacities the
+editor measured, each floored at the engine default in `engine/core/Engine.h`. Growing
+past the default lets large authored content compile; the floor keeps dynamically spawned
+content inside the known-safe baseline.
+
+| Macro | Default | Controls |
+| --- | --- | --- |
+| `MAX_SUBMESHES` | 16 | Submeshes per mesh |
+| `MAX_TILEMAP_TILESRECT` | 200 | Tilemap rectangle tiles |
+| `MAX_TILEMAP_TILES` | 2048 | Tiles per tilemap |
+| `MAX_SPRITE_FRAMES` | 128 | Sprite atlas frames |
+| `MAX_EXTERNAL_BUFFERS` | 30 | External vertex/index buffers per mesh |
+| `MAX_BONES` | 128 | Bone matrices per skinned mesh |
+
+`MAX_BONES` is the CPU array size used at runtime. Skinned shaders bind those matrices
+through a storage buffer or a bone texture and do not embed this count. The editor can
+load skins larger than 128; export writes the raised value so the standalone build
+matches. If you load a larger skin only from code, edit the generated
+`add_definitions("-DMAX_BONES=N")` line in the exported CMakeLists (or pass the same
+compiler define in a standalone engine build).
+
 ## Platform guides
 
 See [Building Overview](../building/overview.md), then use the guide for your target
