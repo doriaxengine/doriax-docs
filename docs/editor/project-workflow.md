@@ -118,13 +118,17 @@ the scene root, or on an entity with a `Transform` to parent the instance there.
 ### Runtime bundle usage
 
 Bundle registration is generated automatically by the export step. At runtime you call
-`createBundle` (bundle **name first, then scene**) and `destroyBundle`:
+`createBundle` (bundle **name first, then scene**) and `destroyBundle`. Entity IDs are
+scene-local, so attach under an existing root with `createBundle(name, scene, "rootName")`
+or pass an object that already carries its scene:
 
 === "Lua"
 
     ```lua
     -- Create a bundle instance at runtime
     local root = BundleManager.createBundle("enemy_grunt", scene)
+    -- Attach under a named entity in that scene
+    BundleManager.createBundle("enemy_grunt", scene, "spawn")
 
     -- Destroy it later
     BundleManager.destroyBundle(scene, root)
@@ -134,12 +138,13 @@ Bundle registration is generated automatically by the export step. At runtime yo
 
     ```cpp
     // Registration is normally emitted by export:
-    BundleManager::registerBundle(1, "enemy_grunt", [](Scene* scene, Entity parent) {
+    BundleManager::registerBundle(1, "enemy_grunt", [](Scene* scene, Entity parent) -> bool {
         // bundle factory body
+        return true;
     });
 
-    // Create an instance
     Entity root = BundleManager::createBundle("enemy_grunt", &scene);
+    BundleManager::createBundle("enemy_grunt", &scene, "spawn");
     ```
 
 See [BundleManager](../reference/classes/bundlemanager.md) for the complete API.

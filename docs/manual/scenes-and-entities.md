@@ -381,7 +381,10 @@ See [Bundles](../editor/bundles.md) for the full editor workflow.
 Bundle **registration** is generated automatically by the export step (it emits a C++
 `registerBundle` call that wires the factory to the bundle name/ID). At runtime you
 mainly call `createBundle` and `destroyBundle`. Note that `createBundle` takes the bundle
-**name first, then the scene**, and returns the root `Entity`.
+**name first, then the scene**, and returns the root `Entity`. Entity IDs are
+scene-local: to attach under an existing entity, look it up in the destination scene
+with `createBundle(name, scene, "rootName")`, or pass an object that already carries
+its scene.
 
 !!! note "There is no direct `.bundle` file loader"
     You don't load a `.bundle` file by path at runtime. Export turns each file into a
@@ -396,6 +399,9 @@ mainly call `createBundle` and `destroyBundle`. Note that `createBundle` takes t
     -- Create an instance (name first, then scene)
     local root = BundleManager.createBundle("enemy_grunt", scene)
 
+    -- Attach under a named entity in that scene
+    BundleManager.createBundle("enemy_grunt", scene, "spawn")
+
     -- Destroy it later (scene first, then root entity)
     BundleManager.destroyBundle(scene, root)
     ```
@@ -405,11 +411,13 @@ mainly call `createBundle` and `destroyBundle`. Note that `createBundle` takes t
     ```cpp
     // Registration is normally emitted by export, e.g.:
     BundleManager::registerBundle(1, "enemy_grunt",
-        [](Scene* scene, Entity parent) {
+        [](Scene* scene, Entity parent) -> bool {
             // factory body
+            return true;
         });
 
     Entity root = BundleManager::createBundle("enemy_grunt", &scene);
+    BundleManager::createBundle("enemy_grunt", &scene, "spawn");
 
     // Destroy when done
     BundleManager::destroyBundle(&scene, root);

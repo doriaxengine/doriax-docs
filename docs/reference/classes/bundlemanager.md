@@ -68,10 +68,14 @@ drops, UI cards, and any pooled hierarchy.
 
 ### registerBundle
 
-* static void **registerBundle**(uint32_t id, const std::string& name, std::function<void(Scene*, Entity)> factory, std::function<bool(Scene*, Entity)> destroyer = nullptr)
+* static void **registerBundle**(uint32_t id, const std::string& name, std::function<bool(Scene*, Entity)> factory, std::function<bool(Scene*, Entity)> destroyer = nullptr)
 
 Registers a named bundle factory. The `factory` receives the target `Scene*` and a root
-`Entity`, and must create the bundle's entities and components as children of that root.
+`Entity`, and must return `true` on success. On failure (or if the factory throws),
+[`createBundle`](#createbundle) does not record an instance and rolls back entities
+created during the call. Void-returning callables are still accepted and treated as
+success.
+
 The optional `destroyer` is called by [`destroyBundle`](#destroybundle) instead of the
 default entity destruction; it receives `(Scene*, Entity root)` and returns `true` on
 success.
@@ -82,8 +86,9 @@ you normally never write it yourself. It is C++-only and not exposed to Lua.
 === "C++"
     ```cpp
     BundleManager::registerBundle(1, "enemies/EnemyShip",
-        [](Scene* scene, Entity root) {
+        [](Scene* scene, Entity root) -> bool {
             // create child entities/components under root...
+            return true;
         });
     ```
 
@@ -93,19 +98,33 @@ you normally never write it yourself. It is C++-only and not exposed to Lua.
 
 * static Entity **createBundle**(const std::string& name, Scene* scene)
 * static Entity **createBundle**(uint32_t id, Scene* scene)
+* static Entity **createBundle**(const std::string& name, Scene* scene, const std::string& rootName)
+* static Entity **createBundle**(uint32_t id, Scene* scene, const std::string& rootName)
+* static Entity **createBundle**(const std::string& name, const EntityHandle& root)
+* static Entity **createBundle**(uint32_t id, const EntityHandle& root)
 * static Entity **createBundle**(const std::string& name, Scene* scene, Entity root)
 * static Entity **createBundle**(uint32_t id, Scene* scene, Entity root)
 
-Spawns an instance of a registered bundle into `scene` and returns the root entity of the
-new hierarchy, or a null entity if the name/ID is not found.
+Spawns an instance of a registered bundle into a scene and returns the root entity of the
+new hierarchy, or a null entity if the name/ID is not found or the factory fails.
 
 - The two-argument overloads create a **new** root entity for the instance.
-- The three-argument overloads attach the bundle under an **existing** `root` entity
-  (which must already exist in the scene).
+- `(name/id, scene, rootName)` looks up `rootName` **in that scene**, then attaches the
+  bundle under it.
+- `(name/id, EntityHandle)` uses the scene already stored on the handle (any
+  [Object](object.md), [Button](button.md), and so on).
+- `(name/id, scene, Entity)` attaches under an existing entity id. That id must belong
+  to `scene`.
 
-Each call tracks the instance internally so [`destroyBundle`](#destroybundle) can later
-remove every entity it created. Note the argument order: the bundle **name/ID comes
-first, then the scene**.
+Each successful call tracks the instance internally so [`destroyBundle`](#destroybundle)
+can later remove every entity it created. Note the argument order: the bundle **name/ID
+comes first, then the scene**.
+
+!!! note "Entity IDs are scene-local"
+    Each scene allocates its own entity IDs. When attaching to an existing root, prefer
+    `createBundle(name, scene, "rootName")` so the name is resolved in that scene, or
+    pass an object that already carries its scene. Passing a raw `Entity` from another
+    scene (for example a main-scene id into a UI scene) targets the wrong entity.
 
 === "Lua"
     ```lua
@@ -115,7 +134,13 @@ first, then the scene**.
     -- By ID
     local r2 = BundleManager.createBundle(1, scene)
 
-    -- Under an existing root entity
+    -- Under a named entity in that scene
+    BundleManager.createBundle("enemy_grunt", scene, "spawn")
+
+    -- Under an object that already carries its scene
+    BundleManager.createBundle("enemy_grunt", someObject)
+
+    -- Under an existing entity id (must belong to scene)
     BundleManager.createBundle("enemy_grunt", scene, existingRoot)
     ```
 
@@ -123,6 +148,8 @@ first, then the scene**.
     ```cpp
     Entity root = BundleManager::createBundle("enemy_grunt", &scene);
     Entity r2   = BundleManager::createBundle(1, &scene);
+    BundleManager::createBundle("enemy_grunt", &scene, "spawn");
+    BundleManager::createBundle("enemy_grunt", someObject);
     BundleManager::createBundle("enemy_grunt", &scene, existingRoot);
     ```
 
