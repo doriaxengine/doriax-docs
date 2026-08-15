@@ -151,10 +151,15 @@ chosen on a 32-core workstation is not lost when a teammate opens the project on
 
 ## Where build files live
 
-The CMake build tree is generated under **`.doriax/build`** inside your project folder.
-It is a disposable cache — deleting it forces a full clean reconfigure and rebuild, which
-is a good first step when the build state seems corrupted (for example after moving the
-project, or upgrading CMake or the compiler).
+Play and Save rewrite the generated C++ glue under **`.doriax/generated`** inside your
+project folder (`CMakeLists.txt`, `main.cpp`, `scene_scripts.cpp`, and bundle factories).
+That list includes every C++ script and `.bundle` file that still exists on disk. Do
+**not** edit those files by hand — the next Play or Save overwrites them.
+
+The CMake build tree is generated under **`.doriax/build`**. It is a disposable cache —
+deleting it forces a full clean reconfigure and rebuild, which is a good first step when
+the build state seems corrupted (for example after moving the project, or upgrading CMake
+or the compiler).
 
 ## Troubleshooting
 
@@ -172,6 +177,8 @@ is almost always the meaningful one.
 | `internal compiler error: Killed` (GCC/Clang) or `fatal error C1060: compiler is out of heap space` (MSVC) | The parallel build ran out of memory. Lower **Project Settings → Parallel Jobs** (try `1` or `2`) — see [Parallel builds](#parallel-builds). |
 | `Does not match the generator used previously` | The build directory holds a cache from a different generator. The editor normally cleans it automatically when you switch compilers; if it reports the directory is **locked**, close anything using `.doriax/build` (notably the VS Code *CMake Tools* extension) or delete the folder manually, then try again. |
 | `CMake configuration failed` with **no other output** | Update the editor — older versions dropped the output of commands that failed quickly. Current versions print the full CMake error plus a `Process exited with code N` line. |
+| `CMake Error: File ... does not exist.` (or similar) for a script or `.bundle` you already deleted | Generated sources still listed a missing file. Current editors skip files that are gone from disk; press Play or Save once to regenerate. Do not patch `.doriax/generated/CMakeLists.txt` — it is overwritten. If a closed scene still shows the old ScriptComponent entry, open that scene, remove the leftover, and save. |
+| `Unknown type SomeClass` | A leftover C++ script class name is still registered. Remove that ScriptComponent entry from every scene and bundle that still lists it, then Play or Save. Recreating a script with the same class name also recovers a project that was already broken. |
 | `Compiler kit changed. Cleaning build directory...` | Not an error — the compiler selection changed, so the editor wipes `.doriax/build` and reconfigures from scratch. |
 | Errors persist after fixing the toolchain | Delete `.doriax/build` and press Play again to force a clean configure. |
 

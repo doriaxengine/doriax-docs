@@ -538,7 +538,7 @@ return Follower
 | Property not in Properties | `DPROPERTY` not immediately above member; unsupported type; header path wrong |
 | Entity reference is nil | Target entity missing, wrong scene, or referenced script disabled |
 | Duplicate event callbacks | Same tag registered twice; use `UNREGISTER_*` in destructor |
-| C++ build or CMake errors | Missing or misconfigured toolchain — see [C++ Build Setup](cpp-build-setup.md) |
+| C++ build or CMake errors | Missing toolchain, or a leftover deleted script still listed in generated sources — see [C++ Build Setup](cpp-build-setup.md) |
 
 ## Next steps
 

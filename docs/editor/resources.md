@@ -132,7 +132,8 @@ Right-click any resource to access:
 - **Open in Tileset Slicer** — opens the texture in the [Tileset Slicer](tileset-slicer.md) tool.
 - **Rename** — renames the file on disk and updates scene references.
 - **Delete** — removes the file from the project and clears every reference to it in
-  scenes, bundles and `.material` files. Undo restores the file, not the references.
+  scenes, bundles and `.material` files, including C++ and Lua script entries. Undo
+  restores the file, not the references.
 - **Show in OS** — reveals the file in the system file manager.
 
 ## Sprite and tileset slicing
