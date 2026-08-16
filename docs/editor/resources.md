@@ -23,6 +23,11 @@ Slicer.
 | Shaders | Shader data files | Built, serialized, and loaded shader programs |
 | Scripts | LUA, CPP, H | Gameplay logic files |
 
+Scenes and bundles the project does not use are drawn **dimmed**: a `.scene` file that is
+not one of the project's scenes, and a `.bundle` no scene instantiates that is not listed
+in **Project → Bundles**. Hover one to see why — a dimmed bundle is not built into the
+game, so `BundleManager` cannot spawn it. See [Bundles in the build](bundles.md#bundles-in-the-build).
+
 ## Previews
 
 The browser includes inline preview renderers. Select a resource to see:

@@ -104,6 +104,26 @@ they are not lost silently.
 Renaming or moving a `.bundle` file through the Resources Browser context menu updates
 the scenes that reference it.
 
+## Bundles in the build
+
+Only the bundles the project uses are compiled into the game and registered with
+[BundleManager](../reference/classes/bundlemanager.md):
+
+- every bundle **instantiated in a scene**, and
+- every bundle listed in **Project → Bundles**.
+
+A bundle that no scene instantiates — one that exists only to be spawned from a script —
+has to be listed, or `createBundle` reports `bundle 'name' not found` at runtime.
+
+**Project → Bundles** lists every `.bundle` file in the project. The ones a scene
+instantiates are checked and disabled, with the scenes using them in the **Used by**
+column; check any other bundle to build and register it as well. The list is stored as
+`standaloneBundles` in `project.yaml`, follows the file when it is renamed or moved, and
+drops entries whose file is deleted.
+
+In the Resources Browser, a `.bundle` the project does not build is drawn dimmed, and so
+is a `.scene` file that is not part of the project.
+
 ## Bundles vs child scenes
 
 | | Bundle | Child scene |

@@ -147,6 +147,9 @@ or pass an object that already carries its scene:
     BundleManager::createBundle("enemy_grunt", &scene, "spawn");
     ```
 
+A bundle no scene instantiates is only built and registered while it is listed in
+**Project → Bundles** — see [Bundles in the build](bundles.md#bundles-in-the-build).
+
 See [BundleManager](../reference/classes/bundlemanager.md) for the complete API.
 
 ## Settings
@@ -154,7 +157,7 @@ See [BundleManager](../reference/classes/bundlemanager.md) for the complete API.
 | Settings area | What it stores |
 | --- | --- |
 | **Editor settings** | Window size, maximized state, recent projects, Resources Browser preferences |
-| **Project settings** | Startup scene reference, canvas size, scaling, VSync, window mode/size/title, compiler, parallel build jobs, and asset/Lua directories |
+| **Project settings** | Startup scene reference, canvas size, scaling, VSync, window mode/size/title, compiler, parallel build jobs, asset/Lua directories, and the bundles built without a scene instance |
 | **Export settings** | Platform targets, shader backend, output folder, included asset folders |
 
 Shaders have no directory setting: each fork picks its own location when you create it,
