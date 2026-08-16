@@ -95,8 +95,10 @@ end
 ```
 
 `intersects` also accepts individual `AABB`, `OBB`, `Plane`, `Body2D`, and `Body3D`
-targets. The returned `RayReturn` carries `hit`, `distance`, `point`, `normal`, `body`
-(the entity), and `shapeIndex`.
+targets. Pass an entity or a list of entities to skip those bodies so the ray continues
+through them (`ray:intersects(scene, RayFilter.BODY_3D, self.entity)`). The returned
+`RayReturn` carries `hit`, `distance`, `point`, `normal`, `body` (the entity), and
+`shapeIndex`.
 
 ## Angles
 

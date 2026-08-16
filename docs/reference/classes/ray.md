@@ -56,35 +56,61 @@ Multiple overloads for different collision targets:
 * [RayReturn](rayreturn.md) **intersects**(const OBB& obb) const
 * [RayReturn](rayreturn.md) **intersects**(const Sphere& sphere) const
 * [RayReturn](rayreturn.md) **intersects**(const Body2D& body) const
+* [RayReturn](rayreturn.md) **intersects**(const Body2D& body, size_t shape) const
 * [RayReturn](rayreturn.md) **intersects**(const Body3D& body) const
+* [RayReturn](rayreturn.md) **intersects**(const Body3D& body, size_t shape) const
 * [RayReturn](rayreturn.md) **intersects**(Scene* scene, [RayFilter](#rayfilter) raytest) const
 * [RayReturn](rayreturn.md) **intersects**(Scene* scene, [RayFilter](#rayfilter) raytest, bool onlyStatic) const
 * [RayReturn](rayreturn.md) **intersects**(Scene* scene, [RayFilter](#rayfilter) raytest, uint16_t categoryBits, uint16_t maskBits) const
+* [RayReturn](rayreturn.md) **intersects**(Scene* scene, [RayFilter](#rayfilter) raytest, bool onlyStatic, uint16_t categoryBits, uint16_t maskBits) const
+* [RayReturn](rayreturn.md) **intersects**(Scene* scene, [RayFilter](#rayfilter) raytest, Entity ignoreEntity) const
+* [RayReturn](rayreturn.md) **intersects**(Scene* scene, [RayFilter](#rayfilter) raytest, const std::vector\<Entity\>& ignoreEntities) const
+* [RayReturn](rayreturn.md) **intersects**(Scene* scene, [RayFilter](#rayfilter) raytest, bool onlyStatic, uint16_t categoryBits, uint16_t maskBits, Entity ignoreEntity) const
+* [RayReturn](rayreturn.md) **intersects**(Scene* scene, [RayFilter](#rayfilter) raytest, bool onlyStatic, uint16_t categoryBits, uint16_t maskBits, const std::vector\<Entity\>& ignoreEntities) const
+* [RayReturn](rayreturn.md) **intersects**(Scene* scene, uint8_t broadPhaseLayer3D) const
+* [RayReturn](rayreturn.md) **intersects**(Scene* scene, uint8_t broadPhaseLayer3D, uint16_t categoryBits, uint16_t maskBits) const
+* [RayReturn](rayreturn.md) **intersects**(Scene* scene, uint8_t broadPhaseLayer3D, Entity ignoreEntity) const
+* [RayReturn](rayreturn.md) **intersects**(Scene* scene, uint8_t broadPhaseLayer3D, const std::vector\<Entity\>& ignoreEntities) const
+* [RayReturn](rayreturn.md) **intersects**(Scene* scene, uint8_t broadPhaseLayer3D, uint16_t categoryBits, uint16_t maskBits, Entity ignoreEntity) const
+* [RayReturn](rayreturn.md) **intersects**(Scene* scene, uint8_t broadPhaseLayer3D, uint16_t categoryBits, uint16_t maskBits, const std::vector\<Entity\>& ignoreEntities) const
 
 Returns a [RayReturn](rayreturn.md) struct. Test the result with `if (result)` or `result.hit`.
 
+Scene queries return the closest hit. [RayFilter](#rayfilter) only selects 2D or 3D bodies — it does not skip a specific entity. Checking `hit.body == entity` after the fact also fails, because that body is already the closest hit and the ray never continues past it. Pass the entity (or a list of entities) to `intersects` so those bodies are ignored and the next hit is returned. This works with both `BODY_2D` and `BODY_3D`.
+
+The `uint8_t broadPhaseLayer3D` overloads test 3D bodies on one broad-phase layer only.
+
 === "C++"
     ```cpp
-    // Screen-to-world raycast
+    // Screen-to-world raycast, skipping this script's own body
     Ray ray = camera.screenToRay(mouseX, mouseY);
-    RayReturn hit = ray.intersects(&scene, RayFilter::BODY_3D);
+    RayReturn hit = ray.intersects(scene, RayFilter::BODY_3D, entity);
     if (hit) {
         Log::print("Hit body at distance: " + std::to_string(hit.distance));
     }
+
+    // Ignore several bodies
+    RayReturn hit2 = ray.intersects(scene, RayFilter::BODY_3D, std::vector<Entity>{entity, other});
     ```
 
 === "Lua"
     ```lua
+    -- Screen-to-world raycast, skipping this script's own body
     local ray = camera:screenToRay(mouseX, mouseY)
-    local hit = ray:intersects(scene, RayFilter.BODY_3D)
+    local hit = ray:intersects(scene, RayFilter.BODY_3D, self.entity)
     if hit.hit then
         Log.print("Hit at " .. tostring(hit.distance))
     end
+
+    -- Ignore several bodies
+    local hit2 = ray:intersects(scene, RayFilter.BODY_3D, {self.entity, other.entity})
     ```
 
 ## Enumerations
 
 ### RayFilter
+
+Selects which physics world a scene raycast tests. Use a separate `ignoreEntity` / `ignoreEntities` argument to skip specific bodies.
 
 * **BODY_2D** — Test against [Body2D](body2d.md) physics bodies.
 * **BODY_3D** — Test against [Body3D](body3d.md) physics bodies.

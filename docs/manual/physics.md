@@ -247,18 +247,19 @@ bool isGrounded(Body3D& body, Scene* scene, float feetOffset, float probe = 0.15
     Vector3 origin = com - Vector3(0, feetOffset - 0.05f, 0); // start just above the soles
     Ray ray(origin, Vector3(0, -(probe + 0.05f), 0));         // direction also sets the length
 
-    RayReturn result = ray.intersects(scene, RayFilter::BODY_3D);
+    // Pass the body so the ray continues through it instead of stopping at a self-hit
+    RayReturn result = ray.intersects(scene, RayFilter::BODY_3D, body.getEntity());
 
     return result.hit
-        && result.body != body.getEntity()  // ignore a self-hit
         && result.normal.y > 0.7f;           // ~45 degree slope limit
 }
 ```
 
 Pass `onlyStatic` or category/mask bits to restrict what counts as ground, for example
-`ray.intersects(scene, RayFilter::BODY_3D, true, groundCategory, groundMask)`. The same
-`Ray` API is available in Lua. The returned [RayReturn](../reference/classes/rayreturn.md)
-also carries the hit `distance`, which is handy for step snapping or coyote-time.
+`ray.intersects(scene, RayFilter::BODY_3D, true, groundCategory, groundMask, body.getEntity())`.
+The same `Ray` API is available in Lua (`RayFilter.BODY_2D` or `RayFilter.BODY_3D`). The
+returned [RayReturn](../reference/classes/rayreturn.md) also carries the hit `distance`,
+which is handy for step snapping or coyote-time.
 
 ### Contact normal (event-driven)
 
