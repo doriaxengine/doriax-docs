@@ -56,7 +56,6 @@ drops, UI cards, and any pooled hierarchy.
 | static void | [registerBundle](#registerbundle) | C++ |
 | static Entity | [createBundle](#createbundle) | C++ \| Lua |
 | static bool | [destroyBundle](#destroybundle) | C++ \| Lua |
-| static bool | [isRootOwned](#isrootowned) | C++ |
 | static uint32_t | [getBundleId](#getbundleid-getbundlename) | C++ \| Lua |
 | static std::string | [getBundleName](#getbundleid-getbundlename) | C++ \| Lua |
 | static std::vector\<std::string\> | [getBundleNames](#getbundlenames) | C++ \| Lua |
@@ -103,33 +102,34 @@ normally never write it yourself. It is C++-only and not exposed to Lua.
 
 * static Entity **createBundle**(const std::string& name, Scene* scene)
 * static Entity **createBundle**(uint32_t id, Scene* scene)
-* static Entity **createBundle**(const std::string& name, Scene* scene, const std::string& rootName)
-* static Entity **createBundle**(uint32_t id, Scene* scene, const std::string& rootName)
-* static Entity **createBundle**(const std::string& name, const EntityHandle& root)
-* static Entity **createBundle**(uint32_t id, const EntityHandle& root)
-* static Entity **createBundle**(const std::string& name, Scene* scene, Entity root)
-* static Entity **createBundle**(uint32_t id, Scene* scene, Entity root)
+* static Entity **createBundle**(const std::string& name, Scene* scene, const std::string& parentName)
+* static Entity **createBundle**(uint32_t id, Scene* scene, const std::string& parentName)
+* static Entity **createBundle**(const std::string& name, const EntityHandle& parent)
+* static Entity **createBundle**(uint32_t id, const EntityHandle& parent)
+* static Entity **createBundle**(const std::string& name, Scene* scene, Entity parent)
+* static Entity **createBundle**(uint32_t id, Scene* scene, Entity parent)
 
 Spawns an instance of a registered bundle into a scene and returns the root entity of the
 new hierarchy, or a null entity if the name/ID is not found or the factory fails.
 
-- The two-argument overloads create a **new** root entity for the instance.
-- `(name/id, scene, rootName)` looks up `rootName` **in that scene**, then attaches the
-  bundle under it.
-- `(name/id, EntityHandle)` uses the scene already stored on the handle (any
-  [Object](object.md), [Button](button.md), and so on).
-- `(name/id, scene, Entity)` attaches under an existing entity id. That id must belong
+**Every overload creates the instance root**, so the same bundle can be spawned any number of
+times. The third argument only says where the new root is parented:
+
+- The two-argument overloads leave the instance at the top level of the scene.
+- `(name/id, scene, parentName)` looks up `parentName` **in that scene** and parents the
+  instance under it.
+- `(name/id, EntityHandle)` parents it under that object, using the scene already stored on
+  the handle (any [Object](object.md), [Button](button.md), and so on).
+- `(name/id, scene, Entity)` parents it under an existing entity id. That id must belong
   to `scene`.
 
 Each successful call tracks the instance internally so [`destroyBundle`](#destroybundle)
-can later remove every entity it created. A root **you** supply — by name, by entity, or
-through a handle — belongs to the scene, so it is kept when the instance is destroyed;
-only a root `createBundle` created for the instance is destroyed with it. Note the
-argument order: the bundle **name/ID comes first, then the scene**.
+can later remove every entity it created, leaving the parent alone. Note the argument order:
+the bundle **name/ID comes first, then the scene**.
 
 !!! note "Entity IDs are scene-local"
-    Each scene allocates its own entity IDs. When attaching to an existing root, prefer
-    `createBundle(name, scene, "rootName")` so the name is resolved in that scene, or
+    Each scene allocates its own entity IDs. When parenting, prefer
+    `createBundle(name, scene, "parentName")` so the name is resolved in that scene, or
     pass an object that already carries its scene. Passing a raw `Entity` from another
     scene (for example a main-scene id into a UI scene) targets the wrong entity.
 
@@ -141,14 +141,14 @@ argument order: the bundle **name/ID comes first, then the scene**.
     -- By ID
     local r2 = BundleManager.createBundle(1, scene)
 
-    -- Under a named entity in that scene
+    -- Parented under a named entity in that scene
     BundleManager.createBundle("enemy_grunt", scene, "spawn")
 
-    -- Under an object that already carries its scene
+    -- Parented under an object that already carries its scene
     BundleManager.createBundle("enemy_grunt", someObject)
 
-    -- Under an existing entity id (must belong to scene)
-    BundleManager.createBundle("enemy_grunt", scene, existingRoot)
+    -- Parented under an existing entity id (must belong to scene)
+    BundleManager.createBundle("enemy_grunt", scene, existingEntity)
     ```
 
 === "C++"
@@ -157,7 +157,7 @@ argument order: the bundle **name/ID comes first, then the scene**.
     Entity r2   = BundleManager::createBundle(1, &scene);
     BundleManager::createBundle("enemy_grunt", &scene, "spawn");
     BundleManager::createBundle("enemy_grunt", someObject);
-    BundleManager::createBundle("enemy_grunt", &scene, existingRoot);
+    BundleManager::createBundle("enemy_grunt", &scene, existingEntity);
     ```
 
 ---
@@ -166,12 +166,11 @@ argument order: the bundle **name/ID comes first, then the scene**.
 
 * static bool **destroyBundle**(Scene* scene, Entity rootEntity)
 
-Destroys a bundle instance by its root entity, removing every entity the spawn created,
-children first. The root goes with them only when [`createBundle`](#createbundle) created
-it; a root you passed in stays in the scene. If the bundle was registered with a custom
-destroyer, that is called instead of the default destruction. Returns `false` if
-`rootEntity` is not a tracked bundle root. Note the argument order: **scene first, then
-the root entity**.
+Destroys a bundle instance by its root entity, removing every entity the spawn created
+(children first, then the root). The entity the instance was parented to is not touched. If
+the bundle was registered with a custom destroyer, that is called instead of the default
+destruction. Returns `false` if `rootEntity` is not a tracked bundle root. Note the argument
+order: **scene first, then the root entity**.
 
 === "Lua"
     ```lua
@@ -182,17 +181,6 @@ the root entity**.
     ```cpp
     BundleManager::destroyBundle(&scene, root);
     ```
-
----
-
-### isRootOwned
-
-* static bool **isRootOwned**(Scene* scene, Entity rootEntity)
-
-Returns `true` when [`createBundle`](#createbundle) created the instance's root, which is
-also when [`destroyBundle`](#destroybundle) destroys it. A root you supplied belongs to the
-scene, so it returns `false`. Written for custom destroyers, which run while the instance is
-still tracked and often need to know whether the root is theirs to remove. C++-only.
 
 ---
 

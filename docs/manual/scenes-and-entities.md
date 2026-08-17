@@ -382,9 +382,10 @@ Bundle **registration** is generated automatically by the export step (it emits 
 `registerBundle` call that wires the factory to the bundle name/ID). At runtime you
 mainly call `createBundle` and `destroyBundle`. Note that `createBundle` takes the bundle
 **name first, then the scene**, and returns the root `Entity`. Entity IDs are
-scene-local: to attach under an existing entity, look it up in the destination scene
-with `createBundle(name, scene, "rootName")`, or pass an object that already carries
-its scene.
+scene-local: to parent the instance under an existing entity, look it up in the destination
+scene with `createBundle(name, scene, "parentName")`, or pass an object that already carries
+its scene. Every call creates its own root, so a bundle can be spawned as many times as you
+want.
 
 !!! note "There is no direct `.bundle` file loader"
     You don't load a `.bundle` file by path at runtime. Export turns each file into a

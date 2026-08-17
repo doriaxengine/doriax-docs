@@ -119,7 +119,7 @@ the scene root, or on an entity with a `Transform` to parent the instance there.
 
 Bundle registration is generated automatically by the export step. At runtime you call
 `createBundle` (bundle **name first, then scene**) and `destroyBundle`. Entity IDs are
-scene-local, so attach under an existing root with `createBundle(name, scene, "rootName")`
+scene-local, so parent under an existing entity with `createBundle(name, scene, "parentName")`
 or pass an object that already carries its scene:
 
 === "Lua"
@@ -127,7 +127,7 @@ or pass an object that already carries its scene:
     ```lua
     -- Create a bundle instance at runtime
     local root = BundleManager.createBundle("enemy_grunt", scene)
-    -- Attach under a named entity in that scene
+    -- Parent the new instance under a named entity in that scene
     BundleManager.createBundle("enemy_grunt", scene, "spawn")
 
     -- Destroy it later
