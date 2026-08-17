@@ -306,9 +306,13 @@ curves by subscribing to an `Ease` instance.
 | C++ script destructor | Call matching `UNREGISTER_*` macros |
 | Lua script unload | `cleanupLuaScripts` removes tags containing instance pointer |
 | Scene unload | `Scene::removeSubscriptionsByTag` |
+| Component callbacks | `Engine::clearComponentSubscriptions(scene)` |
 | Full reset | `Engine::clearAllSubscriptions()` |
 
-Always unregister in C++ destructors when the object can outlive a scene reload.
+Always unregister in C++ destructors when the object can outlive a scene reload. A callback added
+straight to a component event (`button.onPress.add("pressed", ...)`) is not removed with the script
+that added it, so unregister it too — `Engine::clearComponentSubscriptions(scene)` drops every
+component callback of a scene at once.
 
 ## Best practices
 

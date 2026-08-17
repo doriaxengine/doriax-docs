@@ -56,6 +56,7 @@ drops, UI cards, and any pooled hierarchy.
 | static void | [registerBundle](#registerbundle) | C++ |
 | static Entity | [createBundle](#createbundle) | C++ \| Lua |
 | static bool | [destroyBundle](#destroybundle) | C++ \| Lua |
+| static bool | [isRootOwned](#isrootowned) | C++ |
 | static uint32_t | [getBundleId](#getbundleid-getbundlename) | C++ \| Lua |
 | static std::string | [getBundleName](#getbundleid-getbundlename) | C++ \| Lua |
 | static std::vector\<std::string\> | [getBundleNames](#getbundlenames) | C++ \| Lua |
@@ -121,8 +122,10 @@ new hierarchy, or a null entity if the name/ID is not found or the factory fails
   to `scene`.
 
 Each successful call tracks the instance internally so [`destroyBundle`](#destroybundle)
-can later remove every entity it created. Note the argument order: the bundle **name/ID
-comes first, then the scene**.
+can later remove every entity it created. A root **you** supply — by name, by entity, or
+through a handle — belongs to the scene, so it is kept when the instance is destroyed;
+only a root `createBundle` created for the instance is destroyed with it. Note the
+argument order: the bundle **name/ID comes first, then the scene**.
 
 !!! note "Entity IDs are scene-local"
     Each scene allocates its own entity IDs. When attaching to an existing root, prefer
@@ -163,10 +166,12 @@ comes first, then the scene**.
 
 * static bool **destroyBundle**(Scene* scene, Entity rootEntity)
 
-Destroys a bundle instance by its root entity, removing all tracked entities (children
-first, then the root). If the bundle was registered with a custom destroyer, that is
-called instead of the default destruction. Returns `false` if `rootEntity` is not a
-tracked bundle root. Note the argument order: **scene first, then the root entity**.
+Destroys a bundle instance by its root entity, removing every entity the spawn created,
+children first. The root goes with them only when [`createBundle`](#createbundle) created
+it; a root you passed in stays in the scene. If the bundle was registered with a custom
+destroyer, that is called instead of the default destruction. Returns `false` if
+`rootEntity` is not a tracked bundle root. Note the argument order: **scene first, then
+the root entity**.
 
 === "Lua"
     ```lua
@@ -177,6 +182,17 @@ tracked bundle root. Note the argument order: **scene first, then the root entit
     ```cpp
     BundleManager::destroyBundle(&scene, root);
     ```
+
+---
+
+### isRootOwned
+
+* static bool **isRootOwned**(Scene* scene, Entity rootEntity)
+
+Returns `true` when [`createBundle`](#createbundle) created the instance's root, which is
+also when [`destroyBundle`](#destroybundle) destroys it. A root you supplied belongs to the
+scene, so it returns `false`. Written for custom destroyers, which run while the instance is
+still tracked and often need to know whether the root is theirs to remove. C++-only.
 
 ---
 

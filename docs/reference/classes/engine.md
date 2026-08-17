@@ -89,6 +89,7 @@ Control engine properties and define defaults used across the whole project. `En
 | static void | [clearPools](#clearpools) | C++ |
 | static void | [clearUnusedPools](#clearunusedpools) | C++ |
 | static void | [clearAllSubscriptions](#clearallsubscriptions) | C++ \| Lua |
+| static void | [clearComponentSubscriptions](#clearcomponentsubscriptions) | C++ \| Lua |
 | static void | [startAsyncThread](#startasyncthread-committhreadqueue-endasyncthread-isasyncthread) | C++ \| Lua |
 | static void | [commitThreadQueue](#startasyncthread-committhreadqueue-endasyncthread-isasyncthread) | C++ \| Lua |
 | static void | [endAsyncThread](#startasyncthread-committhreadqueue-endasyncthread-isasyncthread) | C++ \| Lua |
@@ -600,6 +601,32 @@ Returns `true` after the graphics surface is ready (after [onViewLoaded](#onview
 * `static void clearAllSubscriptions(bool includeLifecycle)`
 
 Removes all registered callbacks from all engine events. When `includeLifecycle` is `false`, lifecycle events such as `onViewLoaded` are preserved.
+
+---
+
+### clearComponentSubscriptions
+
+* `static void clearComponentSubscriptions(Scene* scene)`
+
+Removes the callbacks registered on a scene's components — [Button](button.md) `onPress`,
+[UI](uicomponent.md) pointer and focus events, panel, scrollbar, text edit, sound, and action
+events. [clearAllSubscriptions](#clearallsubscriptions) covers the engine's own events; this one
+covers the per-component events.
+
+Callbacks a script adds directly, as in
+`getComponent<ButtonComponent>().onPress.add("pressed", ...)`, stay on the component after the
+script is gone, so call this before the code behind them is unloaded — the editor does it when a
+scene stops and the project library is released.
+
+=== "Lua"
+    ```lua
+    Engine.clearComponentSubscriptions(scene)
+    ```
+
+=== "C++"
+    ```cpp
+    Engine::clearComponentSubscriptions(&scene);
+    ```
 
 ---
 
