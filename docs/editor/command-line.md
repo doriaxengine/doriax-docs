@@ -29,6 +29,17 @@ opening a window.
 On Linux and macOS there is a single binary, and the subcommands run before the window
 backend starts, so they work on headless machines.
 
+!!! note "macOS: the binary is inside the app bundle"
+    The editor ships as `Doriax.app`, so the command-line entry point is
+    `Doriax.app/Contents/MacOS/Doriax`:
+
+    ```bash
+    /Applications/Doriax.app/Contents/MacOS/Doriax export \
+      --project ./MyGame --out ./build/MyGame
+    ```
+
+    Alias it or add that directory to your `PATH` if you use it often.
+
 ## `export` — build a project to a target
 
 Serializes scenes, generates the C++ glue and bundle factories, compiles shaders, copies

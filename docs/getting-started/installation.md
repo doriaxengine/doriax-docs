@@ -31,6 +31,28 @@ The Windows download contains two executables: run `doriax-editor.exe` to open t
 editor, and use `doriax-editor-cmd.exe` for scripting and CI. See
 [Command-Line Tools](../editor/command-line.md).
 
+The macOS download is a disk image holding `Doriax.app`. Open the `.dmg` and drag the app
+onto the **Applications** shortcut inside it.
+
+!!! warning "macOS blocks the first launch"
+    Doriax is signed, but not notarized by Apple — notarization requires a paid Apple
+    Developer membership. macOS therefore reports that it cannot verify the app the first
+    time you open it.
+
+    To allow it, open **System Settings → Privacy & Security**, scroll to the security
+    section near the bottom, and click **Open Anyway**. You only do this once per version.
+
+    Before macOS Sequoia you could Control-click the app and choose **Open** instead. That
+    shortcut was removed.
+
+    Downloading from a terminal skips the prompt altogether, because the quarantine flag
+    is set by the browser rather than by macOS:
+
+    ```bash
+    curl -L -o doriax_macos.zip \
+      https://nightly.link/doriaxengine/doriax/workflows/cmake.yml/main/doriax_macos.zip
+    ```
+
 ## Build from source
 
 Doriax is built with **CMake**. The root project builds the desktop editor target
