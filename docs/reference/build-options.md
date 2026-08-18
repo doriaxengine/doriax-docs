@@ -99,6 +99,11 @@ Desktop export selector passes the corresponding value automatically; Web export
 On macOS, `vulkan` builds through MoltenVK but cannot run yet — see
 [Vulkan backend](../building/macos.md#vulkan-backend).
 
+The root **editor** build reads the same variable, but accepts only `vulkan` or `glcore`
+(Linux and Windows, defaulting to `glcore`); macOS is forced to `metal`. There it is a
+cached variable, so the build directory keeps the backend it was configured with until
+`-DGRAPHIC_BACKEND=` is passed again.
+
 ## App backend
 
 | Backend | Target |

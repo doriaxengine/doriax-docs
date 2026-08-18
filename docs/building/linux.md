@@ -46,6 +46,18 @@ cmake --build build --config Release --target doriax-editor
 Ninja is a **single-config** generator, so the `doriax-editor` executable is created
 directly under `build/`.
 
+The editor itself renders with OpenGL Core on Linux. To build it against Vulkan instead,
+install the Vulkan SDK packages (see [Vulkan backend](#vulkan-backend)) and configure
+with `-DGRAPHIC_BACKEND=vulkan`:
+
+```bash
+cmake -S . -B build-vulkan -DGRAPHIC_BACKEND=vulkan -DCMAKE_BUILD_TYPE=Release -G "Ninja"
+```
+
+`GRAPHIC_BACKEND` is cached for the editor build, so the build directory keeps the
+backend it was created with — later `cmake` runs without the flag will not switch it
+back. Use a separate build directory (or pass `-DGRAPHIC_BACKEND=` again) to change it.
+
 ## Runtime project build
 
 Linux runtime builds default to OpenGL Core and the GLFW app backend.

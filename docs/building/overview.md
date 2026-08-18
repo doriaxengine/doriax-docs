@@ -38,9 +38,12 @@ cmake --build build --config Release
 - On **multi-config** generators (Visual Studio, Xcode) it is created under a
   configuration subdirectory such as `build/Release/`.
 
-The root editor build uses the GLFW API backend by default and OpenGL Core for the
-editor renderer. You can select SDL instead of GLFW with `-DAPI_BACKEND=sdl` when the
-SDL2 development package is installed.
+The root editor build picks its platform backend from the host OS (`API_BACKEND` is a
+detection, not a choice: `linux`, `win`, or `mac`). Linux and Windows render the editor
+with OpenGL Core by default and accept `-DGRAPHIC_BACKEND=vulkan`; macOS is always Metal.
+For the editor, `GRAPHIC_BACKEND` is a **cached** variable, so a build directory keeps
+the backend it was configured with — reconfiguring without the flag will not silently
+switch it back.
 
 ## Building a runtime project from source
 
