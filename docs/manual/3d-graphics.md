@@ -239,8 +239,8 @@ position and applies that environment to meshes inside a box-shaped influence vo
 with box-projected (parallax-corrected) reflections that stay anchored to the room.
 Probes can be **static** — an authored cubemap or a one-time capture at load — or
 **dynamic**, re-capturing at runtime on move, on an interval, or on demand. A mesh that
-wraps around a probe would show up inside its own reflection, so turn off its **Draw in
-Probes** flag to keep it out of captures. See
+wraps around a probe would show up inside its own reflection, so turn off its **Render
+in Probes** flag to keep it out of captures. See
 [Rendering Pipeline — Reflection probes](rendering-pipeline.md#reflection-probes).
 
 ### Mirrors
