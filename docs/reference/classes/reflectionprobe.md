@@ -14,6 +14,10 @@ sample its cubemap (box-projected, so reflections stay anchored to the volume) i
 the global sky environment. Meshes need **Receive IBL** and **Receive Lights** enabled to
 pick probes up.
 
+Meshes with `renderInReflectionProbes` disabled are skipped by captures, which keeps an
+object that wraps around a probe out of its own reflection — see
+[Mesh](mesh.md#renderinreflectionprobes).
+
 Static probes use an authored cubemap — or capture the scene once at load when no cubemap
 is set. Dynamic probes re-capture at runtime according to their update mode, budgeted at
 one cubemap face per frame. See

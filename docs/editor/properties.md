@@ -153,6 +153,7 @@ The **Mesh** component exposes rendering flags beyond per-submesh material slots
 | **Receive IBL** | When enabled, the mesh is lit with the scene's Sky environment (diffuse irradiance + specular reflections) in addition to punctual lights. Requires a Sky entity with a cubemap texture. |
 | **Receive Lights** | Master switch for dynamic lighting (must be on for IBL to apply). |
 | **Cast / Receive Shadows** | Shadow map participation. |
+| **Draw in Probes** | Whether the mesh appears in [Reflection Probe](../reference/classes/reflectionprobe.md) captures. Turn it off so an object wrapped around a probe is not seen in its own reflection. |
 
 Each **Submesh** section contains a **Material** row with a shaded preview sphere. The
 preview reflects the current **Receive IBL** setting so you can see environment

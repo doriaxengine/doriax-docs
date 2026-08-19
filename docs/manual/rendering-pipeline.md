@@ -323,6 +323,13 @@ falls back to the sky environment.
 | **Near / Far** | Clip planes of the capture cameras. |
 | **Include Sky** | Whether the sky (and scene background colour) appears in the capture. |
 
+Individual meshes stay out of captures with **Draw in Probes** on the Mesh component
+(`renderInReflectionProbes`). Turn it off for geometry wrapped around a probe — a car
+body with a probe at its centre, say — which would otherwise fill its own reflection.
+The mesh still renders normally everywhere else. Toggling it re-captures every probe in
+the scene, because static and non-interval probes keep their baked cubemap until
+something invalidates it.
+
 ```cpp
 // C++: a dynamic probe covering a 12x6x12 room
 ReflectionProbe probe(&scene);

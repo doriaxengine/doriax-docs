@@ -44,9 +44,10 @@ description: Mesh API reference — geometry, materials, shadows, transparency, 
 | [WindingOrder](#windingorder) | windingOrder | `CCW` | C++ \| Lua |
 | bool | receiveLights | `true` | C++ \| Lua |
 | bool | receiveIBL | `false` | Editor / scene |
-| bool | [castShadows](#castshadows-receiveshadows) | `false` | C++ \| Lua |
-| bool | [receiveShadows](#castshadows-receiveshadows) | `false` | C++ \| Lua |
-| bool | shadowsBillboard | `false` | C++ \| Lua |
+| bool | [castShadows](#castshadows-receiveshadows) | `true` | C++ \| Lua |
+| bool | [receiveShadows](#castshadows-receiveshadows) | `true` | C++ \| Lua |
+| bool | shadowsBillboard | `true` | C++ \| Lua |
+| bool | [renderInReflectionProbes](#renderinreflectionprobes) | `true` | C++ \| Lua |
 | bool | castShadowsWithTexture | `false` | C++ \| Lua |
 | bool | [transparent](#transparent-autotransparency) | `false` | C++ \| Lua |
 | bool | [autoTransparency](#transparent-autotransparency) | `true` | C++ \| Lua |
@@ -191,6 +192,20 @@ Enables or disables back-face culling globally for this mesh. Disable for double
 * *Getter:* `bool isCastShadows() const` / `bool isReceiveShadows() const`
 
 Shadow participation flags. Enabling both adds depth-map cost; disable on distant or small objects for performance.
+
+---
+
+### renderInReflectionProbes
+
+* *Setter:* `void setRenderInReflectionProbes(bool renderInReflectionProbes)`
+* *Getter:* `bool isRenderInReflectionProbes() const`
+
+Whether the mesh is drawn into [ReflectionProbe](reflectionprobe.md) captures. Turn it off
+when an object surrounds or sits on a probe and would otherwise show up inside its own
+reflection. Normal rendering is unaffected — this only controls the capture pass.
+
+Changing it re-captures every probe in the scene: a probe that already baked its cubemap
+keeps the old contents until it captures again.
 
 ---
 
