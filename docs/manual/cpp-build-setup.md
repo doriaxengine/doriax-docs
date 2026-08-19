@@ -149,12 +149,76 @@ chosen on a 32-core workstation is not lost when a teammate opens the project on
     rebuild on the next Play. Ninja and Make apply the limit at the build-tool level,
     so changing it there only affects new compilations.
 
+## Script directories
+
+By default the editor compiles only the C++ scripts a scene actually uses — the files
+referenced by a Script component. A helper class that no entity mentions is never built,
+and every header is included by its full path from the project root.
+
+**Project → Project Settings → Directories → Script Directories** changes that. Add any
+folder inside your project and it becomes two things at once:
+
+| Role | Effect |
+| --- | --- |
+| **Include root** | Headers under it are included by the path *below* the folder, so the full path from the project root is no longer needed |
+| **Compile root** | Every `.cpp` under it is compiled, even when no entity references it |
+
+Only the folders you add behave this way — the rest of the project is untouched, and a
+project with no script directories builds exactly as before.
+
+This lets you lay out code in modules and include across them by short path. With
+`Source/Public` added as a root, a header at `Source/Public/Player/Script.h` becomes:
+
+```cpp
+#include "Player/Script.h"   // instead of "Source/Public/Player/Script.h"
+```
+
+Add as many roots as you need; they are searched in the order listed. Both roles apply to
+Play builds and to [exported projects](../editor/export.md) alike.
+
+!!! note "Keep roots inside the project"
+    A folder outside the project compiles in the editor but **cannot be exported** — the
+    export copies the project tree only, and warns that the directory was skipped. Use a
+    folder inside the project for anything you intend to ship.
+
+The list is saved as `scriptDirs` in `project.yaml` and travels with the project.
+
+## Customizing the build
+
+The `CMakeLists.txt` at your project root is generated: Play and Save overwrite it, so
+edits to it are lost. To add your own CMake — linking a third-party library, extra
+compile definitions, platform flags — create **`ProjectBuild.cmake`** next to it. The
+editor never creates, reads or overwrites that file, and both the editor build and
+exported builds include it when it exists.
+
+```cmake
+target_link_libraries(${DORIAX_TARGET} PRIVATE mylib)
+target_include_directories(${DORIAX_TARGET} PRIVATE ${DORIAX_SCRIPTS_DIR}/ThirdParty/include)
+```
+
+Two variables are set for you, with the same meaning in both builds:
+
+| Variable | Value |
+| --- | --- |
+| `DORIAX_TARGET` | The target to attach to |
+| `DORIAX_SCRIPTS_DIR` | The root your `.h`/`.cpp` paths are relative to |
+
+!!! warning "Attach through `${DORIAX_TARGET}`, not the target name"
+    The target is named after your project in editor builds and after the application
+    name in exported ones, so a hard-coded name works in one and breaks in the other —
+    and breaks again if you rename the project.
+
+For include paths alone you do not need this file: [Script
+directories](#script-directories) covers that case from the editor.
+
 ## Where build files live
 
-Play and Save rewrite the generated C++ glue under **`.doriax/generated`** inside your
-project folder (`CMakeLists.txt`, `main.cpp`, `scene_scripts.cpp`, and bundle factories).
-That list includes every C++ script and `.bundle` file that still exists on disk. Do
-**not** edit those files by hand — the next Play or Save overwrites them.
+Play and Save rewrite the generated C++ glue: `CMakeLists.txt` at the **project root**,
+`scene_scripts.cpp` under **`.doriax`**, and `main.cpp` plus the scene and bundle
+factories under **`.doriax/generated`**. Together they cover every C++ script and
+`.bundle` file that still exists on disk. Do **not** edit those files by hand — the next
+Play or Save overwrites them. Put your own build settings in
+[`ProjectBuild.cmake`](#customizing-the-build) instead, which is never overwritten.
 
 The CMake build tree is generated under **`.doriax/build`**. It is a disposable cache —
 deleting it forces a full clean reconfigure and rebuild, which is a good first step when
@@ -177,7 +241,7 @@ is almost always the meaningful one.
 | `internal compiler error: Killed` (GCC/Clang) or `fatal error C1060: compiler is out of heap space` (MSVC) | The parallel build ran out of memory. Lower **Project Settings → Parallel Jobs** (try `1` or `2`) — see [Parallel builds](#parallel-builds). |
 | `Does not match the generator used previously` | The build directory holds a cache from a different generator. The editor normally cleans it automatically when you switch compilers; if it reports the directory is **locked**, close anything using `.doriax/build` (notably the VS Code *CMake Tools* extension) or delete the folder manually, then try again. |
 | `CMake configuration failed` with **no other output** | Update the editor — older versions dropped the output of commands that failed quickly. Current versions print the full CMake error plus a `Process exited with code N` line. |
-| `CMake Error: File ... does not exist.` (or similar) for a script or `.bundle` you already deleted | Generated sources still listed a missing file. Current editors skip files that are gone from disk; press Play or Save once to regenerate. Do not patch `.doriax/generated/CMakeLists.txt` — it is overwritten. If a closed scene still shows the old ScriptComponent entry, open that scene, remove the leftover, and save. |
+| `CMake Error: File ... does not exist.` (or similar) for a script or `.bundle` you already deleted | Generated sources still listed a missing file. Current editors skip files that are gone from disk; press Play or Save once to regenerate. Do not patch the generated `CMakeLists.txt` — it is overwritten. If a closed scene still shows the old ScriptComponent entry, open that scene, remove the leftover, and save. |
 | `Unknown type SomeClass` | A leftover C++ script class name is still registered. Remove that ScriptComponent entry from every scene and bundle that still lists it, then Play or Save. Recreating a script with the same class name also recovers a project that was already broken. |
 | `Compiler kit changed. Cleaning build directory...` | Not an error — the compiler selection changed, so the editor wipes `.doriax/build` and reconfigures from scratch. |
 | Errors persist after fixing the toolchain | Delete `.doriax/build` and press Play again to force a clean configure. |
