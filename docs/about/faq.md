@@ -103,12 +103,37 @@ over largely intact (with renames such as `SPROPERTY` → `DPROPERTY` and the `d
 namespace), but projects should migrate to the Doriax editor workflow. Some internal
 folders may still mention the previous name during the transition.
 
+## Where can I find the editor crash log?
+
+The desktop editor writes timestamped Output-panel messages to `editor.log`. If the
+editor exits because of a fatal signal or an unhandled exception, it also appends the
+editor version, executable path, reason, and a backtrace. Include this file when
+reporting a crash.
+
+The log is beside the active `settings.yaml`. An editor started from an installed
+desktop launcher normally uses:
+
+| Platform | Log path |
+| --- | --- |
+| Windows | `%APPDATA%\Doriax\editor.log` |
+| macOS | `~/Library/Application Support/Doriax/editor.log` |
+| Linux | `$XDG_CONFIG_HOME/doriax/editor.log`, or `~/.config/doriax/editor.log` when `XDG_CONFIG_HOME` is unset |
+
+When you run the editor from source or another writable working directory, it may keep
+both `settings.yaml` and `editor.log` in that directory instead. The definitive rule is
+that the two files are together.
+
+The editor appends several sessions to the log. At startup, a log larger than 2 MiB is
+moved to `editor.log.1` before a new `editor.log` is created. If both files exist after
+a crash, include both so the earlier session is not lost.
+
 ## Where can I get help or report bugs?
 
 - **Discord** — [discord.gg/yXXDyJf3gT](https://discord.gg/yXXDyJf3gT) for questions and
   discussion.
 - **GitHub** — [github.com/doriaxengine/doriax](https://github.com/doriaxengine/doriax)
-  for issues and contributions.
+  for issues and contributions. For editor crashes, attach the
+  [`editor.log`](#where-can-i-find-the-editor-crash-log) described above.
 
 ## How can I contribute?
 

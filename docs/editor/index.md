@@ -24,7 +24,7 @@ The editor window is divided into a set of resizable panels:
 | **Resources Browser** | Project asset manager: import, preview, and organize files |
 | **Animation Timeline** | Keyframe editor for object animation, sprite frames, and bones |
 | **Code Editor** | Integrated Lua and C++ editor with API completion |
-| **Output panel** | Build logs, play-mode diagnostics, and export messages |
+| **Output panel** | Build logs, play-mode diagnostics, and export messages, persisted to [`editor.log`](../about/faq.md#where-can-i-find-the-editor-crash-log) for crash reports |
 
 ## Main workflows
 
