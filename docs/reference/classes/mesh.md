@@ -43,7 +43,7 @@ description: Mesh API reference — geometry, materials, shadows, transparency, 
 | [CullingMode](#cullingmode) | cullingMode | `BACK` | C++ \| Lua |
 | [WindingOrder](#windingorder) | windingOrder | `CCW` | C++ \| Lua |
 | bool | receiveLights | `true` | C++ \| Lua |
-| bool | receiveIBL | `false` | Editor / scene |
+| bool | [receiveIBL](#receiveibl) | `false` | C++ \| Lua |
 | bool | [castShadows](#castshadows-receiveshadows) | `true` | C++ \| Lua |
 | bool | [receiveShadows](#castshadows-receiveshadows) | `true` | C++ \| Lua |
 | bool | shadowsBillboard | `true` | C++ \| Lua |
@@ -211,12 +211,23 @@ keeps the old contents until it captures again.
 
 ### receiveIBL
 
+* *Setter:* `void setReceiveIBL(bool receiveIBL)`
+* *Getter:* `bool isReceiveIBL() const`
+
 When `true`, the mesh samples the scene's Sky environment for image-based lighting:
 diffuse irradiance plus specular reflections on top of punctual lights. Requires a Sky
 entity with a cubemap texture, **Receive Lights** enabled, and surface normals.
 
-Set this in the editor on the Mesh component (**Receive IBL**). The flag is serialized
-with the scene. Metallic, low-roughness materials show the strongest reflections.
+Also settable in the editor on the Mesh component (**Receive IBL**); the flag is
+serialized with the scene. Metallic, low-roughness materials show the strongest
+reflections.
+
+Beyond reflective materials, this is what keeps *unlit* sides of an object from going
+flat. A surface no light reaches falls back to the scene's global illumination, which is
+a single flat colour — with a bright white ambient it washes out to a pale grey. With
+`receiveIBL` the same surface takes its colour from the sky instead. This shows up most
+in [mirrors](../../manual/rendering-pipeline.md#mirrors-and-planar-reflections), which
+show the side of an object facing the mirror — usually the side the key light misses.
 
 ---
 

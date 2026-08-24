@@ -248,9 +248,11 @@ in Probes** flag to keep it out of captures. See
 For a true planar reflection on a flat surface — a mirror, still water, or a polished
 floor — add a **Mirror** from the Structure panel's create menu. It produces an upright
 reflective wall that reflects the scene from the viewer's mirrored viewpoint, with no
-camera or texture setup required. See
+camera or texture setup required. Because a mirror shows the side of an object facing it
+— the side a single key light usually misses — reflected meshes want **Receive IBL** or a
+fill light to avoid looking washed out. See
 [Rendering Pipeline — Mirrors and planar reflections](rendering-pipeline.md#mirrors-and-planar-reflections)
-for how it works and its performance cost.
+for how it works, its lighting, and its performance cost.
 
 ## Cameras
 

@@ -245,7 +245,8 @@ Typical workflow:
 
 1. Add a Sky entity and assign a cubemap (HDR or LDR).
 2. Select meshes that should reflect the environment (metal, glass, wet stone, etc.).
-3. Enable **Receive IBL** on those meshes in the Properties window.
+3. Enable **Receive IBL** on those meshes in the Properties window, or call
+   `setReceiveIBL(true)` (Lua: `mesh.receiveIBL = true`) in code.
 4. Tune **Roughness** and **Metallic** on the material — low roughness makes reflections
    more obvious.
 
@@ -552,6 +553,26 @@ created with `createPlane`). Use `removeMirror()` / `isMirror()` to toggle or qu
 | Reflected camera | Each frame the active camera is mirrored across the surface plane (entity position + normal). This preserves the handedness flip a real mirror has, so reflected geometry is rendered with **reversed face winding** to stay front-facing. |
 | Projective sampling | The surface samples the reflection texture by screen position, not by mesh UVs, so the reflection stays correctly aligned regardless of the surface's size or placement. |
 | Oblique clipping | The reflection camera's near plane is bent onto the mirror plane (Lengyel oblique projection), so geometry **behind** the mirror cannot leak into the reflection. The sky is excluded from this clip and reflects normally. |
+
+### Lighting in the reflection
+
+A mirror shows the side of an object that **faces the mirror** — usually not the side
+your key light hits. That side is lit only by whatever indirect lighting the scene has,
+so a single directional light plus a flat global illumination colour renders it as a
+washed-out silhouette: with a white ambient, a pale grey ghost of the object.
+
+This is not a mirror artefact — the reflection is rendered with the same lights as the
+main view. The fix is the scene's indirect lighting:
+
+- Enable [**Receive IBL**](../reference/classes/mesh.md#receiveibl) on the reflected
+  meshes so their shaded sides take colour from the sky environment instead of a flat
+  ambient. This is the closest match to how objects look in the main view.
+- Or add a low-intensity fill light pointing back toward the mirror, so the reflected
+  side gets some direct light of its own.
+
+The same applies to the mirror surface itself: leaving **Receive Lights** on shades the
+reflection with the mirror's own material, while turning it off shows the reflected image
+directly.
 
 ### The Normal field
 
