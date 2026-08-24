@@ -31,9 +31,9 @@ The Windows download contains two executables: run `doriax-editor.exe` to open t
 editor, and use `doriax-editor-cmd.exe` for scripting and CI. See
 [Command-Line Tools](../editor/command-line.md).
 
-The Linux download is an **AppImage**: unzip it and run the file directly. It keeps its
-executable bit and needs no installation. A `.tar.gz` of the same build is offered next to
-it if you would rather have a plain directory, or install the editor system-wide.
+The Linux download is an **AppImage**: unzip it, mark it executable with `chmod +x`, and
+run the file directly — there is nothing to install. A plain folder of the same build is
+offered next to it if you would rather have the binaries loose.
 
 !!! tip "Adding Doriax to your application menu"
     An AppImage is a single self-contained file, so nothing registers it with your desktop
@@ -59,8 +59,8 @@ onto the **Applications** shortcut inside it.
     is set by the browser rather than by macOS:
 
     ```bash
-    curl -L -o doriax_macos.zip \
-      https://nightly.link/doriaxengine/doriax/workflows/cmake.yml/main/doriax_macos.zip
+    curl -L -o doriax_macos_dmg.zip \
+      https://nightly.link/doriaxengine/doriax/workflows/cmake.yml/main/doriax_macos_dmg.zip
     ```
 
 ## Build from source
