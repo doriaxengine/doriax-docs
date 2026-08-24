@@ -11,7 +11,7 @@ On Debian/Ubuntu-based distributions, install the development packages:
 ```bash
 sudo apt update
 sudo apt install -y \
-  build-essential cmake ninja-build python3 \
+  build-essential cmake ninja-build pkg-config python3 \
   libglfw3-dev libxi-dev libxcursor-dev libxrandr-dev libxinerama-dev \
   libwayland-dev libxkbcommon-dev wayland-protocols extra-cmake-modules \
   libgl1-mesa-dev libdbus-1-dev libcurl4-openssl-dev
@@ -21,6 +21,7 @@ sudo apt install -y \
 | --- | --- |
 | `build-essential` | C/C++ compiler and toolchain |
 | `cmake`, `ninja-build` | Build system |
+| `pkg-config` | Locating the D-Bus and Wayland modules at configure time |
 | `python3` | Generated editor API suggestion files |
 | `libglfw3-dev` | Windowing / input |
 | `libxi-dev`, `libxcursor-dev`, `libxrandr-dev`, `libxinerama-dev` | X11 input, cursor, and display support |

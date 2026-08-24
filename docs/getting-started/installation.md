@@ -31,6 +31,16 @@ The Windows download contains two executables: run `doriax-editor.exe` to open t
 editor, and use `doriax-editor-cmd.exe` for scripting and CI. See
 [Command-Line Tools](../editor/command-line.md).
 
+The Linux download is an **AppImage**: unzip it and run the file directly. It keeps its
+executable bit and needs no installation. A `.tar.gz` of the same build is offered next to
+it if you would rather have a plain directory, or install the editor system-wide.
+
+!!! tip "Adding Doriax to your application menu"
+    An AppImage is a single self-contained file, so nothing registers it with your desktop
+    on its own — which is why it has no menu entry or icon until you integrate it. Tools
+    such as [Gear Lever](https://github.com/mijorus/gearlever) or `appimaged` read the
+    desktop entry and icons bundled inside the AppImage and register them for you.
+
 The macOS download is a disk image holding `Doriax.app`. Open the `.dmg` and drag the app
 onto the **Applications** shortcut inside it.
 
