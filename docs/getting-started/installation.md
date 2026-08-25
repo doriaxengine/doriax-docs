@@ -22,18 +22,27 @@ Builds are available for:
 | Linux | Ubuntu 22.04+ · x64 |
 | macOS | macOS 12+ · Universal |
 
-!!! warning "Nightly builds"
-    The downloadable editor builds are pulled directly from the `main` branch and are
-    **not stable releases**. Expect bugs, incomplete features, and breaking changes.
-    Use them at your own risk.
+Each platform offers the latest release, and beside it a build of the current `main`
+branch.
+
+!!! warning "Main branch builds"
+    The `main` builds are made from the newest commit and are **not stable releases**.
+    Expect bugs, incomplete features, and breaking changes. Use them at your own risk.
 
 The Windows download contains two executables: run `doriax-editor.exe` to open the
 editor, and use `doriax-editor-cmd.exe` for scripting and CI. See
 [Command-Line Tools](../editor/command-line.md).
 
-The Linux download is an **AppImage**: unzip it, mark it executable with `chmod +x`, and
-run the file directly — there is nothing to install. A plain folder of the same build is
-offered next to it if you would rather have the binaries loose.
+The Linux download is an **AppImage**: a single file to run directly, with nothing to
+install. From the release page it arrives without its executable bit, since no permission
+survives an HTTP download, so mark it executable once:
+
+```bash
+chmod +x Doriax-*-linux-x86_64.AppImage
+```
+
+The main-branch build is a zip instead, which does carry the bit — unzip it and run. Both
+channels also offer the same build as a plain folder of binaries.
 
 !!! tip "Adding Doriax to your application menu"
     An AppImage is a single self-contained file, so nothing registers it with your desktop
