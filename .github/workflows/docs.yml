@@ -24,7 +24,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          # Release tags are the source of the published versions.
+          # Release tags are the source of the published versions, and
+          # 'unstable' always comes from main whichever ref was pushed.
           ref: main
           fetch-depth: 0
 

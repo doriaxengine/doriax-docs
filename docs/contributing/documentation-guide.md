@@ -69,18 +69,20 @@ docs from `main`:
 | URL | Contents |
 | --- | --- |
 | `docs.doriax.org/` | Latest stable release (canonical URLs) |
-| `docs.doriax.org/0.7/` | Newest tag of the 0.7 series |
+| `docs.doriax.org/0.7/` | The 0.7 release series |
 | `docs.doriax.org/unstable/` | Current `main` branch |
 
 `main` is always the unstable docs. Changes land there and reach the stable URLs
-only when a release is tagged, so a page describing an unreleased feature does not
-have to be held back.
+only when a release is tagged, so a page describing an unreleased feature does
+not have to be held back.
 
-`scripts/build-versions.sh` assembles the whole tree — it builds each series from
-its highest patch tag (`v0.7.0`, `v0.7.1` → `0.7`, built from `v0.7.1`), ignores
-pre-release tags, mirrors the newest series at the root, and writes
-`versions.json`, which drives the version picker in the header. Old builds read
-that file at runtime, so they pick up newer releases without being rebuilt.
+Each series is built from its highest patch tag (`v0.7.0`, `v0.7.1` → `0.7`,
+built from `v0.7.1`). Pre-release tags are ignored.
+
+`scripts/build-versions.sh` assembles the whole tree: it builds every series,
+mirrors the newest one at the root, and writes `versions.json`, which drives the
+version picker in the header. Old builds read that file at runtime, so they list
+newer releases without being rebuilt.
 
 `mkdocs serve` builds only the unstable version, and the picker stays hidden
 because there is no `versions.json` to read. To preview the full versioned site:
@@ -99,10 +101,17 @@ git tag v0.7.1
 git push origin v0.7.1
 ```
 
-The tag push rebuilds and redeploys every version. Only a tagged commit's own
-content is published for that version, so the tag must point at the commit whose
-docs describe the release — tag after the release's documentation has landed on
-`main`.
+The tag push rebuilds and redeploys every version. Only the tagged commit's own
+`docs/` is published for that version, so the tag must point at the commit whose
+docs describe the release.
+
+Correcting published docs means moving the tag, since a tag is the only thing
+the build reads:
+
+```bash
+git commit -am "Fix physics layer description"   # on main
+git tag -f v0.7.1 && git push -f origin v0.7.1
+```
 
 The `github-pages` environment must allow tags to deploy, or the tag run builds
 the site and then fails at the deploy step: under **Settings → Environments →
