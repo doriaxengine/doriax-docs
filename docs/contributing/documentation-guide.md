@@ -101,4 +101,10 @@ git push origin v0.7.1
 
 The tag push rebuilds and redeploys every version. Only a tagged commit's own
 content is published for that version, so the tag must point at the commit whose
-docs describe the release.
+docs describe the release — tag after the release's documentation has landed on
+`main`.
+
+The `github-pages` environment must allow tags to deploy, or the tag run builds
+the site and then fails at the deploy step: under **Settings → Environments →
+github-pages → Deployment branches and tags**, `v*` needs a tag rule alongside
+the `main` branch rule.
