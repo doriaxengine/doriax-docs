@@ -270,6 +270,7 @@ a:hover { color: var(--accent-3); }
   padding: 11px 16px;
   margin-bottom: 26px;
 }
+.dx-version-banner[hidden] { display: none; }
 .dx-version-banner.is-outdated { border-left-color: var(--donate-color); }
 .dx-version-banner a { color: var(--accent-text); font-weight: 500; }
 .dx-version-banner a:hover { text-decoration: underline; }
