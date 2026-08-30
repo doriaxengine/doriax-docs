@@ -3,13 +3,17 @@
 # Builds every published version of the documentation into one output tree:
 #
 #   site/            latest stable release (mirror, the canonical URLs)
-#   site/0.7/        newest tag of the 0.7 series
+#   site/0.7/        the 0.7 release series
 #   site/unstable/   the current main branch
 #   site/versions.json   drives the version picker in the header
 #
 # One version is published per minor series, built from the highest patch tag
 # in it (v0.7.0, v0.7.1 -> series "0.7" built from v0.7.1). Pre-release tags
 # (v0.8.0-rc1) are ignored.
+#
+# Every version is built with main's theme/, so a layout fix reaches published
+# versions on the next build; only docs/ and mkdocs.yml come from the tag
+# itself. Set DOCS_SHARED_THEME=0 to build each version with its own theme.
 #
 # Usage: scripts/build-versions.sh [output-dir]
 set -euo pipefail
@@ -20,6 +24,7 @@ cd "$REPO_ROOT"
 OUT="$(realpath -m "${1:-site}")"
 SITE_URL="${DOCS_SITE_URL_BASE:-https://docs.doriax.org}"
 SITE_URL="${SITE_URL%/}"
+SHARED_THEME="${DOCS_SHARED_THEME:-1}"
 
 WORKTREES=()
 cleanup() {
@@ -30,12 +35,30 @@ cleanup() {
 }
 trap cleanup EXIT
 
+# checkout <ref> -> sets CHECKOUT_PATH to a throwaway worktree holding that ref.
+# Sets a global rather than printing: called in a command substitution it would
+# register its worktree in a subshell, and cleanup would never remove it.
+CHECKOUT_PATH=""
+checkout() {
+  local ref="$1" path
+  path="$(mktemp -d)/src"
+  git worktree add --detach "$path" "$ref" >/dev/null
+  WORKTREES+=("$path")
+  if [ "$SHARED_THEME" = 1 ]; then
+    rm -rf "$path/theme"
+    cp -a "$REPO_ROOT/theme" "$path/theme"
+  fi
+  CHECKOUT_PATH="$path"
+}
+
 # build <config-dir> <version-id> <dest-subdir|""> <noindex>
 #
 # Each build gets a generated child config that INHERITs the version's own
 # mkdocs.yml and overrides the version metadata. (A child config rather than
 # env vars: mkdocs resolves !ENV values through YAML's implicit types, which
-# would read a version like 0.10 as the float 0.1.)
+# would read a version like 0.10 as the float 0.1.) It also means a version
+# predating the picker still builds with one, since the keys the theme needs
+# come from here rather than from that version's mkdocs.yml.
 build() {
   local src="$1" id="$2" sub="$3" noindex="$4"
   local dest="$OUT" url="$SITE_URL/" root=""
@@ -60,19 +83,24 @@ YAML
   rm -f "$cfg"
 }
 
-# Highest patch tag per minor series, newest series first.
-declare -A SERIES_TAG=()
-SERIES=()
-while read -r tag; do
-  [ -n "$tag" ] || continue
-  version="${tag#v}"
+declare -A SERIES_REF=() SERIES_TITLE=()
+
+# Release tags, highest patch first; the first tag seen in a series wins.
+while read -r ref; do
+  [ -n "$ref" ] || continue
+  version="${ref##*/v}"
   case "$version" in *-*) continue ;; esac          # skip pre-releases
   minor="$(echo "$version" | cut -d. -f1,2)"
-  if [ -z "${SERIES_TAG[$minor]:-}" ]; then
-    SERIES_TAG[$minor]="$version"
-    SERIES+=("$minor")
+  if [ -z "${SERIES_REF[$minor]:-}" ]; then
+    SERIES_REF[$minor]="$ref"
+    SERIES_TITLE[$minor]="$version"
   fi
-done < <(git tag -l 'v[0-9]*' --sort=-v:refname)
+done < <(git for-each-ref --sort=-v:refname --format='%(refname)' 'refs/tags/v[0-9]*')
+
+SERIES=()
+while read -r s; do
+  [ -n "$s" ] && SERIES+=("$s")
+done < <(printf '%s\n' "${!SERIES_REF[@]}" | sort -Vr)
 
 LATEST="${SERIES[0]:-}"
 
@@ -82,10 +110,9 @@ mkdir -p "$OUT"
 # The root build must come first: mkdocs wipes its own site_dir, and here that
 # is the directory the per-version subdirectories live in.
 if [ -n "$LATEST" ]; then
-  root_src="$(mktemp -d)/src"
-  git worktree add --detach "$root_src" "v${SERIES_TAG[$LATEST]}" >/dev/null
-  WORKTREES+=("$root_src")
-  build "$root_src" "$LATEST" "" false
+  echo "==> latest series '$LATEST' from ${SERIES_REF[$LATEST]#refs/tags/}"
+  checkout "${SERIES_REF[$LATEST]}"
+  build "$CHECKOUT_PATH" "$LATEST" "" false
 else
   echo "==> no release tags found; publishing 'unstable' at the root"
   build "$REPO_ROOT" unstable "" false
@@ -93,10 +120,9 @@ fi
 
 for minor in "${SERIES[@]:-}"; do
   [ -n "$minor" ] || continue
-  src="$(mktemp -d)/src"
-  git worktree add --detach "$src" "v${SERIES_TAG[$minor]}" >/dev/null
-  WORKTREES+=("$src")
-  build "$src" "$minor" "$minor" true
+  echo "==> series '$minor' from ${SERIES_REF[$minor]#refs/tags/}"
+  checkout "${SERIES_REF[$minor]}"
+  build "$CHECKOUT_PATH" "$minor" "$minor" true
 done
 
 build "$REPO_ROOT" unstable unstable true
@@ -104,7 +130,7 @@ build "$REPO_ROOT" unstable unstable true
 SERIES_TITLES="{"
 for minor in "${SERIES[@]:-}"; do
   [ -n "$minor" ] || continue
-  SERIES_TITLES="$SERIES_TITLES\"$minor\":\"${SERIES_TAG[$minor]}\","
+  SERIES_TITLES="$SERIES_TITLES\"$minor\":\"${SERIES_TITLE[$minor]}\","
 done
 SERIES_TITLES="${SERIES_TITLES%,}}"
 export SERIES_TITLES

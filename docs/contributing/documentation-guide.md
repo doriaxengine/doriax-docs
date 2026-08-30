@@ -108,3 +108,22 @@ The `github-pages` environment must allow tags to deploy, or the tag run builds
 the site and then fails at the deploy step: under **Settings → Environments →
 github-pages → Deployment branches and tags**, `v*` needs a tag rule alongside
 the `main` branch rule.
+
+### Layout and theme changes
+
+Only `docs/` and `mkdocs.yml` come from a release tag. Every version is built
+with the theme from `main`, so a fix to the header, CSS, or search reaches all
+published versions on the next build, and a version tagged before a theme
+feature existed still gets it.
+
+The trade-off is that a theme change has to keep rendering older content. Preview
+one against the real thing before pushing:
+
+```bash
+scripts/build-versions.sh site        # every version, current theme
+DOCS_SHARED_THEME=0 scripts/build-versions.sh site   # each version's own theme
+```
+
+`versions.json` is a compatibility contract in the other direction: already
+published builds parse it with the JavaScript they shipped with. Add fields to
+it, never rename or remove them.
