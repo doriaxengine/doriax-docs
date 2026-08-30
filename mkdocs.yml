@@ -19,6 +19,17 @@ theme:
   favicon: 'assets/logo/logo_part1.png'
 
 extra:
+  # Versioning. These are the values for a plain `mkdocs build` / `mkdocs serve`;
+  # scripts/build-versions.sh overrides them per version through a generated
+  # child config that INHERITs this one.
+  version: 'unstable'
+  # Relative hop from base_url up to the site root, where versions.json lives.
+  # Empty for a build served at the root, '/..' for a build under /<version>/.
+  version_root: ''
+  # Archived and unstable builds are kept out of search engines so the
+  # canonical stable docs at the site root are the ones that get indexed.
+  version_noindex: false
+
   social:
     - name: GitHub
       link: 'https://github.com/doriaxengine/doriax'

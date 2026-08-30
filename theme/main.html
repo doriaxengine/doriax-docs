@@ -12,6 +12,10 @@
   <meta property="og:title" content="{% if page and page.title %}{{ page.title }} — {{ config.site_name }}{% else %}{{ config.site_name }}{% endif %}">
   <meta property="og:description" content="{{ config.site_description }}">
   <meta property="og:type" content="website">
+  <link rel="canonical" href="{{ page.canonical_url }}">
+  {%- if config.extra.version_noindex %}
+  <meta name="robots" content="noindex, follow">
+  {%- endif %}
 
   <link rel="icon" type="image/png" href="{{ base_url }}/{{ config.theme.favicon }}">
 
@@ -42,6 +46,8 @@
     {% include "partials/sidebar.html" %}
 
     <main class="dx-main" id="dx-content">
+      <div class="dx-version-banner" id="dx-version-banner" role="status" hidden></div>
+
       <article class="dx-article md-typeset">
         {% block content %}
         {%- if page and page.meta and page.meta.hide_title %}{% else %}
@@ -72,6 +78,9 @@
 
   <script>
     window.DORIAX_BASE_URL = "{{ base_url }}";
+    window.DORIAX_VERSION = {{ config.extra.version | string | tojson }};
+    window.DORIAX_VERSIONS_URL = "{{ base_url }}{{ config.extra.version_root }}/versions.json";
+    window.DORIAX_PAGE_URL = {{ (page.url if page else '') | tojson }};
   </script>
   <script src="{{ base_url }}/js/doriax.js" defer></script>
 </body>

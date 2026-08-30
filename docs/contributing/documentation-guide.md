@@ -60,3 +60,45 @@ Expand these first when touching the reference: `Engine`, `Scene`, `Object`, `In
 ## Links
 
 Use relative links. Run `mkdocs build --strict` after nav or path changes.
+
+## Versioned documentation
+
+The published site carries one build per release series plus the in-development
+docs from `main`:
+
+| URL | Contents |
+| --- | --- |
+| `docs.doriax.org/` | Latest stable release (canonical URLs) |
+| `docs.doriax.org/0.7/` | Newest tag of the 0.7 series |
+| `docs.doriax.org/unstable/` | Current `main` branch |
+
+`main` is always the unstable docs. Changes land there and reach the stable URLs
+only when a release is tagged, so a page describing an unreleased feature does not
+have to be held back.
+
+`scripts/build-versions.sh` assembles the whole tree — it builds each series from
+its highest patch tag (`v0.7.0`, `v0.7.1` → `0.7`, built from `v0.7.1`), ignores
+pre-release tags, mirrors the newest series at the root, and writes
+`versions.json`, which drives the version picker in the header. Old builds read
+that file at runtime, so they pick up newer releases without being rebuilt.
+
+`mkdocs serve` builds only the unstable version, and the picker stays hidden
+because there is no `versions.json` to read. To preview the full versioned site:
+
+```bash
+scripts/build-versions.sh site
+python3 -m http.server -d site
+```
+
+### Releasing a version
+
+Tag the documentation repository when the matching engine release goes out:
+
+```bash
+git tag v0.7.1
+git push origin v0.7.1
+```
+
+The tag push rebuilds and redeploys every version. Only a tagged commit's own
+content is published for that version, so the tag must point at the commit whose
+docs describe the release.

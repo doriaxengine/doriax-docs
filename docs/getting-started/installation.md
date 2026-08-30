@@ -41,8 +41,8 @@ survives an HTTP download, so mark it executable once:
 chmod +x Doriax-*-linux-x86_64.AppImage
 ```
 
-The main-branch build is a zip instead, which does carry the bit — unzip it and run. Both
-channels also offer the same build as a plain folder of binaries.
+The main-branch build is a zip instead, which does carry the bit — unzip it and run. The
+release also offers the same build as a plain zip of loose binaries.
 
 !!! tip "Adding Doriax to your application menu"
     An AppImage is a single self-contained file, so nothing registers it with your desktop
@@ -68,8 +68,7 @@ onto the **Applications** shortcut inside it.
     is set by the browser rather than by macOS:
 
     ```bash
-    curl -L -o doriax_macos_dmg.zip \
-      https://nightly.link/doriaxengine/doriax/workflows/cmake.yml/main/doriax_macos_dmg.zip
+    curl -LO https://github.com/doriaxengine/doriax/releases/download/v0.7/Doriax-v0.7-macos-universal.dmg
     ```
 
 ## Build from source

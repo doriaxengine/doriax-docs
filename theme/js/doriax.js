@@ -12,6 +12,7 @@
     initCopyButtons();
     initScrollSpy();
     initSearch();
+    initVersions();
   });
 
   /* ---------------------------------------------------------------- Sidebar */
@@ -323,6 +324,123 @@
   }
 
   /* --------------------------------------------------------- helpers */
+  /* --------------------------------------------------------------- Versions */
+  function initVersions() {
+    const wrap = document.getElementById('dx-version-select');
+    const url = window.DORIAX_VERSIONS_URL;
+    if (!wrap || !url) return;
+
+    fetch(url, { cache: 'no-cache' })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (data) {
+        if (!data || !Array.isArray(data.versions) || !data.versions.length) return;
+        const root = new URL('.', new URL(url, location.href)).href;
+        buildVersionMenu(wrap, data, root);
+        buildVersionBanner(data, root);
+      })
+      // No versions.json (a plain `mkdocs serve`, say) — leave the picker hidden.
+      .catch(function () {});
+  }
+
+  function versionHref(root, id) {
+    return root + id + '/' + (window.DORIAX_PAGE_URL || '');
+  }
+
+  function buildVersionMenu(wrap, data, root) {
+    const trigger = document.getElementById('dx-version-trigger');
+    const menu = document.getElementById('dx-version-menu');
+    const current = document.getElementById('dx-version-current');
+    if (!trigger || !menu) return;
+
+    const active = data.versions.filter(function (v) { return v.id === window.DORIAX_VERSION; })[0];
+    if (active && current) current.textContent = active.title;
+
+    data.versions.forEach(function (v) {
+      const li = document.createElement('li');
+      const a = document.createElement('a');
+      a.href = versionHref(root, v.id);
+      if (v.id === window.DORIAX_VERSION) {
+        a.className = 'is-current';
+        a.setAttribute('aria-current', 'true');
+      }
+
+      const label = document.createElement('span');
+      label.className = 'dx-version-label';
+      label.textContent = v.title;
+      a.appendChild(label);
+
+      if (v.note) {
+        const note = document.createElement('span');
+        note.className = 'dx-version-note';
+        note.textContent = v.note;
+        a.appendChild(note);
+      }
+
+      // The page may not exist in the target version — fall back to its home.
+      a.addEventListener('click', function (ev) {
+        if (ev.metaKey || ev.ctrlKey || ev.shiftKey || ev.button !== 0) return;
+        ev.preventDefault();
+        const target = a.href;
+        fetch(target, { method: 'HEAD' })
+          .then(function (r) { location.href = r.ok ? target : root + v.id + '/'; })
+          .catch(function () { location.href = root + v.id + '/'; });
+      });
+
+      li.appendChild(a);
+      menu.appendChild(li);
+    });
+
+    function close() {
+      wrap.classList.remove('is-open');
+      menu.hidden = true;
+      trigger.setAttribute('aria-expanded', 'false');
+    }
+    function open() {
+      wrap.classList.add('is-open');
+      menu.hidden = false;
+      trigger.setAttribute('aria-expanded', 'true');
+    }
+
+    trigger.addEventListener('click', function (ev) {
+      ev.stopPropagation();
+      menu.hidden ? open() : close();
+    });
+    document.addEventListener('click', function (ev) {
+      if (!wrap.contains(ev.target)) close();
+    });
+    document.addEventListener('keydown', function (ev) {
+      if (ev.key === 'Escape') close();
+    });
+
+    wrap.hidden = false;
+  }
+
+  function buildVersionBanner(data, root) {
+    const el = document.getElementById('dx-version-banner');
+    if (!el) return;
+
+    const current = window.DORIAX_VERSION;
+    const latest = data.versions.filter(function (v) { return v.id === data.latest; })[0];
+    if (!latest || current === data.latest) return;
+
+    const link = document.createElement('a');
+    link.href = versionHref(root, latest.id);
+    const text = document.createElement('span');
+
+    if (current === 'unstable') {
+      text.textContent = 'You are reading the development documentation for the next release. ';
+      link.textContent = 'Switch to the stable ' + latest.title + ' docs';
+    } else {
+      el.classList.add('is-outdated');
+      text.textContent = 'You are reading the documentation for an older release. ';
+      link.textContent = 'Switch to the latest version (' + latest.title + ')';
+    }
+
+    el.appendChild(text);
+    el.appendChild(link);
+    el.hidden = false;
+  }
+
   function isTyping(el) {
     if (!el) return false;
     const tag = el.tagName;
