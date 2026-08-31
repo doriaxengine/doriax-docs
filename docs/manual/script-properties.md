@@ -125,6 +125,9 @@ doriax::Vector4 tint = doriax::Vector4(1, 1, 1, 1);
 Non-null pointer defaults are not supported. Use `nullptr` and assign the target in the
 Properties.
 
+A `nullptr` or `NULL` default on a member that is not a pointer is ignored: the property
+starts at the type's default and the editor logs a warning.
+
 ## Lua script properties
 
 Declare properties in the table returned by your Lua module:
@@ -260,6 +263,7 @@ Values are stored in a `std::variant` (`ScriptPropertyValue`).
 | --- | --- |
 | Code between `DPROPERTY` and member | Put the macro directly above the member |
 | Function call as default | Use literals only (`5.0f`, `"text"`, `Vector3(...)`) |
+| `nullptr` default on a non-pointer member | Ignored with a warning, use a literal of the member's type |
 | Missing `doriax::` prefix | Add namespace or `using namespace doriax` in header |
 | Expecting serialized C++ pointer | Entity references store `{entity, sceneId}` |
 | Lua property name mismatch | `name` must match `self.<name>` used in code |
