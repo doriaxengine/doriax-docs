@@ -214,9 +214,11 @@ keeps the old contents until it captures again.
 * *Setter:* `void setReceiveIBL(bool receiveIBL)`
 * *Getter:* `bool isReceiveIBL() const`
 
-When `true`, the mesh samples the scene's Sky environment for image-based lighting:
-diffuse irradiance plus specular reflections on top of punctual lights. Requires a Sky
-entity with a cubemap texture, **Receive Lights** enabled, and surface normals.
+When `true`, the mesh samples image-based lighting: diffuse irradiance plus specular
+reflections on top of punctual lights. The source is the scene's Sky environment, a
+[Reflection Probe](reflectionprobe.md) whose volume covers the mesh, or both. Sky
+lighting needs a Sky entity with a cubemap texture; probes need none. Also requires
+**Receive Lights** enabled and surface normals.
 
 Also settable in the editor on the Mesh component (**Receive IBL**); the flag is
 serialized with the scene. Metallic, low-roughness materials show the strongest
