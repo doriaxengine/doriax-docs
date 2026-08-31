@@ -31,7 +31,10 @@ Each frame, the engine runs the following phases in order:
    shadow maps still render it.
 7. **UI pass** — UI entities are rendered in screen-space canvas coordinates, on top of
    the 3D or 2D scene.
-8. **Post-processing** — Fog and other post effects are applied (if configured).
+8. **Post-processing** — Screen-space effects run over the finished image: SSR composites
+   its reflections, then the scene's [post-process chain](#post-processing) applies each
+   enabled user pass in order. ([Fog](#fog) is not a post pass — it is computed in the
+   mesh shader.)
 
 Cameras that render to a texture (minimaps, [mirrors](#mirrors-and-planar-reflections),
 portals) run this same flow into their own framebuffer before the main view is drawn.
@@ -481,6 +484,33 @@ colour come from the material factors and the metallic-roughness / base-colour t
     small seam — raise **Max Steps** or lower **Thickness** to tighten it. SSR runs for the
     main camera only and is skipped when there is no framebuffer destination.
 
+## Post-processing
+
+A scene can run an ordered chain of user **fullscreen passes** over its finished image.
+Each pass is a forked shader picked in the editor's **Post-processing** scene settings;
+see [Custom Shaders — Post-process passes](../editor/custom-shaders.md#post-process-passes)
+for authoring them.
+
+The chain runs on the scene's active camera, after the opaque, transparent, UI, and SSR
+passes and before the fixed-resolution upscale. Enabling it redirects the colour
+pass into an offscreen buffer, exactly like SSR does, and the passes ping-pong between two
+buffers so a chain of any length costs two render targets. The last pass writes the real
+destination — the camera framebuffer, the fixed-resolution target, or the screen.
+
+A pass reads the previous pass's output (`u_sceneColorTexture`) and may also sample depth
+(`u_depthTexture`), the SSR G-buffer (`u_gbufferTexture`), and ambient occlusion
+(`u_ssaoTexture`). When a pass samples depth while SSR and SSAO are both off, the engine
+runs the depth pre-pass for it, so depth-driven effects work on their own.
+
+Values declared in the pass's `u_fs_postParams` block become editable rows in the scene
+settings, and the engine writes `resolution` and `time` into that block every frame.
+
+!!! note "Scope"
+    The chain runs for the scene's active camera only — secondary cameras such as mirrors
+    and minimaps skip it, and so does a scene drawn as a layer, where a fullscreen pass
+    would overwrite the scene below. Disabled passes are still exported, so a pass can be
+    turned back on without recompiling.
+
 ## Framebuffers and render-to-texture
 
 A camera can capture its output to a texture instead of the screen — for minimaps,
@@ -608,7 +638,8 @@ Each renderable type (Mesh, UI, Points, Lines, Sky) has a built-in shader. In th
 you can **fork** any of them — per component, or as a scene-wide default for that type —
 and edit the GLSL; the engine keeps driving the variant system, lighting, and
 depth/shadow/G-buffer passes. A shader set on the component wins over the scene default,
-which wins over the built-in. See [Custom Shaders](../editor/custom-shaders.md).
+which wins over the built-in. The same fork mechanism provides the scene's
+[post-process passes](#post-processing). See [Custom Shaders](../editor/custom-shaders.md).
 
 Built-in skinned variants bind bone matrices through a **storage buffer** (`sbo_skinning`)
 on Vulkan, Metal, and Direct3D 11, or through an **unfilterable RGBA32F bone texture**

@@ -215,8 +215,12 @@ A scene can also define a **default custom shader per type** (in the scene setti
 **Default Shaders** section); components whose Shader row shows **Built-in** inherit it.
 A shader assigned on the component always takes priority over the scene default.
 
-See [Custom Shaders](custom-shaders.md) for the full workflow, scene defaults, includes,
-and project settings.
+The scene settings also have a **Post-processing** section: an ordered list of fullscreen
+passes, each one a forked shader with its own enable checkbox, reorder and remove buttons.
+Any value the pass declares in its `u_fs_postParams` block becomes an editable row here.
+
+See [Custom Shaders](custom-shaders.md) for the full workflow, scene defaults, post-process
+passes, includes, and project settings.
 
 ## Sky component
 

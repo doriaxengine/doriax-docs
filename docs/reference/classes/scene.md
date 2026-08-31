@@ -66,6 +66,7 @@ A `Scene` is the root container for all objects, systems, and resources in a pro
 | string | [defaultSkyShader](#defaultskyshader) | `""` | C++ \| Lua |
 | string | [defaultPointsShader](#defaultpointsshader) | `""` | C++ \| Lua |
 | string | [defaultLinesShader](#defaultlinesshader) | `""` | C++ \| Lua |
+| vector&lt;PostProcessPass&gt; | [postProcess](#postprocess) | `{}` | C++ |
 | [UIEventState](#uieventstate) | [enableUIEvents](#enableuievents) | `NOT_SET` | C++ \| Lua |
 
 ### Methods
@@ -508,6 +509,33 @@ Scene-wide custom shader for Points components. Same semantics as [defaultMeshSh
 * *Getter:* `const std::string& getDefaultLinesShader() const`
 
 Scene-wide custom shader for Lines components. Same semantics as [defaultMeshShader](#defaultmeshshader).
+
+---
+
+### postProcess
+
+* *Setter:* `void setPostProcessPasses(const std::vector<PostProcessPass>& passes)`
+* *Getter:* `const std::vector<PostProcessPass>& getPostProcessPasses() const`
+
+Ordered chain of fullscreen post-process passes run over the scene's finished image, on the main camera only. Each entry is a `PostProcessPass`:
+
+| Field | Type | Meaning |
+| --- | --- | --- |
+| `shader` | string | Project-relative base path to a forked shader, or empty for the built-in passthrough. |
+| `enabled` | bool | Whether the pass runs. Disabled passes still ship their shader. |
+| `uniforms` | vector&lt;pair&lt;string, Vector4&gt;&gt; | Values for the members of the shader's `u_fs_postParams` block, keyed by member name. Unknown names are ignored; unset members are zero. |
+
+Setting the chain rebuilds the passes on the next frame. See [Custom Shaders — Post-process passes](../../editor/custom-shaders.md#post-process-passes).
+
+=== "C++"
+
+    ```cpp
+    PostProcessPass sharpen;
+    sharpen.shader = "shaders/sharpen";
+    sharpen.uniforms.push_back({"amount", Vector4(0.5f, 0.0f, 0.0f, 0.0f)});
+
+    scene.setPostProcessPasses({sharpen});
+    ```
 
 ---
 

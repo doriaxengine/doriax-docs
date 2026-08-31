@@ -1,5 +1,5 @@
 ---
-description: Fork, edit, and customize the built-in shaders for Mesh, UI, Points, Lines, and Sky — per component or as scene-wide defaults — directly in the Doriax editor.
+description: Fork, edit, and customize the built-in shaders for Mesh, UI, Points, Lines, and Sky — per component or as scene-wide defaults — and add custom post-process passes, directly in the Doriax editor.
 ---
 
 # Custom Shaders
@@ -9,6 +9,9 @@ The editor lets you **fork** any of them into your project, edit the GLSL in the
 [Code Editor](code-editor.md), and see the result in the viewport — without leaving the
 editor. Forked shaders are compiled and shipped with your project just like the built-in
 ones.
+
+The same fork mechanism drives [post-process passes](#post-process-passes) — fullscreen
+shaders a scene runs over the finished image.
 
 ## How customization works
 
@@ -108,6 +111,97 @@ variants automatically. They are also scriptable via the `Scene` properties
 `defaultMeshShader`, `defaultUIShader`, `defaultSkyShader`, `defaultPointsShader`, and
 `defaultLinesShader` (see the [Scene reference](../reference/classes/scene.md)).
 
+## Post-process passes
+
+A scene can run an ordered chain of **fullscreen passes** over its finished image:
+sharpen, tint, vignette, colour grading, and so on. Each pass is a forked shader, and
+unlike the component shaders above the chain belongs to the scene, not to any entity.
+
+Select the scene (no entity) in the **Structure panel** and open the **Post-processing**
+section of the scene settings in the Properties window.
+
+| Control | Action |
+| --- | --- |
+| **Add Pass** | Appends a pass. A new pass starts on the built-in passthrough, which copies the image unchanged. |
+| Checkbox | Enables or disables the pass without removing it. |
+| **↑** / **↓** | Moves the pass in the chain. Passes run top to bottom. |
+| **🗑** | Removes the pass. |
+| **Shader** row | The same controls as any other shader row — fork, pick files, open, reset, drag-and-drop. |
+
+Every change is undoable, and the chain is saved with the scene.
+
+The chain runs on the scene's **active camera**, after the opaque, transparent, UI, and
+SSR passes, and before the fixed-resolution upscale. Secondary cameras — minimaps,
+mirrors, portals — do not run it; if the active camera itself renders to a texture, the
+chain writes into that texture. A scene drawn as a layer skips its chain, because a
+fullscreen pass would overwrite the scene below it.
+
+### Writing a pass
+
+Forking a post-process pass copies `fullscreen.vert` and `postprocess.frag` into your
+project. The vertex shader draws a fullscreen triangle and normally needs no edits — all
+the work happens in the fragment shader.
+
+A pass may declare any subset of the inputs below; only the ones it actually uses are
+bound:
+
+| Sampler | Contents |
+| --- | --- |
+| `u_sceneColorTexture` | The previous pass's output, or the scene colour for the first pass. |
+| `u_depthTexture` | Camera-space packed depth. The engine runs a depth pre-pass for the chain when SSR and SSAO are both off, so this is always available. |
+| `u_gbufferTexture` | View-space normal, roughness, and metallic. Only produced while **SSR** is enabled; reads black otherwise. |
+| `u_ssaoTexture` | Blurred ambient occlusion. Reads white while SSAO is off. |
+
+!!! warning "Depth orientation"
+    Depth and the G-buffer keep the logical orientation of the depth pre-pass, so flip
+    `v_texcoord.y` when sampling them on the OpenGL backends. The built-in `ssr.frag` shows
+    the pattern.
+
+### Pass uniforms
+
+Declaring a `u_fs_postParams` block makes every member an editable row in the
+**Post-processing** list — no extra declaration file, and no editor change needed:
+
+```glsl
+uniform u_fs_postParams {
+    vec4 resolution;
+    float amount;
+    float threshold;
+    vec4 tintColor;
+} postParams;
+```
+
+Add a member, save the file, and a row appears for it. Values are stored **by name**, so
+reordering members keeps them, and renaming or deleting one simply drops its saved value.
+A member with no saved value is zero — GLSL uniform blocks have no initializers, so there
+is no shader-side default to read.
+
+Two names are **reserved** and written by the engine every frame instead of being edited.
+They show in the list as *Set by the engine*:
+
+| Name | Contents |
+| --- | --- |
+| `resolution` | `xy` = width and height of the pass target, `zw` = `1 / width` and `1 / height`. |
+| `time` | Seconds elapsed since startup. |
+
+Use `resolution` for anything that depends on target size — a texel offset written as a
+literal breaks the moment the window resizes. Rename the uniform if you want to drive that
+value yourself.
+
+!!! warning "Do not mix int and float members"
+    The OpenGL backends flatten a uniform block into a single upload typed after its first
+    member, so a block holding both `int` and `float` members uploads incorrectly there.
+    Keep one block to one scalar kind.
+
+Members are edited as drag fields; matrix members are not editable and show no row.
+
+### Export
+
+Every pass ships its forked shader, including disabled ones — the generated scene carries
+the whole chain, and the enable flag is a runtime value. A pass whose shader fails to
+compile falls back to the passthrough, so the scene keeps rendering; the list marks it
+**Shader failed to build** and the compiler output goes to the Output panel.
+
 ## Editing and live updates
 
 Forked shaders open in the [Code Editor](code-editor.md) with GLSL syntax highlighting
@@ -178,8 +272,9 @@ Forked shaders flow through the same export pipeline as the built-in ones (see
   [`shaders` CLI command](command-line.md#shaders-generate-shader-files-standalone), which
   writes them straight into its `--out` directory.
 
-At runtime the engine identifies a component's shader from the value saved on it and loads
-the matching compiled `.sdat` — it never reads the source files. Because the engine only
+At runtime the engine identifies a component's shader (or a post-process pass's shader)
+from the value saved on it and loads the matching compiled `.sdat` — it never reads the
+source files. Because the engine only
 cares about the compiled output, your shader sources can be organized however you like.
 
 !!! note "Compiled vs. source location"

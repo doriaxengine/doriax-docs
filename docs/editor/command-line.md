@@ -136,7 +136,7 @@ colon:
 ```
 
 - **Type** (case-insensitive): `points`, `lines`, `mesh`, `sky` (or `skybox`), `depth`,
-  `ui`.
+  `ui`, `postprocess` (or `post`).
 - **Properties** are either:
     - a comma-separated list of property names, e.g. `mesh:Uv1,Nor`, or
     - a numeric bitmask, e.g. `mesh:0x3` or `mesh:12`.
