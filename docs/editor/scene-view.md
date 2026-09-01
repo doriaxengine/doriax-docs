@@ -215,5 +215,6 @@ Use play mode for fast local iteration; export to a real build for platform-spec
 testing.
 
 Play mode follows **Project → Project Settings → VSync**. With VSync disabled, the
-editor render loop is uncapped only while a scene is running; it returns to synchronized
-rendering after you stop. See [Project Workflow — VSync](project-workflow.md#vsync).
+editor render loop is uncapped while a scene is running; after you stop, frames follow
+**View → Editor VSync** instead. See [Project Workflow — VSync](project-workflow.md#vsync)
+and [Editor VSync](project-workflow.md#editor-vsync).

@@ -156,7 +156,7 @@ See [BundleManager](../reference/classes/bundlemanager.md) for the complete API.
 
 | Settings area | What it stores |
 | --- | --- |
-| **Editor settings** | Window size, maximized state, recent projects, Resources Browser preferences |
+| **Editor settings** | Window size, maximized state, recent projects, Resources Browser preferences, editor VSync |
 | **Project settings** | Startup scene reference, canvas size, scaling, VSync, window mode/size/title, compiler, parallel build jobs, asset/Lua/script directories, and the bundles built without a scene instance |
 | **Export settings** | Platform targets, shader backend, output folder, included asset folders |
 
@@ -222,7 +222,7 @@ projects without the field default to enabled.
 
 | Runtime path | VSync off behavior |
 | --- | --- |
-| Editor Play mode | Uncaps the editor render loop while a scene is running; normal editing remains synchronized |
+| Editor Play mode | Uncaps the editor render loop while a scene is running; editing frames follow **View → Editor VSync** instead |
 | Generated standalone GLFW build | Uses swap interval `0` |
 | Exported Linux GLFW, Windows/Linux Sokol OpenGL, or Windows Direct3D 11 build | Uses swap interval `0` |
 | Exported Vulkan build | Prefers Immediate presentation, then Mailbox; falls back to FIFO if neither is supported by the system |
@@ -232,6 +232,21 @@ projects without the field default to enabled.
     A graphics driver, compositor, or window system may still impose presentation
     limits after VSync is disabled. Compare a standalone build when collecting final
     performance numbers because the editor adds its own rendering overhead.
+
+### Editor VSync
+
+The project setting above covers Play mode and builds. The editor's own frames follow
+**View → Editor VSync**, which is enabled by default and saved as `vsync` under `editor`
+in `settings.yaml`. It belongs to the machine rather than the project, so it is not
+exported and does not travel with a project you share.
+
+The two settings never apply at once: while a scene is running frames follow the project
+setting, and the rest of the time they follow this one. Toggling takes effect on the next
+frame, with no restart. An unfocused editor window drops synchronization either way, so
+a blocked present can never stall the window's event loop.
+
+Disabling it only lifts the frame cap while you are interacting or a scene is redrawing.
+An idle editor waits on the window system regardless, so it does not spin.
 
 ### Window
 
