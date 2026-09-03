@@ -93,7 +93,7 @@ clear button to return to the built-in default. Font files must be inside the pr
 
 The stacked layers button opens **Additional fonts** with three fallback slots. The
 engine tries **Fallback 1**, **Fallback 2**, and **Fallback 3** in order whenever the
-main font does not contain a character; empty slots are skipped, and the built-in Latin
+main font does not contain a character; empty slots are skipped, and the built-in Roboto
 and Arabic fonts finish the chain. Each slot has its own picker, drag target, clear
 button, and reset action. A highlighted layers button means at least one fallback is
 configured.

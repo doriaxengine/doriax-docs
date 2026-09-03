@@ -2,49 +2,49 @@
    Doriax docs — Pygments syntax highlighting (dark)
    Token colors tuned to the Doriax accent palette.
    ========================================================================== */
-.highlight .hll { background-color: rgba(47,107,255,0.14); }
-.highlight { color: #d4d4e0; }
+.highlight .hll { background-color: rgba(111,159,212,0.16); }
+.highlight { color: #b4c0d0; }
 
-.highlight .c, .highlight .ch, .highlight .cm, .highlight .c1, .highlight .cs { color: #6b6b80; font-style: italic; } /* Comment */
-.highlight .cp, .highlight .cpf { color: #38d0ff; } /* Preprocessor */
+.highlight .c, .highlight .ch, .highlight .cm, .highlight .c1, .highlight .cs { color: #7d8a9c; font-style: italic; } /* Comment */
+.highlight .cp, .highlight .cpf { color: #8fb6dc; } /* Preprocessor */
 
-.highlight .k, .highlight .kc, .highlight .kd, .highlight .kn, .highlight .kp, .highlight .kr { color: #6da0ff; } /* Keyword */
-.highlight .kt { color: #38d0ff; } /* Keyword.Type */
+.highlight .k, .highlight .kc, .highlight .kd, .highlight .kn, .highlight .kp, .highlight .kr { color: #6f9fd4; } /* Keyword */
+.highlight .kt { color: #8fb6dc; } /* Keyword.Type */
 
-.highlight .o, .highlight .ow { color: #c8c8e0; } /* Operator */
-.highlight .p { color: #b8b8d0; } /* Punctuation */
+.highlight .o, .highlight .ow { color: #c0c8d4; } /* Operator */
+.highlight .p { color: #9aa4b2; } /* Punctuation */
 
-.highlight .n { color: #d4d4e0; } /* Name */
-.highlight .na { color: #6fd6f0; } /* Name.Attribute */
-.highlight .nb, .highlight .bp { color: #38d0ff; } /* Name.Builtin */
-.highlight .nc { color: #fdcb6e; } /* Name.Class */
-.highlight .no { color: #ff9d5c; } /* Name.Constant */
-.highlight .nd { color: #6da0ff; } /* Name.Decorator */
-.highlight .nf, .highlight .fm { color: #6c9eff; } /* Name.Function */
-.highlight .nn { color: #fdcb6e; } /* Name.Namespace */
-.highlight .nt { color: #6da0ff; } /* Name.Tag */
-.highlight .nv, .highlight .vc, .highlight .vg, .highlight .vi { color: #e0e0f0; } /* Name.Variable */
-.highlight .nl { color: #6fd6f0; } /* Name.Label */
+.highlight .n { color: #b4c0d0; } /* Name */
+.highlight .na { color: #8fb6dc; } /* Name.Attribute */
+.highlight .nb, .highlight .bp { color: #8fb6dc; } /* Name.Builtin */
+.highlight .nc { color: #c9a86a; } /* Name.Class */
+.highlight .no { color: #dd8b58; } /* Name.Constant */
+.highlight .nd { color: #6f9fd4; } /* Name.Decorator */
+.highlight .nf, .highlight .fm { color: #6f9fd4; } /* Name.Function */
+.highlight .nn { color: #c9a86a; } /* Name.Namespace */
+.highlight .nt { color: #6f9fd4; } /* Name.Tag */
+.highlight .nv, .highlight .vc, .highlight .vg, .highlight .vi { color: #e8eef6; } /* Name.Variable */
+.highlight .nl { color: #8fb6dc; } /* Name.Label */
 
 .highlight .s, .highlight .sb, .highlight .sc, .highlight .sd, .highlight .s2,
 .highlight .se, .highlight .sh, .highlight .si, .highlight .sx, .highlight .sr,
-.highlight .s1, .highlight .ss, .highlight .dl { color: #79e6a0; } /* String */
-.highlight .sa { color: #79e6a0; }
+.highlight .s1, .highlight .ss, .highlight .dl { color: #9bbf95; } /* String */
+.highlight .sa { color: #9bbf95; }
 
 .highlight .m, .highlight .mb, .highlight .mf, .highlight .mh, .highlight .mi,
-.highlight .mo, .highlight .il { color: #fdcb6e; } /* Number */
+.highlight .mo, .highlight .il { color: #c9a86a; } /* Number */
 
-.highlight .gd { color: #ff5470; } /* Generic.Deleted */
-.highlight .gi { color: #38d0ff; } /* Generic.Inserted */
+.highlight .gd { color: #d4736f; } /* Generic.Deleted */
+.highlight .gi { color: #8fb6dc; } /* Generic.Inserted */
 .highlight .ge { font-style: italic; }
 .highlight .gs { font-weight: bold; }
-.highlight .gh, .highlight .gu { color: #6da0ff; font-weight: bold; }
-.highlight .gp { color: #6b6b80; } /* Generic.Prompt */
-.highlight .err { color: #ff5470; }
+.highlight .gh, .highlight .gu { color: #6f9fd4; font-weight: bold; }
+.highlight .gp { color: #7d8a9c; } /* Generic.Prompt */
+.highlight .err { color: #d4736f; }
 
 /* line numbers */
 .highlight .lineno, .highlight .linenos, .highlight .gl {
-  color: #44445a;
+  color: #4a4a4a;
   user-select: none;
   padding-right: 16px;
 }

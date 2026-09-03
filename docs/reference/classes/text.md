@@ -91,11 +91,11 @@ Doriax stores a fixed `FontArray` with `MAX_TEXT_FONTS` slots (four by default).
 does not contain a character. Empty slots are skipped. Indexes are zero-based in both
 C++ and Lua.
 
-Two fonts are built into the engine and always close the chain: a Latin subset of Roboto
-and an Arabic subset of Noto Sans Arabic. Any codepoint the custom fonts do not cover is
-drawn from them, so setting an Arabic-only font still renders Latin, and leaving slot `0`
-unset still renders Arabic. A codepoint no font in the chain covers is drawn as the
-missing-glyph box.
+Two fonts are built into the engine and always close the chain: a Roboto subset covering
+Latin, Cyrillic, Greek and Vietnamese, and an Arabic subset of Noto Sans Arabic. Any
+codepoint the custom fonts do not cover is drawn from them, so setting an Arabic-only
+font still renders Latin, and leaving slot `0` unset still renders Arabic. A codepoint
+no font in the chain covers is drawn as the missing-glyph box.
 
 A missing main-font file prevents that atlas from loading. A missing fallback is logged
 and skipped, so later fallbacks and the built-in fonts can still render the text.

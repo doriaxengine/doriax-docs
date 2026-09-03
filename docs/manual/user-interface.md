@@ -56,7 +56,8 @@ Typical UI scene examples:
 
 Set a font with [`Text.font`](../reference/classes/text.md#font), pointing at a `.ttf`,
 `.otf` or `.ttc` file in the project. Leaving it unset uses the fonts built into the
-engine: a Latin subset of Roboto and an Arabic subset of Noto Sans Arabic.
+engine: a Roboto subset covering Latin, Cyrillic, Greek and Vietnamese, and an Arabic
+subset of Noto Sans Arabic.
 
 Those two always sit at the end of the chain, so a codepoint the chosen font does not
 carry is drawn from them. An Arabic-only font still renders Latin digits and labels, and
