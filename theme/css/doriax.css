@@ -49,7 +49,7 @@
   --toc-width: 240px;
   --content-max: 820px;
 
-  --font-sans: 'IBM Plex Sans', 'Segoe UI', sans-serif;
+  --font-sans: 'Roboto', 'Segoe UI', sans-serif;
   --font-mono: 'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace;
 }
 
@@ -582,14 +582,12 @@ a:hover { color: var(--accent-3); }
 }
 .md-typeset summary { cursor: pointer; list-style: none; }
 .md-typeset summary::-webkit-details-marker { display: none; }
-.md-typeset .admonition > :not(.admonition-title),
+.md-typeset .admonition > p:not(.admonition-title),
 .md-typeset details > :not(summary) {
-  padding: 0 16px;
+  margin: 0;
+  padding: 16px;
+  line-height: 1.5;
 }
-.md-typeset .admonition > :not(.admonition-title):first-child,
-.md-typeset details > :not(summary):first-child { padding-top: 14px; }
-.md-typeset .admonition > :last-child,
-.md-typeset details > :last-child { padding-bottom: 14px; margin-bottom: 0; }
 
 .md-typeset .admonition-title::before, .md-typeset summary::before {
   content: '';
