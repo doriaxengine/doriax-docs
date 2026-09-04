@@ -241,7 +241,8 @@ return PlayerController
 
 `ScriptComponent` entries store the path relative to the
 [Lua directory](../editor/project-workflow.md#assets-and-lua-directories) and load it as
-`lua://` + path.
+`lua://` + path. Both lookups go through `Data`, so they still work when a native export
+packs Lua sources into `resources.pak`.
 
 ## Referencing other entities
 

@@ -18,9 +18,23 @@ Android with an OpenGL ES 3.1 backend through the Android Native Activity path.
 1. Install Android Studio and ensure the **SDK** and **NDK** are installed via the SDK
    Manager.
 2. Make sure the `ANDROID_HOME` (SDK) and NDK paths are available to your environment.
-3. Export your project from the Doriax editor with Android selected.
-4. Open the generated Android workspace in Android Studio, then build and run on a
+3. Optional: enable **Project Settings → Build → Native Resource Pack** to ship
+   assets and Lua files in one `resources.pak` instead of as loose files.
+4. Export your project from the Doriax editor with Android selected.
+5. Open the generated Android workspace in Android Studio, then build and run on a
    device or emulator.
+
+## Resource packaging
+
+The native resource pack is experimental and disabled by default. When enabled, a
+Source Code export writes `project/assets/resources.pak`, removes the loose asset and
+Lua contents, and the Android build ships the pack at the APK asset root. Normal engine
+loaders, Lua modules, and `Data` continue to resolve asset-relative, `asset://`, and
+`lua://` paths.
+
+A direct `File` handle cannot open packed entries, the full pack must remain below 2
+GiB, and its bytes are obfuscated rather than encrypted. See [Export Window — Native
+resource pack](../editor/export.md#native-resource-pack) for the complete restrictions.
 
 ## Command-line build
 

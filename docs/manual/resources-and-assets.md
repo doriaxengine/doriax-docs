@@ -6,8 +6,9 @@ description: Resource loading, asset formats, runtime pools, file I/O, and user 
 
 Doriax projects combine editor-managed resources with runtime pools and file helpers.
 Media assets are ordinary files that the runtime opens directly, both in the editor and
-in an exported game. Export copies them unchanged, compiles shaders for the target
-backend, and turns scenes and bundles into generated C++.
+in an exported game. Export copies them unchanged or places their bytes in an optional
+native resource pack, compiles shaders for the target backend, and turns scenes and
+bundles into generated C++.
 
 ## Asset types
 
@@ -21,9 +22,10 @@ These are read from a file path by the runtime, on demand, at any point during g
 | **Fonts** | TTF, OTF, TTC | Font pool, `Text` components |
 | **Shaders** | `.sdat` shader data (engine format) | `ShaderPool`, `RenderSystem` |
 
-There is no import step and no engine-specific asset container: the `.glb` or `.png` you
-export from your content tool *is* the file the runtime opens, and no reprocessed copy is
-kept alongside it.
+There is no import or preprocessing step: the `.glb` or `.png` you export from your
+content tool supplies the same bytes the runtime reads. A native export may package
+those original bytes into `resources.pak`, but it does not convert the asset format or
+create a reprocessed copy.
 
 ### Authoring formats
 
@@ -63,6 +65,11 @@ an exported executable. Absolute paths are used as given.
 
 A leading `..` never escapes a root: it is dropped while the path is normalized, so keep
 every referenced file inside the assets directory.
+
+Native resource packs preserve these logical roots. Packed lookups support
+asset-relative paths, `asset://`, and `lua://`; absolute paths, `data://`, and other
+schemes continue to use the filesystem. See [Native resource
+pack](../editor/export.md#native-resource-pack) for export layouts and limitations.
 
 ## Loading assets at runtime
 
@@ -214,6 +221,13 @@ complete C++ API.
 disk and `Data` wraps an in-memory buffer. All three share `readString`, `writeString`,
 `read8/16/32`, `seek`, `pos`, `length`, and `eof`.
 
+In a native build with resource packing enabled, `Data::open()` checks
+`resources.pak` before falling back to disk. Lua `require()`, script entries, textures,
+sounds, and GLTF extra files all go through that path. `FileData::newFile()` also
+returns an in-memory `Data` object when the requested resource is packed, even if a
+handle was requested. A directly constructed `File` still requires a real file and
+therefore cannot open packed assets or Lua files. Editor Play mode never opens a pack.
+
 === "Lua"
 
     ```lua
@@ -287,9 +301,11 @@ Keep heavy save data (inventory, world state) in custom binary or JSON files. Re
 ## Export and asset packaging
 
 At export time the editor copies the **contents** of the assets and Lua directories into
-the `assets` and `lua` folders of the output, which is what the runtime reads relative to
-the executable. Shaders are compiled for the target platform. The source project folder is
-not modified.
+the `assets` and `lua` folders of the output. With the experimental **Native Resource
+Pack** project setting enabled, native exports then combine those two trees into
+`resources.pak` and remove the loose contents. Editor Play mode keeps using the source
+directories. Shaders are compiled for the target platform. The source project folder is
+not modified in either case.
 
 Scene and bundle YAML is not needed by the exported game, since export has already turned
 it into compiled code. Those files may still appear inside the output `assets` folder when
@@ -297,7 +313,10 @@ your assets directory is the project root, because the copy takes the directory 
 point the assets directory at a dedicated subfolder to keep authoring files out of the
 shipped build.
 
-See [Export Window](../editor/export.md) for details on the export pipeline.
+The pack is an organization and light-obfuscation feature, not encryption. Packed data
+is opened in memory, and the complete pack is limited to 2 GiB. See [Export
+Window](../editor/export.md#native-resource-pack) for supported export modes, exact
+output locations, reserved names, and runtime restrictions.
 
 ## See also
 

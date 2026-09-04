@@ -155,6 +155,8 @@ Lua `require("foo")` searches the virtual filesystem:
 2. `lua://foo.lua`
 
 Dots in module names map to directory separators (`require("ui.menu")` → `lua/ui/menu.lua`).
+The lookup goes through `Data`, so packed Lua modules in a native export resolve the same
+way as loose files.
 
 Script component paths use the same `lua://` prefix with the stored relative path.
 

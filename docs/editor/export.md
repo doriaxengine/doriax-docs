@@ -49,6 +49,10 @@ The assets and Lua folders that ship with the build come from
 stored references are relative to those directories, so exporting a different one would
 break every path in the scenes.
 
+The experimental **Native Resource Pack** choice also comes from **Project Settings →
+Build**. It is off by default; see [Native resource pack](#native-resource-pack) for its
+output and runtime restrictions.
+
 The shader list is populated automatically from every saved scene, including a live scan
 of the currently open scenes — so a component added since the last save (for example a
 shadow-casting 2D light) is already accounted for. Use **Add** if your game enables a
@@ -77,7 +81,9 @@ output/
     ├── main.cpp         ← generated startup entry point
     ├── *.cpp            ← generated scene and bundle factory sources
     ├── assets/          ← contents of the project's assets directory
+    │                    ← (or resources.pak only, when packing is enabled)
     ├── lua/             ← contents of the project's Lua directory
+    │                    ← (empty directory kept when packing is enabled)
     └── scripts/         ← your registered C++ scripts
 ```
 
@@ -96,9 +102,51 @@ folder:
   and similar) are copied to both trees.
 
 A folder appears in the export only when a file lands in it, so a folder holding nothing
-but scripts leaves no empty directory behind.
+but scripts leaves no empty directory behind. The exception is a packed Source Code
+export, which keeps an empty `project/lua/` directory for the generated Xcode workspace.
 
 Build it afterwards with the appropriate [platform toolchain](#platform-toolchains).
+
+## Native resource pack
+
+Enable **Project → Project Settings → Build → Native Resource Pack** to combine
+the exported `assets/` and `lua/` trees into one `resources.pak`. This experimental,
+project-wide option is intended for ready-to-run **Desktop** exports and Android builds
+made from **Source Code** output. It has no effect on **Web** mode, which continues to
+produce Emscripten's `.data` bundle.
+
+The resulting layout depends on the export mode:
+
+| Mode | Resource output when packing is enabled |
+| --- | --- |
+| **Desktop** | `resources.pak` beside the executable; loose `assets/` and `lua/` directories are removed |
+| **Source Code** | `project/assets/resources.pak`; the loose contents are removed, while the empty `project/lua/` directory is retained for generated Xcode workspace compatibility |
+| **Web** | Unchanged; Emscripten emits its normal `.data` bundle |
+
+The pack preserves the usual logical names. High-level loaders, Lua `require()`, script
+entries, and `Data::open()` can read plain asset-relative paths, `asset://` paths, and
+`lua://` paths transparently; external buffers and images referenced by GLTF models work
+the same way. Absolute paths, `data://`, and other schemes continue to resolve outside
+the pack. Editor Play mode is unaffected: it always reads the project's loose source
+files.
+
+!!! warning "Experimental limitations"
+    - `File` opens real filesystem files and cannot open a packed entry. Use `Data` (or
+      an engine resource loader) for read-only packaged resources. This also means each
+      opened entry is read into memory rather than exposed as a streaming file handle.
+      `FileData.newFile()` follows the same rule: a packed path returns an in-memory
+      `Data` object even when a file handle was requested.
+    - A pack must remain below **2 GiB**. Export stops with an error if the combined
+      header and resource data exceed that limit.
+    - Packing only obfuscates the bytes; it does **not** encrypt or securely protect
+      shipped assets.
+    - `resources.pak` and `resources.pak.tmp` are reserved, case-insensitive names at
+      the top level of the configured assets directory. Rename any file or directory
+      with either name before exporting, even when packing is disabled.
+
+If you disable the option and export again, the exporter removes a stale pack and ships
+the loose resource directories again. Command-line exports honor the saved project
+setting; there is no separate CLI switch.
 
 ## Desktop mode
 
@@ -127,14 +175,15 @@ The destination folder receives:
 ```
 destination/
 ├── MyProject            ← the executable (MyProject.exe on Windows)
-├── assets/              ← runtime resources
-├── lua/                 ← runtime Lua scripts
+├── assets/              ← runtime resources (default)
+├── lua/                 ← runtime Lua scripts (default)
+├── resources.pak        ← replaces assets/ and lua/ when packing is enabled
 ├── icon.png             ← (Linux, with a project icon set)
 └── MyProject.desktop    ← (Linux, with a project icon set)
 ```
 
-Run the executable from that folder — it resolves `assets/` and `lua/` relative to its
-working directory.
+Run the executable from that folder — it resolves the loose `assets/` and `lua/`
+directories, or `resources.pak`, relative to its working directory.
 
 ### Application icon
 
@@ -204,7 +253,7 @@ changed — typically just your scenes and scripts, finishing in seconds.
 | --- | --- |
 | Scene factory generation | Generates a C++ factory function for each scene from its YAML |
 | Bundle factory generation | Generates C++ factory functions for each bundle |
-| Asset packaging | Copies and organizes resource files |
+| Asset packaging | Copies and organizes resource files, then optionally combines native assets and Lua files into `resources.pak` |
 | Startup code generation | Generates `main.cpp` / entry point with scene registration |
 | Engine template copy | Copies the runtime engine source and CMake/build files |
 | Shader compilation | Translates shaders for the selected graphics backends |

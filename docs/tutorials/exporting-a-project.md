@@ -17,9 +17,10 @@ the mode you choose.
   Windows, macOS, and Linux. Pick this for mobile targets, CI pipelines, or when you
   want to customize the build.
 - **Desktop** — compiles a ready-to-run executable for the OS the editor runs on and
-  copies it, with `assets/` and `lua/`, to your destination folder. Needs CMake and a
-  C++ compiler installed. Choose OpenGL or Vulkan on Linux; Direct3D 11, Vulkan, or
-  OpenGL on Windows; and Metal or OpenGL on macOS.
+  copies it with its resources to your destination folder. Resources ship as `assets/`
+  and `lua/` by default, or as one `resources.pak` when the experimental project option
+  is enabled. Needs CMake and a C++ compiler installed. Choose OpenGL or Vulkan on Linux;
+  Direct3D 11, Vulkan, or OpenGL on Windows; and Metal or OpenGL on macOS.
 - **Web** — compiles an HTML + JavaScript + WebAssembly build with Emscripten. Needs the
   [Emscripten SDK](https://emscripten.org/) installed (auto-detected, or point the
   window at your `emsdk` folder once) and uses WebGL 2.
@@ -35,6 +36,9 @@ Before exporting, verify:
 - All scenes are saved.
 - The intended startup scene is selected.
 - Resource paths are inside the project or otherwise reachable by the exporter.
+- **Project Settings → Build → Native Resource Pack** is configured for the target:
+  leave it off for loose files, or enable it for Desktop/Android after checking its
+  [runtime limitations](../editor/export.md#native-resource-pack).
 - Lua and C++ entry points are configured so only the intended startup path creates the
   main scene.
 - Target platform dependencies are installed.
@@ -47,7 +51,7 @@ The editor export pipeline can prepare:
 | Output | Purpose |
 | --- | --- |
 | Scene code/data | Serialized scene hierarchy, components, bundles, and child scene references |
-| Resources | Textures, models, fonts, audio, and other project assets |
+| Resources | Textures, models, fonts, audio, and other project assets, as loose files or an optional native `resources.pak` |
 | Scripts | Lua files and generated C++ glue for script entry points |
 | Shaders | Shader data compiled for each selected graphic backend |
 | Build files | CMake, Gradle, Xcode, Emscripten, or platform-specific project files |
@@ -81,6 +85,8 @@ Android, iOS, macOS, and HTML5 have additional platform requirements. See the
 | Scene does not load | Startup scene, scene ID/name, exported scene list |
 | Blank window | Active camera, canvas size, render backend, asset paths |
 | Missing textures | Resource folder, texture path case, unsupported source format |
+| Assets disappear only when packing is enabled | Code that constructs `File` directly; packed read-only resources must use `Data` or an engine loader |
+| Export rejects `resources.pak` | Rename the top-level asset; `resources.pak` and `resources.pak.tmp` are reserved export names |
 | Script starts twice | `NO_CPP_INIT` / `NO_LUA_INIT` configuration |
 | Shader errors | Target backend, shader compiler output, generated shader files |
 | Slow or unusually large C++ build | Large inline mesh data; prefer a GLTF or OBJ asset |

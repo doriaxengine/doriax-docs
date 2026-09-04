@@ -75,6 +75,10 @@ import step that rewrites your files. The runtime opens standard formats directl
 OGG/WAV/MP3/FLAC for audio, and TTF/OTF/TTC for fonts. The file your content tool produces
 is the file the game loads.
 
+A native export can optionally combine those original bytes into one `resources.pak`.
+That is packaging and light obfuscation, not a converted engine format — see
+[Native resource pack](../editor/export.md#native-resource-pack).
+
 Scenes, bundles, and materials are the exception. They are authored as YAML for the editor
 and converted at export into C++ that is compiled into your game, rather than shipped as
 data the runtime parses. See
@@ -85,7 +89,10 @@ data the runtime parses. See
 Yes, for media. Models, textures, sounds, and fonts can be loaded or swapped from any path
 at any point during gameplay, with `Engine.asyncLoading = true` moving the work to worker
 threads and [`ResourceProgress`](../reference/classes/resourceprogress.md) reporting how
-far along it is. Lua scripts also load from disk at runtime through the `lua://` root.
+far along it is. Lua scripts also load at runtime through the `lua://` root.
+
+Those same paths work in a packed native export through engine loaders and `Data`. A
+direct `File` handle cannot open a packed entry.
 
 Entity hierarchies work differently, because scenes and bundles are compiled rather than
 parsed. Spawning them on demand is fully supported through

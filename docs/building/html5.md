@@ -50,7 +50,9 @@ cmake --build build-web --config Release --target doriax-project
 
 The runtime selects the `gles3` graphics backend and Emscripten app backend for web
 builds. Assets and Lua files are preloaded into the virtual filesystem when the project
-contains `assets/` and `lua/` folders.
+contains `assets/` and `lua/` folders. The experimental Native Resource Pack setting does
+not apply to Web mode — Emscripten still emits its `.data` bundle from the loose folders.
+Leave packing off if you export Source Code and then run this Emscripten build yourself.
 
 ## Thread support
 

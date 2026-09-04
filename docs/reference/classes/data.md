@@ -11,6 +11,10 @@ description: Data API reference (C++ and Lua).
 
 An in-memory byte buffer that implements the `FileData` streaming interface. It can be loaded from a file path, from a raw byte pointer, or from another [File](file.md) object. Once loaded, it supports sequential read/write operations and random seek access.
 
+In native exports, a filename lookup checks the optional `resources.pak` before falling
+back to the filesystem. This makes `Data` suitable for read-only packaged resources;
+direct [File](file.md) handles can only open loose files.
+
 `Data` is used by the engine for audio sample loading, asset bundling, and anywhere that in-memory file-like access is needed.
 
 ### Methods
@@ -33,7 +37,11 @@ An in-memory byte buffer that implements the `FileData` streaming interface. It 
 * unsigned int **open**(const char* aFilename)
 * unsigned int **open**(File* aFile)
 
-Loads data from a raw byte pointer, a file path, or a [File](file.md) object. When `aCopy` is `true`, the data is duplicated into an internal buffer; when `aTakeOwnership` is `true`, the `Data` object takes ownership of the provided pointer.
+Loads data from a raw byte pointer, a file path, or a [File](file.md) object. The filename
+overload transparently reads packed `asset://`, `lua://`, and asset-relative paths in a
+native export. When `aCopy` is `true`, the data is duplicated into an internal buffer;
+when `aTakeOwnership` is `true`, the `Data` object takes ownership of the provided
+pointer.
 
 ---
 

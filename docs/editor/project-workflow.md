@@ -157,7 +157,7 @@ See [BundleManager](../reference/classes/bundlemanager.md) for the complete API.
 | Settings area | What it stores |
 | --- | --- |
 | **Editor settings** | Window size, maximized state, recent projects, Resources Browser preferences, editor VSync |
-| **Project settings** | Startup scene reference, canvas size, scaling, VSync, window mode/size/title, compiler, parallel build jobs, asset/Lua/script directories, and the bundles built without a scene instance |
+| **Project settings** | Startup scene reference, canvas size, scaling, VSync, window mode/size/title, compiler, parallel build jobs, native resource packaging, asset/Lua/script directories, and the bundles built without a scene instance |
 | **Export settings** | Platform targets, shader backend, output folder, included asset folders |
 
 Shaders have no directory setting: each fork picks its own location when you create it,
@@ -209,6 +209,24 @@ See [C++ Build Setup → Script directories](../manual/cpp-build-setup.md#script
 for the full behaviour, and [Customizing the
 build](../manual/cpp-build-setup.md#customizing-the-build) for `ProjectBuild.cmake`, which
 covers what this setting does not — linking libraries and other CMake of your own.
+
+### Native resource pack
+
+**Project → Project Settings → Build → Native Resource Pack** controls whether a
+native export ships the copied assets and Lua files as loose directories or combines
+them into one `resources.pak` file. The option is experimental and disabled by default.
+It is intended for **Desktop** exports and Android builds made from **Source Code**
+exports; Web exports continue to use Emscripten's own `.data` bundle.
+
+The choice is saved as `packNativeResources` in `project.yaml`, so the Export Window,
+command-line export, and editor automation all use the same project setting. Packing is
+an export step and never changes the source assets or Lua directories. Editor Play mode
+always reads those loose project files.
+
+Packed entries are obfuscated, not encrypted, and each entry is loaded into memory when
+opened. Engine resource loaders, Lua modules, and `Data` can read the pack transparently,
+but a direct `File` handle cannot. Review the [Native resource pack](export.md#native-resource-pack)
+section before enabling it for a project that opens asset or Lua files itself.
 
 ### VSync
 

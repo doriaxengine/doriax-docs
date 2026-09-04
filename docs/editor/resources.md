@@ -171,6 +171,8 @@ See [Tileset Slicer](tileset-slicer.md) for the complete workflow.
 - Store collision meshes separately from visual meshes.
 - Remove unused large assets before exporting mobile or web builds to keep bundle
   sizes small.
+- Do not name a top-level file or folder in the assets directory `resources.pak` or
+  `resources.pak.tmp`. Those names are reserved for the optional native resource pack.
 
 ## See also
 

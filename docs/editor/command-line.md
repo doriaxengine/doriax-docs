@@ -68,6 +68,12 @@ Asset references are stored relative to the directories configured in the projec
 `--assets` and `--lua` only make sense when they point at those same folders. Exporting a
 different root ships files the stored paths do not resolve against.
 
+The command also honors **Project Settings → Build → Native Resource Pack**. When
+that saved project option is enabled, the source output contains
+`project/assets/resources.pak` in place of loose asset and Lua contents. There is no
+command-line override; see [Native resource pack](export.md#native-resource-pack) before
+using it in an automated Android export.
+
 ### List a project's scenes
 
 Useful for discovering a start-scene ID before exporting:
