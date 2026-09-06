@@ -55,6 +55,10 @@ cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -G "Ninja" ^
 cmake --build build --config Release --target doriax-editor
 ```
 
+Launch that editor from the same MSYS2 terminal so it finds `g++`, `mingw32-make` and the
+runtime DLLs. Its **Compiler → Default** then resolves to your GCC toolchain on its own,
+because the MSVC kits are ABI-incompatible with a MinGW editor and are greyed out.
+
 !!! warning "A MinGW editor only loads MinGW C++ plugins"
     The editor and your compiled C++ scripts share a single engine instance, so they must
     use the same C++ ABI. A MinGW-built editor can therefore only build and load **MinGW

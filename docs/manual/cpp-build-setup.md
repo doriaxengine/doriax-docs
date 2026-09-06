@@ -58,12 +58,21 @@ compatible CMake generator:
 
 | Compiler (Windows) | CMake generator | C++ ABI | Official (MSVC) build |
 | --- | --- | --- | --- |
-| MSVC / Visual Studio | Visual Studio (CMake default) | MSVC | Yes |
+| MSVC / Visual Studio | The newest installed `Visual Studio N YYYY` your CMake supports, or Ninja with `cl` | MSVC | Yes |
 | Clang targeting MSVC (`x86_64-pc-windows-msvc`) | Ninja — **required** | MSVC | Yes |
 | MinGW GCC or Clang (`*-mingw*`) | MinGW Makefiles | GNU | No — needs a MinGW editor build |
 
-**Default** lets CMake pick the platform default toolchain (Visual Studio on Windows,
-`cc`/`c++` elsewhere). On Linux and macOS no generator pairing is needed.
+**Default** does not simply hand the choice to CMake on Windows. The editor runs the same
+detection as the dropdown and picks the best **ABI-compatible** kit it finds, pinning both
+the compiler and the generator; the result is printed in the Output panel as *"Default
+compiler resolved to: …"*. On Linux and macOS, where a single system C++ ABI makes any
+detected compiler usable, Default leaves the toolchain to CMake.
+
+!!! note "Why Default pins an explicit toolchain on Windows"
+    A bare `cmake` picks whatever toolchain that particular CMake prefers — and an
+    **MSYS2 CMake earlier on `PATH`** than the Visual Studio one prefers Ninja with MinGW
+    GCC, even when Visual Studio is installed. On the official MSVC editor that silently
+    produced a GNU-ABI plugin that cannot link the engine. Pinning removes the ambiguity.
 
 Your selection is **remembered across sessions and projects** — newly created projects
 inherit the compiler you last chose, so you only need to set it once (rather than having
@@ -112,8 +121,9 @@ each new project silently fall back to **Default**).
     `lld-link: error: could not open 'kernel32.lib'`, the Windows SDK is either not
     installed or could not be located — install it via the Visual Studio Installer.
 
-Switching compilers is safe at any time: the editor detects the change and cleans the
-build directory automatically (CMake cannot switch generators or compilers in-place).
+Switching compilers is safe at any time: the editor detects the change — including a
+change of target architecture — and cleans the build directory automatically (CMake
+cannot switch generators or compilers in-place).
 
 ## Parallel builds
 
@@ -233,17 +243,21 @@ is almost always the meaningful one.
 | Symptom in the Output panel | Likely cause and fix |
 | --- | --- |
 | `Missing Build Tools` dialog | CMake or a C++ compiler is not installed / not on `PATH`. Install it and restart the editor. |
+| `C++ toolchain compatible with this editor: not found` in that dialog | Compilers were found, but none matches the editor's C++ ABI. The dialog lists every detected compiler with the reason it was rejected — see [Choosing a compiler](#choosing-a-compiler). |
+| MSVC greyed out with *"requires a CMake version supporting the installed Visual Studio, or Ninja and an MSVC toolchain environment"* | Your CMake is older than your Visual Studio, so it has no matching `Visual Studio N YYYY` generator. Update CMake, install an older Visual Studio, or install Ninja so the editor can drive `cl.exe` through it. |
 | `The C compiler ... is not able to compile a simple test program` together with `CMAKE_LINKER-NOTFOUND` or `TRK0005` | A custom compiler (usually Clang) was configured with the Visual Studio generator. Install Ninja and re-select the Clang compiler in Project Settings, or switch to the MSVC compiler. Editor versions before June 2026 allowed this broken combination. |
 | `CMake was unable to find a build program corresponding to "Ninja"` | `ninja.exe` is not on `PATH`, or it exists but cannot run (pip wrapper copied out of place, or blocked download). Install the standalone binary and check `ninja --version` works in a fresh terminal. |
-| `undefined reference to` **every** engine symbol (`doriax::Vector3::Vector3`, `doriax::Engine::onUpdate`, …) at the **link** step | The selected compiler's C++ ABI does not match the editor's — typically MinGW GCC against the official MSVC build. Use MSVC or Clang-targeting-MSVC on the MSVC build (or a MinGW editor for MinGW). Current editors grey out incompatible compilers, so this mainly appears in older versions or when building outside the editor. See [Choosing a compiler](#choosing-a-compiler). |
+| `undefined reference to` **every** engine symbol (`doriax::Vector3::Vector3`, `doriax::Engine::onUpdate`, …) at the **link** step | The selected compiler's C++ ABI does not match the editor's — typically MinGW GCC against the official MSVC build. Use MSVC or Clang-targeting-MSVC on the MSVC build (or a MinGW editor for MinGW). Current editors grey out incompatible compilers and stop the build at configure time with a readable message, so this mainly appears in older versions or when building outside the editor. See [Choosing a compiler](#choosing-a-compiler). |
+| `This Doriax editor requires MSVC-compatible C++ plugins` (or `... MinGW/GNU C++ plugins`) at the **configure** step | The selected compiler's ABI does not match the editor's, and the generated CMake project stops before compiling anything. Pick a compatible compiler in **Project Settings → Compiler**; this mainly appears with a compiler saved before the ABI check existed, or one selected outside the editor. See [Choosing a compiler](#choosing-a-compiler). |
+| The build uses `C:\msys64\ucrt64\bin\g++.exe` even though Visual Studio is installed and **Compiler** is **Default** | An MSYS2 `cmake` came earlier on `PATH` than the Visual Studio one, and older editors let CMake choose the toolchain — which that CMake resolves to Ninja with MinGW GCC. Update the editor (Default now pins an ABI-compatible toolchain), or select **MSVC** explicitly in **Project Settings → Compiler**. |
 | `lld-link: error: could not open 'kernel32.lib'` (or other `*.lib`) | Clang cannot find the Windows SDK libraries. Install the Windows SDK through the Visual Studio Installer ("Desktop development with C++"). The editor loads the MSVC environment automatically; if it can't find Visual Studio it warns and you can instead launch the editor from a Developer Command Prompt. |
-| `No CMAKE_C_COMPILER could be found` (with `Building for: Visual Studio 17 2022`) | The build is using the **Default** toolchain and CMake's Visual Studio auto-detection found no usable compiler. Pick an explicit compiler in **Project Settings → Compiler** (MSVC, or Clang). The choice is remembered across projects, so you only set it once. If even MSVC fails here, your Visual Studio C++ toolset is incomplete — repair "Desktop development with C++" in the Visual Studio Installer. |
+| `No CMAKE_C_COMPILER could be found` (with `Building for: Visual Studio 17 2022`) | CMake's Visual Studio auto-detection found no usable compiler. Current editors no longer route **Default** through that auto-detection on Windows, so update the editor first. Otherwise pick an explicit compiler in **Project Settings → Compiler** (MSVC, or Clang). The choice is remembered across projects, so you only set it once. If even MSVC fails here, your Visual Studio C++ toolset is incomplete — repair "Desktop development with C++" in the Visual Studio Installer. |
 | `internal compiler error: Killed` (GCC/Clang) or `fatal error C1060: compiler is out of heap space` (MSVC) | The parallel build ran out of memory. Lower **Project Settings → Parallel Jobs** (try `1` or `2`) — see [Parallel builds](#parallel-builds). |
 | `Does not match the generator used previously` | The build directory holds a cache from a different generator. The editor normally cleans it automatically when you switch compilers; if it reports the directory is **locked**, close anything using `.doriax/build` (notably the VS Code *CMake Tools* extension) or delete the folder manually, then try again. |
 | `CMake configuration failed` with **no other output** | Update the editor — older versions dropped the output of commands that failed quickly. Current versions print the full CMake error plus a `Process exited with code N` line. |
 | `CMake Error: File ... does not exist.` (or similar) for a script or `.bundle` you already deleted | Generated sources still listed a missing file. Current editors skip files that are gone from disk; press Play or Save once to regenerate. Do not patch the generated `CMakeLists.txt` — it is overwritten. If a closed scene still shows the old ScriptComponent entry, open that scene, remove the leftover, and save. |
 | `Unknown type SomeClass` | A leftover C++ script class name is still registered. Remove that ScriptComponent entry from every scene and bundle that still lists it, then Play or Save. Recreating a script with the same class name also recovers a project that was already broken. |
-| `Compiler kit changed. Cleaning build directory...` | Not an error — the compiler selection changed, so the editor wipes `.doriax/build` and reconfigures from scratch. |
+| `Compiler kit or engine library directory changed...` or `CMake generator or architecture changed...` followed by *Cleaning build directory* | Not an error — the compiler, generator, target architecture or editor install changed, so the editor wipes `.doriax/build` and reconfigures from scratch. |
 | Errors persist after fixing the toolchain | Delete `.doriax/build` and press Play again to force a clean configure. |
 
 ## Next steps
