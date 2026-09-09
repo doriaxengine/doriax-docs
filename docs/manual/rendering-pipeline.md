@@ -16,7 +16,9 @@ Each frame, the engine runs the following phases in order:
    matrix.
 2. **Frustum culling** — Renderables outside the camera frustum are excluded. Terrain
    and tilemaps cull below entity level: only the terrain nodes and tilemap chunks that
-   the camera can see are submitted.
+   the camera can see are submitted. [Terrain foliage](terrain.md#foliage) is batched into
+   chunks around the camera and culled the same way, with instances scaling in over the
+   last quarter of the layer's draw distance instead of popping.
 3. **Opaque pass** — Opaque geometry is sorted front-to-back and drawn with depth
    testing enabled for early-Z efficiency.
 4. **Lighting and shadows** — Shadow maps are rendered for each shadow-casting light,

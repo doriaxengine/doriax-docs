@@ -63,8 +63,9 @@ ready-to-run desktop and web builds directly. See the [Export Window](../editor/
 for the export modes and output options.
 
 !!! note "Editor coverage"
-    Terrain sculpting/painting has a dedicated **Terrain Editor** window, and particle
-    entities can be created from the Structure panel. Audio tooling and direct shader
+    Terrain sculpting, painting, foliage and prop placement have a dedicated
+    **Terrain Editor** window, and particle entities can be created from the Structure
+    panel. Audio tooling and direct shader
     manipulation are not fully integrated into the editor yet — those are available at
     the engine/runtime level.
 
@@ -76,6 +77,7 @@ The detailed editor manual is split into focused pages:
 - [Scene View](../editor/scene-view.md)
 - [Properties & Components](../editor/properties.md)
 - [Resources Browser](../editor/resources.md)
+- [Terrain Editor](../editor/terrain-editor.md)
 - [Animation Timeline](../editor/animation.md)
 - [Code Editor](../editor/code-editor.md)
 - [Export Window](../editor/export.md)

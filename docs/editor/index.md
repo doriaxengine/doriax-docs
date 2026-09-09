@@ -36,6 +36,7 @@ The editor window is divided into a set of resizable panels:
 | Import and preview assets | Resources Browser |
 | Share PBR materials across meshes | Create `.material` files (Properties → Resources drag), link from Scene view |
 | Slice sprite sheets and tilesets | Sprite Slicer, Tileset Slicer |
+| Sculpt, paint and populate terrain | Terrain Editor |
 | Write Lua or C++ scripts | Code Editor and script creation dialog |
 | Animate objects and characters | Animation Timeline |
 | Test gameplay | Play / Pause / Stop controls |
@@ -94,6 +95,7 @@ assignments, and cascade deletes (a parent and its children restore together).
 - [Resources Browser](resources.md)
 - [Sprite Slicer](sprite-slicer.md)
 - [Tileset Slicer](tileset-slicer.md)
+- [Terrain Editor](terrain-editor.md)
 - [Animation Timeline](animation.md)
 - [Code Editor](code-editor.md)
 - [Export Window](export.md)

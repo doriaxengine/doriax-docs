@@ -217,6 +217,18 @@ up when the Code Editor reloads the file.
 !!! tip "Iterate fast"
     Keep the file open, tweak, **Ctrl+S**, and watch the viewport update.
 
+### Vertex attribute limit
+
+A vertex stage can declare at most **16 inputs**, and each one has to sit at a
+`layout(location = N)` below 16 — the location indexes the engine's attribute semantic
+table, which is what the HLSL and Metal backends bind against. A shader that goes past
+either limit fails to compile with the offending input named in the Output panel, and the
+component keeps the shader it had. Reuse a free location or pack values into a wider
+vector instead of adding another input.
+
+Fragment inputs and outputs are not bound by that table, so varyings between stages are
+free of the limit.
+
 ## Includes
 
 Shaders include by a fixed key — `#include "includes/pbr.glsl"` — and a fork resolves each

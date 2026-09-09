@@ -1,5 +1,5 @@
 ---
-description: Heightmap terrain in Doriax — LOD clipmap rendering, sculpting and painting in the editor, and the runtime Terrain API.
+description: Heightmap terrain in Doriax — LOD clipmap rendering, detail layers, foliage scattering, sculpting and painting in the editor, and the runtime Terrain API.
 ---
 
 # Terrain
@@ -14,27 +14,70 @@ constant regardless of terrain size, with detail concentrated near the camera.
 | --- | --- |
 | **Heightmap** | Grayscale image that displaces the grid vertically (white = `maxHeight`) |
 | **Base texture** | The ground texture tiled across the whole terrain |
-| **Blend map** | RGB mask that mixes up to three detail textures over the base |
-| **Detail textures** | Red/green/blue channel textures (e.g. grass, rock, path) |
+| **Blend maps** | Up to three RGB masks; each channel weights one detail layer |
+| **Detail layers** | Up to nine textures (grass, rock, path, …) mixed over the base |
+| **Foliage layers** | Meshes scattered over the surface from painted density maps |
 
-The heightmap and the blend map are stretched once over the whole terrain, so they are
+The heightmap and the blend maps are stretched once over the whole terrain, so they are
 sampled with clamp-to-edge wrapping: the outer row and column of texels define the border
 of the terrain instead of blending with the opposite edge. Only the base and detail
 textures tile.
 
+## Detail layers
+
+Detail layers are numbered from 1 and grouped in threes: layers 1–3 are weighted by the
+RGB channels of the first blend map, 4–6 by the second, 7–9 by the third. Whatever weight
+the layers leave unclaimed goes to the base texture, so an unpainted terrain shows the
+base alone.
+
+All layers are uploaded as a single texture array, which keeps the sampler count flat as
+layers are added. Slices smaller than the largest layer are resized and grayscale layers
+are widened to RGBA; a layer whose format cannot be reconciled with the others is refused
+with an error and the terrain falls back to the base texture.
+
+Three things shape how the layers meet on screen:
+
+- **Height blending.** A detail texture's alpha is read as *layer height*, not opacity.
+  Where two layers overlap, the taller one takes the contact zone — gravel settles between
+  cobbles instead of cross-fading into them. Fully opaque textures have no height and blend
+  on their blend-map weight alone.
+- **Triplanar projection on slopes.** A flat top-down projection stretches over a cliff, so
+  as the surface turns vertical the layers fade into side projections taken along X and Z.
+- **Distance tile break.** Past a few tiles of distance a second, coarser tiling rate fades
+  in and mixes with the first, breaking up the repeating pattern of tiled ground.
+
+## Foliage
+
+A terrain can carry foliage layers: a mesh, a painted density map, and the rules for
+scattering it. Instances are not stored in the scene — they are resolved from the density
+map at runtime, in fixed cells batched into per-chunk instanced entities around the
+camera, and re-resolved when the camera moves. Each layer filters by ground slope and
+height, jitters scale and yaw, can lean instances along the surface normal, and has its
+own draw distance, with instances scaling in over the last quarter of it instead of
+popping.
+
+Foliage entities belong to the engine, not to the authored scene: they are not listed in
+the editor's Structure panel and clicking one selects its terrain.
+
+For props that need to be real entities — collision, scripts, animation, or just a
+hand-placed look — use the Terrain Editor's object placement brush instead, which
+parents ordinary models or bundles to the terrain.
+
 ## Editing terrain in the editor
 
 Select an entity with a Terrain component and click **Open Terrain Editor** in the
-Properties window. The Terrain Editor provides brush-based authoring:
+Properties window. The window paints every map the terrain uses:
 
-| Tool | Effect |
+| Section | Tools |
 | --- | --- |
-| **Raise / Lower** | Sculpt the heightmap up or down |
-| **Smooth** | Soften height transitions |
-| **Flatten** | Level an area to a uniform height |
-| **Paint Red / Green / Blue** | Paint detail textures into the blend map channels |
+| **Sculpt** | Raise, Lower, Smooth, Flatten, Sharpen, Noise, Terrace, Stamp, Erode, Ramp |
+| **Texture Paint** | Paint the base or any detail layer into the blend maps, optionally masked by slope and height |
+| **Foliage** | Add layers and paint their density maps |
+| **Objects** | Scatter models or bundles as children of the terrain, instanced or as individual entities |
 
-Brushes have configurable size, strength, shape (circle/square), and falloff.
+Brushes have configurable size, strength, shape (circle/square), falloff, and an optional
+grayscale mask. See [Terrain Editor](../editor/terrain-editor.md) for the full window
+reference.
 
 ## Creating terrain in code
 
@@ -45,10 +88,15 @@ Brushes have configurable size, strength, shape (circle/square), and falloff.
     terrain:setHeightMap("terrain/heightmap.png")
     terrain:setTexture("terrain/grass_base.png")
 
+    -- Layers 0-2 are weighted by the RGB channels of blend map 0
     terrain:setBlendMap("terrain/blendmap.png")
-    terrain:setTextureDetailRed("terrain/rock.png")
-    terrain:setTextureDetailGreen("terrain/grass_detail.png")
-    terrain:setTextureDetailBlue("terrain/path.png")
+    terrain:setTextureLayer(0, "terrain/rock.png")
+    terrain:setTextureLayer(1, "terrain/grass_detail.png")
+    terrain:setTextureLayer(2, "terrain/path.png")
+
+    -- Layers 3-5 need a second blend map
+    terrain:setBlendMapIndex(1, "terrain/blendmap1.png")
+    terrain:setTextureLayer(3, "terrain/snow.png")
 
     -- Dimensions and LOD are properties in Lua
     terrain.size = 2000          -- world units per side
@@ -63,10 +111,15 @@ Brushes have configurable size, strength, shape (circle/square), and falloff.
     terrain.setHeightMap("terrain/heightmap.png");
     terrain.setTexture("terrain/grass_base.png");
 
+    // Layers 0-2 are weighted by the RGB channels of blend map 0
     terrain.setBlendMap("terrain/blendmap.png");
-    terrain.setTextureDetailRed("terrain/rock.png");
-    terrain.setTextureDetailGreen("terrain/grass_detail.png");
-    terrain.setTextureDetailBlue("terrain/path.png");
+    terrain.setTextureLayer(0, "terrain/rock.png");
+    terrain.setTextureLayer(1, "terrain/grass_detail.png");
+    terrain.setTextureLayer(2, "terrain/path.png");
+
+    // Layers 3-5 need a second blend map
+    terrain.setBlendMap(1, "terrain/blendmap1.png");
+    terrain.setTextureLayer(3, "terrain/snow.png");
 
     terrain.setSize(2000.0f);
     terrain.setMaxHeight(80.0f);
@@ -74,7 +127,12 @@ Brushes have configurable size, strength, shape (circle/square), and falloff.
     ```
 
 `Terrain` derives from `Mesh`, so material, shadow, and texture APIs from
-[`Mesh`](../reference/classes/mesh.md) apply as well.
+[`Mesh`](../reference/classes/mesh.md) apply as well — `setTexture` sets the base ground
+texture through the material.
+
+`setTextureDetailRed` / `Green` / `Blue` still work: they are layers 0, 1 and 2 under the
+names they had when a terrain had a single blend map. Foliage layers have no runtime
+setters — they are authored in the editor and read back from the component.
 
 ## LOD tuning
 
@@ -123,6 +181,7 @@ objects rest on the visible surface.
 
 ## See also
 
+- [Terrain Editor](../editor/terrain-editor.md) — sculpting, painting, foliage and object placement
 - [Terrain](../reference/classes/terrain.md) — full API reference
 - [3D Graphics](3d-graphics.md) — lighting, materials, sky, and fog
 - [Physics](physics.md) — height field collision

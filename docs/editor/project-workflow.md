@@ -189,8 +189,8 @@ Changing either directory migrates the project in one step:
 
 Because a reference cannot leave its root, the editor only accepts assets from inside the
 assets directory: dropping a file from elsewhere previews it but shows a warning instead of
-assigning it. Maps painted in the Terrain editor and assets downloaded by the AI assistant
-are created under the assets root for the same reason. Moving a referenced file out of the
+assigning it. Maps painted in the [Terrain Editor](terrain-editor.md) (under `terrain_maps/`) and assets
+downloaded by the AI assistant are created under the assets root for the same reason. Moving a referenced file out of the
 assets directory clears the references to it, exactly like deleting it.
 
 ### Script directories

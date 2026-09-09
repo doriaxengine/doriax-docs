@@ -9,7 +9,7 @@ description: Terrain API reference (C++ and Lua).
 
 ## Description
 
-Generates and renders a heightmap-based terrain mesh using a chunked LOD (Level of Detail) approach. The terrain is built from a greyscale heightmap texture where brighter pixels correspond to higher elevation. An optional blend map controls how up to four detail textures (base + red, green, blue channels) are layered across the surface.
+Generates and renders a heightmap-based terrain mesh using a chunked LOD (Level of Detail) approach. The terrain is built from a greyscale heightmap texture where brighter pixels correspond to higher elevation. Up to three blend maps control how up to nine detail texture layers are mixed over the base texture, three layers per blend map.
 
 The terrain geometry is a CDLOD quadtree: `rootGridSize` × `rootGridSize` root nodes cover the terrain and each node subdivides into four until `levels` is reached. Every node is drawn with the same `resolution` × `resolution` grid and morphs into its coarser neighbour, which keeps the polycount roughly constant regardless of terrain size.
 
@@ -32,6 +32,7 @@ The terrain geometry is a CDLOD quadtree: `rootGridSize` × `rootGridSize` root 
 | bool | [createTerrain](#createterrain) | C++ |
 | void | [setHeightMap](#setheightmap) | C++ \| Lua |
 | void | [setBlendMap](#setblendmap) | C++ \| Lua |
+| void | [setTextureLayer](#settexturelayer) | C++ \| Lua |
 | void | [setTextureDetailRed](#settexturedetailred-settexturedetailgreen-settexturedetailblue) | C++ \| Lua |
 | void | [setTextureDetailGreen](#settexturedetailred-settexturedetailgreen-settexturedetailblue) | C++ \| Lua |
 | void | [setTextureDetailBlue](#settexturedetailred-settexturedetailgreen-settexturedetailblue) | C++ \| Lua |
@@ -113,9 +114,9 @@ system builds and rebuilds terrain automatically.
     ground.setHeightMap("terrain/heightmap.png");
     ground.setBlendMap("terrain/blendmap.png");
     ground.setTexture("terrain/grass.png");
-    ground.setTextureDetailRed("terrain/rock.png");
-    ground.setTextureDetailGreen("terrain/sand.png");
-    ground.setTextureDetailBlue("terrain/snow.png");
+    ground.setTextureLayer(0, "terrain/rock.png");
+    ground.setTextureLayer(1, "terrain/sand.png");
+    ground.setTextureLayer(2, "terrain/snow.png");
     ground.setSize(1000.0f);
     ground.setMaxHeight(80.0f);
     ground.createTerrain();
@@ -127,9 +128,9 @@ system builds and rebuilds terrain automatically.
     ground:setHeightMap("terrain/heightmap.png")
     ground:setBlendMap("terrain/blendmap.png")
     ground:setTexture("terrain/grass.png")
-    ground:setTextureDetailRed("terrain/rock.png")
-    ground:setTextureDetailGreen("terrain/sand.png")
-    ground:setTextureDetailBlue("terrain/snow.png")
+    ground:setTextureLayer(0, "terrain/rock.png")
+    ground:setTextureLayer(1, "terrain/sand.png")
+    ground:setTextureLayer(2, "terrain/snow.png")
     ground.size = 1000
     ground.maxHeight = 80
     ```
@@ -151,8 +152,39 @@ Each quadtree node keeps the min/max height of the heightmap texels under its fo
 
 * void **setBlendMap**(const std::string& path)
 * void **setBlendMap**(Framebuffer* framebuffer)
+* void **setBlendMap**(unsigned int index, const std::string& path) — Lua: **setBlendMapIndex**
 
-Sets the blend map that controls where detail textures appear. The RGB channels select `textureDetailRed`, `textureDetailGreen`, and `textureDetailBlue` respectively. Areas with no blend-map colour show the base texture.
+Sets a blend map. Each blend map weights three detail layers through its RGB channels: blend map 0 weights layers 0–2, blend map 1 layers 3–5, and blend map 2 layers 6–8. The one-argument form is blend map 0. Whatever weight the layers leave unclaimed goes to the base texture, so areas with no blend-map colour show the base alone.
+
+Alpha is not a fourth weight — saved maps are opaque, which would read as full strength. Indexes at or above three are rejected with an error.
+
+---
+
+### setTextureLayer
+
+* void **setTextureLayer**(unsigned int index, const std::string& path)
+
+Sets the texture of one detail layer, 0 to 8. The vector of layers grows as needed, so assigning layer 4 also creates the empty layers below it; an unassigned layer renders as white.
+
+Every layer is uploaded as one slice of a texture array, so the slices share a size and a format: smaller layers are resized to the largest one and grayscale layers are widened to RGBA. A layer whose format cannot be reconciled with the others is refused with an error, and the terrain falls back to the base texture. The sampler filters and wrap modes come from the first assigned layer.
+
+The layer texture's **alpha is read as layer height**, not opacity: where two layers overlap, the taller one takes the contact zone. Opaque textures have no height and blend on their blend-map weight alone. Layers are also projected triplanarly as the surface turns vertical, and mixed with a coarser tiling rate at a distance to break up repetition.
+
+=== "C++"
+    ```cpp
+    ground.setBlendMap("terrain/blendmap.png");
+    ground.setTextureLayer(0, "terrain/rock.png");
+    ground.setTextureLayer(1, "terrain/sand.png");
+    ground.setTextureLayer(2, "terrain/snow.png");
+    ```
+
+=== "Lua"
+    ```lua
+    ground:setBlendMap("terrain/blendmap.png")
+    ground:setTextureLayer(0, "terrain/rock.png")
+    ground:setTextureLayer(1, "terrain/sand.png")
+    ground:setTextureLayer(2, "terrain/snow.png")
+    ```
 
 ---
 
@@ -162,4 +194,4 @@ Sets the blend map that controls where detail textures appear. The RGB channels 
 * void **setTextureDetailGreen**(const std::string& path)
 * void **setTextureDetailBlue**(const std::string& path)
 
-Set the three detail layer textures. Each texture is used where the corresponding RGB channel of the blend map has a non-zero value.
+Layers 0, 1 and 2 under the names they had when a terrain had a single blend map. Equivalent to `setTextureLayer(0/1/2, path)`.
