@@ -83,6 +83,8 @@ nav:
   - Editor:
       - Editor Overview: 'editor/index.md'
       - Project Workflow: 'editor/project-workflow.md'
+      - Project Settings: 'editor/project-settings.md'
+      - Editor Settings: 'editor/editor-settings.md'
       - Structure Panel: 'editor/structure.md'
       - Scene View: 'editor/scene-view.md'
       - Properties & Components: 'editor/properties.md'

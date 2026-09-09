@@ -13,6 +13,18 @@ producing JavaScript and WebAssembly output that runs in the browser.
     files to your destination folder. The manual steps below are for Source Code
     exports and custom setups. See [Export Window](../editor/export.md#web-mode).
 
+    If the SDK is not on `PATH`, point the editor at your `emsdk` folder once in
+    **Edit → [Editor Settings](../editor/editor-settings.md#web) → Web**.
+
+## Page customization
+
+The generated page is not fixed. **Project Settings → Platforms → Web** sets the page
+title, a favicon, extra `<head>` markup, whether the canvas follows the browser window,
+and whether Emscripten's default logo, status line and console are hidden. For full
+control, supply a **Custom HTML Shell**: any HTML file containing a
+`{{DORIAX_DEFAULT_HTML}}` marker, which the build replaces with the page Emscripten
+generated. See [Web settings](../editor/project-settings.md#web).
+
 ## 1. Install Emscripten
 
 Download and install the Emscripten SDK by following the official

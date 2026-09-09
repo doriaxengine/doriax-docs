@@ -23,11 +23,12 @@ By the end of this tutorial you will have:
 
 1. Open the editor and choose **File → New Project** to start with a fresh temporary
    project.
-2. Choose **File → Save Project**, enter a project name, and select an empty directory.
-3. Choose **File → New Scene → 2D Scene**.
-4. Save the new scene immediately: press **Ctrl+S** and name it `main`.
-5. If you do not need the initial 3D scene, select its tab and choose
-   **Scene → Remove**.
+2. Choose **Scene → New Scene → 2D Scene**.
+3. Choose **File → Save All**. The editor asks where each unsaved scene goes — name the
+   2D one `main` — and then where the project itself lives: enter a project name and
+   select an empty directory.
+4. If you do not need the initial 3D scene, select its tab and choose
+   **Scene → Remove Scene from Project**.
 
 ## 2. Add a sprite entity
 

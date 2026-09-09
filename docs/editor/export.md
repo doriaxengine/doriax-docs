@@ -13,8 +13,8 @@ build.
 
 ## Opening the Export Window
 
-Choose **File → Export** from the menu bar, or press the **Export** button in the
-toolbar.
+Choose **File → Export Project...** from the menu bar, or press the **Export** button in
+the toolbar.
 
 ## Export modes
 
@@ -44,19 +44,67 @@ All modes share these settings:
 | **Start Scene** | Scene loaded when the exported game launches |
 | **Shaders** | The shader variants compiled into the build (pre-filled from your scenes; add or remove entries as needed) |
 
+The output folder is remembered **per project and per export mode**, so switching from
+Desktop to Source Code brings back the folder you last used for that mode rather than
+overwriting one with the other. A project that has never been exported starts from the
+**Default Export Directory** in [Editor Settings](editor-settings.md#general), when one
+is set. Both are machine-local: they live in the editor's `settings.yaml`, not in
+`project.yaml`.
+
+**Start Scene** is the same setting as [Project Settings →
+General](project-settings.md#project); changing it here changes it for the project.
+
 The assets and Lua folders that ship with the build come from
 [Project Settings](project-workflow.md#assets-and-lua-directories), not from this window:
 stored references are relative to those directories, so exporting a different one would
 break every path in the scenes.
 
 The experimental **Native Resource Pack** choice also comes from **Project Settings →
-Build**. It is off by default; see [Native resource pack](#native-resource-pack) for its
-output and runtime restrictions.
+Directories**. It is off by default; see [Native resource pack](#native-resource-pack)
+for its output and runtime restrictions.
+
+### Application identity and platform settings
+
+The Export Window does not ask for the application's name, identifier, version or icons:
+those come from [Project Settings](project-settings.md), so every export mode and the
+command line produce the same identity. What the exporter writes with them depends on
+the target:
+
+| Written into | From | Applies to |
+| --- | --- | --- |
+| Web page title, favicon, HTML shell, `<head>` include | [Web settings](project-settings.md#web) | Web mode and Source Code |
+| `.desktop` launcher (`Name`, `Comment`, `Categories`) and `app_icon.png` | [Linux settings](project-settings.md#linux) and the window icon | Linux builds from any mode |
+| Executable icon and `VERSIONINFO` resource (`app_icon.rc`) | [Windows settings](project-settings.md#windows) and the window icon | Windows builds from any mode |
+| `Info.plist`, bundle identifier, `AppIcon` asset set | [macOS](project-settings.md#macos) and [iOS](project-settings.md#ios) settings | Source Code exports (the generated Xcode workspaces) |
+| `build.gradle`, `AndroidManifest.xml`, `strings.xml`, `styles.xml`, launcher icons | [Android settings](project-settings.md#android) | Source Code exports (the generated Android Studio workspace) |
+
+The executable and CMake target are still named after the **project name**, not the
+application name, so renaming the application does not rename the binary.
+
+### Shaders
 
 The shader list is populated automatically from every saved scene, including a live scan
 of the currently open scenes — so a component added since the last save (for example a
-shadow-casting 2D light) is already accounted for. Use **Add** if your game enables a
-feature only at runtime from scripts (say, turning on SSR) so its shaders ship too.
+shadow-casting 2D light) is already accounted for. Each entry shows where it came from:
+
+| Icon | Entry | Meaning |
+| --- | --- | --- |
+| Cubes | Normal | Collected from the project scenes |
+| Plus | Addition | Added by hand with **Add** |
+| Trash | *(Excluded)*, greyed out | Removed by hand, kept in the list so it can be restored |
+
+Use **Add** if your game enables a feature only at runtime from scripts (say, turning on
+SSR) so its shaders ship too. **Delete** on a collected shader does not remove the row —
+it marks it *(Excluded)* and greys it out, so you can always see what a build is leaving
+out and why the list is shorter than the scenes suggest. Selecting an excluded entry
+turns the button into **Restore**, and **Reset Shader Overrides** clears every manual
+addition and exclusion at once.
+
+Additions and exclusions are saved in `project.yaml` under `export`, and they are
+**shared by all three export modes** — a shader you exclude for a Desktop test build is
+excluded from the Source Code export too. Forked shaders are stored by their
+project-relative path rather than by a session id, so the list survives reopening the
+project.
 
 ## Source Code mode
 
@@ -66,8 +114,35 @@ compiled in — and get a buildable CMake project in the target directory.
 
 The source builds for every supported operating system regardless of this choice; only the
 shaders are affected, so include every backend the project may eventually be built with.
-The backends your own machine can build are pre-selected. See
-[Shader compilation](#shader-compilation) for which target needs which backend.
+See [Shader compilation](#shader-compilation) for which target needs which backend.
+
+### Choosing the backends
+
+The **Graphic Backends** section has two tabs over the same selection:
+
+| Tab | Use it to |
+| --- | --- |
+| **Platform Presets** | Tick the platforms you intend to ship — Windows, Linux, macOS, iOS, Android, Web — and let the editor select the backends each one needs |
+| **Custom Backends** | Tick individual backends, with the shader language of each shown in its tooltip |
+
+Switching tabs keeps the current selection, and the line under the tabs always spells out
+which backends the export will include. The two work together rather than overriding each
+other: a backend you tick by hand is kept even when a preset also covers it, and turning
+a platform off only clears the backends that preset added.
+
+A project that has never configured this opens on **Platform Presets** with the platform
+you are running on already ticked; once a selection is saved, the window reopens on
+**Custom Backends** showing it. The selection is stored in `project.yaml` under
+`export.sourceCode.graphicBackends`, so it travels with the project.
+
+| Preset | Selects |
+| --- | --- |
+| **Windows** | OpenGL, Vulkan, Direct3D 11 |
+| **Linux** | OpenGL, Vulkan |
+| **macOS** | Metal (macOS), OpenGL |
+| **iOS** | Metal (iOS) |
+| **Android** | OpenGL ES 3, Vulkan |
+| **Web** | OpenGL ES 3 |
 
 ### Generated output structure
 
@@ -109,7 +184,7 @@ Build it afterwards with the appropriate [platform toolchain](#platform-toolchai
 
 ## Native resource pack
 
-Enable **Project → Project Settings → Build → Native Resource Pack** to combine
+Enable **Project → Project Settings → Directories → Native Resource Pack** to combine
 the exported `assets/` and `lua/` trees into one `resources.pak`. This experimental,
 project-wide option is intended for ready-to-run **Desktop** exports and Android builds
 made from **Source Code** output. It has no effect on **Web** mode, which continues to
@@ -151,9 +226,19 @@ setting; there is no separate CLI switch.
 ## Desktop mode
 
 Builds a native executable for the operating system the editor is running on, using
-CMake and the **compiler kit configured in Project Settings** (or the system default
-toolchain when none is selected). The window shows the effective compiler and parallel
-job count; change them in **Project Settings → Build**.
+CMake and the **compiler kit configured in [Editor
+Settings](editor-settings.md#desktop)** (or the system default toolchain when none is
+selected).
+
+| Setting | Meaning |
+| --- | --- |
+| **Compiler** | Read-only. Shows the kit this project builds with; change it in **Edit → Editor Settings → Desktop** |
+| **Build Jobs** | How many compiler processes run in parallel. Shared with Play-mode script builds — see [Parallel builds](../manual/cpp-build-setup.md#parallel-builds) |
+| **Graphic Backend** | The API the executable is built against, and the only shader format compiled |
+
+Both the compiler and the job count are machine-local: they are stored per project in
+the editor's `settings.yaml`, not in `project.yaml`, so a teammate on another machine
+keeps their own toolchain.
 
 Choose the **Graphic Backend** before exporting. The available choices follow the host
 operating system:
@@ -178,8 +263,8 @@ destination/
 ├── assets/              ← runtime resources (default)
 ├── lua/                 ← runtime Lua scripts (default)
 ├── resources.pak        ← replaces assets/ and lua/ when packing is enabled
-├── icon.png             ← (Linux, with a project icon set)
-└── MyProject.desktop    ← (Linux, with a project icon set)
+├── app_icon.png         ← (Linux, with a project icon set)
+└── MyProject.desktop    ← (Linux launcher entry)
 ```
 
 Run the executable from that folder — it resolves the loose `assets/` and `lua/`
@@ -190,19 +275,27 @@ directories, or `resources.pak`, relative to its working directory.
 Set a **project icon** in **Project Settings → Window → Icon** (square PNG, 256×256 or
 larger recommended) and desktop exports use it automatically:
 
-- **Windows** — embedded into the executable (Explorer, taskbar, and window icon).
+- **Windows** — embedded into the executable (Explorer, taskbar, and window icon),
+  alongside the version resource built from the [Windows
+  settings](project-settings.md#windows).
 - **Linux (X11)** — window and taskbar icon at runtime. Executable files on Linux
-  cannot carry icons, so the export also ships `icon.png` and a ready-made
-  `.desktop` launcher entry; install it with
+  cannot carry icons, so the export also ships `app_icon.png` and a ready-made
+  `.desktop` launcher entry, whose name, comment and categories come from the [Linux
+  settings](project-settings.md#linux); install it with
   `cp MyProject.desktop ~/.local/share/applications/` to get the icon in menus and
   docks — and on **Wayland**, where windows only receive icons through that entry.
 - **macOS** — dock icon at runtime.
 
+Apple bundles and Android launchers use their own icon settings on the [Platforms
+tab](project-settings.md#platforms) instead, because they need asset catalogs and
+adaptive layers rather than a single PNG.
+
 !!! note "Requirements"
     Desktop mode needs **CMake** and a C++ compiler installed. The window warns you with
-    install instructions when either is missing. On macOS the **Xcode generator** is not
-    supported for this mode (it produces an app bundle instead of a plain executable);
-    use the default toolchain.
+    install instructions when either is missing. Point the window at your installs in
+    **Edit → Editor Settings → Desktop** if they are not on `PATH`. On macOS the **Xcode
+    generator** is not supported for this mode (it produces an app bundle instead of a
+    plain executable); use the default toolchain.
 
 ## Web mode
 
@@ -211,11 +304,14 @@ Builds the project with Emscripten and copies `MyProject.html`, `.js`, `.wasm`, 
 **WebGL 2 (OpenGL ES 3)**.
 
 The editor locates the Emscripten SDK automatically from the `EMSDK` environment
-variable or `emcmake` on `PATH`. If neither is set, use **Browse** in the settings to
-point at your `emsdk` folder once — the path is remembered in the editor settings across
-projects. **Auto** returns to automatic detection. The status icon beside
-**Emscripten SDK** shows whether detection succeeded; hover it to see where the SDK was
-found or how to resolve a missing SDK.
+variable or `emcmake` on `PATH`. If neither is set, point at your `emsdk` folder once in
+**Edit → [Editor Settings](editor-settings.md#web) → Web** — the path is remembered
+across projects, and the dialog reports whether the SDK was found. The Export Window
+shows the same status and warns before starting a build it cannot run.
+
+The generated page is customized from the [Web settings](project-settings.md#web): page
+title, favicon, an optional custom HTML shell, extra `<head>` markup, canvas resizing,
+and hiding Emscripten's default UI.
 
 !!! tip "Testing the build"
     Browsers do not load WebAssembly from `file://`. Serve the destination folder with
@@ -307,7 +403,11 @@ backends by how the exported source will be built:
 | Windows | OpenGL, Direct3D 11, Vulkan |
 | macOS | Metal (macOS), OpenGL |
 | iOS | Metal (iOS) |
-| Android, Web | OpenGL ES 3 |
+| Android | OpenGL ES 3, Vulkan |
+| Web | OpenGL ES 3 |
+
+This is exactly the mapping the [Platform Presets](#choosing-the-backends) tab applies,
+so ticking your target platforms there is the same as reading this table.
 
 Including a backend you never build with only costs export time and file size. Leaving one
 out that you do build with makes the game report the shaders as missing at startup, with

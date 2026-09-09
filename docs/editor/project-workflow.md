@@ -19,18 +19,20 @@ temporary project.
 
 To keep a temporary project:
 
-1. Choose **File → Save Project**.
-2. Enter the project name, click **Browse**, and select an empty directory.
-3. Click **Save**. The editor moves the temporary project into that directory and
+1. Choose **File → Save All** (**Ctrl+Shift+S**). On a temporary project, **Save**
+   (**Ctrl+S**) does the same thing, because there is nowhere to save a single file to
+   yet.
+2. The editor saves the open scenes and scripts, asking where any never-saved scene
+   should go, and then asks for the project itself.
+3. Enter the project name, click **Browse**, and select an empty directory.
+4. Click **Save**. The editor moves the temporary project into that directory and
    writes its `project.yaml` file.
-4. Save the initial scene separately with **File → Save** or **Ctrl+S**, choosing a
-   location inside the project directory.
 
 Temporary projects are stored in the operating system's temporary directory. Save the
 project to another directory before relying on it as permanent work.
 
 New projects begin with a 3D scene. To add a different scene type, choose
-**File → New Scene → 2D Scene** or **File → New Scene → UI Scene**. Doriax does not
+**Scene → New Scene → 2D Scene** or **Scene → New Scene → UI Scene**. Doriax does not
 use project templates.
 
 ## Project anatomy
@@ -154,15 +156,27 @@ See [BundleManager](../reference/classes/bundlemanager.md) for the complete API.
 
 ## Settings
 
-| Settings area | What it stores |
-| --- | --- |
-| **Editor settings** | Window size, maximized state, recent projects, Resources Browser preferences, editor VSync |
-| **Project settings** | Startup scene reference, canvas size, scaling, VSync, window mode/size/title, compiler, parallel build jobs, native resource packaging, asset/Lua/script directories, and the bundles built without a scene instance |
-| **Export settings** | Platform targets, shader backend, output folder, included asset folders |
+Settings are split by what they belong to, which decides where they are stored and
+whether they travel with the project:
+
+| Settings area | Opened from | Stored in | Holds |
+| --- | --- | --- | --- |
+| **[Project settings](project-settings.md)** | Project → Project Settings | `project.yaml` | Start scene, application identity, canvas, window, VSync, asset/Lua/script directories, native resource packaging, and the per-platform settings for Web, Linux, Windows, macOS, iOS and Android |
+| **[Editor settings](editor-settings.md)** | Edit → Editor Settings | `settings.yaml` | Compiler kit, CMake and Emscripten paths, default export directory, editor VSync — plus, per project, the build jobs and last export folder |
+| **Export settings** | File → Export Project | `project.yaml` (`export`) and `settings.yaml` | Shader overrides and graphic backends in the project; output directories per machine |
+| **Window and layout state** | — | `settings.yaml` | Window size, maximized state, recent projects, panel visibility, Resources Browser preferences |
+
+The dividing line is the machine: anything that depends on which computer you are
+sitting at — a compiler path, an SDK location, an output folder — is kept out of
+`project.yaml` so it never conflicts in version control.
 
 Shaders have no directory setting: each fork picks its own location when you create it,
 and compiled `.sdat` output always goes to the project's `shaders` folder. See
 [Custom Shaders](custom-shaders.md#shader-locations).
+
+The rest of this page covers the behavior behind a few of those settings. For the field
+list of each dialog, see [Project Settings](project-settings.md) and
+[Editor Settings](editor-settings.md).
 
 ### Assets and Lua directories
 
@@ -195,7 +209,7 @@ assets directory clears the references to it, exactly like deleting it.
 
 ### Script directories
 
-The same **Directories** tab has a **Script Directories** list, which is about the C++
+The **Directories** tab also has a **Script Directories** list, which is about the C++
 build rather than what the running game reads. Each folder you add is both an include
 root and a compile root: headers under it are included by the path below the folder, and
 every `.cpp` under it is compiled even when no entity references it.
@@ -212,7 +226,7 @@ covers what this setting does not — linking libraries and other CMake of your 
 
 ### Native resource pack
 
-**Project → Project Settings → Build → Native Resource Pack** controls whether a
+**Project → Project Settings → Directories → Native Resource Pack** controls whether a
 native export ships the copied assets and Lua files as loose directories or combines
 them into one `resources.pak` file. The option is experimental and disabled by default.
 It is intended for **Desktop** exports and Android builds made from **Source Code**
@@ -240,7 +254,7 @@ projects without the field default to enabled.
 
 | Runtime path | VSync off behavior |
 | --- | --- |
-| Editor Play mode | Uncaps the editor render loop while a scene is running; editing frames follow **View → Editor VSync** instead |
+| Editor Play mode | Uncaps the editor render loop while a scene is running; editing frames follow **Editor Settings → Editor VSync** instead |
 | Generated standalone GLFW build | Uses swap interval `0` |
 | Exported Linux GLFW, Windows/Linux Sokol OpenGL, or Windows Direct3D 11 build | Uses swap interval `0` |
 | Exported Vulkan build | Prefers Immediate presentation, then Mailbox; falls back to FIFO if neither is supported by the system |
@@ -254,9 +268,9 @@ projects without the field default to enabled.
 ### Editor VSync
 
 The project setting above covers Play mode and builds. The editor's own frames follow
-**View → Editor VSync**, which is enabled by default and saved as `vsync` under `editor`
-in `settings.yaml`. It belongs to the machine rather than the project, so it is not
-exported and does not travel with a project you share.
+**Edit → Editor Settings → General → Editor VSync**, which is enabled by default and
+saved as `vsync` under `editor` in `settings.yaml`. It belongs to the machine rather
+than the project, so it is not exported and does not travel with a project you share.
 
 The two settings never apply at once: while a scene is running frames follow the project
 setting, and the rest of the time they follow this one. Toggling takes effect on the next
@@ -277,6 +291,7 @@ create at startup:
 | **Window Width / Height** | Canvas size | Initial window size in pixels, and the size restored when leaving fullscreen |
 | **Window Resizable** | Enabled | Whether the player can resize the window |
 | **Window Title** | Project name | Title-bar text; leave empty to use the project name |
+| **Icon** | None | Application icon for desktop builds — see [Project Settings → Window](project-settings.md#window) |
 
 The values are saved as `windowMode`, `windowWidth`, `windowHeight`,
 `windowResizable`, and `windowTitle` in `project.yaml` and travel with the project.
@@ -299,8 +314,16 @@ leaving fullscreen restores the configured window size.
 
 ## Save strategy
 
+**Save** (**Ctrl+S**) saves one thing: the script you last edited if the Code Editor had
+focus, otherwise the selected scene. **Save All** (**Ctrl+Shift+S**) saves every changed
+scene and script *and* writes `project.yaml`, which is what commits settings changes —
+the settings dialogs apply to the open project immediately but do not write the file
+themselves. **Save Project As** moves the project to another folder, taking its
+machine-local editor settings with it.
+
 - Save scenes after structural edits (**Ctrl+S**).
-- Save project settings after changing export configuration.
+- Use **Save All** after changing project or export settings, so `project.yaml` is
+  written.
 - Keep generated export output outside the source project folder.
 - Commit human-authored files (scenes, scripts, assets) to version control;
   ignore local build folders and generated C++ glue.

@@ -74,6 +74,8 @@ for the export modes and output options.
 The detailed editor manual is split into focused pages:
 
 - [Project Workflow](../editor/project-workflow.md)
+- [Project Settings](../editor/project-settings.md)
+- [Editor Settings](../editor/editor-settings.md)
 - [Scene View](../editor/scene-view.md)
 - [Properties & Components](../editor/properties.md)
 - [Resources Browser](../editor/resources.md)

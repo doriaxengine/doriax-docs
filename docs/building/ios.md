@@ -16,8 +16,14 @@ backend and the native Apple app backend.
 ## Workflow
 
 1. Install Xcode and its Command Line Tools (`xcode-select --install`).
-2. Open the generated Xcode workspace for your exported project.
-3. Select a simulator or a connected device, then build and run from Xcode.
+2. Fill in **Project Settings → Platforms → iOS** — bundle identifier, version name and
+   build number, icon, and the status bar / home indicator / high refresh rate options.
+   See [iOS settings](../editor/project-settings.md#ios).
+3. Export the project as **Source Code** with the iOS backend preset selected. The
+   exporter writes those settings into the generated `Info.plist` and `AppIcon` asset
+   set, so the workspace opens already configured.
+4. Open the generated Xcode workspace for your exported project.
+5. Select a simulator or a connected device, then build and run from Xcode.
 
 ## Command-line build
 

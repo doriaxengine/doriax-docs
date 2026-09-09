@@ -52,9 +52,9 @@ these tools and shows a *Missing Build Tools* dialog listing anything it could n
 
 ## Choosing a compiler
 
-Open **Project → Project Settings** and use the **Compiler** dropdown. The editor
-detects available compilers (GCC, Clang, MSVC/Visual Studio) and pairs each one with a
-compatible CMake generator:
+Open **Edit → [Editor Settings](../editor/editor-settings.md#desktop) → Desktop** and use
+the **Compiler** dropdown. The editor detects available compilers (GCC, Clang,
+MSVC/Visual Studio) and pairs each one with a compatible CMake generator:
 
 | Compiler (Windows) | CMake generator | C++ ABI | Official (MSVC) build |
 | --- | --- | --- | --- |
@@ -74,9 +74,18 @@ detected compiler usable, Default leaves the toolchain to CMake.
     GCC, even when Visual Studio is installed. On the official MSVC editor that silently
     produced a GNU-ABI plugin that cannot link the engine. Pinning removes the ambiguity.
 
-Your selection is **remembered across sessions and projects** — newly created projects
-inherit the compiler you last chose, so you only need to set it once (rather than having
-each new project silently fall back to **Default**).
+Your selection is stored **per project**, so a project that needs MSVC and one that
+needs MinGW can coexist, and it is **remembered across sessions** — a project that has no
+kit yet inherits the compiler you last chose, so you only need to set it once (rather
+than having each new project silently fall back to **Default**).
+
+Because a compiler path only means something on the machine it was installed on, the kit
+is written to the editor's `settings.yaml` under `project_builds`, keyed by the project's
+path — not to `project.yaml`. It therefore never reaches version control, and a teammate
+opening the same project picks their own. Projects saved by older editors still carry
+`cmakeCCompiler`, `cmakeCxxCompiler` and `cmakeGenerator`; opening one migrates those
+values into the editor settings once, without overwriting a kit this machine already
+chose.
 
 !!! danger "Your compiler must match the editor's own C++ ABI"
     C++ scripts are compiled into a shared library that is loaded **into the running
@@ -93,7 +102,9 @@ each new project silently fall back to **Default**).
     editor download supports one ABI.
 
     The editor knows which toolchain it was built with and **greys out incompatible
-    compilers** in the **Compiler** dropdown — hover one to read why. This is a
+    compilers** in the **Compiler** dropdown — hover one to read why. If the kit a
+    project already had is no longer detected, the dropdown falls back to **Default**
+    and warns that builds still use the stored one until you press OK. This is a
     Windows-only concern; Linux and macOS each have a single system C++ ABI, so GCC and
     Clang interoperate there.
 
@@ -132,12 +143,13 @@ detected logical CPU thread**. That is dramatically faster on multi-core machine
 raises peak memory use, since every concurrent compiler process needs its own working
 memory.
 
-Open **Project → Project Settings** and use **Parallel Jobs** (below the **Compiler**
-dropdown) to tune this:
+Open **File → Export Project... → Desktop** and use **Build Jobs** to tune this. The
+field starts at the automatic value — one job per logical CPU thread — and the same
+number is used for Play-mode script builds, not just for the export you are configuring.
 
 | Value | Effect |
 | --- | --- |
-| `0` (default) | Automatic — one job per logical CPU thread of the machine running the build |
+| Automatic (default) | One job per logical CPU thread of the machine running the build |
 | `1` | Serial build — slowest, but minimal memory use |
 | Any other number | At most that many concurrent jobs |
 
@@ -145,17 +157,20 @@ Lower the value if builds fail with out-of-memory errors or make the system
 unresponsive — each concurrent C++ compile can use hundreds of MB of RAM, more with
 heavy template use.
 
-The value is saved as `cmakeBuildJobs` in `project.yaml` (omitted when automatic) and
-travels with the project. It is safe to share between machines of different sizes: the
-stored number is a *request*, and each machine caps it independently at build time (at
-4× its logical CPU count, up to 65536) without rewriting the saved setting — a limit
-chosen on a 32-core workstation is not lost when a teammate opens the project on a
-4-core laptop.
+The value is machine-local, like the compiler: it is saved per project in the editor's
+`settings.yaml` under `project_builds` (as `build_jobs`, omitted when automatic), not in
+`project.yaml`, so a limit chosen on a 32-core workstation is never imposed on a
+teammate's 4-core laptop. Whatever the stored number, each build caps it at **4× the
+machine's logical CPU count**, up to 65536.
+
+Projects saved by older editors carry the setting as `cmakeBuildJobs` in `project.yaml`.
+Opening one migrates the value into the editor settings once — see [Editor
+Settings](../editor/editor-settings.md#migrating-from-older-projects).
 
 !!! note "MSVC rebuilds scripts when the value changes"
     With the MSVC compiler the limit is applied through the compiler's `/MP` flag,
     because MSBuild alone cannot throttle per-file compilation within a single target.
-    Since that changes compile flags, changing **Parallel Jobs** triggers a full script
+    Since that changes compile flags, changing **Build Jobs** triggers a full script
     rebuild on the next Play. Ninja and Make apply the limit at the build-tool level,
     so changing it there only affects new compilations.
 
@@ -165,7 +180,8 @@ By default the editor compiles only the C++ scripts a scene actually uses — th
 referenced by a Script component. A helper class that no entity mentions is never built,
 and every header is included by its full path from the project root.
 
-**Project → Project Settings → Directories → Script Directories** changes that. Add any
+**Project → [Project Settings](../editor/project-settings.md#directories) → Directories →
+Script Directories** changes that. Add any
 folder inside your project and it becomes two things at once:
 
 | Role | Effect |
@@ -245,14 +261,14 @@ is almost always the meaningful one.
 | `Missing Build Tools` dialog | CMake or a C++ compiler is not installed / not on `PATH`. Install it and restart the editor. |
 | `C++ toolchain compatible with this editor: not found` in that dialog | Compilers were found, but none matches the editor's C++ ABI. The dialog lists every detected compiler with the reason it was rejected — see [Choosing a compiler](#choosing-a-compiler). |
 | MSVC greyed out with *"requires a CMake version supporting the installed Visual Studio, or Ninja and an MSVC toolchain environment"* | Your CMake is older than your Visual Studio, so it has no matching `Visual Studio N YYYY` generator. Update CMake, install an older Visual Studio, or install Ninja so the editor can drive `cl.exe` through it. |
-| `The C compiler ... is not able to compile a simple test program` together with `CMAKE_LINKER-NOTFOUND` or `TRK0005` | A custom compiler (usually Clang) was configured with the Visual Studio generator. Install Ninja and re-select the Clang compiler in Project Settings, or switch to the MSVC compiler. Editor versions before June 2026 allowed this broken combination. |
+| `The C compiler ... is not able to compile a simple test program` together with `CMAKE_LINKER-NOTFOUND` or `TRK0005` | A custom compiler (usually Clang) was configured with the Visual Studio generator. Install Ninja and re-select the Clang compiler in Editor Settings, or switch to the MSVC compiler. Editor versions before June 2026 allowed this broken combination. |
 | `CMake was unable to find a build program corresponding to "Ninja"` | `ninja.exe` is not on `PATH`, or it exists but cannot run (pip wrapper copied out of place, or blocked download). Install the standalone binary and check `ninja --version` works in a fresh terminal. |
 | `undefined reference to` **every** engine symbol (`doriax::Vector3::Vector3`, `doriax::Engine::onUpdate`, …) at the **link** step | The selected compiler's C++ ABI does not match the editor's — typically MinGW GCC against the official MSVC build. Use MSVC or Clang-targeting-MSVC on the MSVC build (or a MinGW editor for MinGW). Current editors grey out incompatible compilers and stop the build at configure time with a readable message, so this mainly appears in older versions or when building outside the editor. See [Choosing a compiler](#choosing-a-compiler). |
-| `This Doriax editor requires MSVC-compatible C++ plugins` (or `... MinGW/GNU C++ plugins`) at the **configure** step | The selected compiler's ABI does not match the editor's, and the generated CMake project stops before compiling anything. Pick a compatible compiler in **Project Settings → Compiler**; this mainly appears with a compiler saved before the ABI check existed, or one selected outside the editor. See [Choosing a compiler](#choosing-a-compiler). |
-| The build uses `C:\msys64\ucrt64\bin\g++.exe` even though Visual Studio is installed and **Compiler** is **Default** | An MSYS2 `cmake` came earlier on `PATH` than the Visual Studio one, and older editors let CMake choose the toolchain — which that CMake resolves to Ninja with MinGW GCC. Update the editor (Default now pins an ABI-compatible toolchain), or select **MSVC** explicitly in **Project Settings → Compiler**. |
+| `This Doriax editor requires MSVC-compatible C++ plugins` (or `... MinGW/GNU C++ plugins`) at the **configure** step | The selected compiler's ABI does not match the editor's, and the generated CMake project stops before compiling anything. Pick a compatible compiler in **Editor Settings → Desktop → Compiler**; this mainly appears with a compiler saved before the ABI check existed, or one selected outside the editor. See [Choosing a compiler](#choosing-a-compiler). |
+| The build uses `C:\msys64\ucrt64\bin\g++.exe` even though Visual Studio is installed and **Compiler** is **Default** | An MSYS2 `cmake` came earlier on `PATH` than the Visual Studio one, and older editors let CMake choose the toolchain — which that CMake resolves to Ninja with MinGW GCC. Update the editor (Default now pins an ABI-compatible toolchain), or select **MSVC** explicitly in **Editor Settings → Desktop → Compiler**. |
 | `lld-link: error: could not open 'kernel32.lib'` (or other `*.lib`) | Clang cannot find the Windows SDK libraries. Install the Windows SDK through the Visual Studio Installer ("Desktop development with C++"). The editor loads the MSVC environment automatically; if it can't find Visual Studio it warns and you can instead launch the editor from a Developer Command Prompt. |
-| `No CMAKE_C_COMPILER could be found` (with `Building for: Visual Studio 17 2022`) | CMake's Visual Studio auto-detection found no usable compiler. Current editors no longer route **Default** through that auto-detection on Windows, so update the editor first. Otherwise pick an explicit compiler in **Project Settings → Compiler** (MSVC, or Clang). The choice is remembered across projects, so you only set it once. If even MSVC fails here, your Visual Studio C++ toolset is incomplete — repair "Desktop development with C++" in the Visual Studio Installer. |
-| `internal compiler error: Killed` (GCC/Clang) or `fatal error C1060: compiler is out of heap space` (MSVC) | The parallel build ran out of memory. Lower **Project Settings → Parallel Jobs** (try `1` or `2`) — see [Parallel builds](#parallel-builds). |
+| `No CMAKE_C_COMPILER could be found` (with `Building for: Visual Studio 17 2022`) | CMake's Visual Studio auto-detection found no usable compiler. Current editors no longer route **Default** through that auto-detection on Windows, so update the editor first. Otherwise pick an explicit compiler in **Editor Settings → Desktop → Compiler** (MSVC, or Clang). The choice is remembered across projects, so you only set it once. If even MSVC fails here, your Visual Studio C++ toolset is incomplete — repair "Desktop development with C++" in the Visual Studio Installer. |
+| `internal compiler error: Killed` (GCC/Clang) or `fatal error C1060: compiler is out of heap space` (MSVC) | The parallel build ran out of memory. Lower **Export Project → Desktop → Build Jobs** (try `1` or `2`) — see [Parallel builds](#parallel-builds). |
 | `Does not match the generator used previously` | The build directory holds a cache from a different generator. The editor normally cleans it automatically when you switch compilers; if it reports the directory is **locked**, close anything using `.doriax/build` (notably the VS Code *CMake Tools* extension) or delete the folder manually, then try again. |
 | `CMake configuration failed` with **no other output** | Update the editor — older versions dropped the output of commands that failed quickly. Current versions print the full CMake error plus a `Process exited with code N` line. |
 | `CMake Error: File ... does not exist.` (or similar) for a script or `.bundle` you already deleted | Generated sources still listed a missing file. Current editors skip files that are gone from disk; press Play or Save once to regenerate. Do not patch the generated `CMakeLists.txt` — it is overwritten. If a closed scene still shows the old ScriptComponent entry, open that scene, remove the leftover, and save. |
@@ -264,4 +280,5 @@ is almost always the meaningful one.
 
 - [Creating Scripts](creating-scripts.md) — script types and editor workflow
 - [Code Editor](../editor/code-editor.md) — editing C++ in the editor and reading build output
+- [Editor Settings](../editor/editor-settings.md) — where the compiler and CMake path are configured
 - [Export Window](../editor/export.md) — building standalone projects outside the editor

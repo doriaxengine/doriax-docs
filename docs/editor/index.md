@@ -26,6 +26,26 @@ The editor window is divided into a set of resizable panels:
 | **Code Editor** | Integrated Lua and C++ editor with API completion |
 | **Output panel** | Build logs, play-mode diagnostics, and export messages, persisted to [`editor.log`](../about/faq.md#where-can-i-find-the-editor-crash-log) for crash reports |
 
+## Menu bar
+
+| Menu | Contents |
+| --- | --- |
+| **File** | New Project, Open Project (**Ctrl+O**), Recent Projects, Save (**Ctrl+S**), Save All (**Ctrl+Shift+S**), Save Project As, Export Project, Exit |
+| **Edit** | Undo, Redo, Duplicate, Delete, and [Editor Settings](editor-settings.md) |
+| **View** | Show or hide each panel, Detachable Windows, Reset Layout |
+| **Project** | [Project Settings](project-settings.md), Manage Scenes, Bundles, Empty Project Trash |
+| **Scene** | New Scene (3D / 2D / UI), Run, Pause, Resume, Stop, Remove Scene from Project |
+| **Help** | Documentation (**F1**), Keyboard Shortcuts, Report an Issue, About Doriax |
+
+**Save** writes the one thing you were last working on — the focused script, or the
+selected scene. **Save All** writes every changed scene and script *and* `project.yaml`,
+which is how settings changes are committed to disk. On a project that has never been
+saved, both ask where the project should live first.
+
+**Empty Project Trash** permanently deletes the project's trashed files and asks for
+confirmation first. **Remove Scene from Project** drops a scene from the project, after
+offering to save it if it has unsaved changes.
+
 ## Main workflows
 
 | Task | Where it happens |
@@ -74,21 +94,36 @@ assignments, and cascade deletes (a parent and its children restore together).
 
 ## Keyboard shortcuts
 
+**Help → Keyboard Shortcuts** shows this list inside the editor. On macOS, menu
+shortcuts use **Command** instead of Ctrl.
+
 | Shortcut | Action |
 | --- | --- |
+| **Ctrl+O** | Open project |
+| **Ctrl+S** | Save the current scene or script |
+| **Ctrl+Shift+S** | Save all scenes, scripts, and the project |
 | **Ctrl+Z** | Undo |
-| **Ctrl+Y** | Redo |
-| **Ctrl+S** | Save current scene |
-| **Delete** | Delete selected entity |
-| **W** | Translate gizmo |
-| **E** | Rotate gizmo |
-| **R** | Scale gizmo |
-| **F** | Focus viewport on selection |
-| **Space** | Play / Stop |
+| **Ctrl+Shift+Z** / **Ctrl+Y** | Redo |
+| **Ctrl+D** | Duplicate selection |
+| **Delete** | Delete selection |
+| **F5** | Run current scene, or resume a paused one |
+| **F6** | Pause |
+| **F7** | Stop |
+| **W** / **E** / **R** | Move / Rotate / Scale gizmo |
+| **T** | Toggle local / global transforms |
+| **F** / **Home** | Frame selection / all objects (3D) |
+| **F1** | Open the documentation |
+
+Duplicate and Delete follow the selection: with a tile or a tilemap instance selected
+they act on that, otherwise on the selected entities, and Delete also removes a selected
+child scene reference. They are ignored while typing in a text field, so a shortcut
+never steals a keystroke from an input.
 
 ## Detailed pages
 
 - [Project Workflow](project-workflow.md)
+- [Project Settings](project-settings.md)
+- [Editor Settings](editor-settings.md)
 - [Structure Panel](structure.md)
 - [Scene View](scene-view.md)
 - [Properties & Components](properties.md)

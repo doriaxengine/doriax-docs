@@ -18,11 +18,31 @@ Android with an OpenGL ES 3.1 backend through the Android Native Activity path.
 1. Install Android Studio and ensure the **SDK** and **NDK** are installed via the SDK
    Manager.
 2. Make sure the `ANDROID_HOME` (SDK) and NDK paths are available to your environment.
-3. Optional: enable **Project Settings → Build → Native Resource Pack** to ship
+3. Fill in **Project Settings → Platforms → Android** — package name, version, SDK
+   levels, orientation, architectures, permissions and launcher icons. See
+   [Android settings](../editor/project-settings.md#android).
+4. Optional: enable **Project Settings → Directories → Native Resource Pack** to ship
    assets and Lua files in one `resources.pak` instead of as loose files.
-4. Export your project from the Doriax editor with Android selected.
-5. Open the generated Android workspace in Android Studio, then build and run on a
+5. Export your project from the Doriax editor as **Source Code**, with the Android
+   preset selected in the Export Window's graphic backends.
+6. Open the generated Android workspace in Android Studio, then build and run on a
    device or emulator.
+
+## Project configuration
+
+A Source Code export writes the Android settings into the generated workspace, so the
+manifest and Gradle files do not have to be edited by hand:
+
+| Setting | Written to |
+| --- | --- |
+| Package name, version code / name, min and target SDK, architectures | `app/build.gradle` |
+| Permissions, orientation, allow backup | `app/src/main/AndroidManifest.xml` |
+| Application name | `app/src/main/res/values/strings.xml` |
+| Fullscreen theme | `app/src/main/res/values/styles.xml` and `MainActivity.java` |
+| Launcher icon, or the adaptive foreground/background pair | `app/src/main/res/drawable` and `mipmap-anydpi-v26` |
+
+An export with no architecture selected fails rather than producing an APK that cannot
+run, so keep at least one ABI ticked.
 
 ## Resource packaging
 

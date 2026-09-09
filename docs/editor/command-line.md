@@ -68,11 +68,31 @@ Asset references are stored relative to the directories configured in the projec
 `--assets` and `--lua` only make sense when they point at those same folders. Exporting a
 different root ships files the stored paths do not resolve against.
 
-The command also honors **Project Settings → Build → Native Resource Pack**. When
-that saved project option is enabled, the source output contains
-`project/assets/resources.pak` in place of loose asset and Lua contents. There is no
-command-line override; see [Native resource pack](export.md#native-resource-pack) before
-using it in an automated Android export.
+### Project settings the command line uses
+
+The export reads `project.yaml`, so the [Project Settings](project-settings.md) that
+shape the output apply here exactly as they do in the editor — with two deliberate
+exceptions that the flags own instead:
+
+| Project setting | In a CLI export |
+| --- | --- |
+| Application name, identifier, version, build | Applied |
+| Per-platform settings (Web, Linux, Windows, macOS, iOS, Android) | Applied — the generated Xcode and Android Studio workspaces are configured from them |
+| Window settings, VSync, canvas | Applied |
+| Assets and Lua directories | Applied unless `--assets` / `--lua` override them |
+| Start scene | Applied unless `--start-scene` overrides it |
+| **Native Resource Pack** | Applied. There is no command-line override |
+| **Shader additions and exclusions** | **Ignored.** Use `--shader`, or let the export use the shaders discovered in the scenes |
+| **Graphic backends saved by the Export Window** | **Ignored.** `--backend` decides, and defaults to every supported backend |
+
+The two ignored ones keep a scripted build reproducible from its command line: a CI job
+compiles what its flags say, not what someone last ticked in the Export Window. Pass the
+same backends you selected there when you want the two to match.
+
+When Native Resource Pack is enabled, the source output contains
+`project/assets/resources.pak` in place of loose asset and Lua contents; see
+[Native resource pack](export.md#native-resource-pack) before using it in an automated
+Android export.
 
 ### List a project's scenes
 

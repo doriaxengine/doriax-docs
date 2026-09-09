@@ -10,7 +10,7 @@ the mode you choose.
 
 ## Choose an export mode
 
-**File → Export** opens with three modes:
+**File → Export Project...** opens with three modes:
 
 - **Source Code** — generates a self-contained C++ project (engine included) you build
   yourself with CMake or the platform toolchain. It supports Android, iOS, Web,
@@ -36,7 +36,7 @@ Before exporting, verify:
 - All scenes are saved.
 - The intended startup scene is selected.
 - Resource paths are inside the project or otherwise reachable by the exporter.
-- **Project Settings → Build → Native Resource Pack** is configured for the target:
+- **Project Settings → Directories → Native Resource Pack** is configured for the target:
   leave it off for loose files, or enable it for Desktop/Android after checking its
   [runtime limitations](../editor/export.md#native-resource-pack).
 - Lua and C++ entry points are configured so only the intended startup path creates the

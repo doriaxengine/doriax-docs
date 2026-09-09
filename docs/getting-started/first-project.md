@@ -13,7 +13,7 @@ author a scene, add entities and components, attach scripts, then run in play mo
 
 Open the Doriax editor. If there is no saved project to reopen, the editor starts with
 a temporary project and a new 3D scene; there is no startup dialog. Choose
-**File → Save Project**, enter a name, and select an empty directory before doing work
+**File → Save All**, enter a name, and select an empty directory before doing work
 you want to keep. See [Project Workflow](../editor/project-workflow.md#creating-a-project)
 for the complete startup and save behavior.
 
@@ -30,7 +30,7 @@ A typical project contains:
 ## Create a scene
 
 Use the initial 3D scene, or create a 2D, 3D, or UI scene with
-**File → New Scene** or from the Structure panel. Save the scene separately with a
+**Scene → New Scene** or from the Structure panel. Save the scene separately with a
 stable name such as `main`, `level_01`, or `menu`.
 
 Scene type controls editor defaults such as camera setup and viewport behavior. It does
