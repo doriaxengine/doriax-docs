@@ -14,8 +14,10 @@ If you only use Lua scripts, no build tools are required.
 
 ## Required tools
 
-- **CMake 3.15 or newer**, available on `PATH`.
-- A **C++17 compiler** for your platform (see below).
+- **CMake 3.20 or newer**, available on `PATH`.
+- A compiler for your platform (see below) that supports the project's **C++ Standard**
+  — C++17 by default, set under [Project Settings →
+  Build](../editor/project-settings.md#build).
 
 When you press Play in a project that contains C++ scripts, the editor first checks for
 these tools and shows a *Missing Build Tools* dialog listing anything it could not find.
@@ -235,7 +237,9 @@ Two variables are set for you, with the same meaning in both builds:
     and breaks again if you rename the project.
 
 For include paths alone you do not need this file: [Script
-directories](#script-directories) covers that case from the editor.
+directories](#script-directories) covers that case from the editor. The language standard
+has its own setting too — `CMAKE_CXX_STANDARD` is written from [Project Settings →
+Build](../editor/project-settings.md#build), so do not set it here.
 
 ## Where build files live
 

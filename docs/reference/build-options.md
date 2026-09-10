@@ -12,7 +12,7 @@ Apple, and web exports.
 | Requirement | Notes |
 | --- | --- |
 | CMake | 3.20 or newer |
-| C++ compiler | C++17-capable MSVC, GCC, Clang, or equivalent |
+| C++ compiler | MSVC, GCC, Clang, or equivalent, capable of the selected `DORIAX_CXX_STANDARD` (C++17 by default) |
 | Python 3 | Used by code generation scripts |
 | Platform SDK | Required for Android, iOS, macOS, and web builds |
 
@@ -23,6 +23,10 @@ cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
 cmake --build build --config Release --target doriax-editor
 cmake --install build --config Release --strip
 ```
+
+`DORIAX_CXX_STANDARD` applies here too, building the editor and engine with it. It is
+independent of the standard a project selects: the editor compiles script plugins with
+the project's value regardless of how the editor itself was built.
 
 On Windows the build also provides `doriax-editor-cmd`, the same editor linked as a
 console application for automation and terminal output. It is excluded from the default
@@ -66,17 +70,19 @@ cmake --build build --config Debug
 | `DORIAX_WINDOW_MODE` | `0` | Initial window state: `0` windowed, `1` maximized, `2` fullscreen. The Sokol app backend has no maximized support and treats `1` as windowed. |
 | `DORIAX_WINDOW_RESIZABLE` | `ON` | Allow resizing the window. Ignored by the Sokol app backend, whose windows are always resizable. |
 | `DORIAX_WINDOW_TITLE` | `"Doriax"` | Window title-bar text |
+| `DORIAX_CXX_STANDARD` | `17` | C++ standard for the engine and the game target. Accepts `17`, `20` or `23` only — configuration fails on any other value. |
 
 The editor writes these options into exported CMake projects from **Project
-Settings** (VSync and the Window settings). For a manually configured standalone
-runtime, override them at configure time:
+Settings** (VSync, the Window settings and the C++ standard). For a manually configured
+standalone runtime, override them at configure time:
 
 ```bash
 cmake -S engine -B build-runtime \
   -DPROJECT_ROOT=/path/to/project \
   -DDORIAX_VSYNC_ENABLED=OFF \
   -DDORIAX_WINDOW_MODE=2 \
-  -DDORIAX_WINDOW_TITLE="My Game"
+  -DDORIAX_WINDOW_TITLE="My Game" \
+  -DDORIAX_CXX_STANDARD=23
 ```
 
 Vulkan treats `OFF` as a request for Immediate presentation, with Mailbox and then FIFO

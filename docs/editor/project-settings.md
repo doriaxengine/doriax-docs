@@ -1,5 +1,5 @@
 ---
-description: The Project Settings dialog — application identity, canvas, window, directories, and per-platform export settings in the Doriax editor.
+description: The Project Settings dialog — application identity, canvas, window, directories, build, and per-platform export settings in the Doriax editor.
 ---
 
 # Project Settings
@@ -12,7 +12,7 @@ what each platform adds on top of that. Every value on this dialog is saved in
 Machine-specific settings — the compiler, the CMake and Emscripten paths, the default
 export folder — are **not** here. They live in [Editor Settings](editor-settings.md).
 
-The dialog is a modal with five tabs and an **OK** / **Cancel** footer: nothing is
+The dialog is a modal with six tabs and an **OK** / **Cancel** footer: nothing is
 written until you press OK. Settings that differ from their default show a small
 restore arrow next to the label; click it to put the default back. Hover the **(?)**
 marker at the end of a row for the setting's description.
@@ -107,6 +107,26 @@ directories are about the C++ build rather than what the running game reads; see
 The native resource pack has runtime restrictions — packed entries are read through
 `Data`, not `File` — described in
 [Export Window → Native resource pack](export.md#native-resource-pack).
+
+## Build
+
+| Setting | Default | Effect |
+| --- | --- | --- |
+| **C++ Standard** | `C++17` | Language standard the project's C++ scripts are compiled with, in Play and in exported games |
+
+The standard belongs to the project rather than to your machine — a script using
+`consteval` needs C++20 wherever it is built — so it is saved in `project.yaml` and
+travels with the project. Play and export both compile scripts with it, and an export
+compiles the engine with it too.
+
+Which compilers can *satisfy* it is machine-specific: pick one under
+[Editor Settings → Desktop](editor-settings.md#desktop). C++17 works anywhere the editor
+runs; C++20 and C++23 need a recent MSVC, GCC or Clang.
+
+!!! note "The generated `CMakeLists.txt` follows this setting"
+    `CMAKE_CXX_STANDARD` in the generated project comes from here, so there is nothing to
+    change by hand — and any edit is overwritten on the next Play or Save. See [C++ Build
+    Setup → Customizing the build](../manual/cpp-build-setup.md#customizing-the-build).
 
 ## Platforms
 
@@ -237,7 +257,7 @@ file.
 
 | Block | Holds |
 | --- | --- |
-| Top level | `name`, `canvasWidth`, `scalingMode`, `vsync`, `windowMode`, `windowTitle`, `windowIcon`, `assetsDir`, `luaDir`, `scriptDirs`, `packNativeResources`, … |
+| Top level | `name`, `canvasWidth`, `scalingMode`, `vsync`, `windowMode`, `windowTitle`, `windowIcon`, `assetsDir`, `luaDir`, `scriptDirs`, `cxxStandard`, `packNativeResources`, … |
 | `application` | `name`, `identifier`, `version`, `build` |
 | `web`, `linux`, `windows`, `macos`, `ios`, `android` | That platform's overrides only |
 | `export` | Shader overrides and the graphic backends picked in the [Export Window](export.md) |
