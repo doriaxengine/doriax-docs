@@ -11,6 +11,17 @@ description: ScaleAction API reference (C++ and Lua).
 
 Animates the `scale` property of its target object, interpolating between a start scale and an end scale over a fixed duration.
 
+### Constructors
+
+Available in C++ and Lua:
+
+* `ScaleAction(Scene* scene)` — creates a new entity.
+* `ScaleAction(Scene* scene, Entity entity)` — wraps an existing entity without taking ownership.
+
+In Lua, use `ScaleAction(scene, entity)` to access an existing action. The entity must
+already have the components required by this type; wrapping does not add them.
+See [EntityHandle ownership](entityhandle.md#ownership-and-lifetime).
+
 ### Methods
 
 | Type | Name | Langs |

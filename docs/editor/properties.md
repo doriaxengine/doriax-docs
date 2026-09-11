@@ -130,6 +130,12 @@ For static multi-node models that need same-entity features such as
 That sets the serialized `mergeStaticMeshes` flag and reloads the model in one undoable
 step. See [3D Graphics — Merging static model meshes](../manual/3d-graphics.md#merging-static-model-meshes).
 
+Setting **Model File** rebuilds the child meshes, except when you re-assign the same file
+to a static model whose parts you have
+[rearranged in Structure](structure.md#organizing-the-parts-of-a-static-model): those parts
+are kept and refreshed in place. See
+[3D Graphics — Reloading a rearranged model](../manual/3d-graphics.md#reloading-a-rearranged-model).
+
 ## Instanced Mesh
 
 **Instanced Mesh** draws many copies of the *same entity's* mesh geometry with per-instance

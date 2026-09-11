@@ -31,6 +31,17 @@ description: Mesh API reference — geometry, materials, shadows, transparency, 
     mesh.castShadows = true
     ```
 
+### Constructors
+
+Available in C++ and Lua:
+
+* `Mesh(Scene* scene)` — creates a new entity.
+* `Mesh(Scene* scene, Entity entity)` — wraps an existing entity without taking ownership.
+
+In Lua, use `Mesh(scene, entity)` to access an existing mesh. The entity must
+already have the components required by this type; wrapping does not add them.
+See [EntityHandle ownership](entityhandle.md#ownership-and-lifetime).
+
 ### Properties
 
 | Type | Name | Default | Languages |

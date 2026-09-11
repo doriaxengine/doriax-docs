@@ -11,6 +11,17 @@ description: ColorAction API reference (C++ and Lua).
 
 Animates the `color` property of its target object, interpolating from a start colour to an end colour over a fixed duration. Both RGB (`Vector3`) and RGBA (`Vector4`) variants are available.
 
+### Constructors
+
+Available in C++ and Lua:
+
+* `ColorAction(Scene* scene)` — creates a new entity.
+* `ColorAction(Scene* scene, Entity entity)` — wraps an existing entity without taking ownership.
+
+In Lua, use `ColorAction(scene, entity)` to access an existing action. The entity must
+already have the components required by this type; wrapping does not add them.
+See [EntityHandle ownership](entityhandle.md#ownership-and-lifetime).
+
 ### Methods
 
 | Type | Name | Langs |

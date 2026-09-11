@@ -13,6 +13,26 @@ Plays audio clips in a scene, supporting both 2D and 3D positional audio. `Sound
 
 A 2D sound is heard at the same volume and position regardless of where in the scene the listener or source is placed; a 3D sound is automatically attenuated based on the distance between the sound entity and the active camera.
 
+### Constructors
+
+All three overloads are available in C++ and Lua:
+
+* `Sound(Scene* scene)` — creates a new 2D sound entity.
+* `Sound(Scene* scene, bool is3D)` — creates a new sound entity, adding a transform when `is3D` is `true`.
+* `Sound(Scene* scene, Entity entity)` — wraps an existing sound entity without taking ownership or adding components.
+
+In Lua, a numeric second argument is an entity ID; use `true` or `false` to choose
+the 3D/2D creation overload. For example:
+
+```lua
+local sound2D = Sound(scene)
+local sound3D = Sound(scene, true)
+local existingSound = Sound(scene, soundEntity)
+```
+
+Keep newly created owning handles alive while you need their entities. See
+[EntityHandle ownership](entityhandle.md#ownership-and-lifetime).
+
 ### Properties
 
 | Type | Name | Default | Langs |

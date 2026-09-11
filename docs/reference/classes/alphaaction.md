@@ -11,6 +11,17 @@ description: AlphaAction API reference (C++ and Lua).
 
 Animates the `alpha` (opacity) property of its target object from a start value to an end value over a fixed duration.
 
+### Constructors
+
+Available in C++ and Lua:
+
+* `AlphaAction(Scene* scene)` — creates a new entity.
+* `AlphaAction(Scene* scene, Entity entity)` — wraps an existing entity without taking ownership.
+
+In Lua, use `AlphaAction(scene, entity)` to access an existing action. The entity must
+already have the components required by this type; wrapping does not add them.
+See [EntityHandle ownership](entityhandle.md#ownership-and-lifetime).
+
 ### Methods
 
 | Type | Name | Langs |

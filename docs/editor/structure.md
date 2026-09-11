@@ -120,6 +120,33 @@ under the Model (helpers, joints, and mesh nodes). Static multi-mesh files still
 one child mesh entity per mesh node. See
 [3D Graphics — GLTF node hierarchy](../manual/3d-graphics.md#gltf-node-hierarchy).
 
+### Organizing the parts of a static model
+
+The child mesh entities of a **static** multi-mesh GLTF (no animation clips, no skins,
+not merged) belong to their Model, but you can arrange them inside it. The tree draws
+these parts in the normal text colour, and hovering one shows *Drag to organize the
+parts of this model*. A model whose parts cannot be rearranged — a full node-tree
+import, a skinned model, a merged model, or one still loading — keeps them greyed out.
+
+- Drag a part under another part to nest it.
+- Drag an **Empty object** into the model, then drag parts under it to group them. While
+  it holds parts, that group counts as part of the model.
+- Drop a part on the Model row to put it straight back under the root, or drop it
+  between siblings to reorder.
+
+Reparenting keeps the world placement, so grouping never moves geometry. The file is not
+touched: the arrangement is saved with the scene, and reopening the scene or
+re-assigning the same model file keeps it (see
+[3D Graphics — Reloading a rearranged model](../manual/3d-graphics.md#reloading-a-rearranged-model)).
+
+Parts always stay inside their model — a drop on the scene root, on an entity outside
+the model, or inside a nested model is refused. Parts and the groups holding them are
+also deleted and duplicated only together with the whole model, so **Delete** and
+**Duplicate** act on the Model row instead.
+
+Right-click the Model and choose **Reset mesh parenting** to move every part back
+directly under the model root in one undoable step.
+
 ### Merge static model
 
 Multi-node GLTF models normally keep geometry on child entities (the full node tree when
@@ -131,12 +158,14 @@ Right-click a Model entity in Structure:
 
 | Action | Effect |
 | --- | --- |
+| **Reset mesh parenting** | Moves every mesh part back directly under the model root (available while parts are [rearranged](#organizing-the-parts-of-a-static-model)). Undoable. |
 | **Merge static model** | Bakes child mesh transforms into the root `MeshComponent`, removes the child mesh entities, and sets the model's `mergeStaticMeshes` flag. Undoable. |
 | **Restore model mesh children** | Reloads the model with the hierarchy restored (available after a merge). |
 
 Merge is only available for static multi-mesh models. It is disabled (with a tooltip)
 when the model is skinned, animated, has morph targets, has fewer than two mesh nodes,
-or would exceed the root submesh limit. See
+or would exceed the root submesh limit. It is also disabled while the parts are
+rearranged — choose **Reset mesh parenting** first. See
 [3D Graphics — Merging static model meshes](../manual/3d-graphics.md#merging-static-model-meshes).
 
 ## Non-hierarchical area
@@ -164,6 +193,12 @@ Reparenting is a transform operation. Dragging an entity under another entity on
 makes sense when the moved entity has `Transform`. Non-transform entities can still be
 reordered in their separate area or associated virtually with a target, such as an
 action targeting a transformed entity.
+
+Entities the editor generates for a component — bones, skeletons, imported animations,
+the label of a button, and so on — are greyed out and can only be reordered among their
+siblings. The mesh parts of a static model are the exception: they can be regrouped
+anywhere inside their own model (see
+[Organizing the parts of a static model](#organizing-the-parts-of-a-static-model)).
 
 Drag and drop also crosses window boundaries:
 

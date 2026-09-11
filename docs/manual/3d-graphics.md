@@ -73,6 +73,11 @@ Imported models with child nodes start collapsed in the
 [Structure panel](../editor/structure.md#tree-marks-and-collapse). Expand the model when
 you need to select a specific node, joint, or child mesh.
 
+On the child-mesh path the parts are yours to arrange: nest them under each other or
+under a plain entity inside the model, and the scene saves that layout.
+Full node-tree imports keep the parentage authored in the file. See
+[Structure — Organizing the parts of a static model](../editor/structure.md#organizing-the-parts-of-a-static-model).
+
 ### Merging static model meshes
 
 A GLTF with several mesh nodes normally keeps those meshes on child entities. That
@@ -90,7 +95,33 @@ into the root:
 
 **Restore model mesh children** reverses the flatten. Merge is refused for skinned,
 animated, or morph-target models, and when the flattened result would exceed the root
-submesh limit.
+submesh limit. It is also refused while the parts are rearranged inside the model; use
+**Reset mesh parenting** first.
+
+### Reloading a rearranged model
+
+A model normally rebuilds its child meshes on every reload: the old parts are deleted and
+the file creates fresh ones under the root. When the parts of a static model have been
+[rearranged](../editor/structure.md#organizing-the-parts-of-a-static-model), a reload
+that would only throw that layout away — re-assigning the **same** model file — keeps the
+existing part entities instead and refreshes their geometry and materials in place.
+Assigning a different file, merging, or restoring still rebuilds the parts.
+
+Whenever the file loads against existing part entities — that in-place reload, or
+reopening a saved scene — each part is paired with a mesh node of the file by **node
+name**, so re-exporting from your DCC with nodes reordered keeps every part on its own
+geometry. The pairing goes:
+
+1. A part whose name still matches the node at its saved index keeps that node.
+2. Remaining nodes claim the part with the same name, wherever it moved to.
+3. Nodes without a name, and parts you renamed in the editor, fall back to the saved
+   index.
+
+A part left without a node stays in the scene as a plain entity and no longer belongs to
+the model (a warning names it in the log); delete it or keep it as you see fit. A new
+node in the file gets a new part under the model root. Kept parts keep the transform
+saved in the scene — the file's node transform is applied only when a part is created —
+and their [submesh overrides](#editing-an-imported-models-submeshes) are preserved.
 
 ## PBR materials
 

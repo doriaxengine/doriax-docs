@@ -11,6 +11,17 @@ description: PositionAction API reference (C++ and Lua).
 
 Animates the `position` property of its target object, moving it from a start position to an end position over a fixed duration. Works in both 2D and 3D scenes.
 
+### Constructors
+
+Available in C++ and Lua:
+
+* `PositionAction(Scene* scene)` — creates a new entity.
+* `PositionAction(Scene* scene, Entity entity)` — wraps an existing entity without taking ownership.
+
+In Lua, use `PositionAction(scene, entity)` to access an existing action. The entity must
+already have the components required by this type; wrapping does not add them.
+See [EntityHandle ownership](entityhandle.md#ownership-and-lifetime).
+
 ### Methods
 
 | Type | Name | Langs |

@@ -121,7 +121,9 @@ Scales the texture coordinates, effectively tiling or shrinking the mapped textu
 * *Setter:* `void setTextureRect(Rect textureRect)`
 * *Getter:* `Rect getTextureRect() const`
 
-Defines the sub-rectangle of the texture to display, in **pixel** coordinates. Use to select a region from a texture atlas without defining named frames.
+Defines the sub-rectangle of the texture to display in **UV coordinates**, where
+`Rect(0, 0, 1, 1)` covers the full texture. Use [addFrame](#addframe) and
+[setFrame](#setframe) for pixel-based atlas regions.
 
 ---
 
@@ -202,19 +204,22 @@ Sets both width and height in a single call. Equivalent to calling `setWidth` an
 * `void setTextureRect(float x, float y, float width, float height)`
 * `void setTextureRect(Rect textureRect)`
 
-Restricts rendering to a sub-region of the texture. Coordinates are in **pixels** from the top-left of the texture image.
+Restricts rendering to a sub-region of the texture using **UV coordinates**. Divide
+pixel x/width by the texture width and pixel y/height by the texture height.
+This setter applies immediately and cancels any pending frame selection waiting
+for texture dimensions. `getTextureRect()` returns the currently applied UV rectangle.
 
 === "C++"
 
     ```cpp
-    // Show only the 64×64 region starting at (0,0) of the atlas
-    sprite.setTextureRect(0.0f, 0.0f, 64.0f, 64.0f);
+    // Show the top-left 64×64 region of a 256×256 atlas.
+    sprite.setTextureRect(0.0f, 0.0f, 0.25f, 0.25f);
     ```
 
 === "Lua"
 
     ```lua
-    sprite:setTextureRect(0, 0, 64, 64)
+    sprite:setTextureRect(0, 0, 0.25, 0.25)
     ```
 
 ---
@@ -227,6 +232,10 @@ Restricts rendering to a sub-region of the texture. Coordinates are in **pixels*
 * `void addFrame(Rect rect)` *(auto-increment id)*
 
 Registers a named frame in the sprite sheet. Frames are used by [setFrame](#setframe) and [startAnimation](#startanimation).
+
+Frame rectangles may use pixels or normalized UVs. If all four rectangle values
+are in `[0, 1]`, the engine treats them as UVs; otherwise it converts them from
+pixels using the texture dimensions when the frame is applied.
 
 === "C++"
 
@@ -260,7 +269,23 @@ Removes a registered frame by ID or name.
 * `void setFrame(int id)`
 * `void setFrame(const std::string& name)`
 
-Immediately displays the registered frame with the given ID or name, overriding any active animation.
+Selects the registered frame with the given ID or name. You can call this while
+configuring a new sprite, before its geometry has been built.
+
+UV rectangles and pixel rectangles whose texture dimensions are known apply
+immediately. If dimensions are unavailable, the sprite retains the requested
+rectangle and retries during mesh updates. The currently applied rectangle stays
+unchanged until conversion succeeds.
+
+Each sprite stores one pending rectangle: repeated calls replace it, so the latest
+selection wins. For example, `setFrame(1)` followed by `setFrame(2)` before loading
+finishes eventually displays frame 2. Different sprites keep independent pending
+selections. Use [startAnimation](#startanimation) for a timed sequence of frames.
+
+Calling `setFrame()` does not stop an active animation; its next frame update can
+replace the selection. A direct [setTextureRect](#settexturerect) call cancels a
+pending selection. Stopping editor play also clears pending runtime selections
+when the saved sprite state is restored.
 
 === "C++"
 

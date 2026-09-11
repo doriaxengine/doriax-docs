@@ -16,6 +16,17 @@ The emitter has two layers of per-particle customisation:
 * **Initializers** — applied once at birth to set the particle's starting value.
 * **Modifiers** — applied over the particle's lifetime to interpolate a value from one state to another, with optional easing.
 
+### Constructors
+
+Available in C++ and Lua:
+
+* `Particles(Scene* scene)` — creates a new entity.
+* `Particles(Scene* scene, Entity entity)` — wraps an existing entity without taking ownership.
+
+In Lua, use `Particles(scene, entity)` to access an existing action. The entity must
+already have the components required by this type; wrapping does not add them.
+See [EntityHandle ownership](entityhandle.md#ownership-and-lifetime).
+
 ### Properties
 
 | Type | Name | Default | Langs |

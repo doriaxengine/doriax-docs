@@ -11,6 +11,17 @@ description: RotationAction API reference (C++ and Lua).
 
 Animates the `rotation` property of its target object using quaternion spherical linear interpolation (slerp) between a start and end rotation.
 
+### Constructors
+
+Available in C++ and Lua:
+
+* `RotationAction(Scene* scene)` — creates a new entity.
+* `RotationAction(Scene* scene, Entity entity)` — wraps an existing entity without taking ownership.
+
+In Lua, use `RotationAction(scene, entity)` to access an existing action. The entity must
+already have the components required by this type; wrapping does not add them.
+See [EntityHandle ownership](entityhandle.md#ownership-and-lifetime).
+
 ### Methods
 
 | Type | Name | Langs |

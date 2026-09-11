@@ -13,6 +13,17 @@ Base class for all fixed-duration tweens. `TimedAction` drives a single value fr
 
 You typically do not instantiate `TimedAction` directly.
 
+### Constructors
+
+Available in C++ and Lua:
+
+* `TimedAction(Scene* scene)` — creates a new entity.
+* `TimedAction(Scene* scene, Entity entity)` — wraps an existing entity without taking ownership.
+
+In Lua, use `TimedAction(scene, entity)` to access an existing action. The entity must
+already have the components required by this type; wrapping does not add them.
+See [EntityHandle ownership](entityhandle.md#ownership-and-lifetime).
+
 ### Properties
 
 | Type | Name | Default | Langs |

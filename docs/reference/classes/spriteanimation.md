@@ -11,6 +11,17 @@ description: SpriteAnimation API reference (C++ and Lua).
 
 Cycles through a sequence of texture atlas frames on its target [Sprite](sprite.md), creating flip-book-style 2D animation. This is distinct from skeletal animation ([Animation](animation.md)); `SpriteAnimation` only advances the active frame of a sprite sheet.
 
+### Constructors
+
+Available in C++ and Lua:
+
+* `SpriteAnimation(Scene* scene)` — creates a new entity.
+* `SpriteAnimation(Scene* scene, Entity entity)` — wraps an existing entity without taking ownership.
+
+In Lua, use `SpriteAnimation(scene, entity)` to access an existing action. The entity must
+already have the components required by this type; wrapping does not add them.
+See [EntityHandle ownership](entityhandle.md#ownership-and-lifetime).
+
 ### Properties
 
 | Type | Name | Default | Langs |

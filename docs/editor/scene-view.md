@@ -211,6 +211,9 @@ without running the game.
 
 Press **Play** to run the scene inside the viewport. All input and logic operate
 normally. When you press **Stop**, the scene is restored to the pre-play snapshot.
+Entities spawned by scripts during play are removed even if they never appeared
+in the Structure panel. Pending sprite frame selections from play are cleared so
+they cannot overwrite the restored texture rectangles after Stop.
 Use play mode for fast local iteration; export to a real build for platform-specific
 testing.
 
