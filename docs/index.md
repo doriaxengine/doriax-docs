@@ -50,7 +50,7 @@ and efficient open-source game engine with an integrated editor for creating 2D 
 <p class="dx-card-desc">Understand the data-oriented ECS at the core of the engine.</p>
 </a>
 
-<a class="dx-card" href="reference/index/">
+<a class="dx-card" href="reference/">
 <p class="dx-card-title">API Reference</p>
 <p class="dx-card-desc">Complete class reference with C++ and Lua on every page.</p>
 </a>
