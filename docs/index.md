@@ -54,7 +54,7 @@ and efficient open-source game engine with an integrated editor for creating 2D 
 <p class="dx-card-desc">Understand the data-oriented ECS at the core of the engine.</p>
 </a>
 
-<a class="dx-card" href="reference/index/">
+<a class="dx-card" href="reference/">
 <div class="dx-card-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M16 3h3a2 2 0 0 1 2 2v3"/><path d="M8 21H5a2 2 0 0 1-2-2v-3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/><path d="m9 9-3 3 3 3"/><path d="m15 9 3 3-3 3"/></svg></div>
 <p class="dx-card-title">API Reference</p>
 <p class="dx-card-desc">Complete class reference with C++ and Lua on every page.</p>
