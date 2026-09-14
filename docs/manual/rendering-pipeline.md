@@ -506,6 +506,10 @@ runs the depth pre-pass for it, so depth-driven effects work on their own.
 
 Values declared in the pass's `u_fs_postParams` block become editable rows in the scene
 settings, and the engine writes `resolution` and `time` into that block every frame.
+Scripts set them with `Scene.setPostProcessUniform`, which rewrites the value without
+rebuilding the chain. Component shaders have the same mechanism, reserved names
+included, through their `u_vs_customParams` / `u_fs_customParams` blocks — see
+[Custom Shaders — Shader uniforms](../editor/custom-shaders.md#shader-uniforms).
 
 !!! note "Scope"
     The chain runs for the scene's active camera only — secondary cameras such as mirrors

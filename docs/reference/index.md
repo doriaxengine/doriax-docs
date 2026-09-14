@@ -135,6 +135,7 @@ See also [Enumerations](enums.md) and [Build Options](build-options.md).
 - [MeshPolygon](classes/meshpolygon.md)
 - [OverallBuildProgress](classes/overallbuildprogress.md)
 - [PointData](classes/pointdata.md)
+- [PostProcessPass](classes/postprocesspass.md)
 - [RayReturn](classes/rayreturn.md)
 - [ResourceBuildInfo](classes/resourcebuildinfo.md)
 - [ResourceProgress](classes/resourceprogress.md)

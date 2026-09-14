@@ -128,6 +128,7 @@ nav:
       - Core:
           - Engine: 'reference/classes/engine.md'
           - Scene: 'reference/classes/scene.md'
+          - PostProcessPass: 'reference/classes/postprocesspass.md'
           - Input: 'reference/classes/input.md'
           - Log: 'reference/classes/log.md'
           - System: 'reference/classes/system.md'

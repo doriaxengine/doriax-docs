@@ -62,6 +62,7 @@ See [EntityHandle ownership](entityhandle.md#ownership-and-lifetime).
 | bool | castShadowsWithTexture | `false` | C++ \| Lua |
 | bool | [transparent](#transparent-autotransparency) | `false` | C++ \| Lua |
 | bool | [autoTransparency](#transparent-autotransparency) | `true` | C++ \| Lua |
+| string | [customShader](#customshader) | `""` | C++ \| Lua |
 
 ### Methods
 
@@ -101,6 +102,11 @@ See [EntityHandle ownership](entityhandle.md#ownership-and-lifetime).
 | bool | [isTransparent](#transparent-autotransparency) | C++ \| Lua |
 | void | [setAutoTransparency](#transparent-autotransparency) | C++ \| Lua |
 | bool | [isAutoTransparency](#transparent-autotransparency) | C++ \| Lua |
+| void | [setCustomShader](#customshader) | C++ \| Lua |
+| string | [getCustomShader](#customshader) | C++ \| Lua |
+| void | [setShaderUniform](#setshaderuniform) | C++ \| Lua |
+| Vector4 | [getShaderUniform](#setshaderuniform) | C++ \| Lua |
+| bool | [removeShaderUniform](#setshaderuniform) | C++ \| Lua |
 | void | [setAsMirror](#setasmirror-removemirror-ismirror) | C++ \| Lua |
 | void | [removeMirror](#setasmirror-removemirror-ismirror) | C++ \| Lua |
 | bool | [isMirror](#setasmirror-removemirror-ismirror) | C++ \| Lua |
@@ -251,6 +257,29 @@ show the side of an object facing the mirror — usually the side the key light 
 
 `transparent` marks the mesh for the transparent render pass (sorted back-to-front). `autoTransparency` detects blending from the material (`BLEND`, or `AUTO` when the texture or factor is translucent) and enables the transparent pass automatically. A blended submesh keeps depth testing but disables depth writes in the colour pass so overlapping translucent surfaces composite correctly.
 
+---
+
+### customShader
+
+* *Setter:* `void setCustomShader(const std::string& path)`
+* *Getter:* `std::string getCustomShader() const`
+
+Project-relative base path of a forked shader used for this mesh's colour pass — `"shaders/wave"` resolves to `shaders/wave.vert` and `shaders/wave.frag`, or `"a.vert|b.frag"` names the two files separately. Empty (default) uses the scene's [defaultMeshShader](scene.md#defaultmeshshader), or the engine built-in when the scene has none. Changing it reloads the mesh. The engine loads the compiled shader; the sources are only needed by the editor. See [Custom Shaders](../../editor/custom-shaders.md).
+
+Like colour and material, this is per Mesh component: a multi-node glTF [Model](model.md) renders through its part entities, so assign the shader (and its uniforms) on the parts — `Mesh(scene, partEntity)` — not on the Model root, whose own Mesh is empty unless the model is merged or single-node.
+
+=== "C++"
+
+    ```cpp
+    mesh.setCustomShader("shaders/wave");
+    ```
+
+=== "Lua"
+
+    ```lua
+    mesh.customShader = "shaders/wave"
+    ```
+
 ## Method details
 
 ### load
@@ -319,6 +348,57 @@ target to the mesh's base texture — no camera setup is required. Set `receiveL
 Use these to make an existing mesh reflective. To create a mirror outright, the
 [Mirror](mirror.md) class does both steps at once and exposes the surface normal as a
 property.
+
+---
+
+### setShaderUniform
+
+* `void setShaderUniform(const std::string& name, const Vector4& value)`
+* `void setShaderUniform(const std::string& name, const Vector3& value)`
+* `void setShaderUniform(const std::string& name, const Vector2& value)`
+* `void setShaderUniform(const std::string& name, float value)`
+* `Vector4 getShaderUniform(const std::string& name) const`
+* `bool removeShaderUniform(const std::string& name)`
+
+Values for the members of the custom shader's `u_vs_customParams` / `u_fs_customParams`
+blocks, keyed by member name (see [Custom Shaders — Shader uniforms](../../editor/custom-shaders.md#shader-uniforms)).
+A value is stored on the mesh and applied to every submesh; a narrower value leaves the
+remaining components at zero, and an `int` member takes the truncated value. Setting a
+value only rewrites the uploaded block, so it can be called every frame. Names the shader
+does not declare are kept but unused, and a member with no value reads zero.
+
+`getShaderUniform` returns the stored value (zero when unset) — the value list, not the
+uploaded block, so an `int` member set to `3.7` reads back `3.7` while the shader sees `3`,
+and the engine-written names are not in it. `removeShaderUniform` drops a value and returns
+whether it existed; the member reads zero again. Matrix and array members take no value.
+
+Two names are reserved and written by the engine every frame — `time` (seconds since
+startup, the same clock as [Engine.systemTime](engine.md#systemtime)) and `resolution`
+(`xy` = size of the render target the mesh is drawn into, `zw` = `1 / size`); setting
+either logs an error. For a glTF model, call this on the part entities (see
+[customShader](#customshader)).
+
+=== "C++"
+
+    ```cpp
+    mesh.setCustomShader("shaders/wave");
+    mesh.setShaderUniform("amplitude", 0.3f);
+    mesh.setShaderUniform("direction", Vector2(1.0f, 0.0f));
+    mesh.setShaderUniform("tint", Vector4(0.2f, 0.5f, 1.0f, 0.5f));
+
+    Vector4 tint = mesh.getShaderUniform("tint");
+    ```
+
+=== "Lua"
+
+    ```lua
+    mesh.customShader = "shaders/wave"
+    mesh:setShaderUniform("amplitude", 0.3)
+    mesh:setShaderUniform("direction", Vector2(1, 0))
+    mesh:setShaderUniform("tint", Vector4(0.2, 0.5, 1.0, 0.5))
+
+    local tint = mesh:getShaderUniform("tint")
+    ```
 
 ---
 

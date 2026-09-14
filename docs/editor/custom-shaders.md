@@ -1,5 +1,5 @@
 ---
-description: Fork, edit, and customize the built-in shaders for Mesh, UI, Points, Lines, and Sky — per component or as scene-wide defaults — and add custom post-process passes, directly in the Doriax editor.
+description: Fork, edit, and customize the built-in shaders for Mesh, UI, Points, Lines, and Sky — per component or as scene-wide defaults — feed them custom uniforms from the editor or from scripts, and add custom post-process passes, directly in the Doriax editor.
 ---
 
 # Custom Shaders
@@ -33,7 +33,8 @@ project; you edit the shading code while the rest of the rendering contract stay
   includes as well, the fork dialog can copy them for you (see [Includes](#includes)).
 
 This means you customize the *surface/shading logic* while the engine continues to drive
-lighting, passes, and built-in inputs.
+lighting, passes, and built-in inputs. Values of your own — a wave speed, a dissolve
+amount, the current time — reach the fork through its [shader uniforms](#shader-uniforms).
 
 ## The Shader row
 
@@ -110,6 +111,144 @@ any other custom shader — components that inherit them compile and ship the ri
 variants automatically. They are also scriptable via the `Scene` properties
 `defaultMeshShader`, `defaultUIShader`, `defaultSkyShader`, `defaultPointsShader`, and
 `defaultLinesShader` (see the [Scene reference](../reference/classes/scene.md)).
+
+## Shader uniforms
+
+A fork can declare a uniform block of its own and have the engine fill it: from rows in
+the Properties window, from a script every frame, or with the current time. This is how
+a water, wave, fire, or dissolve effect gets its parameters.
+
+Declare `u_vs_customParams` in the vertex shader, `u_fs_customParams` in the fragment
+shader, or both. Members are matched **by name**, so a name that appears in both blocks
+receives the same value in both stages:
+
+```glsl
+// wave.vert
+uniform u_vs_customParams {
+    float time;
+    float amplitude;
+} customParams;
+
+// ... in main():
+pos.y += sin(customParams.time * 3.0 + pos.x * 4.0) * customParams.amplitude;
+```
+
+!!! warning "Vertex displacement is colour-pass only"
+    A fork only replaces the colour pass. The depth, shadow, and G-buffer passes keep the
+    built-in shaders, so a vertex moved like this swims while its shadow and its
+    screen-space reflection stay where the mesh data is. Keep displacement small, or turn
+    off shadow casting for that mesh.
+
+```glsl
+// wave.frag
+uniform u_fs_customParams {
+    float time;
+    vec4 tint;
+} customParams;
+
+// ... at the end of main():
+g_finalColor.rgb = mix(g_finalColor.rgb, customParams.tint.rgb, 0.5 + 0.5 * sin(customParams.time));
+```
+
+The built-in Mesh, UI, Points, Lines, and Sky sources all carry a comment showing the
+declaration, so a fresh fork has it at hand. Nothing else is needed: the block is picked
+up from the compiled shader by name, and a fork that declares none behaves exactly as
+before.
+
+### Editing values
+
+Every member becomes a row under the component's **Shader** row in the Properties window
+— save the file and the rows appear. Values are stored **on the component**, by name:
+
+- A Mesh keeps one set of values for all of its submeshes.
+- A component that inherits a [scene default shader](#scene-default-shaders) still has
+  its own values, so two meshes on the same default shader can be tinted differently.
+- Reordering members keeps their values; renaming or deleting one drops its value. A
+  member with no value reads zero — GLSL uniform blocks have no initializers.
+
+The rows are drag fields (`float`, `vec2`, `vec3`, `vec4` and their `int` forms), every
+edit is undoable, and the values are saved with the scene and exported with it. Matrix and
+array members take no value and stay zero; they show as *Not editable* — declare one
+scalar or vector member per value instead.
+
+!!! note "glTF models"
+    A multi-node glTF `Model` renders through its part entities (one Mesh component
+    each); the root's own Mesh is empty unless the model is merged or single-node. Fork
+    and edit the shader, and set the values, on the parts — like colour and material —
+    not on the Model root.
+
+Two names are **reserved** and written by the engine every frame instead of being edited;
+they show in the rows as *Set by the engine*:
+
+| Name | Contents |
+| --- | --- |
+| `time` | Seconds elapsed since startup. |
+| `resolution` | `xy` = width and height of the render target the component is drawn into — the camera's framebuffer, the fixed-resolution target, the view, or a reflection probe face — `zw` = `1 / width` and `1 / height`. |
+
+`resolution` is what screen-space effects need (scanlines, pixel snapping, dithering
+against `gl_FragCoord`), and it follows the target: the same fork drawn by a
+render-to-texture camera sees that camera's size. Rename a member if you want to drive
+a value with one of these names yourself.
+
+!!! warning "Do not mix int and float members"
+    The OpenGL backends flatten a uniform block into a single upload typed after its
+    first member, so a block holding both `int` and `float` members uploads incorrectly
+    there. Keep one block to one scalar kind.
+
+### Setting values from scripts
+
+The same values are scriptable, so a uniform can follow gameplay or animate every frame.
+`Mesh` (and everything derived from it — `Shape`, `Model`, `Sprite`, `Terrain`,
+`Tilemap`), `Image`, `Text`, `Polygon`, `Points`, `Lines`, and `SkyBox` all expose:
+
+| Method | Meaning |
+| --- | --- |
+| `setShaderUniform(name, value)` | Sets a member. `value` is a `float`, `Vector2`, `Vector3`, or `Vector4`; the components a narrower value leaves out read zero. |
+| `getShaderUniform(name)` | The stored value as a `Vector4` (zero when unset). It reads the value list, not the block — `time` and `resolution` are not there; scripts read the same clock as `Engine.systemTime`. |
+| `removeShaderUniform(name)` | Drops the value; the member reads zero again. |
+| `customShader` | The fork base path, so a script can assign or reset the fork too. |
+
+Setting a value only rewrites the block bytes — no shader reload — so calling it every
+frame is fine:
+
+=== "C++"
+
+    ```cpp
+    Shape water(&scene);
+    water.createPlane(20, 20);
+    water.setCustomShader("shaders/wave");
+    water.setShaderUniform("amplitude", 0.3f);
+    water.setShaderUniform("tint", Vector4(0.2f, 0.5f, 1.0f, 0.5f));
+    ```
+
+=== "Lua"
+
+    ```lua
+    function WaveScript:init()
+        self.water = Shape(self.scene)
+        self.water:createPlane(20, 20)
+        self.water.customShader = "shaders/wave"
+        self.water:setShaderUniform("amplitude", 0.3)
+        self.water:setShaderUniform("tint", Vector4(0.2, 0.5, 1.0, 0.5))
+        RegisterEngineEvent(self, "onUpdate")
+    end
+
+    function WaveScript:onUpdate()
+        -- "time" and "resolution" need no call: the engine writes them. Gameplay-driven
+        -- values go through the same method every frame.
+        self.water:setShaderUniform("amplitude", 0.3 * self.stormLevel)
+    end
+    ```
+
+Setting a reserved name (`time`, `resolution`) logs an error and is ignored. For a glTF
+model, call these on the part entities (`Mesh(scene, scene:findEntity("Body"))`), as the
+note above explains. See the [Mesh reference](../reference/classes/mesh.md#setshaderuniform)
+for the full signatures.
+
+!!! note "Main pass only"
+    Custom blocks reach the fork's main colour pass. The depth, shadow, and G-buffer passes
+    keep the built-in shaders, so a vertex displacement driven by a uniform does not move
+    the object's shadow or its screen-space reflection.
 
 ## Post-process passes
 
@@ -193,7 +332,30 @@ value yourself.
     member, so a block holding both `int` and `float` members uploads incorrectly there.
     Keep one block to one scalar kind.
 
-Members are edited as drag fields; matrix members are not editable and show no row.
+Members are edited as drag fields; matrix and array members take no value and show as
+*Not editable*.
+
+The values are scriptable as well. `scene:setPostProcessUniform(index, name, value)`
+rewrites one member of the pass at `index` (top of the list is 0, also from Lua) without
+rebuilding the chain, so it can run every frame; `scene:getPostProcessUniform(index, name)`
+reads it back, and `scene:setPostProcessPassEnabled(index, enabled)` toggles a pass. The
+whole chain is available as `scene.postProcessPasses` — a list of `PostProcessPass` values
+with `shader`, `enabled`, and `setUniform`/`getUniform` — for scripts that build it
+themselves (in Lua a 1-based sequence, so `scene.postProcessPasses[1]` is pass index 0):
+
+=== "C++"
+
+    ```cpp
+    scene.setPostProcessUniform(0, "amount", 0.8f);
+    ```
+
+=== "Lua"
+
+    ```lua
+    scene:setPostProcessUniform(0, "amount", 0.8)
+    ```
+
+See the [Scene reference](../reference/classes/scene.md#setpostprocessuniform).
 
 ### Export
 

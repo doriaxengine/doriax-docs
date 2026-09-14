@@ -29,6 +29,7 @@ Text is shaped before it is drawn, so scripts that need contextual glyph forms w
 | bool | [flipY](#flipy) | `false` | C++ \| Lua |
 | bool | [pivotBaseline](#pivotbaseline-pivotcentered) | `false` | C++ \| Lua |
 | bool | [pivotCentered](#pivotbaseline-pivotcentered) | `false` | C++ \| Lua |
+| string | [customShader](#customshader) | `""` | C++ \| Lua |
 
 ### Methods
 
@@ -44,6 +45,9 @@ Text is shaped before it is drawn, so scripts that need contextual glyph forms w
 | float | [getCharWidth](#getcharwidth) | C++ \| Lua |
 | [AABB](aabb.md) | [getAABB](#getaabb-getworldaabb) | C++ \| Lua |
 | [AABB](aabb.md) | [getWorldAABB](#getaabb-getworldaabb) | C++ \| Lua |
+| void | [setShaderUniform](#setshaderuniform) | C++ \| Lua |
+| Vector4 | [getShaderUniform](#setshaderuniform) | C++ \| Lua |
+| bool | [removeShaderUniform](#setshaderuniform) | C++ \| Lua |
 
 ## Property details
 
@@ -261,3 +265,41 @@ This is the advance of the glyph in isolation. It is not the width the codepoint
 * [AABB](aabb.md) **getWorldAABB**() const
 
 Returns the axis-aligned bounding box of the rendered text in local or world space.
+
+---
+
+### customShader
+
+* *Setter:* `void setCustomShader(const std::string& path)`
+* *Getter:* `std::string getCustomShader() const`
+
+Project-relative base path of a forked shader (`"shaders/outline"` resolves to `shaders/outline.vert` and `shaders/outline.frag`, or `"a.vert|b.frag"` names the files separately). Empty (default) uses the scene default shader for this type, or the engine built-in. Changing it reloads the component. Same semantics as [Mesh.customShader](mesh.md#customshader); see [Custom Shaders](../../editor/custom-shaders.md).
+
+---
+
+### setShaderUniform
+
+* `void setShaderUniform(const std::string& name, const Vector4& value)`
+* `void setShaderUniform(const std::string& name, const Vector3& value)`
+* `void setShaderUniform(const std::string& name, const Vector2& value)`
+* `void setShaderUniform(const std::string& name, float value)`
+* `Vector4 getShaderUniform(const std::string& name) const`
+* `bool removeShaderUniform(const std::string& name)`
+
+Values for the members of the custom shader's `u_vs_customParams` / `u_fs_customParams` blocks, by member name. Setting a value only rewrites the uploaded block, so it can run every frame; a member with no value reads zero, and `time` (seconds since startup) and `resolution` (render target size) are reserved for the engine. Same semantics as [Mesh.setShaderUniform](mesh.md#setshaderuniform); see [Custom Shaders — Shader uniforms](../../editor/custom-shaders.md#shader-uniforms).
+
+=== "C++"
+
+    ```cpp
+    text.setCustomShader("shaders/outline");
+    text.setShaderUniform("strength", 0.8f);
+    text.setShaderUniform("glowColor", Vector4(1.0f, 0.8f, 0.2f, 1.0f));
+    ```
+
+=== "Lua"
+
+    ```lua
+    text.customShader = "shaders/outline"
+    text:setShaderUniform("strength", 0.8)
+    text:setShaderUniform("glowColor", Vector4(1, 0.8, 0.2, 1))
+    ```

@@ -66,7 +66,7 @@ A `Scene` is the root container for all objects, systems, and resources in a pro
 | string | [defaultSkyShader](#defaultskyshader) | `""` | C++ \| Lua |
 | string | [defaultPointsShader](#defaultpointsshader) | `""` | C++ \| Lua |
 | string | [defaultLinesShader](#defaultlinesshader) | `""` | C++ \| Lua |
-| vector&lt;PostProcessPass&gt; | [postProcess](#postprocess) | `{}` | C++ |
+| vector&lt;[PostProcessPass](postprocesspass.md)&gt; | [postProcessPasses](#postprocesspasses) | `{}` | C++ \| Lua |
 | [UIEventState](#uieventstate) | [enableUIEvents](#enableuievents) | `NOT_SET` | C++ \| Lua |
 
 ### Methods
@@ -131,6 +131,12 @@ A `Scene` is the root container for all objects, systems, and resources in a pro
 | void | [setFixedResolutionSize](#fixedresolutionwidth-fixedresolutionheight) | C++ \| Lua |
 | void | [setFixedResolutionFilter](#fixedresolutionfilter) | C++ \| Lua |
 | TextureFilter | [getFixedResolutionFilter](#fixedresolutionfilter) | C++ \| Lua |
+| void | [setPostProcessPasses](#postprocesspasses) | C++ \| Lua |
+| vector&lt;PostProcessPass&gt; | [getPostProcessPasses](#postprocesspasses) | C++ \| Lua |
+| void | [setPostProcessUniform](#setpostprocessuniform) | C++ \| Lua |
+| Vector4 | [getPostProcessUniform](#setpostprocessuniform) | C++ \| Lua |
+| void | [setPostProcessPassEnabled](#setpostprocesspassenabled) | C++ \| Lua |
+| bool | [isPostProcessPassEnabled](#setpostprocesspassenabled) | C++ \| Lua |
 | void | [enableUIEvents](#enableuievents_1) | C++ \| Lua |
 | bool | [isEnableUIEvents](#isenableuievents) | C++ \| Lua |
 | bool | [canReceiveUIEvents](#canreceiveuievents) | C++ \| Lua |
@@ -512,29 +518,33 @@ Scene-wide custom shader for Lines components. Same semantics as [defaultMeshSha
 
 ---
 
-### postProcess
+### postProcessPasses
 
 * *Setter:* `void setPostProcessPasses(const std::vector<PostProcessPass>& passes)`
 * *Getter:* `const std::vector<PostProcessPass>& getPostProcessPasses() const`
 
-Ordered chain of fullscreen post-process passes run over the scene's finished image, on the main camera only. Each entry is a `PostProcessPass`:
+Ordered chain of fullscreen post-process passes run over the scene's finished image, on the main camera only. Each entry is a [PostProcessPass](postprocesspass.md) with the fork to run, an enable flag, and the values of its `u_fs_postParams` members. In Lua the property is a 1-based sequence of `PostProcessPass` values (a copy — assign it back to apply changes); build the chain as a sequence (a `{...}` literal or `table.insert`), whose array order is the pass order, and note that `pass_index` arguments such as [setPostProcessUniform](#setpostprocessuniform) count from 0.
 
-| Field | Type | Meaning |
-| --- | --- | --- |
-| `shader` | string | Project-relative base path to a forked shader, or empty for the built-in passthrough. |
-| `enabled` | bool | Whether the pass runs. Disabled passes still ship their shader. |
-| `uniforms` | vector&lt;pair&lt;string, Vector4&gt;&gt; | Values for the members of the shader's `u_fs_postParams` block, keyed by member name. Unknown names are ignored; unset members are zero. |
-
-Setting the chain rebuilds the passes on the next frame. See [Custom Shaders — Post-process passes](../../editor/custom-shaders.md#post-process-passes).
+Setting the chain rebuilds the passes on the next frame, unless only uniform values changed (same shaders and enable flags), in which case the compiled chain is kept and just the values are rewritten. For a single value or pass on a live chain, [setPostProcessUniform](#setpostprocessuniform) and [setPostProcessPassEnabled](#setpostprocesspassenabled) are the direct route. See [Custom Shaders — Post-process passes](../../editor/custom-shaders.md#post-process-passes).
 
 === "C++"
 
     ```cpp
     PostProcessPass sharpen;
     sharpen.shader = "shaders/sharpen";
-    sharpen.uniforms.push_back({"amount", Vector4(0.5f, 0.0f, 0.0f, 0.0f)});
+    sharpen.setUniform("amount", 0.5f);
 
     scene.setPostProcessPasses({sharpen});
+    ```
+
+=== "Lua"
+
+    ```lua
+    local sharpen = PostProcessPass()
+    sharpen.shader = "shaders/sharpen"
+    sharpen:setUniform("amount", 0.5)
+
+    scene.postProcessPasses = {sharpen}
     ```
 
 ---
@@ -725,6 +735,53 @@ Returns `true` if this scene is currently the topmost scene that is able to rece
 * `void updateCameraSize()`
 
 Recalculates the active camera's projection to match the current canvas size. Called automatically when the canvas changes; call manually after resizing the viewport from script.
+
+---
+
+### setPostProcessUniform
+
+* `void setPostProcessUniform(unsigned int index, const std::string& name, const Vector4& value)`
+* `void setPostProcessUniform(unsigned int index, const std::string& name, const Vector3& value)`
+* `void setPostProcessUniform(unsigned int index, const std::string& name, const Vector2& value)`
+* `void setPostProcessUniform(unsigned int index, const std::string& name, float value)`
+* `Vector4 getPostProcessUniform(unsigned int index, const std::string& name) const`
+
+Sets one member of the `u_fs_postParams` block of the pass at `index` (0 = first pass of [postProcessPasses](#postprocesspasses)), by member name. Only the uploaded block is rewritten — the chain is not rebuilt — so it can run every frame. A narrower value leaves the remaining components at zero; a member with no value reads zero. An index past the chain, or a reserved name (`time`, `resolution`, written by the engine every frame), logs an error and is ignored. `getPostProcessUniform` returns the stored value, zero when unset.
+
+=== "C++"
+
+    ```cpp
+    scene.setPostProcessUniform(0, "amount", 0.8f);
+    scene.setPostProcessUniform(0, "tintColor", Vector4(1.0f, 0.9f, 0.8f, 1.0f));
+    ```
+
+=== "Lua"
+
+    ```lua
+    scene:setPostProcessUniform(0, "amount", 0.8)
+    scene:setPostProcessUniform(0, "tintColor", Vector4(1, 0.9, 0.8, 1))
+    ```
+
+---
+
+### setPostProcessPassEnabled
+
+* `void setPostProcessPassEnabled(unsigned int index, bool enabled)`
+* `bool isPostProcessPassEnabled(unsigned int index) const`
+
+Turns the pass at `index` on or off. A change rebuilds the chain on the next frame (the compiled shader is kept, so it is cheap, but not something to toggle every frame). An index past the chain logs an error; `isPostProcessPassEnabled` returns `false` for it.
+
+=== "C++"
+
+    ```cpp
+    scene.setPostProcessPassEnabled(1, false);
+    ```
+
+=== "Lua"
+
+    ```lua
+    scene:setPostProcessPassEnabled(1, false)
+    ```
 
 ---
 

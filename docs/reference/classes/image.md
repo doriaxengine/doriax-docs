@@ -26,6 +26,7 @@ All UI elements also expose a rich set of pointer/focus callback events (inherit
 | unsigned int | [patchMarginRight](#patchmargin) | `0` | C++ \| Lua |
 | unsigned int | [patchMarginTop](#patchmargin) | `0` | C++ \| Lua |
 | unsigned int | [patchMarginBottom](#patchmargin) | `0` | C++ \| Lua |
+| string | [customShader](#customshader) | `""` | C++ \| Lua |
 
 ### Methods
 
@@ -38,6 +39,9 @@ All UI elements also expose a rich set of pointer/focus callback events (inherit
 | void | [setAlpha](#color) | C++ \| Lua |
 | AABB | [getAABB](#getaabb-getworldaabb) | C++ \| Lua |
 | AABB | [getWorldAABB](#getaabb-getworldaabb) | C++ \| Lua |
+| void | [setShaderUniform](#setshaderuniform) | C++ \| Lua |
+| Vector4 | [getShaderUniform](#setshaderuniform) | C++ \| Lua |
+| bool | [removeShaderUniform](#setshaderuniform) | C++ \| Lua |
 
 ### Callback events
 
@@ -135,6 +139,44 @@ Assigns the texture to display. Pass a file path, in-memory pixel data with a ca
 * [AABB](aabb.md) **getWorldAABB**() const
 
 Returns the axis-aligned bounding box in local or world space. Useful for hit-testing or layout calculations.
+
+---
+
+### customShader
+
+* *Setter:* `void setCustomShader(const std::string& path)`
+* *Getter:* `std::string getCustomShader() const`
+
+Project-relative base path of a forked shader (`"shaders/glow"` resolves to `shaders/glow.vert` and `shaders/glow.frag`, or `"a.vert|b.frag"` names the files separately). Empty (default) uses the scene default shader for this type, or the engine built-in. Changing it reloads the component. Same semantics as [Mesh.customShader](mesh.md#customshader); see [Custom Shaders](../../editor/custom-shaders.md).
+
+---
+
+### setShaderUniform
+
+* `void setShaderUniform(const std::string& name, const Vector4& value)`
+* `void setShaderUniform(const std::string& name, const Vector3& value)`
+* `void setShaderUniform(const std::string& name, const Vector2& value)`
+* `void setShaderUniform(const std::string& name, float value)`
+* `Vector4 getShaderUniform(const std::string& name) const`
+* `bool removeShaderUniform(const std::string& name)`
+
+Values for the members of the custom shader's `u_vs_customParams` / `u_fs_customParams` blocks, by member name. Setting a value only rewrites the uploaded block, so it can run every frame; a member with no value reads zero, and `time` (seconds since startup) and `resolution` (render target size) are reserved for the engine. Same semantics as [Mesh.setShaderUniform](mesh.md#setshaderuniform); see [Custom Shaders — Shader uniforms](../../editor/custom-shaders.md#shader-uniforms).
+
+=== "C++"
+
+    ```cpp
+    image.setCustomShader("shaders/glow");
+    image.setShaderUniform("strength", 0.8f);
+    image.setShaderUniform("glowColor", Vector4(1.0f, 0.8f, 0.2f, 1.0f));
+    ```
+
+=== "Lua"
+
+    ```lua
+    image.customShader = "shaders/glow"
+    image:setShaderUniform("strength", 0.8)
+    image:setShaderUniform("glowColor", Vector4(1, 0.8, 0.2, 1))
+    ```
 
 ---
 
