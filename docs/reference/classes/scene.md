@@ -135,6 +135,7 @@ A `Scene` is the root container for all objects, systems, and resources in a pro
 | vector&lt;PostProcessPass&gt; | [getPostProcessPasses](#postprocesspasses) | C++ \| Lua |
 | void | [setPostProcessUniform](#setpostprocessuniform) | C++ \| Lua |
 | Vector4 | [getPostProcessUniform](#setpostprocessuniform) | C++ \| Lua |
+| bool | [removePostProcessUniform](#setpostprocessuniform) | C++ \| Lua |
 | void | [setPostProcessPassEnabled](#setpostprocesspassenabled) | C++ \| Lua |
 | bool | [isPostProcessPassEnabled](#setpostprocesspassenabled) | C++ \| Lua |
 | void | [enableUIEvents](#enableuievents_1) | C++ \| Lua |
@@ -745,8 +746,9 @@ Recalculates the active camera's projection to match the current canvas size. Ca
 * `void setPostProcessUniform(unsigned int index, const std::string& name, const Vector2& value)`
 * `void setPostProcessUniform(unsigned int index, const std::string& name, float value)`
 * `Vector4 getPostProcessUniform(unsigned int index, const std::string& name) const`
+* `bool removePostProcessUniform(unsigned int index, const std::string& name)`
 
-Sets one member of the `u_fs_postParams` block of the pass at `index` (0 = first pass of [postProcessPasses](#postprocesspasses)), by member name. Only the uploaded block is rewritten — the chain is not rebuilt — so it can run every frame. A narrower value leaves the remaining components at zero; a member with no value reads zero. An index past the chain, or a reserved name (`time`, `resolution`, written by the engine every frame), logs an error and is ignored. `getPostProcessUniform` returns the stored value, zero when unset.
+Sets one member of the `u_fs_postParams` block of the pass at `index` (0 = first pass of [postProcessPasses](#postprocesspasses)), by member name. Only the uploaded block is rewritten — the chain is not rebuilt — so it can run every frame. A narrower value leaves the remaining components at zero; a member with no value reads zero. An index past the chain, or a reserved name (`time`, `resolution`, written by the engine every frame), logs an error and is ignored. `getPostProcessUniform` returns the stored value, zero when unset; `removePostProcessUniform` drops it (the member reads zero again) and returns whether it existed.
 
 === "C++"
 

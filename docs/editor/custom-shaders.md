@@ -182,7 +182,7 @@ they show in the rows as *Set by the engine*:
 
 | Name | Contents |
 | --- | --- |
-| `time` | Seconds elapsed since startup. |
+| `time` | Seconds elapsed since startup — wall-clock time, so it keeps running in the editor viewport and while the game is paused. For gameplay-driven time, set a member of your own from a script. |
 | `resolution` | `xy` = width and height of the render target the component is drawn into — the camera's framebuffer, the fixed-resolution target, the view, or a reflection probe face — `zw` = `1 / width` and `1 / height`. |
 
 `resolution` is what screen-space effects need (scanlines, pixel snapping, dithering
@@ -193,7 +193,9 @@ a value with one of these names yourself.
 !!! warning "Do not mix int and float members"
     The OpenGL backends flatten a uniform block into a single upload typed after its
     first member, so a block holding both `int` and `float` members uploads incorrectly
-    there. Keep one block to one scalar kind.
+    there. Keep one block to one scalar kind. The rows show a warning when a block mixes
+    them, and when a name is declared with different types in the vertex and fragment
+    blocks (one value feeds both).
 
 ### Setting values from scripts
 
@@ -338,7 +340,8 @@ Members are edited as drag fields; matrix and array members take no value and sh
 The values are scriptable as well. `scene:setPostProcessUniform(index, name, value)`
 rewrites one member of the pass at `index` (top of the list is 0, also from Lua) without
 rebuilding the chain, so it can run every frame; `scene:getPostProcessUniform(index, name)`
-reads it back, and `scene:setPostProcessPassEnabled(index, enabled)` toggles a pass. The
+reads it back, `scene:removePostProcessUniform(index, name)` drops it, and
+`scene:setPostProcessPassEnabled(index, enabled)` toggles a pass. The
 whole chain is available as `scene.postProcessPasses` — a list of `PostProcessPass` values
 with `shader`, `enabled`, and `setUniform`/`getUniform` — for scripts that build it
 themselves (in Lua a 1-based sequence, so `scene.postProcessPasses[1]` is pass index 0):

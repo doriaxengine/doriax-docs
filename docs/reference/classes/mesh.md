@@ -372,8 +372,9 @@ uploaded block, so an `int` member set to `3.7` reads back `3.7` while the shade
 and the engine-written names are not in it. `removeShaderUniform` drops a value and returns
 whether it existed; the member reads zero again. Matrix and array members take no value.
 
-Two names are reserved and written by the engine every frame — `time` (seconds since
-startup, the same clock as [Engine.systemTime](engine.md#systemtime)) and `resolution`
+Two names are reserved and written by the engine every frame — `time` (wall-clock seconds
+since startup, the same clock as [Engine.systemTime](engine.md#systemtime); it does not
+stop for a pause) and `resolution`
 (`xy` = size of the render target the mesh is drawn into, `zw` = `1 / size`); setting
 either logs an error. For a glTF model, call this on the part entities (see
 [customShader](#customshader)).
