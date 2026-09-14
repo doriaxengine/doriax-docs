@@ -120,23 +120,45 @@ under the Model (helpers, joints, and mesh nodes). Static multi-mesh files still
 one child mesh entity per mesh node. See
 [3D Graphics — GLTF node hierarchy](../manual/3d-graphics.md#gltf-node-hierarchy).
 
-### Organizing the parts of a static model
+### Organizing the parts of a model
 
-The child mesh entities of a **static** multi-mesh GLTF (no animation clips, no skins,
-not merged) belong to their Model, but you can arrange them inside it. The tree draws
-these parts in the normal text colour, and hovering one shows *Drag to organize the
-parts of this model*. A model whose parts cannot be rearranged — a full node-tree
-import, a skinned model, a merged model, or one still loading — keeps them greyed out.
+The child mesh entities of a multi-mesh GLTF belong to their Model, but you can arrange
+them inside it. Parts that can move are drawn in the normal text colour, and hovering
+one shows *Drag to organize the parts of this model*. Parts that stay put are greyed
+out, and their tooltip says why.
 
-- Drag a part under another part to nest it.
-- Drag an **Empty object** into the model, then drag parts under it to group them. While
-  it holds parts, that group counts as part of the model.
-- Drop a part on the Model row to put it straight back under the root, or drop it
-  between siblings to reorder.
+What you can move:
 
-Reparenting keeps the world placement, so grouping never moves geometry. The file is not
-touched: the arrangement is saved with the scene, and reopening the scene or
-re-assigning the same model file keeps it (see
+- Every part of a **static** model (no animation clips, at most one skin, not merged).
+- The **skinned** parts of an animated model. A skinned mesh is placed by its joints, so
+  moving the part changes only the tree, never the geometry.
+- A **rigid** part the file does not animate — not directly and not through a parent
+  node — such as a loose prop exported next to a character.
+- A plain entity (an **Empty object**) holding parts. Drag it into the model, then drag
+  parts under it to group them; while it holds parts it counts as part of the model.
+
+What stays where the file put it, with the tooltip reason:
+
+| Tooltip | Why |
+| --- | --- |
+| *Joints cannot be reparented* | The joint's world transform feeds skinning, and its keyframes are relative to its parent. Bones can still receive drops. |
+| *Model nodes cannot be reparented* | Transform-only helper nodes of a full node-tree import. |
+| *Animated parts cannot be reparented* | The part has its own translation, rotation, or scale keyframes, which are relative to the file's parent. |
+| *Parts inheriting animation cannot be reparented* | A rigid part under an animated node moves with that node; pulling it out would stop its animation. |
+| *Parts holding joints cannot be reparented* | The part has joints below it in the file. |
+
+Where you can put a movable part:
+
+- Under another part, or under a group entity inside the model.
+- On a **bone** or any other node of the model — the way to hang a prop on a hand. Bones
+  also accept plain entities (lights, cameras, empties, other models), so you can attach
+  anything to a joint by dropping it there.
+- On the Model row to put it back under the root, or between siblings to reorder.
+
+Reparenting keeps the world placement, so a drop never moves geometry; position the part
+afterwards with the gizmo if it should sit somewhere else. The file is not touched: the
+arrangement is saved with the scene, and reopening the scene or re-assigning the same
+model file keeps it (see
 [3D Graphics — Reloading a rearranged model](../manual/3d-graphics.md#reloading-a-rearranged-model)).
 
 Parts always stay inside their model — a drop on the scene root, on an entity outside
@@ -144,8 +166,11 @@ the model, or inside a nested model is refused. Parts and the groups holding the
 also deleted and duplicated only together with the whole model, so **Delete** and
 **Duplicate** act on the Model row instead.
 
-Right-click the Model and choose **Reset mesh parenting** to move every part back
-directly under the model root in one undoable step.
+Right-click the Model and choose **Reset mesh parenting** to move every part back under
+the node the file gives it (the model root for a static model) in one undoable step. A
+part that is locked away from its file node — after a re-export changed the file, for
+example — can always be dropped back on that node even though it cannot go anywhere
+else.
 
 ### Merge static model
 
@@ -158,7 +183,7 @@ Right-click a Model entity in Structure:
 
 | Action | Effect |
 | --- | --- |
-| **Reset mesh parenting** | Moves every mesh part back directly under the model root (available while parts are [rearranged](#organizing-the-parts-of-a-static-model)). Undoable. |
+| **Reset mesh parenting** | Moves every mesh part back under the node the file gives it (available while parts are [rearranged](#organizing-the-parts-of-a-model)). Undoable. |
 | **Merge static model** | Bakes child mesh transforms into the root `MeshComponent`, removes the child mesh entities, and sets the model's `mergeStaticMeshes` flag. Undoable. |
 | **Restore model mesh children** | Reloads the model with the hierarchy restored (available after a merge). |
 
@@ -196,9 +221,9 @@ action targeting a transformed entity.
 
 Entities the editor generates for a component — bones, skeletons, imported animations,
 the label of a button, and so on — are greyed out and can only be reordered among their
-siblings. The mesh parts of a static model are the exception: they can be regrouped
-anywhere inside their own model (see
-[Organizing the parts of a static model](#organizing-the-parts-of-a-static-model)).
+siblings. The mesh parts of a model are the exception: the ones the file does not
+animate can be regrouped anywhere inside their own model, bones included (see
+[Organizing the parts of a model](#organizing-the-parts-of-a-model)).
 
 Drag and drop also crosses window boundaries:
 

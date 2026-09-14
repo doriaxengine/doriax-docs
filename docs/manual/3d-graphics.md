@@ -74,9 +74,11 @@ Imported models with child nodes start collapsed in the
 you need to select a specific node, joint, or child mesh.
 
 On the child-mesh path the parts are yours to arrange: nest them under each other or
-under a plain entity inside the model, and the scene saves that layout.
-Full node-tree imports keep the parentage authored in the file. See
-[Structure — Organizing the parts of a static model](../editor/structure.md#organizing-the-parts-of-a-static-model).
+under a plain entity inside the model, and the scene saves that layout. Full node-tree
+imports keep joints, helper nodes, animated parts, and rigid parts that inherit a node's
+animation where the file authored them; skinned parts and rigid parts the file does not
+animate can be moved, onto bones included, and any entity can be attached to a bone. See
+[Structure — Organizing the parts of a model](../editor/structure.md#organizing-the-parts-of-a-model).
 
 ### Merging static model meshes
 
@@ -100,17 +102,20 @@ submesh limit. It is also refused while the parts are rearranged inside the mode
 
 ### Reloading a rearranged model
 
-A model normally rebuilds its child meshes on every reload: the old parts are deleted and
-the file creates fresh ones under the root. When the parts of a static model have been
-[rearranged](../editor/structure.md#organizing-the-parts-of-a-static-model), a reload
-that would only throw that layout away — re-assigning the **same** model file — keeps the
-existing part entities instead and refreshes their geometry and materials in place.
-Assigning a different file, merging, or restoring still rebuilds the parts.
+A model normally rebuilds its child entities on every reload: the old parts are deleted
+and the file creates fresh ones. Re-assigning the **same** model file — the usual step
+after re-exporting from your DCC — keeps what you arranged, in one of two ways depending
+on how the file imports.
+
+**Child-mesh models** (static, or a single skin without clips) whose parts have been
+[rearranged](../editor/structure.md#organizing-the-parts-of-a-model) keep the existing
+part entities and refresh their geometry and materials in place. Assigning a different
+file, merging, or restoring still rebuilds the parts.
 
 Whenever the file loads against existing part entities — that in-place reload, or
 reopening a saved scene — each part is paired with a mesh node of the file by **node
-name**, so re-exporting from your DCC with nodes reordered keeps every part on its own
-geometry. The pairing goes:
+name**, so re-exporting with nodes reordered keeps every part on its own geometry. The
+pairing goes:
 
 1. A part whose name still matches the node at its saved index keeps that node.
 2. Remaining nodes claim the part with the same name, wherever it moved to.
@@ -122,6 +127,25 @@ the model (a warning names it in the log); delete it or keep it as you see fit. 
 node in the file gets a new part under the model root. Kept parts keep the transform
 saved in the scene — the file's node transform is applied only when a part is created —
 and their [submesh overrides](#editing-an-imported-models-submeshes) are preserved.
+
+**Full node-tree models** cannot be refreshed in place, because the node transforms,
+joints, and animation clips all come from the file. They are rebuilt, and the editor
+then puts your arrangement back by node name: every part you moved returns to the node
+or group you left it under, keeping the local transform you gave it. A part the
+re-export turned into something that may no longer move — it gained keyframes, or now
+sits under an animated node — stays where the new file puts it, with a warning in the
+log. Part entities are new after this kind of reload, so entity references that pointed
+at a part have to be re-assigned.
+
+**Attachments survive both kinds of reload.** Anything you hung on a bone, a helper
+node, or a part — a light, a camera, an empty holding a prop, another model — is kept
+and re-attached to the same-named node with the same local offset, on static models
+too. The node is matched by name as well as index, so it follows a re-export that
+reorders nodes; if the node is gone from the file, the entity is left directly under the
+model with a warning.
+
+Assigning a **different** model file rebuilds everything from that file and does not
+carry attachments or arrangements over.
 
 ## PBR materials
 

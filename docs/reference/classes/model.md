@@ -237,4 +237,4 @@ Read or write the weight of a blend-shape morph target. Weights range from `0.0`
 
 * void **resetToBindPose**()
 
-Resets every imported node (or, on the legacy skeleton path, every bone) back to the bind pose defined in the model file, clearing any programmatic or animation-driven overrides. Useful when switching between animations or when stopping all playback.
+Resets every imported node (or, on the legacy skeleton path, every bone) back to the bind pose defined in the model file, clearing any programmatic or animation-driven overrides. Useful when switching between animations or when stopping all playback. A mesh part that was [moved away from its file node](../../editor/structure.md#organizing-the-parts-of-a-model) keeps its transform, since the file's pose is relative to another parent.
