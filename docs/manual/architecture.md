@@ -5,8 +5,13 @@ description: Runtime architecture of Doriax: Engine, Scene, ECS, systems, manage
 # Engine Architecture
 
 Doriax is organized around a small runtime core, an ECS, scene-scoped subsystems, and
-high-level object wrappers. The editor sits on top of the same runtime concepts and
-serializes scenes into data that can be exported to native projects.
+high-level object wrappers. The editor uses this runtime API, while the runtime itself
+has no dependency on editor internals.
+
+The editor saves authoring data as `.scene` and `.bundle` files; export turns them into
+C++ factory functions built on the same API as handwritten game code. See
+[From editor data to runtime code](../editor/export.md#from-editor-data-to-runtime-code)
+for the full boundary.
 
 ## Runtime layers
 

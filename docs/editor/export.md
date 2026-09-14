@@ -5,11 +5,39 @@ description: Export modes (Source Code, Desktop, Web), settings, generated files
 # Export Window
 
 The **Export Window** turns a Doriax project into something you can ship. It collects
-scene data, resources, scripts, generated C++ glue, engine runtime files, and compiled
+generated scene and bundle C++, resources, scripts, engine runtime files, and compiled
 shaders — and, depending on the mode, also compiles the result into a ready-to-run
 build.
 
 ![Export window](../assets/screenshots/editor-export-window.png)
+
+## From editor data to runtime code
+
+The engine runtime is independent of the editor. Export generates C++ that uses the
+public runtime API; the resulting game builds and runs without the editor or its
+internal project model.
+
+| Project input | Exported form |
+| --- | --- |
+| `.scene` files | C++ factory functions that create entities and configure their components |
+| `.bundle` files included in the build | C++ factory functions for reusable entity hierarchies |
+| User C++ scripts | Source files copied unchanged and compiled alongside generated code, with separate generated script bindings |
+| Lua scripts | Runtime resources loaded by the engine's Lua binding |
+| Textures, models, audio, and other assets | Runtime resources copied or packaged for the target |
+
+Scene and bundle setup therefore runs as compiled code, without parsing the editor's
+YAML scene and bundle files at runtime. Lua and external assets remain resources;
+export does not convert them all into C++.
+
+**Source Code** export lets you inspect and build this code with standard toolchains.
+**Desktop** and **Web** compile it into the final application. Editor Play mode has a
+separate build workflow; use export for distribution.
+
+!!! note "Asset directory contents"
+    Files inside the assets directory ship as they are. When that directory is left at
+    the project root, that includes the `.scene`, `.bundle`, and `project.yaml` files.
+    The game never reads them, so point the assets directory at a dedicated folder to
+    keep authoring files out of the build.
 
 ## Opening the Export Window
 

@@ -24,6 +24,9 @@ Doriax is built around a few core principles:
 - **Two languages, one workflow** — use **Lua** for rapid iteration and flexible
   scripting, or **C++** for full native performance. C++ scripts are compiled at build
   time, not runtime.
+- **Independent runtime** — export turns scenes and bundles into C++ that builds and
+  runs without the editor. See
+  [how export works](../editor/export.md#from-editor-data-to-runtime-code).
 - **Write once, deploy everywhere** — a single project can target six platforms with
   native graphics backends.
 
