@@ -130,16 +130,24 @@ See [Bundles](bundles.md) for the full bundle workflow.
 
 ## Context menu
 
-Right-click any resource to access:
+Double-click a file to open it in its editor tool (image viewer, scene, or code editor).
+Right-click a file or folder to access:
 
-- **Open** — opens the file with the appropriate editor tool.
-- **Open in Sprite Slicer** — opens the texture in the [Sprite Slicer](sprite-slicer.md) tool.
-- **Open in Tileset Slicer** — opens the texture in the [Tileset Slicer](tileset-slicer.md) tool.
-- **Rename** — renames the file on disk and updates scene references.
+- **Open (Add)** — `.scene` files only: opens the scene alongside the one already open
+  instead of replacing it.
+- **Copy** / **Cut** / **Paste** — copies or moves the selected files. Paste puts the
+  clipboard contents into the right-clicked folder.
 - **Delete** — removes the file from the project and clears every reference to it in
   scenes, bundles and `.material` files, including C++ and Lua script entries. Undo
   restores the file, not the references.
-- **Show in OS** — reveals the file in the system file manager.
+- **Rename** (`F2`) — renames the file on disk and updates scene references.
+- **Open in File Manager** — shows the selection in the OS file manager (Explorer,
+  Finder, or the Linux default). A folder opens itself; a file opens the folder that
+  contains it.
+
+Right-click empty space in the listing for **Import Files**, **Import Folders**,
+**New Folder**, **Paste** into the current folder, and **Open in File Manager** for
+the current folder.
 
 ## Sprite and tileset slicing
 
