@@ -223,10 +223,15 @@ called, then writes it and opens the GLSL in the Code Editor. The remaining butt
 the `.vert`/`.frag` files, reopen the assigned shader, and reset to the engine default.
 You can also drag an existing `.vert`/`.frag` from the Resources Browser onto the row.
 
+A Mesh has a second **Depth Shader** row with the same controls. It forks the shader
+behind the mesh's shadow maps and depth pre-pass, for colour forks that move vertices or
+discard fragments, so the shadow follows — see
+[Custom Shaders — The Depth Shader row](custom-shaders.md#the-depth-shader-row).
+
 A fork that declares a `u_vs_customParams` or `u_fs_customParams` block gets one editable
 row per member right under the Shader row (`time` and `resolution` are written by the engine); the values are
-saved on the component and are also scriptable through `setShaderUniform` — see
-[Custom Shaders — Shader uniforms](custom-shaders.md#shader-uniforms).
+saved on the component, shared with the depth fork, and also scriptable through
+`setShaderUniform` — see [Custom Shaders — Shader uniforms](custom-shaders.md#shader-uniforms).
 
 A scene can also define a **default custom shader per type** (in the scene settings'
 **Default Shaders** section); components whose Shader row shows **Built-in** inherit it.

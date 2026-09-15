@@ -1,5 +1,5 @@
 ---
-description: Fork, edit, and customize the built-in shaders for Mesh, UI, Points, Lines, and Sky — per component or as scene-wide defaults — feed them custom uniforms from the editor or from scripts, and add custom post-process passes, directly in the Doriax editor.
+description: Fork, edit, and customize the built-in shaders for Mesh (colour and depth), UI, Points, Lines, and Sky — per component or as scene-wide defaults — feed them custom uniforms from the editor or from scripts, and add custom post-process passes, directly in the Doriax editor.
 ---
 
 # Custom Shaders
@@ -26,8 +26,10 @@ project; you edit the shading code while the rest of the rendering contract stay
   storage buffer, or through a bone texture when the editor compiles for OpenGL / OpenGL
   ES (`SKINNING_TEXTURE`). Re-fork that include if you copied an older `skinning.glsl`
   that still declared `mat4 bonesMatrix[MAX_BONES]` in a uniform block.
-- The **depth, shadow, and G-buffer passes** keep using the built-in shaders, so shadow
-  casting and screen-space effects continue to work.
+- The **shadow, depth, and G-buffer passes** keep using the built-in shaders, so shadow
+  casting and screen-space effects continue to work. A Mesh can fork its **depth shader**
+  as well — the one behind its shadow maps and the depth pre-pass — for a colour fork
+  that moves vertices or discards fragments (see [The Depth Shader row](#the-depth-shader-row)).
 - `#include` directives still resolve against the engine's shader library, so you only
   need the top-level `.vert`/`.frag` — not the whole include tree. If you want to edit the
   includes as well, the fork dialog can copy them for you (see [Includes](#includes)).
@@ -55,6 +57,36 @@ fork it again, so an existing fork is never orphaned by accident.
 
 The Shader row is shown for a single selected entity (the path is per-entity). Assigning,
 editing, or resetting a custom shader is undoable.
+
+## The Depth Shader row
+
+A Mesh component has a second row, **Depth Shader**, with the same controls. It forks
+`depth.vert` and `depth.frag` — the shader the engine draws the mesh with into **shadow
+maps**, and into the **depth pre-pass** that feeds SSAO and post-process depth while SSR
+is off (with SSR on, those read the G-buffer, which keeps the built-in shader).
+
+The colour fork never reaches those passes, so a mesh whose fork displaces vertices or
+discards fragments keeps casting the shadow of its undisplaced, undiscarded geometry —
+and self-shadows against it once the displacement grows. Fork the depth shader too, apply
+the same displacement or `discard` there, and the shadow follows. The variant defines
+(skinning, morph targets, terrain, instancing, alpha mask) are the ones `depth.vert` and
+`depth.frag` already handle, so the fork keeps working across those cases.
+
+A depth fork reads the same [shader uniforms](#shader-uniforms) as the colour fork, so
+one value drives both: declare the same member names in its `u_vs_customParams` /
+`u_fs_customParams` blocks. It is compiled as soon as it is set — even in a scene with no
+shadow-casting light — so its members and build errors show up right away; a fork that
+fails to build is reported as **Depth shader failed to build** under the row while the
+built-in depth shader keeps drawing.
+
+The depth shader is per mesh — there is no scene default — and its fork name is pre-filled
+with a `_depth` suffix. Like the colour fork it is undoable, saved with the scene, exported
+with the project, and scriptable through `customDepthShader` (see
+[Setting values from scripts](#setting-values-from-scripts)).
+
+!!! note "Resolution in a depth fork"
+    `resolution` is the size of the target being written: the shadow slot of a cascade
+    or cube face, or the depth pre-pass target.
 
 ## The Fork Shader dialog
 
@@ -134,10 +166,10 @@ pos.y += sin(customParams.time * 3.0 + pos.x * 4.0) * customParams.amplitude;
 ```
 
 !!! warning "Vertex displacement is colour-pass only"
-    A fork only replaces the colour pass. The depth, shadow, and G-buffer passes keep the
-    built-in shaders, so a vertex moved like this swims while its shadow and its
-    screen-space reflection stay where the mesh data is. Keep displacement small, or turn
-    off shadow casting for that mesh.
+    A fork only replaces the colour pass, so a vertex moved like this swims while its
+    shadow stays where the mesh data is. Fork the [depth shader](#the-depth-shader-row)
+    as well and displace there too, and the shadow (and SSAO, while SSR is off) follows.
+    Screen-space reflections read the built-in G-buffer and keep the undisplaced surface.
 
 ```glsl
 // wave.frag
@@ -150,8 +182,8 @@ uniform u_fs_customParams {
 g_finalColor.rgb = mix(g_finalColor.rgb, customParams.tint.rgb, 0.5 + 0.5 * sin(customParams.time));
 ```
 
-The built-in Mesh, UI, Points, Lines, and Sky sources all carry a comment showing the
-declaration, so a fresh fork has it at hand. Nothing else is needed: the block is picked
+The built-in Mesh, UI, Points, Lines, Sky, and depth sources all carry a comment showing
+the declaration, so a fresh fork has it at hand. Nothing else is needed: the block is picked
 up from the compiled shader by name, and a fork that declares none behaves exactly as
 before.
 
@@ -209,6 +241,7 @@ The same values are scriptable, so a uniform can follow gameplay or animate ever
 | `getShaderUniform(name)` | The stored value as a `Vector4` (zero when unset). It reads the value list, not the block — `time` and `resolution` are not there; scripts read the same clock as `Engine.systemTime`. |
 | `removeShaderUniform(name)` | Drops the value; the member reads zero again. |
 | `customShader` | The fork base path, so a script can assign or reset the fork too. |
+| `customDepthShader` | A Mesh's [depth fork](#the-depth-shader-row) base path; it reads the same values. |
 
 Setting a value only rewrites the block bytes — no shader reload — so calling it every
 frame is fine:
@@ -247,10 +280,11 @@ model, call these on the part entities (`Mesh(scene, scene:findEntity("Body"))`)
 note above explains. See the [Mesh reference](../reference/classes/mesh.md#setshaderuniform)
 for the full signatures.
 
-!!! note "Main pass only"
-    Custom blocks reach the fork's main colour pass. The depth, shadow, and G-buffer passes
-    keep the built-in shaders, so a vertex displacement driven by a uniform does not move
-    the object's shadow or its screen-space reflection.
+!!! note "Colour and depth forks only"
+    Custom blocks reach the fork's colour pass and, for a Mesh, its
+    [depth fork](#the-depth-shader-row), which reads the same values. The G-buffer pass
+    keeps the built-in shader, so a uniform-driven displacement never moves the object's
+    screen-space reflection.
 
 ## Post-process passes
 

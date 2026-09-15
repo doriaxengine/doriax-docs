@@ -63,6 +63,7 @@ See [EntityHandle ownership](entityhandle.md#ownership-and-lifetime).
 | bool | [transparent](#transparent-autotransparency) | `false` | C++ \| Lua |
 | bool | [autoTransparency](#transparent-autotransparency) | `true` | C++ \| Lua |
 | string | [customShader](#customshader) | `""` | C++ \| Lua |
+| string | [customDepthShader](#customdepthshader) | `""` | C++ \| Lua |
 
 ### Methods
 
@@ -104,6 +105,8 @@ See [EntityHandle ownership](entityhandle.md#ownership-and-lifetime).
 | bool | [isAutoTransparency](#transparent-autotransparency) | C++ \| Lua |
 | void | [setCustomShader](#customshader) | C++ \| Lua |
 | string | [getCustomShader](#customshader) | C++ \| Lua |
+| void | [setCustomDepthShader](#customdepthshader) | C++ \| Lua |
+| string | [getCustomDepthShader](#customdepthshader) | C++ \| Lua |
 | void | [setShaderUniform](#setshaderuniform) | C++ \| Lua |
 | Vector4 | [getShaderUniform](#setshaderuniform) | C++ \| Lua |
 | bool | [removeShaderUniform](#setshaderuniform) | C++ \| Lua |
@@ -280,6 +283,29 @@ Like colour and material, this is per Mesh component: a multi-node glTF [Model](
     mesh.customShader = "shaders/wave"
     ```
 
+---
+
+### customDepthShader
+
+* *Setter:* `void setCustomDepthShader(const std::string& path)`
+* *Getter:* `std::string getCustomDepthShader() const`
+
+Project-relative base path of a forked **depth** shader — the one the mesh is drawn with into shadow maps and into the depth pre-pass that feeds SSAO and post-process depth while SSR is off. Same path forms as [customShader](#customshader); empty (default) uses the engine built-in, and there is no scene default. Fork it when the colour fork displaces vertices or discards fragments, so the shadow follows; it reads the same [shader uniforms](#setshaderuniform). Changing it reloads the mesh. See [Custom Shaders — The Depth Shader row](../../editor/custom-shaders.md#the-depth-shader-row).
+
+=== "C++"
+
+    ```cpp
+    mesh.setCustomShader("shaders/wave");
+    mesh.setCustomDepthShader("shaders/wave_depth");
+    ```
+
+=== "Lua"
+
+    ```lua
+    mesh.customShader = "shaders/wave"
+    mesh.customDepthShader = "shaders/wave_depth"
+    ```
+
 ## Method details
 
 ### load
@@ -362,7 +388,8 @@ property.
 
 Values for the members of the custom shader's `u_vs_customParams` / `u_fs_customParams`
 blocks, keyed by member name (see [Custom Shaders — Shader uniforms](../../editor/custom-shaders.md#shader-uniforms)).
-A value is stored on the mesh and applied to every submesh; a narrower value leaves the
+A value is stored on the mesh and applied to every submesh — of the colour fork and of the
+[depth fork](#customdepthshader) alike; a narrower value leaves the
 remaining components at zero, and an `int` member takes the truncated value. Setting a
 value only rewrites the uploaded block, so it can be called every frame. Names the shader
 does not declare are kept but unused, and a member with no value reads zero.

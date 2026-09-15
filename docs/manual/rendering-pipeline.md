@@ -642,10 +642,12 @@ backend. Shader data files are generated at export time.
 
 Each renderable type (Mesh, UI, Points, Lines, Sky) has a built-in shader. In the editor
 you can **fork** any of them — per component, or as a scene-wide default for that type —
-and edit the GLSL; the engine keeps driving the variant system, lighting, and
-depth/shadow/G-buffer passes. A shader set on the component wins over the scene default,
-which wins over the built-in. The same fork mechanism provides the scene's
-[post-process passes](#post-processing). See [Custom Shaders](../editor/custom-shaders.md).
+and edit the GLSL; the engine keeps driving the variant system, lighting, and the
+shadow/depth/G-buffer passes. A Mesh can fork its depth shader too, so a colour fork that
+displaces vertices or discards keeps its shadows in step. A shader set on the component
+wins over the scene default, which wins over the built-in. The same fork mechanism provides
+the scene's [post-process passes](#post-processing). See
+[Custom Shaders](../editor/custom-shaders.md).
 
 Built-in skinned variants bind bone matrices through a **storage buffer** (`sbo_skinning`)
 on Vulkan, Metal, and Direct3D 11, or through an **unfilterable RGBA32F bone texture**
