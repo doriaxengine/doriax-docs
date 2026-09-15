@@ -140,7 +140,8 @@ Right-click a file or folder to access:
 - **Delete** — removes the file from the project and clears every reference to it in
   scenes, bundles and `.material` files, including C++ and Lua script entries. Undo
   restores the file, not the references.
-- **Rename** (`F2`) — renames the file on disk and updates scene references.
+- **Rename** (`F2`) — renames the file on disk and updates scene references. `F2` acts
+  on the selected file, or on the one under the mouse when nothing is selected.
 - **Open in File Manager** — shows the selection in the OS file manager (Explorer,
   Finder, or the Linux default). A folder opens itself; a file opens the folder that
   contains it.

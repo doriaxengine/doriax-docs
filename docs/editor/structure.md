@@ -212,6 +212,13 @@ Typical non-transform entities include:
 An entity can be selected and inspected even if it is not in the transform hierarchy.
 Add a `Transform` if it should become spatial or parentable.
 
+## Renaming
+
+Right-click an entity or the scene root and edit the **Name** field at the top of its
+menu, or select the row and press **F2** to edit the name in the
+[Properties window](properties.md#selecting-an-entity). A child scene node keeps its
+name read-only here; open the child scene to rename it.
+
 ## Drag and drop rules
 
 Reparenting is a transform operation. Dragging an entity under another entity only

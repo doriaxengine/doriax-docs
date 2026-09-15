@@ -106,6 +106,7 @@ shortcuts use **Command** instead of Ctrl.
 | **Ctrl+Shift+Z** / **Ctrl+Y** | Redo |
 | **Ctrl+D** | Duplicate selection |
 | **Delete** | Delete selection |
+| **F2** | Rename selection |
 | **F5** | Run current scene, or resume a paused one |
 | **F6** | Pause |
 | **F7** | Stop |
@@ -116,8 +117,11 @@ shortcuts use **Command** instead of Ctrl.
 
 Duplicate and Delete follow the selection: with a tile or a tilemap instance selected
 they act on that, otherwise on the selected entities, and Delete also removes a selected
-child scene reference. They are ignored while typing in a text field, so a shortcut
-never steals a keystroke from an input.
+child scene reference. F2 jumps to the name field in the
+[Properties window](properties.md#selecting-an-entity) for the selected entity, or for the
+scene when nothing is selected; in the [Resources window](resources.md#context-menu) it
+renames the selected file instead. They are ignored while typing in a text field, so a
+shortcut never steals a keystroke from an input.
 
 ## Detailed pages
 

@@ -16,6 +16,11 @@ data.
 Click an entity in the **Structure panel** or directly in the **Scene view** to select
 it. The Properties window updates immediately to show its components.
 
+The field at the top holds the entity name: edit it to rename the entity, or press
+**F2** anywhere in the scene windows to jump straight into it with the name selected.
+With several entities selected the field is read-only; with none selected, the window
+shows the scene instead and the same field renames it.
+
 ## Adding components
 
 Use the **Add Component** button at the bottom of the Properties window. A searchable
