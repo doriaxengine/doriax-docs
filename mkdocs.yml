@@ -84,6 +84,7 @@ nav:
       - Editor Overview: 'editor/index.md'
       - Project Workflow: 'editor/project-workflow.md'
       - Project Settings: 'editor/project-settings.md'
+      - Version Control: 'editor/version-control.md'
       - Editor Settings: 'editor/editor-settings.md'
       - Structure Panel: 'editor/structure.md'
       - Scene View: 'editor/scene-view.md'

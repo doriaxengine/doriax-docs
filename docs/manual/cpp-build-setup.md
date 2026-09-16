@@ -82,12 +82,12 @@ kit yet inherits the compiler you last chose, so you only need to set it once (r
 than having each new project silently fall back to **Default**).
 
 Because a compiler path only means something on the machine it was installed on, the kit
-is written to the editor's `settings.yaml` under `project_builds`, keyed by the project's
-path — not to `project.yaml`. It therefore never reaches version control, and a teammate
-opening the same project picks their own. Projects saved by older editors still carry
-`cmakeCCompiler`, `cmakeCxxCompiler` and `cmakeGenerator`; opening one migrates those
-values into the editor settings once, without overwriting a kit this machine already
-chose.
+is written to the project's `.doriax/user/build.yaml` — not to `project.yaml`. That file
+is not committed, so it never reaches version control and a teammate opening the same
+project picks their own kit, while a project moved or copied to another folder keeps
+working. Projects saved by older editors carry the kit in `project.yaml` or in the
+editor's `settings.yaml`; opening one migrates it once, without overwriting a kit this
+machine already chose.
 
 !!! danger "Your compiler must match the editor's own C++ ABI"
     C++ scripts are compiled into a shared library that is loaded **into the running
@@ -159,8 +159,8 @@ Lower the value if builds fail with out-of-memory errors or make the system
 unresponsive — each concurrent C++ compile can use hundreds of MB of RAM, more with
 heavy template use.
 
-The value is machine-local, like the compiler: it is saved per project in the editor's
-`settings.yaml` under `project_builds` (as `build_jobs`, omitted when automatic), not in
+The value is machine-local, like the compiler: it is saved per project in
+`.doriax/user/build.yaml` (as `build_jobs`, omitted when automatic), not in
 `project.yaml`, so a limit chosen on a 32-core workstation is never imposed on a
 teammate's 4-core laptop. Whatever the stored number, each build caps it at **4× the
 machine's logical CPU count**, up to 65536.
@@ -244,11 +244,21 @@ Build](../editor/project-settings.md#build), so do not set it here.
 ## Where build files live
 
 Play and Save rewrite the generated C++ glue: `CMakeLists.txt` at the **project root**,
-`scene_scripts.cpp` under **`.doriax`**, and `main.cpp` plus the scene and bundle
-factories under **`.doriax/generated`**. Together they cover every C++ script and
-`.bundle` file that still exists on disk. Do **not** edit those files by hand — the next
-Play or Save overwrites them. Put your own build settings in
+`scene_scripts.cpp` and `LocalPaths.cmake` under **`.doriax`**, and `main.cpp` plus the
+scene and bundle factories under **`.doriax/generated`**. Together they cover every C++
+script and `.bundle` file that still exists on disk. Do **not** edit those files by hand
+— the next Play or Save overwrites them. Put your own build settings in
 [`ProjectBuild.cmake`](#customizing-the-build) instead, which is never overwritten.
+
+`CMakeLists.txt` names no path belonging to your machine, so the same file works for
+everyone: the asset and Lua roots resolve from `${PROJECT_ROOT}`, and the shader cache
+and engine library directory come from `LocalPaths.cmake`, which the editor rewrites for
+whichever machine opens the project. Both are regenerated rather than committed — see
+[Version Control](../editor/version-control.md).
+
+Configuring outside the editor works the same way, as long as the project has been
+opened in the editor once so `.doriax` exists. Pass `-DDORIAX_SHADER_PATH=<dir>` to
+override the shader cache location.
 
 The CMake build tree is generated under **`.doriax/build`**. It is a disposable cache —
 deleting it forces a full clean reconfigure and rebuild, which is a good first step when

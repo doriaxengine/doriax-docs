@@ -127,6 +127,7 @@ shortcut never steals a keystroke from an input.
 
 - [Project Workflow](project-workflow.md)
 - [Project Settings](project-settings.md)
+- [Version Control](version-control.md)
 - [Editor Settings](editor-settings.md)
 - [Structure Panel](structure.md)
 - [Scene View](scene-view.md)

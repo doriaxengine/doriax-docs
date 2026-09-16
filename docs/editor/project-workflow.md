@@ -45,6 +45,7 @@ use project templates.
 | `shaders/` | Default location for forked shader sources (`.vert`/`.frag`/`.glsl`), and where compiled `.sdat` output goes — see [Custom Shaders](custom-shaders.md) |
 | `bundles/` | Reusable entity hierarchy files |
 | `settings/` | Scene startup references, build target settings, and export configuration |
+| `.doriax/` | The editor's own working directory: generated C++, build trees, and the settings that belong to your machine and your session. Recreated as needed and never committed — see [Version Control](version-control.md) |
 
 Folder names may differ by project. The structure is a convention, not a strict
 requirement — you can reorganize asset folders and update resource paths accordingly.
@@ -52,8 +53,9 @@ requirement — you can reorganize asset folders and update resource paths accor
 ## Scene files
 
 Scene files are serialized as YAML. They store the full scene hierarchy: entities,
-component data, transform values, camera settings, child scene references, and editor
-viewport state.
+component data, transform values, camera settings, and child scene references. Where you
+left the *editor* camera is not part of the scene — that is per-user state, kept out of
+the file so it never appears in a commit.
 
 Keep scene files focused. For large games, split gameplay areas into separate scenes
 and compose them with child scene references. This keeps individual YAML files small
@@ -162,13 +164,20 @@ whether they travel with the project:
 | Settings area | Opened from | Stored in | Holds |
 | --- | --- | --- | --- |
 | **[Project settings](project-settings.md)** | Project → Project Settings | `project.yaml` | Start scene, application identity, canvas, window, VSync, asset/Lua/script directories, native resource packaging, and the per-platform settings for Web, Linux, Windows, macOS, iOS and Android |
-| **[Editor settings](editor-settings.md)** | Edit → Editor Settings | `settings.yaml` | Compiler kit, CMake and Emscripten paths, default export directory, editor VSync — plus, per project, the build jobs and last export folder |
-| **Export settings** | File → Export Project | `project.yaml` (`export`) and `settings.yaml` | Shader overrides and graphic backends in the project; output directories per machine |
+| **[Editor settings](editor-settings.md)** | Edit → Editor Settings | `settings.yaml` | Compiler kit, CMake and Emscripten paths, default export directory, editor VSync |
+| **Export settings** | File → Export Project | `project.yaml` (`export`) and the project's `.doriax/user/build.yaml` | Shader overrides and graphic backends in the project; output directories per machine |
+| **Machine settings** | — | `.doriax/user/build.yaml` | The compiler kit, build jobs and export folders chosen for *this* project on *this* machine |
+| **Editor workspace** | — | `.doriax/user/workspace.yaml` | Open tabs and their order, the selected scene, each scene's editor camera and viewport guides, the terrain brush |
 | **Window and layout state** | — | `settings.yaml` | Window size, maximized state, recent projects, panel visibility, Resources Browser preferences |
 
-The dividing line is the machine: anything that depends on which computer you are
-sitting at — a compiler path, an SDK location, an output folder — is kept out of
-`project.yaml` so it never conflicts in version control.
+Two dividing lines run through that table. The first is the machine: a compiler path, an
+SDK location, an output folder. The second is the session: which tabs you had open and
+where you left each camera. Neither belongs to the game, so both are kept out of
+`project.yaml` and out of version control — see [Version Control](version-control.md).
+
+Everything in the last three rows lives beside the project rather than in the editor's
+own configuration, so **Save Project As** carries it along and a project copied to
+another drive keeps working.
 
 Shaders have no directory setting: each fork picks its own location when you create it,
 and compiled `.sdat` output always goes to the project's `shaders` folder. See
@@ -325,5 +334,6 @@ machine-local editor settings with it.
 - Use **Save All** after changing project or export settings, so `project.yaml` is
   written.
 - Keep generated export output outside the source project folder.
-- Commit human-authored files (scenes, scripts, assets) to version control;
-  ignore local build folders and generated C++ glue.
+- Commit human-authored files (scenes, scripts, assets) and `project.yaml`; the editor
+  writes the `.gitignore` that excludes the rest — see
+  [Version Control](version-control.md).

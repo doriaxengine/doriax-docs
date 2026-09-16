@@ -76,8 +76,8 @@ The output folder is remembered **per project and per export mode**, so switchin
 Desktop to Source Code brings back the folder you last used for that mode rather than
 overwriting one with the other. A project that has never been exported starts from the
 **Default Export Directory** in [Editor Settings](editor-settings.md#general), when one
-is set. Both are machine-local: they live in the editor's `settings.yaml`, not in
-`project.yaml`.
+is set. Both are machine-local: they live in the project's `.doriax/user/build.yaml`,
+which is not committed, not in `project.yaml`.
 
 **Start Scene** is the same setting as [Project Settings →
 General](project-settings.md#project); changing it here changes it for the project.
@@ -265,8 +265,8 @@ selected).
 | **Graphic Backend** | The API the executable is built against, and the only shader format compiled |
 
 Both the compiler and the job count are machine-local: they are stored per project in
-the editor's `settings.yaml`, not in `project.yaml`, so a teammate on another machine
-keeps their own toolchain.
+`.doriax/user/build.yaml`, not in `project.yaml`, so a teammate on another machine keeps
+their own toolchain.
 
 Choose the **Graphic Backend** before exporting. The available choices follow the host
 operating system:

@@ -25,9 +25,13 @@ marker at the end of a row for the setting's description.
 | --- | --- |
 | **Project Name** | The project's name. Also the default application name, window title, and the identifier the exported executable and CMake target are named after |
 | **Start Scene** | Scene the exported game loads at launch. Only saved scenes can be chosen |
+| **Version Control Files** | Enabled. Keeps `.gitignore` and `.gitattributes` written at the project root, so the editor's working directory, your machine's build settings and each developer's own layout stay out of the repository |
 
 The Export Window shows the same **Start Scene** and writes back to this setting, so the
 two never disagree.
+
+**Version Control Files** refreshes both files whenever the project is saved, and never
+replaces one the editor did not generate — see [Version Control](version-control.md).
 
 ### Application
 
@@ -273,4 +277,5 @@ machine already has.
 
 - [Editor Settings](editor-settings.md) — the machine-level counterpart
 - [Project Workflow](project-workflow.md) — project anatomy, scenes, bundles, save strategy
+- [Version Control](version-control.md) — what to commit, and where per-user state is kept
 - [Export Window](export.md) — where these settings are applied
