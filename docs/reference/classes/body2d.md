@@ -79,6 +79,8 @@ description: Body2D API reference — 2D physics body powered by Box2D, shapes, 
 | float | [getShapeFriction](#setshapedensity-setshapefriction-setshaperestitution) | C++ \| Lua |
 | void | [setShapeRestitution](#setshapedensity-setshapefriction-setshaperestitution) | C++ \| Lua |
 | float | [getShapeRestitution](#setshapedensity-setshapefriction-setshaperestitution) | C++ \| Lua |
+| void | [setShapeSensor](#setshapesensor) | C++ \| Lua |
+| bool | [isShapeSensor](#setshapesensor) | C++ \| Lua |
 | void | [setShapeEnableHitEvents](#setshapeenablehitevents-setshapecontactevents-setshapepresolveevents-setshapesensorevents) | C++ \| Lua |
 | void | [setShapeContactEvents](#setshapeenablehitevents-setshapecontactevents-setshapepresolveevents-setshapesensorevents) | C++ \| Lua |
 | void | [setShapePreSolveEvents](#setshapeenablehitevents-setshapecontactevents-setshapepresolveevents-setshapesensorevents) | C++ \| Lua |
@@ -180,7 +182,9 @@ Use these for teleports — respawns, checkpoints, portals. For continuous movem
 * *Setter:* `void setLinearVelocity(Vector2 linearVelocity)`
 * *Getter:* `Vector2 getLinearVelocity() const`
 
-Current velocity of the center of mass in world units per second.
+Current velocity of the center of mass in points per second — the same units as positions,
+so `setLinearVelocity(Vector2(300, 0))` crosses 300 points in one second. Forces and
+impulses are not converted: they stay in Box2D units (Newtons on the meter-scaled body).
 
 ---
 
@@ -342,6 +346,41 @@ All three come in two overloads: `setXxx(value)` applies to all shapes; `setXxx(
 
 ---
 
+### setShapeSensor
+
+* `void setShapeSensor(bool sensor)`
+* `void setShapeSensor(size_t index, bool sensor)`
+* `bool isShapeSensor() const`
+* `bool isShapeSensor(size_t index) const`
+
+Turns a shape into a **sensor**: an overlap-only shape that never pushes anything and is
+reported through `beginSensorContact2D` / `endSensorContact2D` instead of the contact
+events. Pickups, triggers and hurt zones are the typical use. A sensor always has its
+[sensor events](#setshapeenablehitevents-setshapecontactevents-setshapepresolveevents-setshapesensorevents)
+enabled, so the callbacks arrive without further setup; two sensors never report each
+other. The flag is also a checkbox on the shape in the editor (**Sensor**) and the
+`shapeSensor` property in Lua. Box2D has no live toggle for it, so changing it rebuilds the
+body's shapes on the next physics step.
+
+=== "C++"
+
+    ```cpp
+    Body2D coin = coinSprite.getBody2D();
+    coin.createCircleShape(Vector2(0, 0), 22.0f);
+    coin.setShapeSensor(true);
+    coin.setCategoryBitsFilter(0x0010); // a category the hero can recognize
+    ```
+
+=== "Lua"
+
+    ```lua
+    local coin = coinSprite:getBody2D()
+    coin:createCircleShape(Vector2(0, 0), 22)
+    coin.shapeSensor = true
+    ```
+
+---
+
 ### setShapeEnableHitEvents / setShapeContactEvents / setShapePreSolveEvents / setShapeSensorEvents
 
 Enable specific collision event callbacks for a shape. See [PhysicsSystem events](physicssystem.md) and [Events manual](../../manual/events.md#physics-events).
@@ -349,7 +388,7 @@ Enable specific collision event callbacks for a shape. See [PhysicsSystem events
 * **HitEvents** — Fired when two shapes collide (one-shot, not sustained).
 * **ContactEvents** — Fired while shapes are in contact.
 * **PreSolveEvents** — Fired before the physics impulse is resolved; allows modifying or cancelling the collision.
-* **SensorEvents** — Lets the shape be reported when it overlaps a sensor shape. It does *not* turn the shape itself into a sensor, and it does not change the collision response.
+* **SensorEvents** — Lets the shape be reported when it overlaps a sensor shape. It does *not* turn the shape itself into a sensor, and it does not change the collision response. A [sensor](#setshapesensor) always has them on: `isShapeSensorEvents` returns `true` for it and the editor hides the box.
 
 ---
 

@@ -26,6 +26,7 @@ Two operations change what is on screen:
 | --- | --- | --- |
 | static void | [registerScene](#registerscene) | C++ \| Lua |
 | static bool | [loadScene](#loadscene) | C++ \| Lua |
+| static bool | [isLoadPending](#isloadpending) | C++ \| Lua |
 | static bool | [addChildScene](#addchildscene-removechildscene) | C++ \| Lua |
 | static bool | [removeChildScene](#addchildscene-removechildscene) | C++ \| Lua |
 | static uint32_t | [getSceneId](#getsceneid-getscenename) | C++ \| Lua |
@@ -84,6 +85,14 @@ Loads a registered scene stack by name or ID, performing a full scene transition
 
 Because it clears everything, do not call `loadScene` once per layer. Persistent layers (a HUD, shared lighting) should be **start-active child scenes** of the target scene so they come up in the same call.
 
+Called while a frame is running — from a script callback, a physics contact, a button
+press — the transition is **deferred to the start of the next frame**, because the factory
+tears down the scenes and scripts that are still executing. The call still returns `true`
+when the scene exists; the last request made in a frame wins (a replaced request logs a
+warning), [`isLoadPending`](#isloadpending) reports the wait, and `getCurrentSceneId`
+only changes once the load is applied. Outside a frame (for example in the `init()` entry
+point) the stack is built immediately.
+
 === "Lua"
     ```lua
     SceneManager.loadScene("Level2")
@@ -140,6 +149,15 @@ Look up a scene's numeric ID by name, or its name by ID. Returns `0` / `""` if n
 * static int **getSceneCount**()
 
 Returns all registered scene names, or the total number of registered scenes.
+
+---
+
+### isLoadPending
+
+* static bool **isLoadPending**()
+
+`true` between a `loadScene` call made during a frame and the next frame, which applies
+it. Lua reads it as the `SceneManager.loadPending` property.
 
 ---
 

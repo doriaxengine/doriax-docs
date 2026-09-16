@@ -261,6 +261,12 @@ screens.
     persistent layers (a HUD, shared lighting) as **start-active child scenes** of the
     target scene instead — they come up with it in a single `loadScene` call.
 
+!!! note "Called from a running scene"
+    From a script, a physics contact or a button press the transition happens at the start
+    of the **next frame**, so the calling scene and its scripts finish the current frame
+    intact; `SceneManager::isLoadPending()` is `true` until then. See
+    [SceneManager](../reference/classes/scenemanager.md#loadscene).
+
 ### Overlay a scene without leaving the current one
 
 `SceneManager.addChildScene` and `removeChildScene` add or remove a scene **on top** of

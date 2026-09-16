@@ -85,7 +85,7 @@ have density, friction, restitution, sensor state, and collision filtering.
 Body2D body = object.getBody2D();
 body.createBoxShape(64, 32);
 body.setType(BodyType::DYNAMIC);
-body.setLinearVelocity(Vector2(4, 0));
+body.setLinearVelocity(Vector2(200, 0)); // points per second
 ```
 
 ## 3D physics
@@ -107,6 +107,46 @@ body.createCapsuleShape(0.8f, 0.25f);
 body.setType(BodyType::DYNAMIC);
 body.setAllowedDOFs2DPlane();
 ```
+
+### 2D sensors
+
+In 2D the flag lives on each **shape**, so one body can mix solid and trigger shapes (a
+character with a solid box and a foot sensor, a chest with a solid lid and a pickup zone).
+Tick **Sensor** on the shape in the Body2D component of the Properties window — the editor
+draws sensor shapes in orange — or set it from code with
+[Body2D — setShapeSensor](../reference/classes/body2d.md#setshapesensor). A sensor never
+pushes anything; its overlaps arrive through `beginSensorContact2D` / `endSensorContact2D`
+on the [PhysicsSystem](../reference/classes/physicssystem.md), which name the sensor first
+and the visitor second. A sensor always reports its overlaps (its **sensor events** are
+implied), so give shapes a category bit so the callback can tell a coin from a spike:
+
+=== "C++"
+
+    ```cpp
+    Body2D coin = coinSprite.getBody2D();
+    coin.createCircleShape(Vector2(0, 0), 22.0f);
+    coin.setShapeSensor(true);
+    coin.setCategoryBitsFilter(0x0010);
+
+    // on the hero
+    REGISTER_EVENT(scene->getSystem<PhysicsSystem>()->beginSensorContact2D, onSensor);
+
+    void Hero::onSensor(Body2D sensor, unsigned long shape, Body2D visitor, unsigned long) {
+        if (visitor.getEntity() != getEntity()) return;
+        if (sensor.getCategoryBitsFilter(shape) & 0x0010) collect(sensor.getEntity());
+    }
+    ```
+
+=== "Lua"
+
+    ```lua
+    local coin = coinSprite:getBody2D()
+    coin:createCircleShape(Vector2(0, 0), 22)
+    coin.shapeSensor = true
+    coin:setCategoryBitsFilter(0x0010)
+    ```
+
+Two sensors never report each other, and ray casts ignore sensor shapes.
 
 ### 3D sensors
 
