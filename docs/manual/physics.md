@@ -267,6 +267,21 @@ Collision filters use category and mask bits. Put broad gameplay groups into cat
 bits, such as player, enemy, world, projectile, and trigger. Use masks to decide which
 groups interact.
 
+### What a 3D callback may do
+
+3D contact events run *while Jolt is stepping*, unlike the 2D begin/end/sensor/hit events,
+which Box2D queues and the engine dispatches once the step is over (`preSolve2D` and
+`shouldCollide2D` are the 2D exceptions: they are filter hooks called mid-step).
+Reading and moving bodies is fine there — velocities, positions, ray casts
+— but the broad phase is locked for the duration, so a body or joint cannot be **created**
+from a callback: the call is refused and logged, and the next update retries it. Teardown
+is queued instead of refused, so removing a `Body3DComponent` from a callback still
+destroys its body, just after the step finishes.
+
+Keep callbacks to recording what happened — a flag, a score, an entity to act on — and do
+the work from `onUpdate` or `onFixedUpdate`. `PhysicsSystem::isSteppingWorld3D()`
+(`physics.steppingWorld3D` in Lua) reports the window for helpers called from both.
+
 ## Raycasts and ground checks
 
 A common need for character controllers is knowing whether a body is **standing on the

@@ -153,6 +153,10 @@ Manual mass override in kilograms. Applies to dynamic bodies. Set the mass after
 
 Scales the global gravity for this body. `0` = gravity-free, `2` = double gravity.
 
+Stored on the body component, so it can be set **before** [load](#load) and survives a body
+reload. In the editor it is the **Gravity Factor** field of the Body3D component, saved with
+the scene and applied in exported projects.
+
 ---
 
 ### friction / restitution
@@ -394,6 +398,13 @@ Constrain which degrees of freedom the body can move in.
 * **setAllowedDOFsAll** — All 6 DOF (default).
 * **setAllowedDOFs2DPlane** — Restricts to translation on X/Z and rotation on Y. Use for top-down or side-view games.
 * **setAllowedDOFs(translationX, translationY, translationZ, rotationX, rotationY, rotationZ)** — Fine-grained control per axis.
+
+Locking all three rotation axes is the usual way to keep a character upright; drive its
+facing with [rotation](#position-rotation) instead of letting the solver spin it.
+
+Like [gravityFactor](#gravityfactor), the mask is stored on the body component, so it
+survives a body reload and is saved with the scene and applied in exported projects. Leaving
+every axis locked is invalid in Jolt — use a static body to freeze one completely.
 
 ---
 

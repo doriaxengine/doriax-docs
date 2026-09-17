@@ -263,6 +263,9 @@ Use custom tags when you need to replace or manually remove a specific subscript
 | `onContactAdded3D` / `onContactPersisted3D` / `onContactRemoved3D` | 3D contact lifecycle |
 | `shouldCollide3D` | Filter whether two 3D bodies/shapes should collide |
 
+Unlike the 2D contact events, these run while Jolt is stepping, which limits what they may
+do to the world — see [What a 3D callback may do](physics.md#what-a-3d-callback-may-do).
+
 ## UI component events
 
 `UIComponent` events (also available through `REGISTER_UI_EVENT`):

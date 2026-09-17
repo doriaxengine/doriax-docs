@@ -62,7 +62,7 @@ doriax-editor export --project ./MyGame --out ./build/MyGame --backend vulkan
 | `--lua <path>` | Lua directory, relative to the project or absolute. Defaults to the project's Lua directory. |
 | `--start-scene <id\|name>` | Override the start scene by numeric ID, scene name, or file stem. |
 | `--backend <list>` | Graphic backend(s) to compile shaders for. Repeatable, or a list (see below). Defaults to **all** supported backends. |
-| `--shader <spec>` | Shader(s) to compile. Repeatable (see [Shader specs](#shader-specs)). If omitted, shaders discovered while regenerating scenes are exported. |
+| `--shader <spec>` | Shader(s) to compile, replacing what the scenes report. Repeatable (see [Shader specs](#shader-specs)). If omitted, shaders discovered while regenerating scenes are exported. |
 | `--list-scenes` | Print the project's scenes (`id`, `name`, `path`) and exit. |
 | `-h`, `--help` | Show usage for this subcommand. |
 
