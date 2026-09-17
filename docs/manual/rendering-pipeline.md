@@ -428,7 +428,8 @@ SSR refines what IBL already provides instead of double-counting it.
 
 When SSR is enabled the main camera first renders a small **G-buffer** geometry pre-pass —
 packed depth, view-space normal, roughness/metallic, and base colour — then runs three
-fullscreen passes:
+fullscreen passes. [Terrain](terrain.md#pbr-layers) evaluates its painted layers in this
+pass too, so a reflective wet patch reflects like one:
 
 1. **March** — reflect the view ray about the G-buffer normal and step it through depth
    (with a binary-search refine) until it crosses on-screen geometry.

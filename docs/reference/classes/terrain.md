@@ -9,7 +9,7 @@ description: Terrain API reference (C++ and Lua).
 
 ## Description
 
-Generates and renders a heightmap-based terrain mesh using a chunked LOD (Level of Detail) approach. The terrain is built from a greyscale heightmap texture where brighter pixels correspond to higher elevation. Up to three blend maps control how up to nine detail texture layers are mixed over the base texture, three layers per blend map.
+Generates and renders a heightmap-based terrain mesh using a chunked LOD (Level of Detail) approach. The terrain is built from a greyscale heightmap texture where brighter pixels correspond to higher elevation. Up to three blend maps control how up to nine detail layers are mixed over the base texture, three layers per blend map. A layer blends its colour alone, or carries its own PBR surface — see [TerrainSurfaceLayer](#terrainsurfacelayer).
 
 The terrain geometry is a CDLOD quadtree: `rootGridSize` × `rootGridSize` root nodes cover the terrain and each node subdivides into four until `levels` is reached. Every node is drawn with the same `resolution` × `resolution` grid and morphs into its coarser neighbour, which keeps the polycount roughly constant regardless of terrain size.
 
@@ -33,6 +33,11 @@ The terrain geometry is a CDLOD quadtree: `rootGridSize` × `rootGridSize` root 
 | void | [setHeightMap](#setheightmap) | C++ \| Lua |
 | void | [setBlendMap](#setblendmap) | C++ \| Lua |
 | void | [setTextureLayer](#settexturelayer) | C++ \| Lua |
+| void | [setSurfaceLayer](#setsurfacelayer-getsurfacelayer) | C++ \| Lua |
+| TerrainSurfaceLayer | [getSurfaceLayer](#setsurfacelayer-getsurfacelayer) | C++ \| Lua |
+| void | [setLayerFromMaterial](#setlayerfrommaterial) | C++ \| Lua |
+| void | [removeSurfaceLayer](#removesurfacelayer) | C++ \| Lua |
+| unsigned int | [getNumLayers](#getnumlayers) | C++ \| Lua |
 | void | [setTextureDetailRed](#settexturedetailred-settexturedetailgreen-settexturedetailblue) | C++ \| Lua |
 | void | [setTextureDetailGreen](#settexturedetailred-settexturedetailgreen-settexturedetailblue) | C++ \| Lua |
 | void | [setTextureDetailBlue](#settexturedetailred-settexturedetailgreen-settexturedetailblue) | C++ \| Lua |
@@ -164,11 +169,11 @@ Alpha is not a fourth weight — saved maps are opaque, which would read as full
 
 * void **setTextureLayer**(unsigned int index, const std::string& path)
 
-Sets the texture of one detail layer, 0 to 8. The vector of layers grows as needed, so assigning layer 4 also creates the empty layers below it; an unassigned layer renders as white.
+Sets the **colour** of one detail layer, 0 to 8, and nothing else — a layer that carries a PBR surface keeps its other maps and factors. The vector of layers grows as needed, so assigning layer 4 also creates the empty layers below it; an unassigned layer renders as white.
 
-Every layer is uploaded as one slice of a texture array, so the slices share a size and a format: smaller layers are resized to the largest one and grayscale layers are widened to RGBA. A layer whose format cannot be reconciled with the others is refused with an error, and the terrain falls back to the base texture. The sampler filters and wrap modes come from the first assigned layer.
+Every map of every layer is uploaded as one slice of a single texture array, so the whole terrain costs one sampler. Sources are converted to RGBA and resized to a common size, capped at 2048 px. The sampler filters and wrap modes come from the first assigned layer colour; a terrain with any PBR layer or custom tiling also gets mipmaps, which tiled surface maps need to stop aliasing at distance.
 
-The layer texture's **alpha is read as layer height**, not opacity: where two layers overlap, the taller one takes the contact zone. Opaque textures have no height and blend on their blend-map weight alone. Layers are also projected triplanarly as the surface turns vertical, and mixed with a coarser tiling rate at a distance to break up repetition.
+On a plain colour layer the texture's **alpha is read as layer height**, not opacity: where two layers overlap, the taller one takes the contact zone. Opaque textures have no height and blend on their blend-map weight alone. A PBR layer takes its height from its height map instead, leaving its colour alpha unused. Layers are also projected triplanarly as the surface turns vertical, and mixed with a coarser tiling rate at a distance to break up repetition.
 
 === "C++"
     ```cpp
@@ -188,10 +193,99 @@ The layer texture's **alpha is read as layer height**, not opacity: where two la
 
 ---
 
+### setSurfaceLayer / getSurfaceLayer
+
+* void **setSurfaceLayer**(unsigned int index, const TerrainSurfaceLayer& layer)
+* TerrainSurfaceLayer **getSurfaceLayer**(unsigned int index) const
+
+Replaces or reads one whole layer, maps and factors together. `getSurfaceLayer` returns a **copy**, so editing it changes nothing until it is passed back to `setSurfaceLayer` — read, change, write.
+
+=== "C++"
+    ```cpp
+    TerrainSurfaceLayer rock;
+    rock.pbr = true;
+    rock.colorTexture = Texture("terrain/rock_color.png");
+    rock.normalTexture = Texture("terrain/rock_normal.png");
+    rock.roughnessTexture = Texture("terrain/rock_orm.png");
+    rock.metallicTexture = Texture("terrain/rock_orm.png");
+    rock.roughnessFactor = 0.9f;
+    ground.setSurfaceLayer(0, rock);
+    ```
+
+=== "Lua"
+    ```lua
+    local rock = TerrainSurfaceLayer()
+    rock.pbr = true
+    rock.colorTexture = Texture("terrain/rock_color.png")
+    rock.normalTexture = Texture("terrain/rock_normal.png")
+    rock.roughnessFactor = 0.9
+    ground:setSurfaceLayer(0, rock)
+
+    -- Read, change, write back
+    local layer = ground:getSurfaceLayer(0)
+    layer.uvScale = Vector2(2, 2)
+    ground:setSurfaceLayer(0, layer)
+    ```
+
+---
+
+### setLayerFromMaterial
+
+* void **setLayerFromMaterial**(unsigned int index, const Material& material)
+
+Fills a layer from a [Material](material.md) and turns on its PBR surface: base colour and factor, normal, metallic/roughness (assigned to both the roughness and metallic slots), occlusion, and the roughness and metallic factors.
+
+Emission, alpha mode and secondary UV sets have no meaning on a terrain layer and are dropped. The layer keeps the UV scale and offset it already had, since a material carries no tiling of its own.
+
+---
+
+### removeSurfaceLayer
+
+* void **removeSurfaceLayer**(unsigned int index)
+
+Removes a layer. Blend map channels are positional, so every later layer moves down one channel — onto the paint the removed layer left behind. Only removing the last layer is lossless, which is all the Terrain Editor offers.
+
+---
+
+### getNumLayers
+
+* unsigned int **getNumLayers**() const
+
+How many layers the terrain currently holds, painted or empty.
+
+---
+
+## TerrainSurfaceLayer
+
+One painted surface. The maps are separate inputs so an existing material can fill them without repacking images; the renderer packs them into slices of the terrain's texture array.
+
+| Type | Name | Default | Meaning |
+| --- | --- | --- | --- |
+| bool | pbr | `false` | Off blends only the colour and leaves the rest to the terrain material |
+| [Texture](texture.md) | colorTexture | empty | Surface colour. sRGB-decoded and tinted on a PBR layer; used raw on a colour layer |
+| [Texture](texture.md) | normalTexture | empty | Tangent-space normal map, projected with the layer |
+| [Texture](texture.md) | roughnessTexture | empty | Read from green, or the only channel of a grayscale map |
+| [Texture](texture.md) | metallicTexture | empty | Read from blue, same fallback |
+| [Texture](texture.md) | occlusionTexture | empty | Read from red; white is unoccluded |
+| [Texture](texture.md) | heightTexture | empty | Biases blending toward this layer where it is taller; never moves geometry |
+| Vector4 | colorFactor | `(1,1,1,1)` | Linear tint multiplied with `colorTexture`. PBR layers only |
+| float | normalStrength | `1.0` | How far the normal map tilts the surface |
+| float | roughnessFactor | `1.0` | Multiplies `roughnessTexture` |
+| float | metallicFactor | `0.0` | Multiplies `metallicTexture` |
+| float | occlusionStrength | `1.0` | How far `occlusionTexture` darkens ambient light |
+| Vector2 | uvScale | `(1,1)` | Multiplies the shared detail tiling, for this layer alone |
+| Vector2 | uvOffset | `(0,0)` | Shifts this layer inside its tile |
+
+All fields are readable and writable from both C++ and Lua, and Lua can construct one with `TerrainSurfaceLayer()`.
+
+`uvScale` and `uvOffset` apply whether or not `pbr` is on. Every other field beyond `colorTexture` needs `pbr`.
+
+---
+
 ### setTextureDetailRed / setTextureDetailGreen / setTextureDetailBlue
 
 * void **setTextureDetailRed**(const std::string& path)
 * void **setTextureDetailGreen**(const std::string& path)
 * void **setTextureDetailBlue**(const std::string& path)
 
-Layers 0, 1 and 2 under the names they had when a terrain had a single blend map. Equivalent to `setTextureLayer(0/1/2, path)`.
+Layers 0, 1 and 2 under the names they had when a terrain had a single blend map. Equivalent to `setTextureLayer(0/1/2, path)`, so they set only the layer colour.

@@ -1,5 +1,5 @@
 ---
-description: Heightmap terrain in Doriax — LOD clipmap rendering, detail layers, foliage scattering, sculpting and painting in the editor, and the runtime Terrain API.
+description: Heightmap terrain in Doriax — LOD clipmap rendering, PBR detail layers, foliage scattering, sculpting and painting in the editor, and the runtime Terrain API.
 ---
 
 # Terrain
@@ -15,7 +15,7 @@ constant regardless of terrain size, with detail concentrated near the camera.
 | **Heightmap** | Grayscale image that displaces the grid vertically (white = `maxHeight`) |
 | **Base texture** | The ground texture tiled across the whole terrain |
 | **Blend maps** | Up to three RGB masks; each channel weights one detail layer |
-| **Detail layers** | Up to nine textures (grass, rock, path, …) mixed over the base |
+| **Detail layers** | Up to nine painted surfaces (grass, rock, path, …) mixed over the base |
 | **Foliage layers** | Meshes scattered over the surface from painted density maps |
 
 The heightmap and the blend maps are stretched once over the whole terrain, so they are
@@ -30,10 +30,10 @@ RGB channels of the first blend map, 4–6 by the second, 7–9 by the third. Wh
 the layers leave unclaimed goes to the base texture, so an unpainted terrain shows the
 base alone.
 
-All layers are uploaded as a single texture array, which keeps the sampler count flat as
-layers are added. Slices smaller than the largest layer are resized and grayscale layers
-are widened to RGBA; a layer whose format cannot be reconciled with the others is refused
-with an error and the terrain falls back to the base texture.
+Every map of every layer is uploaded as a slice of one texture array, so the whole terrain
+costs a single sampler no matter how many layers and maps it uses. Sources are converted
+to RGBA and resized to a common size, capped at 2048 px — keep source maps at 1024 or
+below on a heavily layered terrain, or the array grows quickly.
 
 Three things shape how the layers meet on screen:
 
@@ -45,6 +45,38 @@ Three things shape how the layers meet on screen:
   as the surface turns vertical the layers fade into side projections taken along X and Z.
 - **Distance tile break.** Past a few tiles of distance a second, coarser tiling rate fades
   in and mixes with the first, breaking up the repeating pattern of tiled ground.
+
+## PBR layers
+
+A layer starts as a **color layer**: it blends its texture over the base and leaves every
+other surface property to the terrain material. Turning on **PBR** gives that layer its
+own surface instead.
+
+| Map | Read from | Without it |
+| --- | --- | --- |
+| **Color** | RGB, decoded from sRGB and multiplied by the layer tint | White |
+| **Normal** | Tangent-space RGB, projected with the layer | The terrain's own surface |
+| **Roughness** | Green, or the only channel of a grayscale map | The roughness factor alone |
+| **Metallic** | Blue, same fallback | The metallic factor alone |
+| **Occlusion** | Red | Unoccluded |
+| **Height** | Any channel; only biases blending, never geometry | The layer blends flat |
+
+Each map has a factor beside it, so a layer can be authored with factors alone and no
+maps at all. A packed ORM texture works by assigning the same file to Occlusion,
+Roughness and Metallic; separate grayscale files work just as well.
+
+Every layer, PBR or not, also has a **UV scale and offset** that multiplies the shared
+detail tiling, so one layer can tile finer than its neighbours.
+
+!!! note "Color layers are left exactly as they were"
+    A terrain with only plain color layers and default tiling renders through the same
+    shader it always did — no added cost. The wider path switches on as soon as one layer
+    turns on PBR or takes a custom tiling. In a mixed terrain, color layers keep blending
+    their texture raw (and their alpha as height) rather than being re-interpreted, so
+    adding a PBR layer never changes how the existing ones look.
+
+Painted layers are written to the G-buffer as well, so screen-space reflections see the
+same normal, roughness and metallic the lit surface shades with.
 
 ## Foliage
 
@@ -98,6 +130,15 @@ reference.
     terrain:setBlendMapIndex(1, "terrain/blendmap1.png")
     terrain:setTextureLayer(3, "terrain/snow.png")
 
+    -- A layer with its own PBR surface
+    local mud = TerrainSurfaceLayer()
+    mud.pbr = true
+    mud.colorTexture = Texture("terrain/mud_color.png")
+    mud.normalTexture = Texture("terrain/mud_normal.png")
+    mud.roughnessFactor = 0.3
+    mud.uvScale = Vector2(2, 2)
+    terrain:setSurfaceLayer(4, mud)
+
     -- Dimensions and LOD are properties in Lua
     terrain.size = 2000          -- world units per side
     terrain.maxHeight = 80       -- world height of a white heightmap pixel
@@ -121,6 +162,15 @@ reference.
     terrain.setBlendMap(1, "terrain/blendmap1.png");
     terrain.setTextureLayer(3, "terrain/snow.png");
 
+    // A layer with its own PBR surface
+    TerrainSurfaceLayer mud;
+    mud.pbr = true;
+    mud.colorTexture = Texture("terrain/mud_color.png");
+    mud.normalTexture = Texture("terrain/mud_normal.png");
+    mud.roughnessFactor = 0.3f;
+    mud.uvScale = Vector2(2, 2);
+    terrain.setSurfaceLayer(4, mud);
+
     terrain.setSize(2000.0f);
     terrain.setMaxHeight(80.0f);
     terrain.setResolution(32);
@@ -130,9 +180,12 @@ reference.
 [`Mesh`](../reference/classes/mesh.md) apply as well — `setTexture` sets the base ground
 texture through the material.
 
-`setTextureDetailRed` / `Green` / `Blue` still work: they are layers 0, 1 and 2 under the
-names they had when a terrain had a single blend map. Foliage layers have no runtime
-setters — they are authored in the editor and read back from the component.
+`setTextureLayer` sets only a layer's color, so it still does what it always did and
+leaves the rest of a PBR layer's surface alone. `setTextureDetailRed` / `Green` / `Blue`
+are layers 0, 1 and 2 under the names they had when a terrain had a single blend map.
+`setLayerFromMaterial` fills a layer from a [Material](../reference/classes/material.md)
+in one call. Foliage layers have no runtime setters — they are authored in the editor and
+read back from the component.
 
 ## LOD tuning
 

@@ -1,5 +1,5 @@
 ---
-description: The Doriax Terrain Editor window — sculpt brushes, texture layer painting, scattered foliage, and object placement over a heightmap terrain.
+description: The Doriax Terrain Editor window — sculpt brushes, PBR layer painting, scattered foliage, and object placement over a heightmap terrain.
 ---
 
 # Terrain Editor
@@ -74,17 +74,37 @@ to.
 | Row | Meaning |
 | --- | --- |
 | **Base** | The material's base color texture. Painting it clears the blend map the selected layer sits on, letting the base show through |
-| **Layer 1…9** | A detail texture. Click the thumbnail to paint that layer; use the folder/clear buttons or drop an image from the [Resources Browser](resources.md) to assign it |
+| **Layer 1…9** | A painted surface. Click the thumbnail to paint that layer; use the folder/clear buttons or drop an image from the [Resources Browser](resources.md) to assign its color |
+| ▾ (per layer) | Opens that layer's settings under the row |
 | **Layers** | Add or remove the last layer, up to nine (three per blend map) |
 | **Normalize** | Fades the other layers sharing the same blend map as you paint. Layers on other blend maps keep their weight |
 
 Painting is a blend-map write, so the layer textures themselves are never modified.
 
-Detail layers are uploaded as one texture array: slices are resized to the largest layer
-and grayscale layers are widened to RGBA, but layers whose formats disagree are refused
-with an error in the Output panel. See
-[Detail layers](../manual/terrain.md#detail-layers) for how the layers are blended at
+See [Detail layers](../manual/terrain.md#detail-layers) for how the layers are blended at
 runtime.
+
+### Layer settings
+
+The arrow beside a layer's clear button opens its settings under the row. A layer with
+**Enable PBR** off shows only what it can use — the rest appears once it is on, and the
+layer's preview is marked **PBR** in the list.
+
+| Setting | Meaning |
+| --- | --- |
+| **Enable PBR** | Off blends only the layer's color and leaves the rest to the terrain material. On gives the layer its own surface |
+| **Copy from material** | Fills the layer from a `.material` file. Dropping one on the layer does the same |
+| **Tint** | Multiplies the layer color |
+| **Normal** + **Normal Strength** | Tangent-space normal map and how far it tilts the surface |
+| **Roughness** + **Roughness Factor** | Map read from green (or the only channel of a grayscale map), multiplied by the factor |
+| **Metallic** + **Metallic Factor** | Map read from blue, same fallback and multiply |
+| **Occlusion** + **Occlusion Strength** | Map read from red, and how far it darkens ambient light |
+| **Height** | Biases the blend toward this layer where it is taller — it never moves geometry |
+| **UV Scale** / **UV Offset** | Tiling for this layer alone, multiplying the shared detail tiling |
+
+Copying a material takes its base color and tint, normal, metallic/roughness, occlusion
+and factors, and turns the layer into a PBR one. Emission and transparency are not part
+of a terrain layer and are left out; the layer keeps the tiling it already had.
 
 ### Slope and height mask
 
