@@ -56,6 +56,14 @@ tight near/far range — a large ratio (e.g. 0.1 to 100 000) causes depth fighti
 distant surfaces. You can also configure the projection in one call with
 `setPerspective(yfov, aspect, near, far)` or `setOrtho(left, right, bottom, top, near, far)`.
 
+Each camera also decides whether it uses the depth buffer at all.
+`Camera::setDepthTest(false)` drops depth testing and depth writes from its colour pass,
+so the camera composites renderables in submission order — later draws land on top,
+whatever their distance — and the back-to-front sorting of `setTransparentSort()` is
+skipped with it. That is the canvas behaviour a 2D or UI scene wants, so the camera a scene
+creates for itself and the ones the editor adds to a 2D scene already have it off; a 3D
+camera keeps it on so geometry occludes by depth.
+
 A camera can render to its own texture instead of the screen — see
 [Framebuffers and render-to-texture](#framebuffers-and-render-to-texture) below.
 

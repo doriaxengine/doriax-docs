@@ -51,6 +51,7 @@ description: Camera API reference — orthographic and perspective projection, t
 | Vector3 | [up](#up) | `(0,1,0)` | C++ \| Lua |
 | bool | [renderToTexture](#rendertotexture) | `false` | C++ \| Lua |
 | bool | [transparentSort](#transparentsort) | `true` | C++ \| Lua |
+| bool | [depthTest](#depthtest) | `true` | C++ \| Lua |
 
 ### Methods
 
@@ -110,6 +111,8 @@ description: Camera API reference — orthographic and perspective projection, t
 | void | [setFramebufferFilter](#setrendertotexture-getframebuffer-setframebuffersize-setframebufferfilter) | C++ \| Lua |
 | void | [setTransparentSort](#transparentsort) | C++ \| Lua |
 | bool | [isTransparentSort](#transparentsort) | C++ \| Lua |
+| void | [setDepthTest](#depthtest) | C++ \| Lua |
+| bool | [isDepthTest](#depthtest) | C++ \| Lua |
 | Ray | [screenToRay](#screentoray) | C++ \| Lua |
 | float | [getDistanceFromTarget](#getdistancefromtarget) | C++ \| Lua |
 | void | [updateCamera](#updatecamera) | C++ \| Lua |
@@ -206,7 +209,24 @@ When `true`, the camera renders to an internal [Framebuffer](#setrendertotexture
 * *Setter:* `void setTransparentSort(bool transparentSort)`
 * *Getter:* `bool isTransparentSort() const`
 
-Enables back-to-front depth sorting for transparent objects from this camera's viewpoint. Disable for orthographic UI cameras where order is determined by hierarchy.
+Enables back-to-front depth sorting for transparent objects from this camera's viewpoint. Disable for orthographic UI cameras where order is determined by hierarchy. It only applies while [depthTest](#depthtest) is on — without a depth buffer the camera already draws in submission order.
+
+---
+
+### depthTest
+
+* *Setter:* `void setDepthTest(bool depthTest)`
+* *Getter:* `bool isDepthTest() const`
+
+When `false`, the camera ignores the depth buffer entirely — no depth test, no depth write — and composites every renderable in submission order, like a 2D canvas: what is drawn later appears on top, regardless of its distance. Distance sorting is skipped as well, so [transparentSort](#transparentsort) has no effect.
+
+Keep it `true` for 3D scenes, where geometry has to occlude by depth. A `Camera` you create defaults to `true`; the canvas camera a scene creates for itself when none is set, and the cameras the editor adds to a 2D scene, have it off, so entity order decides what covers what.
+
+!!! note "Instances and points follow the main camera"
+    Instanced meshes and point clouds share one GPU buffer across every camera, so their
+    batch order is fixed once per frame by the scene's active camera. A render-to-texture
+    camera whose `depthTest` differs from the main camera's reuses that order instead of
+    computing its own.
 
 ## Method details
 

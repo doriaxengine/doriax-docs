@@ -53,6 +53,16 @@ release also offers the same build as a plain zip of loose binaries.
 The macOS download is a disk image holding `Doriax.app`. Open the `.dmg` and drag the app
 onto the **Applications** shortcut inside it.
 
+Beside the disk image, macOS is also offered as a plain zip of loose binaries —
+`doriax-editor` next to `libdoriax.dylib` and the `engine/` runtime, with no `.app`
+bundle. It is the same build, for cases where a bundle is inconvenient (a CI checkout, a
+tool that expects the binary directly). A zip that came through GitHub Actions drops the
+executable bit, so mark it once if the binary refuses to run:
+
+```bash
+chmod +x doriax-editor
+```
+
 !!! warning "macOS blocks the first launch"
     Doriax is signed, but not notarized by Apple — notarization requires a paid Apple
     Developer membership. macOS therefore reports that it cannot verify the app the first

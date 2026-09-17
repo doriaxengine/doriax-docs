@@ -38,7 +38,9 @@ backend starts, so they work on headless machines.
       --project ./MyGame --out ./build/MyGame
     ```
 
-    Alias it or add that directory to your `PATH` if you use it often.
+    Alias it or add that directory to your `PATH` if you use it often. The
+    [loose-binary zip](../getting-started/installation.md#download-a-prebuilt-editor) has
+    no bundle, so there the entry point is just `./doriax-editor`.
 
 ## `export` — build a project to a target
 
