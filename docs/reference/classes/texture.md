@@ -23,6 +23,7 @@ A `Texture` object is a lightweight handle; the actual GPU resource is managed i
 | [TextureWrap](#texturewrap) | [wrapU](#wrapu-wrapv) | `REPEAT` | C++ \| Lua |
 | [TextureWrap](#texturewrap) | [wrapV](#wrapu-wrapv) | `REPEAT` | C++ \| Lua |
 | float | [svgScale](#svgscale) | `1.0` | C++ \| Lua |
+| bool | [releaseDataAfterLoad](#releasedataafterload) | `true` | C++ \| Lua |
 
 ### Methods
 
@@ -34,6 +35,7 @@ A `Texture` object is a lightweight handle; the actual GPU resource is managed i
 | void | [setCubeMap](#setcubemap) | C++ \| Lua |
 | void | [setCubePaths](#setcubepaths) | C++ \| Lua |
 | void | [setCubeDatas](#setcubedatas) | C++ \| Lua |
+| void | [setFramebuffer](#setframebuffer) | C++ \| Lua |
 | [TextureLoadResult](textureloadresult.md) | [load](#load) | C++ \| Lua |
 | void | [destroy](#destroy) | C++ \| Lua |
 | std::string | [getPath](#getpath) | C++ \| Lua |
@@ -44,6 +46,7 @@ A `Texture` object is a lightweight handle; the actual GPU resource is managed i
 | bool | [isCubeMap](#iscubemap) | C++ \| Lua |
 | bool | [empty](#empty) | C++ \| Lua |
 | bool | [isFramebuffer](#isframebuffer) | C++ \| Lua |
+| bool | [isFramebufferOutdated](#isframebufferoutdated) | C++ \| Lua |
 | void | [releaseData](#releasedata) | C++ \| Lua |
 
 ## Enumerations
@@ -121,6 +124,15 @@ reloads at the new resolution.
     local icon = Texture("ui/icon.svg")
     icon.svgScale = 4  -- a 24x24 SVG rasterizes as 96x96
     ```
+
+---
+
+### releaseDataAfterLoad
+
+* *Setter*: void **setReleaseDataAfterLoad**(bool release)
+* *Getter*: bool **isReleaseDataAfterLoad**() const
+
+Frees the CPU-side pixel data as soon as the texture reaches the GPU. `true` by default, but textures built from a [TextureData](texturedata.md) keep their pixels: the `Texture(id, data)` constructor, [setData](#setdata) and [setCubeDatas](#setcubedatas) all clear the flag, as does [setFramebuffer](#setframebuffer). See [releaseData](#releasedata) to free the pixels on demand.
 
 ---
 
@@ -231,6 +243,14 @@ Creates a cube-map texture from six in-memory [TextureData](texturedata.md) face
 
 ---
 
+### setFramebuffer
+
+* void **setFramebuffer**([Framebuffer](framebuffer.md)* framebuffer)
+
+Points the texture at a render target so it can be sampled like any other texture. Also clears [releaseDataAfterLoad](#releasedataafterload), unlike the `Texture(Framebuffer*)` constructor, which leaves it set.
+
+---
+
 ### load
 
 * [TextureLoadResult](textureloadresult.md) **load**()
@@ -296,6 +316,14 @@ Returns `true` if this texture is a cube map (six faces).
 * bool **empty**() const
 
 Returns `true` if no path, data, or framebuffer has been assigned to this texture.
+
+---
+
+### isFramebufferOutdated
+
+* bool **isFramebufferOutdated**() const
+
+Returns `true` when the render target has been resized or recreated since the texture last bound it, so the caller knows to rebind.
 
 ---
 

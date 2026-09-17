@@ -22,7 +22,7 @@ A single tilemap can render at most **16 383** tiles — the index buffer is 16-
 
 | Type | Name | Default | Langs |
 | --- | --- | --- | --- |
-| float | [textureScaleFactor](#texturescalefactor) | `1.0` | C++ \| Lua |
+| float | [textureScaleFactor](#texturescalefactor) | `0.0` | C++ \| Lua |
 | unsigned int | [reserveTiles](#reservetiles) | `10` | C++ \| Lua |
 
 ### Methods
@@ -51,7 +51,7 @@ A single tilemap can render at most **16 383** tiles — the index buffer is 16-
 * *Setter*: void **setTextureScaleFactor**(float textureScaleFactor)
 * *Getter*: float **getTextureScaleFactor**() const
 
-A global scale applied to all UV coordinates. Increase this value to make the texture appear smaller (more repeating) across tiles, or decrease it to make it appear larger. Useful when using a high-resolution atlas intended for retina displays.
+Insets each tile's UV rectangle by this many texels on every side, `0.0` by default. A small value such as `0.5` keeps bilinear filtering from bleeding neighbouring tiles of the atlas into the edges of a tile.
 
 ---
 

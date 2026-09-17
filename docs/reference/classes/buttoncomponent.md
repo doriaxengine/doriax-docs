@@ -8,9 +8,13 @@ description: ButtonComponent API reference (C++ and Lua).
 
 ## Properties
 
+!!! note "Writing a component field"
+    Some fields take effect only once the matching `needUpdate…` flag is set too. See
+    [Writing components directly](../../manual/entity-component-system.md#writing-components-directly).
+
 | Name | Languages |
 | --- | --- |
-| `label` | C++ \| Lua |
+| `label` | C++ \| Lua (read-only) |
 | `textureNormal` | C++ \| Lua |
 | `textureHovered` | C++ \| Lua |
 | `texturePressed` | C++ \| Lua |
@@ -21,7 +25,7 @@ description: ButtonComponent API reference (C++ and Lua).
 | `colorDisabled` | C++ \| Lua |
 | `onPress` | C++ \| Lua |
 | `onRelease` | C++ \| Lua |
-| `pressed` | C++ \| Lua |
-| `hovered` | C++ \| Lua |
+| `pressed` | C++ \| Lua (read-only) |
+| `hovered` | C++ \| Lua (read-only) |
 | `disabled` | C++ \| Lua |
 | `needUpdateButton` | C++ \| Lua |

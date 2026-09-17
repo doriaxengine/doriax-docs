@@ -37,7 +37,7 @@ description: Sprite API reference — 2D images, texture atlas frames, pivot, an
 | unsigned int | [width](#width-height) | `0` | C++ \| Lua |
 | unsigned int | [height](#width-height) | `0` | C++ \| Lua |
 | bool | [flipY](#flipy) | `false` | C++ \| Lua |
-| float | [textureScaleFactor](#texturescalefactor) | `1.0` | C++ \| Lua |
+| float | [textureScaleFactor](#texturescalefactor) | `0.0` | C++ \| Lua |
 | Rect | [textureRect](#texturerect) | full texture | C++ \| Lua |
 | [PivotPreset](#pivotpreset) | [pivotPreset](#pivotpreset_1) | `CENTER` | C++ \| Lua |
 
@@ -111,7 +111,7 @@ Flips the texture vertically. Useful when loading textures from APIs that use a 
 * *Setter:* `void setTextureScaleFactor(float textureScaleFactor)`
 * *Getter:* `float getTextureScaleFactor() const`
 
-Scales the texture coordinates, effectively tiling or shrinking the mapped texture without changing the quad size.
+Insets the UV rectangle by this many texels on every side, `0.0` by default. A small value such as `0.5` pulls the sampled area away from the edges of a packed atlas cell, hiding the neighbouring pixels that bilinear filtering would otherwise bleed in.
 
 ---
 

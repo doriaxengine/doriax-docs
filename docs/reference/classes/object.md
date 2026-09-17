@@ -42,8 +42,8 @@ description: Object API reference — transform, hierarchy, visibility, billboar
 | bool | [cylindricalBillboard](#cylindricalbillboard) | `false` | C++ \| Lua |
 | Quaternion | [billboardRotation](#billboardrotation) | identity | C++ \| Lua |
 | Matrix4 | [localMatrix](#localmatrix) | identity | C++ \| Lua |
-| Matrix4 | [modelMatrix](#modelmatrix) | — | C++ \| Lua |
-| Matrix4 | [normalMatrix](#normalmatrix) | — | C++ \| Lua |
+| Matrix4 | [modelMatrix](#modelmatrix) | — | C++ \| Lua (read-only) |
+| Matrix4 | [normalMatrix](#normalmatrix) | — | C++ \| Lua (read-only) |
 
 ### Methods
 

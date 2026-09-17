@@ -10,8 +10,8 @@ description: TimedActionComponent API reference (C++ and Lua).
 
 | Name | Languages |
 | --- | --- |
-| `time` | C++ \| Lua |
-| `value` | C++ \| Lua |
+| `time` | C++ \| Lua (read-only) |
+| `value` | C++ \| Lua (read-only) |
 | `duration` | C++ \| Lua |
 | `loop` | C++ \| Lua |
 | `function` | C++ \| Lua |

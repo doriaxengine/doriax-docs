@@ -16,6 +16,7 @@ An **Oriented Bounding Box** — a box whose axes can be rotated arbitrarily in 
 | --- | --- | --- |
 | Vector3 | [center](#center-halfextents) | C++ \| Lua |
 | Vector3 | [halfExtents](#center-halfextents) | C++ \| Lua |
+| Quaternion | [orientation](#setorientation-getorientation) | C++ \| Lua |
 
 ### Methods
 

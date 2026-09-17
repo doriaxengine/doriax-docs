@@ -8,9 +8,12 @@ description: TextureLoadResult API reference (C++ and Lua).
 
 ## Properties
 
+!!! note "Read-only from Lua"
+    A load result: the loader fills it in, scripts read it.
+
 | Name | Languages |
 | --- | --- |
-| `id` | C++ \| Lua |
-| `state` | C++ \| Lua |
-| `errorMessage` | C++ \| Lua |
-| `data` | C++ \| Lua |
+| `id` | C++ \| Lua (read-only) |
+| `state` | C++ \| Lua (read-only) |
+| `errorMessage` | C++ \| Lua (read-only) |
+| `data` | C++ \| Lua (read-only) |

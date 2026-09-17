@@ -64,6 +64,9 @@ See [EntityHandle ownership](entityhandle.md#ownership-and-lifetime).
 | bool | [autoTransparency](#transparent-autotransparency) | `true` | C++ \| Lua |
 | string | [customShader](#customshader) | `""` | C++ \| Lua |
 | string | [customDepthShader](#customdepthshader) | `""` | C++ \| Lua |
+| unsigned int | [maxInstances](#maxinstances) | `100` | C++ \| Lua |
+| bool | [instancedBillboard](#instancedbillboard-instancedcylindricalbillboard) | `false` | C++ \| Lua |
+| bool | [instancedCylindricalBillboard](#instancedbillboard-instancedcylindricalbillboard) | `false` | C++ \| Lua |
 
 ### Methods
 
@@ -306,6 +309,41 @@ Project-relative base path of a forked **depth** shader — the one the mesh is 
     mesh.customDepthShader = "shaders/wave_depth"
     ```
 
+### maxInstances
+
+* *Setter:* `void setMaxInstances(unsigned int maxInstances)`
+* *Getter:* `unsigned int getMaxInstances() const`
+
+Slots in the GPU instance buffer, `100` by default. Drawing clamps to it, but [addInstance](#addinstance) grows the cap as the list outgrows it — reloading the mesh each time — so the clamp only bites when the instance list is filled without going through `addInstance`. Set the capacity up front when the count is already known, to skip those reloads. Unlike the billboard setters, this one logs an error if the mesh is not instanced yet — call [createInstancedMesh](#createinstancedmesh) first.
+
+---
+
+### instancedBillboard / instancedCylindricalBillboard
+
+* *Setter:* `void setInstancedBillboard(bool billboard)`
+* *Setter:* `void setInstancedBillboard(bool billboard, bool cylindrical)`
+* *Getters:* `bool isInstancedBillboard() const`, `bool isInstancedCylindricalBillboard() const`
+
+Turns every instance to face the camera, the per-instance counterpart of [Object.billboard](object.md#billboard). Both default to `false`, and `instancedCylindricalBillboard` only matters while `instancedBillboard` is on. The setters create the instanced mesh if it does not exist yet.
+
+!!! warning "Cylindrical is not Y-only yet"
+    The instanced path builds its rotation from the inverse view matrix whichever flag is set, so instanced cylindrical facing currently matches the spherical one. [Object.cylindricalBillboard](object.md#billboard) does constrain to Y.
+
+=== "C++"
+
+    ```cpp
+    grass.setInstancedBillboard(true, true);
+    ```
+
+=== "Lua"
+
+    ```lua
+    grass.instancedBillboard = true
+    grass.instancedCylindricalBillboard = true
+    ```
+
+---
+
 ## Method details
 
 ### load
@@ -495,7 +533,7 @@ Instancing draws geometry on this entity only. Multi-node GLTF models that keep 
 * `void addInstance(Vector3 position, Quaternion rotation, Vector3 scale, Vector4 color)`
 * `void addInstance(Vector3 position, Quaternion rotation, Vector3 scale, Vector4 color, Rect textureRect)`
 
-Appends a new instance with the specified transform. Requires [createInstancedMesh](#createinstancedmesh) to have been called first.
+Appends a new instance with the specified transform, creating the instanced mesh if the entity does not have one yet. Growing past [maxInstances](#maxinstances) doubles the capacity and reloads the mesh.
 
 ---
 

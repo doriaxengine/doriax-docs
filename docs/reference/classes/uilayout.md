@@ -32,6 +32,8 @@ The anchor system works in two modes:
 | int | [anchorOffsetBottom](#anchoroffsets) | `0` | C++ \| Lua |
 | [AnchorPreset](#anchorpreset) | [anchorPreset](#anchorpreset_1) | `NONE` | C++ \| Lua |
 | Vector2 | [positionOffset](#positionoffset) | `(0,0)` | C++ \| Lua |
+| float | [positionXOffset](#positionoffset) | `0.0` | C++ \| Lua |
+| float | [positionYOffset](#positionoffset) | `0.0` | C++ \| Lua |
 | bool | [usingAnchors](#usinganchors) | `true` | C++ \| Lua |
 | bool | [ignoreScissor](#ignorescissor) | `false` | C++ \| Lua |
 

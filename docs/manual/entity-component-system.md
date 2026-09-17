@@ -126,6 +126,57 @@ sprite.setPosition(100, 100);
 This wrapper creates or references an entity and manipulates the components needed to
 represent a sprite.
 
+## Writing components directly
+
+A wrapper setter usually does two things: it writes the field, and it marks the component
+dirty so the system picks the change up on the next frame.
+
+```cpp
+void Sound::setVolume(double volume){
+    SoundComponent& audio = getComponent<SoundComponent>();
+    if (audio.volume != volume){
+        audio.volume = volume;
+        audio.needUpdate = true;   // without this, AudioSystem never applies it
+    }
+}
+```
+
+Writing the component yourself means doing both, for the fields a flag guards. Flags exist
+where the work is expensive — rebuilding geometry, pushing a voice's parameters to the audio
+backend, refreshing a button or a tilemap — not for every field. Plenty are read as written:
+`ActionComponent.speed` is used on every tick, `UIComponent.color` is uploaded on every draw,
+and `ParticlesComponent` has no flag at all. When in doubt, look at what the wrapper setter
+does.
+
+=== "Lua"
+
+    ```lua
+    local audio = sound:getSoundComponent()
+    audio.volume = 0.25
+    audio.needUpdate = true
+    ```
+
+=== "C++"
+
+    ```cpp
+    SoundComponent& audio = scene.getComponent<SoundComponent>(entity);
+    audio.volume = 0.25;
+    audio.needUpdate = true;
+    ```
+
+The flags are named after what they refresh: `needUpdate`, `needUpdateSizes`,
+`needUpdateButton`, `needUpdateTilemap`, `needReload`, and so on.
+
+Two kinds of field are read-only from Lua, because writing them can only desync the
+system that owns them: values a system produces (`playingTime`, `state`, `pressed`,
+`loaded`) and the child-entity handles of a widget (`label`, `bar`, `fill`, and the
+`TextEdit` `text` / `selection` / `cursor` entities).
+
+!!! note "Colours are linear in components"
+    A wrapper setter such as `Image::setColor` or `Button::setColorNormal` converts from
+    sRGB; the component field stores the linear value. Writing `color` directly stores
+    exactly what you pass, so prefer the setter unless you already have linear values.
+
 ## Built-in component groups
 
 The engine includes a broad set of built-in components. Most are exposed through both

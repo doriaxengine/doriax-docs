@@ -8,11 +8,15 @@ description: TextEditComponent API reference (C++ and Lua).
 
 ## Properties
 
+!!! note "Writing a component field"
+    Some fields take effect only once the matching `needUpdate…` flag is set too. See
+    [Writing components directly](../../manual/entity-component-system.md#writing-components-directly).
+
 | Name | Languages |
 | --- | --- |
-| `text` | C++ \| Lua |
-| `selection` | C++ \| Lua |
-| `cursor` | C++ \| Lua |
+| `text` | C++ \| Lua (read-only) |
+| `selection` | C++ \| Lua (read-only) |
+| `cursor` | C++ \| Lua (read-only) |
 | `cursorBlink` | C++ \| Lua |
 | `cursorWidth` | C++ \| Lua |
 | `cursorColor` | C++ \| Lua |

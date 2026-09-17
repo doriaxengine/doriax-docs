@@ -10,8 +10,8 @@ description: ActionComponent API reference (C++ and Lua).
 
 | Name | Languages |
 | --- | --- |
-| `state` | C++ \| Lua |
-| `timecount` | C++ \| Lua |
+| `state` | C++ \| Lua (read-only) |
+| `timecount` | C++ \| Lua (read-only) |
 | `speed` | C++ \| Lua |
 | `startTrigger` | C++ \| Lua |
 | `stopTrigger` | C++ \| Lua |

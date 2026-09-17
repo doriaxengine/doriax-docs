@@ -24,7 +24,7 @@ Shadows are opt-in per-light and render via a shadow map. Cascaded shadow maps (
 | float | [intensity](#intensity) | `1.0` | C++ \| Lua |
 | float | [innerConeAngle](#innerconeangle-outerconeangle) | `10°` | C++ \| Lua |
 | float | [outerConeAngle](#innerconeangle-outerconeangle) | `45°` | C++ \| Lua |
-| [Texture](texture.md) | [spotMask](#spotmask) | empty | C++ \| Lua |
+| [Texture](texture.md) | [spotMask](#spotmask) | empty | C++ \| Lua (read-only) |
 | bool | [shadows](#shadows) | `false` | C++ \| Lua |
 | float | [bias](#bias) | `0.005` | C++ \| Lua |
 | unsigned int | [shadowMapSize](#shadowmapsize) | `1024` | C++ \| Lua |
@@ -184,7 +184,7 @@ When a [spotMask](#spotmask) is assigned, `outerConeAngle` controls the mask's v
 * *Clearer*: void **clearSpotMask**()
 * *Getter*: [Texture](texture.md) **getSpotMask**() const
 
-An optional image projected by a `SPOT` light. It replaces the default circular cone attenuation, allowing shapes such as windows, logos, arrows, and soft-edged patterns without a separate spot-shape setting.
+An optional image projected by a `SPOT` light. It replaces the default circular cone attenuation, allowing shapes such as windows, logos, arrows, and soft-edged patterns without a separate spot-shape setting. The `spotMask` property only reads the current mask in either language; `setSpotMask` and `clearSpotMask` are the write path, Lua included.
 
 For an image with transparency, alpha controls the light intensity. Otherwise, the image luminance is used. Black produces no light, white produces full light, and intermediate values produce partial intensity. The source aspect ratio is preserved, and spot-light shadows use the same projection frame and aspect ratio.
 

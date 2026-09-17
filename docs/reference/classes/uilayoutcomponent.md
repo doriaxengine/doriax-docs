@@ -8,6 +8,10 @@ description: UILayoutComponent API reference (C++ and Lua).
 
 ## Properties
 
+!!! note "Writing a component field"
+    Some fields take effect only once the matching `needUpdate…` flag is set too. See
+    [Writing components directly](../../manual/entity-component-system.md#writing-components-directly).
+
 | Name | Languages |
 | --- | --- |
 | `width` | C++ \| Lua |
@@ -23,8 +27,8 @@ description: UILayoutComponent API reference (C++ and Lua).
 | `positionOffset` | C++ \| Lua |
 | `anchorPreset` | C++ \| Lua |
 | `usingAnchors` | C++ \| Lua |
-| `panel` | C++ \| Lua |
-| `containerBoxIndex` | C++ \| Lua |
+| `panel` | C++ \| Lua (read-only) |
+| `containerBoxIndex` | C++ \| Lua (read-only) |
 | `scissor` | C++ \| Lua |
 | `ignoreScissor` | C++ \| Lua |
 | `ignoreEvents` | C++ \| Lua |

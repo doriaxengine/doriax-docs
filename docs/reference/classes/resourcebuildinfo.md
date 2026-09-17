@@ -8,10 +8,13 @@ description: ResourceBuildInfo API reference (C++ and Lua).
 
 ## Properties
 
+!!! note "Read-only from Lua"
+    A progress snapshot: the build threads fill it in, scripts read it.
+
 | Name | Languages |
 | --- | --- |
-| `type` | C++ \| Lua |
-| `name` | C++ \| Lua |
-| `progress` | C++ \| Lua |
-| `isActive` | C++ \| Lua |
-| `startTime` | C++ \| Lua |
+| `type` | C++ \| Lua (read-only) |
+| `name` | C++ \| Lua (read-only) |
+| `progress` | C++ \| Lua (read-only) |
+| `isActive` | C++ \| Lua (read-only) |
+| `startTime` | C++ \| Lua (read-only) |

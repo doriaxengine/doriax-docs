@@ -10,15 +10,15 @@ Particle system configuration component.
 
 | Name | Languages |
 | --- | --- |
-| `newParticlesCount` | C++ \| Lua |
-| `lastUsedParticle` | C++ \| Lua |
+| `newParticlesCount` | C++ \| Lua (read-only) |
+| `lastUsedParticle` | C++ \| Lua (read-only) |
 | `emitter` | C++ \| Lua |
 | `loop` | C++ \| Lua |
 | `localSpace` | C++ \| Lua |
 | `rate` | C++ \| Lua |
 | `maxPerUpdate` | C++ \| Lua |
 | `bursts` | C++ \| Lua |
-| `currentBurst` | C++ \| Lua |
+| `currentBurst` | C++ \| Lua (read-only) |
 | `lifeInitializer` | C++ \| Lua |
 | `positionInitializer` | C++ \| Lua |
 | `positionModifier` | C++ \| Lua |

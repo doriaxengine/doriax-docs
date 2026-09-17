@@ -26,6 +26,7 @@ All UI elements also expose a rich set of pointer/focus callback events (inherit
 | unsigned int | [patchMarginRight](#patchmargin) | `0` | C++ \| Lua |
 | unsigned int | [patchMarginTop](#patchmargin) | `0` | C++ \| Lua |
 | unsigned int | [patchMarginBottom](#patchmargin) | `0` | C++ \| Lua |
+| float | [textureScaleFactor](#texturescalefactor) | `0.0` | C++ \| Lua |
 | string | [customShader](#customshader) | `""` | C++ \| Lua |
 
 ### Methods
@@ -108,6 +109,15 @@ Sets the 9-patch insets. When all four margins are zero (the default), the image
     panel:setPatchMargin(20)
     panel:setSize(300, 200)
     ```
+
+---
+
+### textureScaleFactor
+
+* *Setter*: void **setTextureScaleFactor**(float textureScaleFactor)
+* *Getter*: float **getTextureScaleFactor**() const
+
+Insets the UV rectangle by this many texels on every side, `0.0` by default. A small value such as `0.5` pulls the sampled area away from the edges of a packed atlas cell, hiding the neighbouring pixels that bilinear filtering would otherwise bleed in.
 
 ---
 
