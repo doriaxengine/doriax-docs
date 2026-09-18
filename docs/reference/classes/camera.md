@@ -184,6 +184,16 @@ Vertical field-of-view in degrees (when `Engine::useDegrees` is `true`). Affects
 
 Look-at point in local space. When set, the camera orientation is computed each frame so the camera always faces this point. Disable with [disableTarget](#settarget-disabletarget-isusingtarget).
 
+!!! warning "In Lua, `setTarget` only takes three numbers"
+    Lua binds the `Vector3` form as the **`target` property** and `setTarget` as the
+    three-float overload only. Passing a `Vector3` to `setTarget` fails with
+    *"Error decoding argument #3: The lua object can't be cast to desired type"*.
+
+    ```lua
+    cam.target = Vector3(0, 3, 0)   -- Vector3 form
+    cam:setTarget(0, 3, 0)          -- three numbers
+    ```
+
 ---
 
 ### up
@@ -285,7 +295,7 @@ Configures the camera for perspective (3D) projection.
 
 ### setTarget / disableTarget / isUsingTarget
 
-* `void setTarget(Vector3 target)` — Sets the look-at point. Activates target mode.
+* `void setTarget(Vector3 target)` — Sets the look-at point. Activates target mode. In Lua this form is the [`target`](#target) property; `setTarget` there takes three numbers.
 * `void disableTarget()` — Removes the look-at constraint and allows free rotation.
 * `bool isUsingTarget() const` — Returns `true` while target mode is active.
 

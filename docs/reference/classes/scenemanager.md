@@ -26,15 +26,15 @@ Two operations change what is on screen:
 | --- | --- | --- |
 | static void | [registerScene](#registerscene) | C++ \| Lua |
 | static bool | [loadScene](#loadscene) | C++ \| Lua |
-| static bool | [isLoadPending](#isloadpending) | C++ \| Lua |
+| static bool | [isLoadPending](#isloadpending) | C++ \| Lua (`loadPending`) |
 | static bool | [addChildScene](#addchildscene-removechildscene) | C++ \| Lua |
 | static bool | [removeChildScene](#addchildscene-removechildscene) | C++ \| Lua |
 | static uint32_t | [getSceneId](#getsceneid-getscenename) | C++ \| Lua |
 | static std::string | [getSceneName](#getsceneid-getscenename) | C++ \| Lua |
 | static std::vector\<std::string\> | [getSceneNames](#getscenenames-getscenecount) | C++ \| Lua |
-| static int | [getSceneCount](#getscenenames-getscenecount) | C++ \| Lua |
-| static uint32_t | [getCurrentSceneId](#getcurrentsceneid-getcurrentscenename) | C++ \| Lua |
-| static std::string | [getCurrentSceneName](#getcurrentsceneid-getcurrentscenename) | C++ \| Lua |
+| static int | [getSceneCount](#getscenenames-getscenecount) | C++ \| Lua (`sceneCount`) |
+| static uint32_t | [getCurrentSceneId](#getcurrentsceneid-getcurrentscenename) | C++ \| Lua (`currentSceneId`) |
+| static std::string | [getCurrentSceneName](#getcurrentsceneid-getcurrentscenename) | C++ \| Lua (`currentSceneName`) |
 | static void | [clearAll](#clearall) | C++ \| Lua |
 | static void | [setScenePtr](#setsceneptr-getsceneptr-removesceneptr) | C++ \| Lua |
 | static Scene* | [getScenePtr](#setsceneptr-getsceneptr-removesceneptr) | C++ \| Lua |
@@ -150,6 +150,8 @@ Look up a scene's numeric ID by name, or its name by ID. Returns `0` / `""` if n
 
 Returns all registered scene names, or the total number of registered scenes.
 
+In Lua the count is the read-only property `SceneManager.sceneCount`, not a call.
+
 ---
 
 ### isLoadPending
@@ -167,6 +169,19 @@ it. Lua reads it as the `SceneManager.loadPending` property.
 * static std::string **getCurrentSceneName**()
 
 Returns the ID or name of the most recently loaded scene.
+
+=== "Lua"
+    ```lua
+    -- read-only properties, not calls
+    local id = SceneManager.currentSceneId
+    local name = SceneManager.currentSceneName
+    ```
+
+=== "C++"
+    ```cpp
+    uint32_t id = SceneManager::getCurrentSceneId();
+    std::string name = SceneManager::getCurrentSceneName();
+    ```
 
 ---
 

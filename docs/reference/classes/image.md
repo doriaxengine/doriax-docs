@@ -72,7 +72,14 @@ All UI elements also expose a rich set of pointer/focus callback events (inherit
 * *Getter*: Vector4 **getColor**() const
 * *Getter*: float **getAlpha**() const
 
-The tint colour multiplied with the texture. `(1,1,1,1)` renders the texture as-is. Changing the colour is a cheap way to create hover/pressed states without separate textures.
+The tint colour multiplied with the texture, in sRGB. `(1,1,1,1)` renders the texture
+as-is. Changing the colour is a cheap way to create hover/pressed states without
+separate textures.
+
+It is stored linear internally, so the value read back is the sRGB form of the stored
+one. Writing [`UIComponent.color`](uicomponent.md#color) instead skips the conversion
+and takes the linear value directly — which is also what a colour authored in a
+`.scene` file is.
 
 ---
 

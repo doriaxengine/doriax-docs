@@ -48,6 +48,21 @@ callbacks below run.
 
 See [Events](../../manual/events.md). Use `onFixedUpdate` for forces.
 
+!!! warning "A filter callback must return a value"
+    `shouldCollide2D` and `shouldCollide3D` are the two events whose return value is
+    read. A Lua handler that falls off the end returns `nil`, which is read as `false`
+    and **rejects the contact**. The `true` default only applies when nothing is
+    subscribed at all, so always end the handler with an explicit `return`.
+
+    ```lua
+    function Trap:shouldCollide(bodyA, bodyB, offset, result)
+        if bodyA.entity == self.ghostEntity then
+            return false
+        end
+        return true          -- without this, nothing collides
+    end
+    ```
+
 ### Inside a 3D callback
 
 3D events fire while Jolt is stepping, on a thread that already holds the body locks:
