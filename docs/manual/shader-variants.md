@@ -42,6 +42,89 @@ editor has actually drawn. Two consequences:
 
 Opening the project in the editor and playing each scene once is what fills the list in.
 
+## Property reference
+
+A property name is a three-letter abbreviation of the feature it switches on, and its
+position in the list below is the bit it occupies in the numeric mask. Both spellings
+are accepted by `--shader` (`mesh:Uv1,Nor` and `mesh:0x42` are the same variant), and
+the numeric form is what a scene file's `shaderKeys` entries hold.
+
+### `mesh`
+
+| Bit | Name | Feature |
+| --- | --- | --- |
+| 0 | `Ult` | Unlit material |
+| 1 | `Uv1` | Primary UV set |
+| 2 | `Uv2` | Secondary UV set |
+| 3 | `Puc` | Punctual lights |
+| 4 | `Shw` | Shadow maps |
+| 6 | `Nor` | Vertex normals |
+| 7 | `Nmp` | Normal map |
+| 8 | `Tan` | Vertex tangents |
+| 9 | `Vc3` | Vertex color, RGB |
+| 10 | `Vc4` | Vertex color, RGBA |
+| 11 | `Txr` | Texture rect |
+| 12 | `Fog` | Fog |
+| 13 | `Ski` | Skinning |
+| 14 | `Mta` | Morph targets |
+| 15 | `Mnr` | Morph normals |
+| 16 | `Mtg` | Morph tangents |
+| 17 | `Ter` | Terrain |
+| 18 | `Ist` | Instancing |
+| 19 | `Ibl` | Image-based lighting |
+| 20 | `Mir` | Mirror |
+| 21 | `Sao` | SSAO |
+| 22 | `L2d` | 2D lights |
+| 23 | `S2d` | 2D shadows |
+| 24 | `Ams` | Alpha mask |
+| 25 | `Aop` | Alpha opaque |
+| 26 | `Ifd` | Instance distance fade |
+| 27 | `Tpb` | Terrain PBR layers |
+
+Bit 5 is reserved: it used to select the PCF shadow filter, which is uniform-driven now
+(Scene shadow quality).
+
+### `depth`
+
+| Bit | Name | Feature |
+| --- | --- | --- |
+| 0 | `Tex` | Texture (alpha-masked shadow casters) |
+| 1 | `Ski` | Skinning |
+| 2 | `Mta` | Morph targets |
+| 3 | `Mnr` | Morph normals |
+| 4 | `Mtg` | Morph tangents |
+| 5 | `Ter` | Terrain |
+| 6 | `Ist` | Instancing |
+| 7 | `Ams` | Alpha mask |
+| 8 | `Ifd` | Instance distance fade |
+
+### `ui`, `points`, `lines`
+
+| Type | Bit 0 | Bit 1 | Bit 2 | Bit 3 |
+| --- | --- | --- | --- | --- |
+| `ui` | `Tex` texture | `Ftx` font texture | `Vc3` | `Vc4` |
+| `points` | `Tex` texture | `Vc3` | `Vc4` | `Txr` texture rect |
+| `lines` | `Vc3` | `Vc4` | - | - |
+
+`sky`, `blit`, `ssao`, `ssaoblur`, `ssr`, `ssrblur`, `composite`, `shadow2d` and
+`postprocess` have no properties; name the type on its own.
+
+### Combinations that are easy to miss
+
+Several properties come from the scene or the frame rather than from the model, so a
+variant list assembled by hand tends to be short by a factor of two or four:
+
+- **`Sao`** is set on every lit mesh in a scene with SSAO enabled, terrain and water
+  included.
+- **`Ibl`** is off until the sky's environment maps finish generating, so the same mesh
+  needs the variant both with and without it - the first frames are drawn before they
+  exist.
+- **`Ifd`** is a separate program from `Ist`, and terrain foliage chunks always set both.
+- **`Vc4`** turns on for any model whose glTF carries `COLOR_0`, which many scanned
+  assets do without it being obvious.
+- **`Uv1`** needs a texture, not just UVs: a generated mesh with texture coordinates but
+  an untextured material does not set it.
+
 ## When a build is missing one
 
 An exported game checks its precompiled set at startup. If a variant it needs is absent,

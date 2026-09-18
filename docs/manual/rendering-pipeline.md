@@ -708,6 +708,30 @@ models that keep child mesh entities will not draw instances until you
 (or build instances on a single-mesh entity / basic shape). In the editor, the Instanced
 Mesh panel warns when a model still uses the child-mesh layout.
 
+### Distance fade
+
+**Distance Fade** shrinks instances to nothing between **Fade Start** and **Fade End**,
+both measured from the camera in the entity's model space. It is a vertex-shader scale,
+not a dither: the engine has no temporal anti-aliasing, so a stipple fade reads as dots
+on thin foliage. Turning it on selects a different shader variant (`Ifd`), while the two
+distances are plain uniforms that can be dragged freely.
+
+Fade is what keeps a field of instances from popping at the edge of its draw distance;
+the terrain's [foliage layers](terrain.md#foliage) set it up for themselves from each
+layer's draw distance.
+
+### Culling granularity
+
+An instanced entity is culled as a whole: its bounds are rebuilt from its instances, so
+one entity holding a whole forest has a bounding box covering the map and is drawn in
+full every frame. Splitting the same instances into one entity per region — the terrain
+foliage uses chunks around the camera — gives the frustum something to reject.
+
+That trades against batch size, because instancing batches per model and per entity. A
+region that offers every model variation ends up with two or three instances per draw
+call. Picking a small subset of the palette per region, deterministically from its
+coordinates, keeps the batches large while the whole map still uses every model.
+
 ## Performance guidelines
 
 | Area | Guideline |
