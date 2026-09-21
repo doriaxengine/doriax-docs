@@ -12,7 +12,7 @@ A registry for named scene stacks that lets you switch between scenes at runtime
 
 The typical workflow is:
 
-1. **Register** all scenes at startup, providing a factory function that creates and wires up the scene objects. In an exported project this is done for you — the editor registers every scene stack.
+1. **Register** all scenes at startup with the factories that build them. In an exported project this is done for you — the editor registers every scene stack.
 2. **Load** a scene by name or ID; the manager calls `Engine::removeAllScenes()` to clear the current main scene and all layers, then invokes the new scene's factory function.
 
 Two operations change what is on screen:
@@ -44,28 +44,44 @@ Two operations change what is on screen:
 
 ### registerScene
 
-* static void **registerScene**(uint32_t id, const std::string& name, std::function<void()> factory)
-* static void **registerScene**(uint32_t id, const std::string& name, std::function<void()> factory, const std::vector<uint32_t>& sceneIds)
+* static void **registerScene**(uint32_t id, const std::string& name, std::function<void()> loadFactory)
+* static void **registerScene**(uint32_t id, const std::string& name, std::function<void()> loadFactory, const std::vector<uint32_t>& sceneIds)
+* static void **registerScene**(uint32_t id, const std::string& name, std::function<void()> loadFactory, std::function<void()> addFactory)
+* static void **registerScene**(uint32_t id, const std::string& name, std::function<void()> loadFactory, std::function<void()> addFactory, const std::vector<uint32_t>& sceneIds)
 
-Registers a named scene stack. The `factory` function is invoked when the scene is loaded — it should call `Engine::setScene()` and optionally `Engine::addSceneLayer()` to build the scene hierarchy.
+Registers a named scene stack with the functions that build it. A stack has two of them because coming up *as the world* and coming up *on top of the world* are different jobs.
 
-The optional `sceneIds` vector lists child scene IDs that should also be loaded as layers alongside this scene.
+**`loadFactory`** runs on [`loadScene`](#loadscene). It owns the transition: it calls `Engine::setScene()` for the stack's main scene, `Engine::addSceneLayer()` for its layers, and it is free to destroy the stack it replaces.
+
+**`addFactory`** runs on [`addChildScene`](#addchildscene-removechildscene). It only **creates** the stack's scenes and registers each one with [`setScenePtr`](#setsceneptr-getsceneptr-removesceneptr). It must not call `Engine::setScene()` and must not destroy anything, because the stack it is being layered onto keeps running. It does not add layers either — `addChildScene` does that, in stack order. It must be safe to call repeatedly, because `addChildScene` calls it every time.
+
+A stack registered without an add factory can still be loaded. It can only be added as a child once something else has created its scenes.
+
+The optional `sceneIds` vector lists the scenes that come up **together** with this one — the stack's *active* scenes. It is what `addChildScene` puts on screen, the stack's own scene first so it sits below the layers it owns.
 
 === "C++"
     ```cpp
-    SceneManager::registerScene(1, "MainMenu", [](){
-        static Scene menuScene;
-        Engine::setScene(&menuScene);
-        // populate scene...
-    });
+    static Scene* menuScene = nullptr;
 
-    SceneManager::registerScene(2, "Level1", [](){
-        static Scene gameScene;
-        static Scene hud;
-        Engine::setScene(&gameScene);
-        Engine::addSceneLayer(&hud);
-    });
+    void load_MainMenu() {
+        if (!menuScene) {
+            menuScene = new Scene();
+            SceneManager::setScenePtr(1, menuScene);
+            // populate scene...
+        }
+        Engine::setScene(menuScene);
+    }
 
+    void add_MainMenu() {
+        if (!menuScene) {
+            menuScene = new Scene();
+            SceneManager::setScenePtr(1, menuScene);
+            // populate scene...
+        }
+        // no setScene, no teardown, no addSceneLayer
+    }
+
+    SceneManager::registerScene(1, "MainMenu", load_MainMenu, add_MainMenu);
     SceneManager::loadScene("MainMenu");
     ```
 
@@ -116,9 +132,17 @@ point) the stack is built immediately.
 
 Add or remove a scene stack as layers on top of the running scenes **without** a full transition — ideal for overlaying a UI scene (pause menu, dialog) on top of a game scene.
 
-`addChildScene` adds the scene's start-active stack at the **top** of the layer list, so the overlay draws above everything below it. The target scene must already be loaded (its `Scene*` must exist) — in the editor model this is satisfied by a child scene marked **Start active → Off**, which is built with its parent but not shown until you add it. Returns `false` if the scene is unknown or not yet loaded.
+`addChildScene` runs the stack's **add factory**, then adds its active scenes at the **top** of the layer list, in order, so the overlay draws above everything below it and the stack's own scene stays below the layers it owns.
 
-`removeChildScene` removes those layers again, keeping the main scene and any other layers intact. Returns `false` if nothing was removed.
+The scene does **not** have to be loaded first. If its scenes do not exist yet the factory creates them on the spot; if they exist already the factory finds nothing to do and the call is cheap. Either way the factory runs on every call, which is what lets it restore a stack whose scripts were torn down earlier.
+
+Unlike [`loadScene`](#loadscene), this takes effect **immediately**, including when called inside a frame, because nothing is destroyed. The scenes it adds update and draw from that same frame on.
+
+Returns `false` if the scene is unknown, if it has no add factory and its scenes were never created, or if the factory did not produce the whole stack.
+
+`removeChildScene` removes those layers again, keeping the main scene and any other layers intact. It does **not** destroy the scenes, so a later `addChildScene` brings the same ones back with their state intact. Returns `false` if nothing was removed.
+
+See [Preloaded or built on demand](../../manual/scenes-and-entities.md#preloaded-or-built-on-demand) for choosing between a scene that is built with its parent and one built the first time it is shown.
 
 === "Lua"
     ```lua

@@ -29,7 +29,7 @@ above the parent's entities, tinted soft teal to set them apart.
 
 | Action | Effect |
 | --- | --- |
-| **Start active** | Toggles whether the child scene is added to the engine automatically when the parent loads. On (the default) means it runs immediately; off means it is built but hidden until you call `SceneManager.addChildScene` at runtime. |
+| **Start active** | Toggles whether the child scene is added to the engine automatically when the parent loads. On (the default) means it runs immediately; off means it is built with the parent but hidden, ready for `SceneManager.addChildScene` to show it with no loading cost. A scene does not have to be a child scene to be added at runtime — being one is what makes it *preloaded*. |
 | **Remove child scene** | Detaches the reference (it does not delete the scene file). |
 
 Each child scene row also shows a small **play** or **pause** mark next to the name:

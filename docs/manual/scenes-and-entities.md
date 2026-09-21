@@ -61,6 +61,11 @@ load scenes by name or numeric ID:
     SceneManager::loadScene("Level1");
     ```
 
+That form registers a stack that can be **loaded**. To also overlay it with
+`addChildScene`, pass a second factory that only creates the scenes — see
+[registerScene](../reference/classes/scenemanager.md#registerscene). Scenes registered by
+the editor always get both.
+
 See [Switching scenes with SceneManager](#switching-scenes-with-scenemanager) for full
 scene transitions and on-demand overlays at runtime.
 
@@ -213,6 +218,12 @@ A child scene that starts inactive is *ready but hidden*. Because it is already 
 showing it later with [`SceneManager.addChildScene`](#switching-scenes-with-scenemanager)
 is instant — there is no loading cost at the moment it appears.
 
+**Start active** is not what makes a scene addable at runtime; any registered scene can be
+overlaid, and one that is not a child scene is simply built the first time you add it.
+What the flag controls is whether the scene comes up *with its parent*, and inactive
+children are the ones already paid for. See
+[Preloaded or built on demand](#preloaded-or-built-on-demand).
+
 ### Scene order
 
 The order of the layers follows the order the child scenes are listed under their parent
@@ -271,8 +282,9 @@ screens.
 
 `SceneManager.addChildScene` and `removeChildScene` add or remove a scene **on top** of
 what is already running, with no transition. This is how you show a pause menu, dialog, or
-HUD toggle over live gameplay. They operate on scenes that are part of the loaded stack —
-typically a child scene you marked **Start active → Off** so it is prepared but hidden.
+HUD toggle over live gameplay. Any registered scene can be overlaid — it does not have to
+belong to the loaded stack. If its scenes have not been built yet, `addChildScene` builds
+them before showing them.
 
 === "Lua"
 
@@ -311,7 +323,31 @@ typically a child scene you marked **Start active → Off** so it is prepared bu
 
 Because `addChildScene` puts the scene at the top of the layer list, the overlay always
 draws above the gameplay below it. `removeChildScene` takes it back out and leaves the
-main scene and other layers untouched.
+main scene and other layers untouched — it does not destroy the scene, so adding it again
+brings it back exactly as you left it, scroll position and all.
+
+### Preloaded or built on demand
+
+Because `addChildScene` can build a stack itself, you choose when a scene pays for its
+own setup:
+
+| How the scene is set up | Built | First time it is shown |
+| --- | --- | --- |
+| Child scene, **Start active → On** | With its parent | Already on screen |
+| Child scene, **Start active → Off** | With its parent | Instant — it is ready and waiting |
+| Not a child scene at all | On the first `addChildScene` | Pauses to create entities and start scripts |
+
+Keep something you toggle often — a pause menu, a HUD panel — as an inactive child, so
+showing it costs nothing. Leave a heavy screen you may never open — a full inventory, a
+map, an end-of-game summary — out of the child list, so a session that never opens it
+never pays for it.
+
+!!! warning "Cross-scene references need the scene to exist"
+    If a script in one scene references entities in another (see
+    [SceneManager.setScenePtr](../reference/classes/scenemanager.md#setsceneptr-getsceneptr-removesceneptr)),
+    the referenced scene must be built when that script initializes. Keep it a child
+    scene — active or inactive — so it comes up with its parent. A scene built on demand
+    does not exist yet when the parent's scripts start.
 
 ### Knowing where you are
 
