@@ -1,5 +1,5 @@
 ---
-description: Cameras, render systems, PBR materials, lighting, shadows, shaders, framebuffers, and backend support in Doriax.
+description: Cameras, render systems, PBR materials, lighting, shadows, mesh LOD, depth prepass, instancing, shaders, framebuffers, and backend support in Doriax.
 ---
 
 # Rendering Pipeline
@@ -18,22 +18,27 @@ Each frame, the engine runs the following phases in order:
    and tilemaps cull below entity level: only the terrain nodes and tilemap chunks that
    the camera can see are submitted. [Terrain foliage](terrain.md#foliage) is batched into
    chunks around the camera and culled the same way, with instances scaling in over the
-   last quarter of the layer's draw distance instead of popping.
-3. **Opaque pass** — Opaque geometry is sorted front-to-back and drawn with depth
-   testing enabled for early-Z efficiency.
-4. **Lighting and shadows** — Shadow maps are rendered for each shadow-casting light,
+   last quarter of the layer's draw distance instead of popping. Instanced meshes keep a
+   [per-view instance list](#culling-granularity) for the main camera and each shadow
+   atlas slot, so instances outside a view are not submitted to it.
+3. **Depth prepass** *(optional)* — When [depth prepass](#depth-prepass) is enabled, opaque
+   meshes write depth only so the colour pass can shade each pixel once. Off by default.
+4. **Opaque pass** — Opaque geometry is sorted front-to-back and drawn with depth
+   testing enabled for early-Z efficiency. Each mesh picks a
+   [detail level](#mesh-detail-lod) from its projected geometric error.
+5. **Lighting and shadows** — Shadow maps are rendered for each shadow-casting light,
    then the lighting pass applies directional, point, and spot lights.
-5. **Skybox and IBL** — The sky cubemap is drawn (when visible). Environment maps derived
+6. **Skybox and IBL** — The sky cubemap is drawn (when visible). Environment maps derived
    from the sky feed **image-based lighting (IBL)** on meshes that opt in.
-6. **Transparent pass** — Objects with blending enabled are sorted back-to-front and
+7. **Transparent pass** — Objects with blending enabled are sorted back-to-front and
    drawn after opaque geometry. Blended submeshes still depth-test, but they do **not**
    write depth in the colour pass, so overlapping translucent surfaces composite instead
    of punching holes in each other. A mesh marked transparent (including by
    `autoTransparency`) is skipped by the SSAO depth pre-pass and the SSR G-buffer;
    shadow maps still render it.
-7. **UI pass** — UI entities are rendered in screen-space canvas coordinates, on top of
+8. **UI pass** — UI entities are rendered in screen-space canvas coordinates, on top of
    the 3D or 2D scene.
-8. **Post-processing** — Screen-space effects run over the finished image: SSR composites
+9. **Post-processing** — Screen-space effects run over the finished image: SSR composites
    its reflections, then the scene's [post-process chain](#post-processing) applies each
    enabled user pass in order. ([Fog](#fog) is not a post pass — it is computed in the
    mesh shader.)
@@ -154,7 +159,9 @@ scene.setShadowQuality(ShadowQuality::MEDIUM);
 
 Directional and spot shadows sample a depth atlas through a hardware comparison
 sampler, so every tap is already filtered across a 2x2 neighbourhood: `NONE` still
-softens edges slightly rather than producing hard ones. Point lights keep a packed
+softens edges slightly rather than producing hard ones. The PCF kernel then pairs those
+bilinear taps along each axis, so a 3×3 / 5×5 / 7×7 filter costs about a quarter of the
+naïve tap count while matching the same weighted result. Point lights keep a packed
 colour depth map and stay hard-edged at `NONE`.
 
 ## 2D lighting and shadows
@@ -716,9 +723,15 @@ not a dither: the engine has no temporal anti-aliasing, so a stipple fade reads 
 on thin foliage. Turning it on selects a different shader variant (`Ifd`), while the two
 distances are plain uniforms that can be dragged freely.
 
+On the built-in triangle mesh shaders — no custom colour or depth fork, no scene default
+mesh shader, and [SSR](#screen-space-reflections-ssr) off — instances past **Fade End**
+are also dropped from the draw list, so they cost neither vertices nor a fragment. Custom
+shaders and the SSR G-buffer still draw every instance and rely on the vertex scale alone.
+
 Fade is what keeps a field of instances from popping at the edge of its draw distance;
 the terrain's [foliage layers](terrain.md#foliage) set it up for themselves from each
-layer's draw distance.
+layer's draw distance. From script, `Mesh::setDistanceFade` / `setFadeRange` expose the
+same controls as the Instanced Mesh panel.
 
 ### Culling granularity
 
@@ -732,13 +745,97 @@ region that offers every model variation ends up with two or three instances per
 call. Picking a small subset of the palette per region, deterministically from its
 coordinates, keeps the batches large while the whole map still uses every model.
 
+**Cull Instances** (default on) then filters *inside* the entity. The main camera and each
+shadow atlas slot keep their own instance list: only instances that intersect that view's
+frustum are uploaded, nearest first and grouped by [detail level](#mesh-detail-lod).
+Mirrors and other render-to-texture cameras still draw the full batch. Turn culling off
+when a shader moves instances away from the bounds the CPU computed — those instances
+would otherwise vanish as soon as their authored positions leave the frustum. With it off
+the entity is not frustum-culled as a whole either, so the batch always reaches the GPU.
+
+## Mesh detail (LOD)
+
+Meshes can drop geometric detail as they recede, so a distant prop costs fewer triangles
+than the same mesh at the camera. The engine builds extra index ranges with
+[meshoptimizer](https://github.com/zeux/meshoptimizer) the first time a mesh loads —
+asynchronously on the thread pool, keyed by a hash of the geometry so identical meshes
+share the result. Level 0 is the source; up to three simplified levels keep roughly 50%,
+25%, and 12.5% of the source triangles, stopping early when a mesh cannot shrink further.
+`MAX_MESH_LODS` (default 4) is the compile-time cap.
+
+A detail level is chosen from **projected geometric error**: the simplification's
+deviation from the source, in mesh units, is compared with how many world units one
+screen pixel spans at that distance. The scene's **Threshold** is how many pixels of
+error a simplified mesh may show (default `1`). Shadow maps use a fixed two-texel budget
+instead, so casters stay sharp enough for the PCF filter.
+
+| Control | Default | Effect |
+| --- | --- | --- |
+| `Scene::setMeshLodEnabled` | `true` | Master switch for the scene |
+| `Scene::setMeshLodThreshold` | `1.0` | Allowed screen-space error in pixels; lower keeps more detail |
+| `Mesh::setLodEnabled` | `true` | Per-mesh opt-out; toggling it reloads the mesh |
+| `Mesh::setLodBias` | `1.0` | Above 1 keeps detail longer; below 1 drops it sooner |
+
+Terrain and tilemaps keep their own LOD and are not simplified this way. Detail levels
+apply to the main camera and to shadow maps; mirrors and other render-to-texture cameras
+draw the source mesh. Instanced meshes pick a level *per instance* in those same views.
+
+In the editor the scene controls live under **Scene → Mesh Detail (LOD)** when nothing
+is selected, and each mesh has **Detail Levels** / **Detail Bias** on the Mesh component.
+
+```cpp
+scene.setMeshLodEnabled(true);
+scene.setMeshLodThreshold(1.0f);
+
+mesh.setLodEnabled(true);
+mesh.setLodBias(1.5f);   // keep this hero prop sharper than the default
+```
+
+```lua
+scene.meshLodEnabled = true
+scene.meshLodThreshold = 1.0
+
+mesh.lodEnabled = true
+mesh.lodBias = 1.5
+```
+
+## Depth prepass
+
+An optional **depth-only pass** runs on the main camera before the opaque colour draws,
+writing the same depth the colour pass will test. Later fragments fail the depth test
+instead of running the lit mesh shader, so each pixel is shaded once. That pays off when
+many opaque surfaces overlap in screen space — dense foliage, layered interiors — and
+costs an extra geometry pass when they do not.
+
+The setting is off by default. Toggling it reloads meshes, because the prepass pipelines
+are built with each mesh. It runs only for the main camera and only while that camera
+has depth testing on; 2D and UI cameras skip it. A mesh whose colour shader is forked
+without a matching [depth fork](../editor/custom-shaders.md#the-depth-shader-row) is left
+out of the prepass, so its vertices stay consistent with the colour pass.
+
+This is separate from the small depth target SSAO (and some post-process passes) already
+build when they need a depth texture. Enabling the scene prepass does not replace those.
+
+In the editor the toggle is **Scene → Depth Prepass**. From script:
+
+```cpp
+scene.setDepthPrepassEnabled(true);
+```
+
+```lua
+scene.depthPrepassEnabled = true
+```
+
 ## Performance guidelines
 
 | Area | Guideline |
 | --- | --- |
 | Draw calls | Reduce with instancing, atlases, and shared `.material` files |
+| Mesh LOD | Leave scene Mesh Detail on; raise **Threshold** or lower a mesh's **Detail Bias** to drop triangles sooner |
+| Instance culling | Keep **Cull Instances** on unless a shader moves instances off their bounds; split huge batches into regional entities |
+| Depth prepass | Enable for heavy opaque overdraw (forests, interiors); leave off when most pixels are shaded once already |
 | IBL cost | Environment maps are rebuilt when the sky texture changes; disable **Receive IBL** on distant or unimportant meshes |
-| Shadow casters | Limit shadow-casting lights; cascade only when needed |
+| Shadow casters | Limit shadow-casting lights; cascade only when needed; turn off **Cast Shadows** on grass-scale [terrain foliage](terrain.md#foliage) |
 | Transparent objects | Keep transparent draw counts low; sort correctly |
 | Tilemaps | Chunk culling is automatic, so map size costs little; a tilemap is capped at 16 383 tiles |
 | Mobile shaders | Simplify PBR (skip normal maps, lower cascade count) |
@@ -746,6 +843,11 @@ coordinates, keeps the batches large while the whole map still uses every model.
 | Mirrors | Each mirror re-renders the scene once per frame; keep one hero reflection and lower its target resolution if needed |
 | SSR | Adds a G-buffer geometry pass plus fullscreen march/blur/composite passes; lower **Max Steps** for cost, and it shares its geometry pass with SSAO when both are on |
 | Textures | Use compressed formats (ETC2/BC) on mobile/desktop respectively |
+
+The editor footer reports FPS, frame time, draw calls, and triangles for the last drawn
+frame. `Engine::getFrameStats()` returns the same counters from C++. For a repeatable
+capture with VSync forced off, use the
+[`benchmark`](../editor/command-line.md#benchmark-measure-scene-fps) command.
 
 ## See also
 

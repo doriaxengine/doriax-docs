@@ -1,16 +1,17 @@
 ---
-description: Run Doriax exports and shader generation from the command line for automation and CI/CD.
+description: Run Doriax exports, shader generation, and scene benchmarks from the command line.
 ---
 
 # Command-Line Tools
 
-The `doriax-editor` executable doubles as a **headless command-line tool**. When the
-first argument is a known subcommand, the editor runs that command and exits without ever
-opening a window — ideal for build servers, scripted releases, and CI/CD pipelines.
+The `doriax-editor` executable doubles as a **command-line tool**. `export` and `shaders`
+are headless: they run and exit without opening a window, which is what build servers
+and CI want. `benchmark` opens a window, times a scene, prints JSON, and exits.
 
 ```bash
-doriax-editor export   --project <path> --out <dir> [options]
-doriax-editor shaders  --out <dir> --shader <spec> [options]
+doriax-editor export    --project <path> --out <dir> [options]
+doriax-editor shaders   --out <dir> --shader <spec> [options]
+doriax-editor benchmark --project <path> [--scene <scene>] [options]
 ```
 
 Running `doriax-editor` with **no arguments** launches the normal graphical editor.
@@ -26,8 +27,8 @@ opening a window.
     same program linked as a console application: use it for scripting and CI. Both
     accept the same subcommands, and both open the editor when given no arguments.
 
-On Linux and macOS there is a single binary, and the subcommands run before the window
-backend starts, so they work on headless machines.
+On Linux and macOS there is a single binary. `export` and `shaders` run before the window
+backend starts, so they work on headless machines. `benchmark` still opens a window.
 
 !!! note "macOS: the binary is inside the app bundle"
     The editor ships as `Doriax.app`, so the command-line entry point is
@@ -105,6 +106,71 @@ doriax-editor export --project ./MyGame --list-scenes
 # 1   MainMenu   scenes/main_menu.scene
 # 2   Level01    scenes/level_01.scene
 ```
+
+## `benchmark` — measure scene FPS
+
+Opens the editor, loads a project, and times the **scene camera** with VSync forced off.
+Unlike [`export`](#export-build-a-project-to-a-target) and [`shaders`](#shaders-generate-shader-files-standalone),
+this is **not headless**: it needs a window and a GPU, waits until meshes, foliage,
+detail levels, and shaders have finished loading (90 seconds, then it measures anyway), warms up, then
+records FPS and draw counters. The JSON result is printed to stdout; `--out` writes the
+same text to a file. The process then exits.
+
+Use it to compare scene settings — mesh LOD, depth prepass, foliage shadows — on the
+same machine without clicking through Play.
+
+```bash
+doriax-editor benchmark --project ./MyGame --scene Level01 --out ./bench.json
+```
+
+On Windows call `doriax-editor-cmd` so the shell waits for the exit code. On macOS the
+entry point is `Doriax.app/Contents/MacOS/Doriax`, same as the other subcommands.
+
+### Options
+
+| Option | Description |
+| --- | --- |
+| `-p`, `--project <path>` | **Required.** Project directory or a `project.yaml` file. |
+| `-s`, `--scene <scene>` | Scene name, scene file name, or path. Defaults to the project's start scene. |
+| `--frames <n>` | Measured frames after warmup. Default `180`. |
+| `--warmup <n>` | Warmup frames after resources finish loading. Default `90`. |
+| `--mesh-lod <on\|off>` | Override the scene's [mesh LOD](../manual/rendering-pipeline.md#mesh-detail-lod) setting for this run. |
+| `--depth-prepass <on\|off>` | Override the scene's [depth prepass](../manual/rendering-pipeline.md#depth-prepass) setting for this run. |
+| `--name <label>` | Label written into the JSON `name` field. Defaults to the scene name. |
+| `--out <path>` | Write the JSON to this file as well as stdout. |
+| `-h`, `--help` | Show usage for this subcommand. |
+
+The capture uses the scene's game camera, hides the editor grid, origin, gizmos, and
+selection outline, and does not enter play mode — scripts that start in `onStart` are
+not run. The viewport is the scene view inside the editor's default window; the JSON
+reports its size.
+
+### Result JSON
+
+```json
+{
+  "name": "Level01",
+  "scene": "Level01",
+  "meshLod": true,
+  "depthPrepass": false,
+  "viewport": [1280, 720],
+  "frames": 180,
+  "warmupFrames": 90,
+  "elapsedSeconds": 3.12,
+  "wallFps": 57.69,
+  "avgFps": 58.20,
+  "minFps": 54.10,
+  "maxFps": 60.00,
+  "avgMs": 17.33,
+  "avgDrawCalls": 142.0,
+  "avgInstances": 8100.0,
+  "avgTriangles": 1850000.0
+}
+```
+
+`wallFps` is measured frames divided by wall time; `avgFps` averages
+`Engine::getFramerate()` per frame. Draw, instance, and triangle averages come from
+[`Engine::getFrameStats()`](../reference/classes/engine.md#framestats).
 
 ## `shaders` — generate shader files standalone
 
@@ -212,4 +278,5 @@ The exported directory still needs its native toolchain to produce final binarie
 ## See also
 
 - [Export Window](export.md) — the graphical equivalent and full export pipeline.
+- [Rendering Pipeline](../manual/rendering-pipeline.md#performance-guidelines) — mesh LOD, instance culling, and the depth prepass.
 - [Build Options](../reference/build-options.md) — CMake flags for the generated project.

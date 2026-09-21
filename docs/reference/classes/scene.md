@@ -6,7 +6,7 @@ description: Scene API reference — camera, background, lighting, UI events, an
 
 ## Description
 
-A `Scene` is the root container for all objects, systems, and resources in a project. It manages the active camera, background color, global illumination, shadow settings, and the update/draw lifecycle. You typically create one or more scenes at startup and set the active one with `Engine::setScene`.
+A `Scene` is the root container for all objects, systems, and resources in a project. It manages the active camera, background color, global illumination, shadow settings, mesh detail levels, the optional depth prepass, and the update/draw lifecycle. You typically create one or more scenes at startup and set the active one with `Engine::setScene`.
 
 **Inherits:** [EntityRegistry](entityregistry.md)
 
@@ -37,6 +37,9 @@ A `Scene` is the root container for all objects, systems, and resources in a pro
 | --- | --- | --- | --- |
 | Vector4 | [backgroundColor](#backgroundcolor) | `(0,0,0,1)` | C++ \| Lua |
 | [ShadowQuality](#shadowquality) | [shadowQuality](#shadowquality_1) | `LOW` | C++ \| Lua |
+| bool | [meshLodEnabled](#meshlodenabled-meshlodthreshold) | `true` | C++ \| Lua |
+| float | [meshLodThreshold](#meshlodenabled-meshlodthreshold) | `1.0` | C++ \| Lua |
+| bool | [depthPrepassEnabled](#depthprepassenabled) | `false` | C++ \| Lua |
 | [LightState](#lightstate) | [lightState](#lightstate_1) | `AUTO` | C++ \| Lua |
 | float | [globalIlluminationIntensity](#globalilluminationintensity) | `1.0` | C++ \| Lua |
 | Vector3 | [globalIlluminationColor](#globalilluminationcolor) | `(1,1,1)` | C++ \| Lua |
@@ -84,6 +87,12 @@ A `Scene` is the root container for all objects, systems, and resources in a pro
 | Vector4 | [getBackgroundColor](#setbackgroundcolor) | C++ \| Lua |
 | void | [setShadowQuality](#shadowquality_1) | C++ |
 | ShadowQuality | [getShadowQuality](#shadowquality_1) | C++ |
+| void | [setMeshLodEnabled](#meshlodenabled-meshlodthreshold) | C++ \| Lua |
+| bool | [isMeshLodEnabled](#meshlodenabled-meshlodthreshold) | C++ \| Lua |
+| void | [setMeshLodThreshold](#meshlodenabled-meshlodthreshold) | C++ \| Lua |
+| float | [getMeshLodThreshold](#meshlodenabled-meshlodthreshold) | C++ \| Lua |
+| void | [setDepthPrepassEnabled](#depthprepassenabled) | C++ \| Lua |
+| bool | [isDepthPrepassEnabled](#depthprepassenabled) | C++ \| Lua |
 | void | [setLightState](#setlightstate) | C++ \| Lua |
 | LightState | [getLightState](#setlightstate) | C++ \| Lua |
 | void | [setGlobalIllumination](#setglobalillumination) | C++ \| Lua |
@@ -207,6 +216,54 @@ scene.shadowQuality = ShadowQuality.MEDIUM
 ```
 
 There is no separate `shadow3DQuality` Lua property; `shadowQuality` is the 3D shadow quality setting.
+
+---
+
+### meshLodEnabled / meshLodThreshold
+
+* *meshLodEnabled Setter:* `void setMeshLodEnabled(bool enabled)`
+* *meshLodEnabled Getter:* `bool isMeshLodEnabled() const`
+* *meshLodThreshold Setter:* `void setMeshLodThreshold(float pixels)`
+* *meshLodThreshold Getter:* `float getMeshLodThreshold() const`
+
+Scene-wide [mesh detail levels](../../manual/rendering-pipeline.md#mesh-detail-lod). `meshLodEnabled` (default `true`) lets meshes draw a simplified index range once their geometric error projects below `meshLodThreshold` screen pixels (default `1`). The threshold is clamped to `≥ 0`. Changing either takes effect immediately; individual meshes still need [lodEnabled](mesh.md#lodenabled-lodbias).
+
+In the editor these are **Scene → Mesh Detail (LOD)** when nothing is selected.
+
+=== "C++"
+
+    ```cpp
+    scene.setMeshLodEnabled(true);
+    scene.setMeshLodThreshold(2.0f);
+    ```
+
+=== "Lua"
+
+    ```lua
+    scene.meshLodEnabled = true
+    scene.meshLodThreshold = 2.0
+    ```
+
+---
+
+### depthPrepassEnabled
+
+* *Setter:* `void setDepthPrepassEnabled(bool enabled)`
+* *Getter:* `bool isDepthPrepassEnabled() const`
+
+Writes a [depth-only pass](../../manual/rendering-pipeline.md#depth-prepass) for the main camera before the opaque colour draws, so overlapping pixels fail the depth test instead of running the lit shader. Off by default. Toggling it reloads meshes (the prepass pipelines are built with each mesh).
+
+=== "C++"
+
+    ```cpp
+    scene.setDepthPrepassEnabled(true);
+    ```
+
+=== "Lua"
+
+    ```lua
+    scene.depthPrepassEnabled = true
+    ```
 
 ---
 

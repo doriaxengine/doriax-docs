@@ -25,6 +25,7 @@ The editor window is divided into a set of resizable panels:
 | **Animation Timeline** | Keyframe editor for object animation, sprite frames, and bones |
 | **Code Editor** | Integrated Lua and C++ editor with API completion |
 | **Output panel** | Build logs, play-mode diagnostics, and export messages, persisted to [`editor.log`](../about/faq.md#where-can-i-find-the-editor-crash-log) for crash reports |
+| **Footer** | Play / Pause / Stop on the left; FPS, frame time, draw calls, and triangles on the right |
 
 ## Menu bar
 
@@ -83,7 +84,10 @@ current scene state before entering play mode and restores it when you stop, so 
 mutations do not permanently corrupt your authored data.
 
 Use play mode for quick iteration. For platform-specific validation (mobile input,
-web memory limits, native graphics), test with a proper exported build.
+web memory limits, native graphics), test with a proper exported build. The footer
+shows FPS, frame time, draw calls, and triangles while the viewport is drawing; the
+[`benchmark`](command-line.md#benchmark-measure-scene-fps) command records the same
+counters with VSync forced off.
 
 ## Undo and redo
 

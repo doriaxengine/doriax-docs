@@ -19,7 +19,7 @@ it. The Properties window updates immediately to show its components.
 The field at the top holds the entity name: edit it to rename the entity, or press
 **F2** anywhere in the scene windows to jump straight into it with the name selected.
 With several entities selected the field is read-only; with none selected, the window
-shows the scene instead and the same field renames it.
+shows the [scene settings](#scene-settings) instead and the same field renames it.
 
 ## Adding components
 
@@ -153,6 +153,13 @@ stores its meshes as child entities (the default multi-node or animated GLTF lay
 editor shows a warning and writes to the Output panel: instances will not render until you
 [merge the static model](structure.md#merge-static-model).
 
+| Property | Purpose |
+| --- | --- |
+| **Max Instances** | GPU instance-buffer capacity |
+| **Billboard** / **Cylindrical Billboard** | Turn every instance to face the camera |
+| **Cull Instances** | Skip instances outside the camera and shadow views. Turn off for shaders that move instances away from their bounds |
+| **Distance Fade** | Shrink instances between **Fade Start** and **Fade End** (model-space distance) instead of popping. Fade End must be greater than Fade Start |
+
 A clone mark next to the entity in Structure indicates the instance count. See
 [Rendering Pipeline — GPU instancing](../manual/rendering-pipeline.md#gpu-instancing).
 
@@ -165,6 +172,8 @@ The **Mesh** component exposes rendering flags beyond per-submesh material slots
 | **Receive IBL** | When enabled, the mesh is lit with image-based lighting (diffuse irradiance + specular reflections) in addition to punctual lights — from the scene's Sky environment, from a [Reflection Probe](../reference/classes/reflectionprobe.md) covering it, or both. Sky lighting requires a Sky entity with a cubemap texture. |
 | **Receive Lights** | Master switch for dynamic lighting (must be on for IBL to apply). |
 | **Cast / Receive Shadows** | Shadow map participation. |
+| **Detail Levels** | Draw [simplified meshes](../manual/rendering-pipeline.md#mesh-detail-lod) when the extra triangles would not show (scene Mesh Detail must also be on). |
+| **Detail Bias** | Scales how far detail is kept: above 1 keeps it longer, below 1 drops it sooner. |
 | **Render in Probes** | Whether the mesh appears in [Reflection Probe](../reference/classes/reflectionprobe.md) captures. Turn it off so an object wrapped around a probe is not seen in its own reflection. |
 
 Each **Submesh** section contains a **Material** row with a shaded preview sphere. The
@@ -297,6 +306,20 @@ Selecting the probe draws its influence box in the viewport — cyan for static,
 dynamic — with a gold marker at the capture origin when **Box Offset** moves the box away
 from it. The **Refresh Probe** button forces a re-capture (or re-bake of the authored
 cubemap) regardless of mode.
+
+## Scene settings
+
+With no entity selected, Properties edits the scene. Lighting, shadows, SSAO, SSR,
+fixed resolution, default shaders, and post-processing live here — see
+[Rendering Pipeline](../manual/rendering-pipeline.md) for those. Two scene-wide
+performance switches sit with the lighting block:
+
+| Section | Purpose |
+| --- | --- |
+| **Mesh Detail (LOD)** | Draw [simplified meshes](../manual/rendering-pipeline.md#mesh-detail-lod) when their geometric error no longer shows. **Enabled** is on by default; **Threshold** is the allowed screen-space error in pixels (lower keeps more detail). |
+| **Depth Prepass** | Write [depth before the opaque colour pass](../manual/rendering-pipeline.md#depth-prepass) so each pixel is shaded once. Off by default; pays off with heavy overdraw. |
+
+Each mesh can still opt out with **Detail Levels** on the Mesh component.
 
 ## Scripts
 

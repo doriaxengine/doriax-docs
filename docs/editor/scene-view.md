@@ -221,3 +221,8 @@ Play mode follows **Project → Project Settings → VSync**. With VSync disable
 editor render loop is uncapped while a scene is running; after you stop, frames follow
 **Editor Settings → Editor VSync** instead. See [Project Workflow — VSync](project-workflow.md#vsync)
 and [Editor VSync](project-workflow.md#editor-vsync).
+
+The editor footer on the right shows FPS, frame time, draw calls, and triangles for the
+last drawn frame — the same counters `Engine::getFrameStats()` returns. For a scripted
+capture with VSync forced off, use
+[`doriax-editor benchmark`](command-line.md#benchmark-measure-scene-fps).

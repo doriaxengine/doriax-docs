@@ -6,7 +6,7 @@ description: Mesh API reference — geometry, materials, shadows, transparency, 
 
 ## Description
 
-`Mesh` is the base class for all renderable 3D objects. It exposes the material system (color, texture, PBR material), shadow casting and receiving, transparency control, face culling, and GPU instancing for drawing thousands of objects in a single draw call.
+`Mesh` is the base class for all renderable 3D objects. It exposes the material system (color, texture, PBR material), shadow casting and receiving, transparency control, face culling, automatic detail levels, and GPU instancing (including distance fade and per-view instance culling) for drawing thousands of objects in a single draw call.
 
 **Inherits:** [Object](object.md) → [EntityHandle](entityhandle.md)
 
@@ -57,6 +57,8 @@ See [EntityHandle ownership](entityhandle.md#ownership-and-lifetime).
 | bool | [receiveIBL](#receiveibl) | `false` | C++ \| Lua |
 | bool | [castShadows](#castshadows-receiveshadows) | `true` | C++ \| Lua |
 | bool | [receiveShadows](#castshadows-receiveshadows) | `true` | C++ \| Lua |
+| bool | [lodEnabled](#lodenabled-lodbias) | `true` | C++ \| Lua |
+| float | [lodBias](#lodenabled-lodbias) | `1.0` | C++ \| Lua |
 | bool | shadowsBillboard | `true` | C++ \| Lua |
 | bool | [renderInReflectionProbes](#renderinreflectionprobes) | `true` | C++ \| Lua |
 | bool | castShadowsWithTexture | `false` | C++ \| Lua |
@@ -67,6 +69,10 @@ See [EntityHandle ownership](entityhandle.md#ownership-and-lifetime).
 | unsigned int | [maxInstances](#maxinstances) | `100` | C++ \| Lua |
 | bool | [instancedBillboard](#instancedbillboard-instancedcylindricalbillboard) | `false` | C++ \| Lua |
 | bool | [instancedCylindricalBillboard](#instancedbillboard-instancedcylindricalbillboard) | `false` | C++ \| Lua |
+| bool | [distanceFade](#distancefade-fadestart-fadeend) | `false` | C++ \| Lua |
+| float | [fadeStart](#distancefade-fadestart-fadeend) | `0` | C++ \| Lua |
+| float | [fadeEnd](#distancefade-fadestart-fadeend) | `0` | C++ \| Lua |
+| bool | [cullInstances](#cullinstances) | `true` | C++ \| Lua |
 
 ### Methods
 
@@ -98,6 +104,10 @@ See [EntityHandle ownership](entityhandle.md#ownership-and-lifetime).
 | bool | [isCastShadows](#castshadows-receiveshadows) | C++ \| Lua |
 | void | [setReceiveShadows](#castshadows-receiveshadows) | C++ \| Lua |
 | bool | [isReceiveShadows](#castshadows-receiveshadows) | C++ \| Lua |
+| void | [setLodEnabled](#lodenabled-lodbias) | C++ \| Lua |
+| bool | [isLodEnabled](#lodenabled-lodbias) | C++ \| Lua |
+| void | [setLodBias](#lodenabled-lodbias) | C++ \| Lua |
+| float | [getLodBias](#lodenabled-lodbias) | C++ \| Lua |
 | void | setShadowsBillboard | C++ \| Lua |
 | bool | isShadowsBillboard | C++ \| Lua |
 | void | setCastShadowsWithTexture | C++ \| Lua |
@@ -134,6 +144,15 @@ See [EntityHandle ownership](entityhandle.md#ownership-and-lifetime).
 | bool | [isInstancedCylindricalBillboard](#createinstancedmesh) | C++ \| Lua |
 | void | [setMaxInstances](#createinstancedmesh) | C++ \| Lua |
 | unsigned int | [getMaxInstances](#createinstancedmesh) | C++ \| Lua |
+| void | [setDistanceFade](#distancefade-fadestart-fadeend) | C++ \| Lua |
+| bool | [isDistanceFade](#distancefade-fadestart-fadeend) | C++ \| Lua |
+| void | [setFadeRange](#distancefade-fadestart-fadeend) | C++ \| Lua |
+| void | [setFadeStart](#distancefade-fadestart-fadeend) | C++ \| Lua |
+| float | [getFadeStart](#distancefade-fadestart-fadeend) | C++ \| Lua |
+| void | [setFadeEnd](#distancefade-fadestart-fadeend) | C++ \| Lua |
+| float | [getFadeEnd](#distancefade-fadestart-fadeend) | C++ \| Lua |
+| void | [setCullInstances](#cullinstances) | C++ \| Lua |
+| bool | [isCullInstances](#cullinstances) | C++ \| Lua |
 
 ## Enumerations
 
@@ -218,6 +237,33 @@ Shadow participation flags. Enabling both adds depth-map cost; disable on distan
 
 ---
 
+### lodEnabled / lodBias
+
+* *lodEnabled Setter:* `void setLodEnabled(bool lodEnabled)`
+* *lodEnabled Getter:* `bool isLodEnabled() const`
+* *lodBias Setter:* `void setLodBias(float lodBias)`
+* *lodBias Getter:* `float getLodBias() const`
+
+[Mesh detail levels](../../manual/rendering-pipeline.md#mesh-detail-lod). `lodEnabled` (default `true`) lets this mesh pick a simplified index range when it is far enough that the extra triangles would not show. Toggling it reloads the mesh. `lodBias` (default `1`) scales how far detail is kept: above 1 keeps the source longer, below 1 drops to a coarser level sooner.
+
+The scene must also have [meshLodEnabled](scene.md#meshlodenabled-meshlodthreshold) on. Terrain and tilemaps ignore these flags and keep their own LOD.
+
+=== "C++"
+
+    ```cpp
+    mesh.setLodEnabled(true);
+    mesh.setLodBias(1.5f);
+    ```
+
+=== "Lua"
+
+    ```lua
+    mesh.lodEnabled = true
+    mesh.lodBias = 1.5
+    ```
+
+---
+
 ### renderInReflectionProbes
 
 * *Setter:* `void setRenderInReflectionProbes(bool renderInReflectionProbes)`
@@ -293,7 +339,7 @@ Like colour and material, this is per Mesh component: a multi-node glTF [Model](
 * *Setter:* `void setCustomDepthShader(const std::string& path)`
 * *Getter:* `std::string getCustomDepthShader() const`
 
-Project-relative base path of a forked **depth** shader — the one the mesh is drawn with into shadow maps and into the depth pre-pass that feeds SSAO and post-process depth while SSR is off. Same path forms as [customShader](#customshader); empty (default) uses the engine built-in, and there is no scene default. Fork it when the colour fork displaces vertices or discards fragments, so the shadow follows; it reads the same [shader uniforms](#setshaderuniform). Changing it reloads the mesh. See [Custom Shaders — The Depth Shader row](../../editor/custom-shaders.md#the-depth-shader-row).
+Project-relative base path of a forked **depth** shader — the one the mesh is drawn with into shadow maps, into the optional scene [depth prepass](../../manual/rendering-pipeline.md#depth-prepass), and into the depth pre-pass that feeds SSAO and post-process depth while SSR is off. Same path forms as [customShader](#customshader); empty (default) uses the engine built-in, and there is no scene default. Fork it when the colour fork displaces vertices or discards fragments, so the shadow follows; it reads the same [shader uniforms](#setshaderuniform). Changing it reloads the mesh. See [Custom Shaders — The Depth Shader row](../../editor/custom-shaders.md#the-depth-shader-row).
 
 === "C++"
 
@@ -341,6 +387,45 @@ Turns every instance to face the camera, the per-instance counterpart of [Object
     grass.instancedBillboard = true
     grass.instancedCylindricalBillboard = true
     ```
+
+---
+
+### distanceFade / fadeStart / fadeEnd
+
+* *distanceFade Setter:* `void setDistanceFade(bool distanceFade)`
+* *distanceFade Getter:* `bool isDistanceFade() const`
+* *Setter:* `void setFadeRange(float fadeStart, float fadeEnd)`
+* *fadeStart Setter / Getter:* `void setFadeStart(float fadeStart)` / `float getFadeStart() const`
+* *fadeEnd Setter / Getter:* `void setFadeEnd(float fadeEnd)` / `float getFadeEnd() const`
+
+Instanced-mesh [distance fade](../../manual/rendering-pipeline.md#distance-fade). When `distanceFade` is on, instances shrink toward their base between `fadeStart` and `fadeEnd`, both model-space distances from the camera. Toggling the flag reloads the mesh (shader variant `Ifd`); the two distances are uniforms and can change without a reload. `Fade End` must be greater than `Fade Start`. Logs an error if the mesh is not instanced yet.
+
+On the built-in triangle shaders, instances past `fadeEnd` are also omitted from the draw. Custom shaders and the SSR G-buffer still submit them and rely on the vertex scale.
+
+=== "C++"
+
+    ```cpp
+    trees.createInstancedMesh();
+    trees.setDistanceFade(true);
+    trees.setFadeRange(40.0f, 60.0f);
+    ```
+
+=== "Lua"
+
+    ```lua
+    trees:createInstancedMesh()
+    trees.distanceFade = true
+    trees:setFadeRange(40, 60)
+    ```
+
+---
+
+### cullInstances
+
+* *Setter:* `void setCullInstances(bool cullInstances)`
+* *Getter:* `bool isCullInstances() const`
+
+When `true` (default), instances outside the main camera or a shadow atlas slot are left out of that view. Turn it off when a shader moves instances away from the bounds the CPU computed; the whole entity then skips frustum culling too. Logs an error if the mesh is not instanced yet. See [Culling granularity](../../manual/rendering-pipeline.md#culling-granularity).
 
 ---
 

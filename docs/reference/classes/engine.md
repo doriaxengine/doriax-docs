@@ -53,6 +53,7 @@ Control engine properties and define defaults used across the whole project. `En
 | static float | [deltatime](#deltatime) | — | C++ \| Lua |
 | static float | [maxDeltatime](#maxdeltatime) | `0.25` | C++ \| Lua |
 | static float | [framerate](#framerate) | — | C++ \| Lua |
+| static [FrameStats](#framestats) | [frameStats](#framestats) | — | C++ |
 | static double | [systemTime](#systemtime) | — | C++ \| Lua |
 | static [Platform](#platform) | [platform](#platform_1) | — | C++ \| Lua |
 | static [GraphicBackend](#graphicbackend) | [graphicBackend](#graphicbackend_1) | — | C++ \| Lua |
@@ -84,6 +85,7 @@ Control engine properties and define defaults used across the whole project. `En
 | static void | [setUpdateTimeMS](#setupdatetimems) | C++ \| Lua |
 | static bool | [isUIEventReceived](#isuieventreceived) | C++ \| Lua |
 | static bool | [isViewLoaded](#isviewloaded) | C++ \| Lua |
+| static const FrameStats& | [getFrameStats](#framestats) | C++ |
 | static void | [setMaxResourceLoadingThreads](#setmaxresourceloadingthreads) | C++ \| Lua |
 | static size_t | [getQueuedResourceCount](#getqueuedresourcecount) | C++ \| Lua |
 | static void | [clearPools](#clearpools) | C++ |
@@ -319,6 +321,32 @@ Upper bound, in **seconds**, for the value returned by [deltatime](#deltatime) a
 * *Getter:* `static float getFramerate()`
 
 Current frames-per-second estimate. Computed from the **raw** (unclamped) frame time, so it stays accurate even on stalled frames where [deltatime](#deltatime) is clamped.
+
+---
+
+### frameStats
+
+* *Getter:* `static const FrameStats& getFrameStats()`
+
+Draw counters for the last completed `systemDraw`: GPU submissions, not CPU work. C++ only — Lua can read [framerate](#framerate) but not these fields.
+
+| Field | Type | Meaning |
+| --- | --- | --- |
+| `drawCalls` | `uint32_t` | `draw` submissions issued that frame |
+| `instances` | `uint32_t` | Sum of the instance counts passed to those draws |
+| `triangles` | `uint64_t` | Triangle estimate from the primitive type and the index/vertex count, multiplied by the instance count (`1` when the draw is not instanced) |
+
+The editor footer shows `drawCalls` and `triangles` next to FPS. The
+[`benchmark`](../../editor/command-line.md#benchmark-measure-scene-fps) command averages
+the same counters over a measured run.
+
+=== "C++"
+
+    ```cpp
+    const Engine::FrameStats& stats = Engine::getFrameStats();
+    Log::info("draws %u  tris %llu", stats.drawCalls,
+              (unsigned long long)stats.triangles);
+    ```
 
 ---
 

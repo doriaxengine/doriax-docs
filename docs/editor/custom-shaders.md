@@ -62,8 +62,9 @@ editing, or resetting a custom shader is undoable.
 
 A Mesh component has a second row, **Depth Shader**, with the same controls. It forks
 `depth.vert` and `depth.frag` — the shader the engine draws the mesh with into **shadow
-maps**, and into the **depth pre-pass** that feeds SSAO and post-process depth while SSR
-is off (with SSR on, those read the G-buffer, which keeps the built-in shader).
+maps**, into the optional scene [depth prepass](../manual/rendering-pipeline.md#depth-prepass),
+and into the **depth pre-pass** that feeds SSAO and post-process depth while SSR is off
+(with SSR on, those read the G-buffer, which keeps the built-in shader).
 
 The colour fork never reaches those passes, so a mesh whose fork displaces vertices or
 discards fragments keeps casting the shadow of its undisplaced, undiscarded geometry —
@@ -87,6 +88,21 @@ with the project, and scriptable through `customDepthShader` (see
 !!! note "Resolution in a depth fork"
     `resolution` is the size of the target being written: the shadow slot of a cascade
     or cube face, or the depth pre-pass target.
+
+### Depth forks and the depth prepass
+
+With the scene [depth prepass](../manual/rendering-pipeline.md#depth-prepass) on, the
+depth fork also writes the depth the colour pass tests against, so both must land on the
+same pixel. `u_vs_depthParams` carries `mvpMatrix` — the light (or camera) view-projection
+already multiplied by the model matrix — and `depth.vert` sets `gl_Position` from it under
+`invariant`, matching `mesh.vert` bit for bit. Keep that in a fork: multiplying
+`lightVPMatrix * modelMatrix` yourself still compiles (older forks keep working) but can
+round differently and z-fight in the prepass.
+
+A mesh whose **colour** shader is forked — or covered by a scene default mesh shader —
+without a depth fork is left out of the prepass and drawn once in the colour pass, since
+the built-in depth shader cannot know where the fork moves its vertices. Add a depth fork
+with the same displacement to bring it back in.
 
 ## The Fork Shader dialog
 

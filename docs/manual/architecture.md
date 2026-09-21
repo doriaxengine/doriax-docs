@@ -35,7 +35,7 @@ Common responsibilities:
 
 - Set and layer scenes.
 - Configure canvas size and scaling.
-- Track delta time, framerate, and physics interpolation.
+- Track delta time, framerate, draw-call / triangle stats, and physics interpolation.
 - Forward input and lifecycle events.
 - Manage render-to-texture framebuffers.
 - Coordinate async loading and queued work committed to the main thread.
@@ -54,7 +54,7 @@ play mode snapshot and restore scene data safely.
 | System | Runtime role |
 | --- | --- |
 | `RenderSystem` | Draws cameras, meshes, sprites, lights, UI, sky, fog, particles, lines, and points |
-| `MeshSystem` | Generates and loads mesh data, including GLTF, OBJ, terrain, tilemaps, sprites, and instancing |
+| `MeshSystem` | Generates and loads mesh data, including GLTF, OBJ, terrain, tilemaps, sprites, instancing, and mesh detail levels |
 | `PhysicsSystem` | Steps 2D/3D physics, contacts, sensors, joints, filters, and body transforms |
 | `AudioSystem` | Plays, pauses, seeks, and spatializes sounds through SoLoud |
 | `ActionSystem` | Updates actions, animation playback, sprite animation, and keyframe tracks |

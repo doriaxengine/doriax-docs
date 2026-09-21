@@ -131,6 +131,7 @@ Add a layer, pick its **mesh** (a model file), create its **Density map**, then 
 | **Rotation** | Random yaw as a share of a full turn |
 | **Normal alignment** | Blends from upright (0%) to lying along the surface normal (100%) |
 | **Draw distance** | Visibility distance in world units; instances fade in over the last quarter of it |
+| **Cast shadows** | Put this layer into the shadow cascades. Turn off for grass-scale scatter so it still draws in the colour pass without the extra shadow geometry |
 | **Seed** | Change it to reshuffle instance positions |
 
 Foliage entities are created by the engine, not authored: they never appear in the

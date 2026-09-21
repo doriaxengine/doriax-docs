@@ -323,8 +323,10 @@ preserving the player's view.
 ## Additional features
 
 The runtime also supports [particle systems](particles.md), [terrain](terrain.md) with
-level-of-detail (LOD), and [mesh instancing](rendering-pipeline.md#gpu-instancing) for
-efficiently rendering many copies of the same geometry.
+level-of-detail (LOD), automatic [mesh detail levels](rendering-pipeline.md#mesh-detail-lod)
+for distant props, and [mesh instancing](rendering-pipeline.md#gpu-instancing) for
+efficiently rendering many copies of the same geometry. An optional
+[depth prepass](rendering-pipeline.md#depth-prepass) cuts overdraw on dense opaque scenes.
 
 ## Next steps
 

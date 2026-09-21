@@ -60,7 +60,7 @@ This documentation follows a broad structure similar to large engine manuals:
 - GLTF and OBJ model loading
 - Skeletal animation and morph targets
 - PBR materials, dynamic shadows, fog, and sky
-- Particle systems, UI, terrain LOD, and instancing
+- Particle systems, UI, terrain LOD, mesh LOD, and instancing
 - Scene serialization, texture and shader pools, and multithreading
 - 3D audio
 

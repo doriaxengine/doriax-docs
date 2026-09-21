@@ -144,6 +144,7 @@ content inside the known-safe baseline.
 | `MAX_SPRITE_FRAMES` | 128 | Sprite atlas frames |
 | `MAX_EXTERNAL_BUFFERS` | 30 | External vertex/index buffers per mesh |
 | `MAX_BONES` | 128 | Bone matrices per skinned mesh |
+| `MAX_MESH_LODS` | 4 | Detail levels per mesh submesh (source plus simplified index ranges) |
 
 `MAX_BONES` is the CPU array size used at runtime. Skinned shaders bind those matrices
 through a storage buffer or a bone texture and do not embed this count. The editor can

@@ -158,5 +158,5 @@ a machine with a GPU ever opened the project.
 ## See also
 
 - [Custom Shaders](../editor/custom-shaders.md) — forking a built-in shader
-- [Command-Line Tools](../editor/command-line.md) — `export` and `shaders` subcommands
+- [Command-Line Tools](../editor/command-line.md) — `export`, `shaders`, and `benchmark` subcommands
 - [Rendering Pipeline](rendering-pipeline.md#shaders) — what the built-in shaders do
