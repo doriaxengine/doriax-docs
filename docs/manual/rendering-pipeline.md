@@ -707,7 +707,9 @@ for (int i = 0; i < 500; i++) {
 ```
 
 Instances can be modified later with `updateInstance(index, ...)` and read back with
-`getInstance(index)`.
+`getInstance(index)`. Instance transforms may rotate, mirror, and scale non-uniformly;
+normals and tangents are transformed correctly, so a tree stretched taller is still lit
+as a tree.
 
 Instancing uses geometry on the **same entity** as the instanced mesh. Multi-node GLTF
 models that keep child mesh entities will not draw instances until you
@@ -752,6 +754,13 @@ Mirrors and other render-to-texture cameras still draw the full batch. Turn cull
 when a shader moves instances away from the bounds the CPU computed — those instances
 would otherwise vanish as soon as their authored positions leave the frustum. With it off
 the entity is not frustum-culled as a whole either, so the batch always reaches the GPU.
+
+**Cull Distance** (default `0` = unlimited) drops instances farther than that many world
+units from the main camera from the same culled views, shadow slots included. Unlike
+[distance fade](#distance-fade) it is a hard cut that keeps instances full-sized until
+they disappear, and it works with custom shaders and the SSR G-buffer. Hide the pop with
+[fog](#fog) or a distant representation. It follows **Cull Instances**, so turning that
+off disables the distance too.
 
 ## Mesh detail (LOD)
 

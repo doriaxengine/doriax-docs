@@ -44,6 +44,7 @@ Linked materials reload when the file changes on disk. See
 | MaterialAlphaMode | [alphaMode](#alphamode-alphacutoff) | `AUTO` | C++ \| Lua (read-only) |
 | float | [alphaCutoff](#alphamode-alphacutoff) | `0.5` | C++ \| Lua (read-only) |
 | Vector3 | [emissiveFactor](#emissivefactor) | `(0,0,0)` | C++ \| Lua (read-only) |
+| float | [foliageTransmission](#foliagetransmission) | `0` | C++ \| Lua (read-only) |
 | [Texture](texture.md) | [baseColorTexture](#basecolortexture) | empty | C++ \| Lua (read-only) |
 | [Texture](texture.md) | [emissiveTexture](#emissivetexture) | empty | C++ \| Lua (read-only) |
 | [Texture](texture.md) | [metallicRoughnessTexture](#metallicroughnesstexture) | empty | C++ \| Lua (read-only) |
@@ -118,6 +119,21 @@ Controls the PBR metallic-roughness workflow:
 ### emissiveFactor
 
 An additive linear-space RGB glow colour. The surface emits light of this colour independent of external lighting. Multiplied with `emissiveTexture` when present. Keep all channels at `0` (the default) to disable emission.
+
+---
+
+### foliageTransmission
+
+Light let through a thin surface when a light is behind it, `0`–`1` (values are clamped). Each light adds its intensity times the base colour, this factor, how directly the light shines through, and the same shadow term as direct lighting, so a leaf glows only where the sun actually reaches its back. `0` (the default) disables it; keep it there on opaque geometry. Unlit materials ignore it.
+
+Imported glTF materials read it from the material extra `doriax_foliage_transmission`; in the editor it is the **Leaf Transmission** row of the Material and is kept as a submesh override.
+
+=== "C++"
+    ```cpp
+    Material leaves = mesh.getMaterial(0);
+    leaves.foliageTransmission = 0.3f;
+    mesh.setMaterial(0, leaves);
+    ```
 
 ---
 

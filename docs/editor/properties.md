@@ -158,6 +158,7 @@ editor shows a warning and writes to the Output panel: instances will not render
 | **Max Instances** | GPU instance-buffer capacity |
 | **Billboard** / **Cylindrical Billboard** | Turn every instance to face the camera |
 | **Cull Instances** | Skip instances outside the camera and shadow views. Turn off for shaders that move instances away from their bounds |
+| **Cull Distance** | Drop instances farther than this from the main camera, in world units; `0` = unlimited. A hard cut, so hide it with fog. Needs Cull Instances |
 | **Distance Fade** | Shrink instances between **Fade Start** and **Fade End** (model-space distance) instead of popping. Fade End must be greater than Fade Start |
 
 A clone mark next to the entity in Structure indicates the instance count. See
@@ -198,6 +199,12 @@ colour, textures, metallic, and roughness controls:
 **Alpha Cutoff** ranges from `0` to `1`, defaults to `0.5`, and only affects **Mask**.
 Masked cutouts use the same threshold in the visible surface, shadows, depth, and SSR
 G-buffer.
+
+**Leaf Transmission** (`0`–`1`, default `0`) lets light through a thin surface when it
+is lit from behind — backlit foliage. Leave it at `0` on bark, trunks, and solid
+geometry. Like the other material fields it is stored as an override on imported models;
+a glTF can also carry it as the material extra `doriax_foliage_transmission`. See
+[3D Graphics — PBR materials](../manual/3d-graphics.md#pbr-materials).
 
 For explicit **Opaque**, **Mask**, and **Blend** modes, the engine derives **Texture
 Shadow** from the alpha mode: it is enabled for Mask and disabled for the other two.

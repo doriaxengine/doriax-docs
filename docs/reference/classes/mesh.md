@@ -73,6 +73,7 @@ See [EntityHandle ownership](entityhandle.md#ownership-and-lifetime).
 | float | [fadeStart](#distancefade-fadestart-fadeend) | `0` | C++ \| Lua |
 | float | [fadeEnd](#distancefade-fadestart-fadeend) | `0` | C++ \| Lua |
 | bool | [cullInstances](#cullinstances) | `true` | C++ \| Lua |
+| float | [cullDistance](#culldistance) | `0` | C++ \| Lua |
 
 ### Methods
 
@@ -153,6 +154,8 @@ See [EntityHandle ownership](entityhandle.md#ownership-and-lifetime).
 | float | [getFadeEnd](#distancefade-fadestart-fadeend) | C++ \| Lua |
 | void | [setCullInstances](#cullinstances) | C++ \| Lua |
 | bool | [isCullInstances](#cullinstances) | C++ \| Lua |
+| void | [setCullDistance](#culldistance) | C++ \| Lua |
+| float | [getCullDistance](#culldistance) | C++ \| Lua |
 
 ## Enumerations
 
@@ -224,7 +227,7 @@ GPU draw mode. Overloads are available per submesh.
 * *Setter:* `void setFaceCulling(bool faceCulling)`
 * *Getter:* `bool isFaceCulling() const`
 
-Enables or disables back-face culling globally for this mesh. Disable for double-sided geometry (e.g. leaves, cards).
+Enables or disables back-face culling globally for this mesh. Disable for double-sided geometry (e.g. leaves, cards): back faces are then lit with their normal flipped toward the viewer, as glTF double-sided materials are.
 
 ---
 
@@ -426,6 +429,29 @@ On the built-in triangle shaders, instances past `fadeEnd` are also omitted from
 * *Getter:* `bool isCullInstances() const`
 
 When `true` (default), instances outside the main camera or a shadow atlas slot are left out of that view. Turn it off when a shader moves instances away from the bounds the CPU computed; the whole entity then skips frustum culling too. Logs an error if the mesh is not instanced yet. See [Culling granularity](../../manual/rendering-pipeline.md#culling-granularity).
+
+---
+
+### cullDistance
+
+* *Setter:* `void setCullDistance(float distance)`
+* *Getter:* `float getCullDistance() const`
+
+World-space distance from the main camera past which instances are dropped from the culled views (main camera and shadow slots). `0` (default) means unlimited; negative or non-finite values are ignored. A hard cut, unlike [distanceFade](#distancefade-fadestart-fadeend): instances keep their size until they vanish, and it applies with custom shaders and SSR too, so hide it with fog. Requires [cullInstances](#cullinstances). Logs an error if the mesh is not instanced yet.
+
+=== "C++"
+
+    ```cpp
+    trees.createInstancedMesh();
+    trees.setCullDistance(150.0f);
+    ```
+
+=== "Lua"
+
+    ```lua
+    trees:createInstancedMesh()
+    trees.cullDistance = 150
+    ```
 
 ---
 

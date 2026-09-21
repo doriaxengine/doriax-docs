@@ -169,6 +169,15 @@ maps still render it. In the editor, expand **Mesh → Submesh → Material** to
 [Material reference](../reference/classes/material.md#alphamode-alphacutoff) for the mode
 behaviours.
 
+A mesh with **Face Culling** off is lit on both sides: the back face shades with its
+normal (and normal map) flipped toward the viewer, as glTF specifies for double-sided
+materials, instead of appearing in shadow. **Leaf Transmission**
+([`foliageTransmission`](../reference/classes/material.md#foliagetransmission), `0`–`1`,
+default `0`) adds the light that passes through a thin surface such as a leaf when the
+sun is behind it, scaled by the base colour and the same shadow term as direct lighting.
+Set it per submesh in the editor, or author it in the glTF as the material extra
+`doriax_foliage_transmission`; ordinary glTF materials are unaffected.
+
 ### Editing an imported model's submeshes
 
 A model's geometry and materials are rebuilt from its source file every time the scene
