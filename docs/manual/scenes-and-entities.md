@@ -427,7 +427,10 @@ mainly call `createBundle` and `destroyBundle`. Note that `createBundle` takes t
 scene-local: to parent the instance under an existing entity, look it up in the destination
 scene with `createBundle(name, scene, "parentName")`, or pass an object that already carries
 its scene. Every call creates its own root, so a bundle can be spawned as many times as you
-want.
+want. Member entities are created when the factory runs, so their ids differ between the
+editor and a build; reach them by name under the instance root with
+[`findEntity(name, root)`](../reference/classes/entityregistry.md#findentity) rather than
+by id.
 
 !!! note "There is no direct `.bundle` file loader"
     You don't load a `.bundle` file by path at runtime. Export turns each file into a

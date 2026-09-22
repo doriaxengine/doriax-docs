@@ -23,6 +23,13 @@ emits a `registerBundle` call that wires that factory to a numeric **ID** and a 
 BundleManager::registerBundle(1, "enemies/EnemyShip", create_bundle_enemies_EnemyShip);
 ```
 
+The generated `bundle_<name>.h` also declares
+`build_bundle_<name>(Scene* scene, Entity root, std::vector<Entity>& members)`, the same
+factory appending the entities it creates to `members`; generated scene code uses it to
+reach instance members, whose ids only exist at runtime. Spawn through
+[`createBundle`](#createbundle) rather than calling either function yourself, so the
+instance is tracked for [`destroyBundle`](#destroybundle).
+
 The bundle **name** is the `.bundle` file's path with the extension removed, using forward
 slashes (for example, `bundles/enemies/EnemyShip.bundle` registers as
 `enemies/EnemyShip`). Registration covers the bundles a scene instantiates plus the ones

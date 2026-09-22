@@ -398,6 +398,19 @@ Generated factories also construct large fixed-capacity components, such as mesh
 tilemap, and 3D physics body data, in temporary heap storage before inserting them into
 the ECS. This prevents those payloads from inflating the scene factory's stack frame.
 
+### Bundle instances
+
+Each bundle becomes `bundle_<name>.h` and `bundle_<name>.cpp` with two entry points:
+`create_bundle_<name>(scene, root)`, the factory `main.cpp` registers with
+`BundleManager`, and `build_bundle_<name>(scene, root, members)`, the same factory
+appending every entity it creates to `members` — its own entities first, then each
+nested bundle's. A scene factory calls `create_bundle_<name>` for an instance nothing
+else refers to, and `build_bundle_<name>` when it needs the members: per-instance
+overrides, scene entities kept under a member, and component or script references into
+the instance are emitted against that vector instead of an entity id, because member ids
+are only assigned when the factory runs. Scene entities keep the ids they have in the
+editor; bundle members do not.
+
 Large inline meshes still increase the generated source size, executable size, and C++
 compile time. Prefer a GLTF or OBJ asset for multi-megabyte geometry that does not need
 to be stored directly in the scene.

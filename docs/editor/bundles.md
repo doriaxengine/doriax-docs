@@ -124,6 +124,21 @@ drops entries whose file is deleted.
 In the Resources Browser, a `.bundle` the project does not build is drawn dimmed, and so
 is a `.scene` file that is not part of the project.
 
+### Instances in an exported build
+
+An exported scene creates each placed instance through the bundle's generated factory,
+the same one `BundleManager` registers. Member entities get their ids when that factory
+runs, so the id a member has in the editor is not the id it has in a build, and
+generated code never hardcodes one: whenever the scene needs a member — a **Make
+Unique** override, a non-member child kept under a member, or a component or script
+property on a scene entity that points into the instance — it takes the entities the
+factory created and addresses them by position. Overrides and references into instances
+therefore behave in a build exactly as they do in the editor, nested bundles included.
+
+Scripts should reach an instance's entities by name under its root with
+[`findEntity(name, root)`](../reference/classes/entityregistry.md#findentity), never by
+an id copied from the editor.
+
 ## Bundles vs child scenes
 
 | | Bundle | Child scene |
