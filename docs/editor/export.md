@@ -398,6 +398,19 @@ Generated factories also construct large fixed-capacity components, such as mesh
 tilemap, and 3D physics body data, in temporary heap storage before inserting them into
 the ECS. This prevents those payloads from inflating the scene factory's stack frame.
 
+### Scene stacks
+
+`main.cpp` gives every scene two functions and registers them together, as
+`SceneManager::registerScene(id, name, load_<name>, add_<name>, {start-active scene ids})`.
+Both begin the same way: for the scene and every child scene it involves, a `new Scene()`
+registered with `SceneManager::setScenePtr`, the scene factory, then `initScripts` —
+skipping any that already exist. `load_<name>()` goes on to call `Engine::setScene` and
+`Engine::addSceneLayer` for the start-active scenes and to tear down every scene the new
+stack does not involve; `add_<name>()` stops after creating, and
+[`SceneManager::addChildScene`](../reference/classes/scenemanager.md#addchildscene-removechildscene)
+puts the scenes on screen. A scene is not torn down while a stack that involves it is
+running, which is what keeps a stack a script adds from its `init` alive across the load.
+
 ### Bundle instances
 
 Each bundle becomes `bundle_<name>.h` and `bundle_<name>.cpp` with two entry points:

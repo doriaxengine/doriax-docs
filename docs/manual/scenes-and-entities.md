@@ -326,6 +326,10 @@ draws above the gameplay below it. `removeChildScene` takes it back out and leav
 main scene and other layers untouched — it does not destroy the scene, so adding it again
 brings it back exactly as you left it, scroll position and all.
 
+`addChildScene` is also safe from a script's `init` while that script's own stack is
+still loading — a level that opens its HUD from code. The stack it adds survives the
+load; only scenes no running stack involves are torn down by the transition.
+
 ### Preloaded or built on demand
 
 Because `addChildScene` can build a stack itself, you choose when a scene pays for its

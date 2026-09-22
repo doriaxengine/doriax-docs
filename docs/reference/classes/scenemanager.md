@@ -57,7 +57,7 @@ Registers a named scene stack with the functions that build it. A stack has two 
 
 A stack registered without an add factory can still be loaded. It can only be added as a child once something else has created its scenes.
 
-The optional `sceneIds` vector lists the scenes that come up **together** with this one — the stack's *active* scenes. It is what `addChildScene` puts on screen, the stack's own scene first so it sits below the layers it owns.
+The optional `sceneIds` vector lists the scenes that come up **together** with this one — the stack's *active* scenes. It is what `addChildScene` puts on screen, the stack's own scene first so it sits below the layers it owns. A braced list works in C++ (`{1, 2}`), and the stack's own id is added when the list leaves it out.
 
 === "C++"
     ```cpp
@@ -87,6 +87,27 @@ The optional `sceneIds` vector lists the scenes that come up **together** with t
 
 === "Lua"
     ```lua
+    local menuScene = nil
+
+    local function load_MainMenu()
+        if not menuScene then
+            menuScene = Scene()
+            SceneManager.setScenePtr(1, menuScene)
+            -- populate scene...
+        end
+        Engine.setScene(menuScene)
+    end
+
+    local function add_MainMenu()
+        if not menuScene then
+            menuScene = Scene()
+            SceneManager.setScenePtr(1, menuScene)
+            -- populate scene...
+        end
+        -- no setScene, no teardown, no addSceneLayer
+    end
+
+    SceneManager.registerScene(1, "MainMenu", load_MainMenu, add_MainMenu)
     SceneManager.loadScene("MainMenu")
     ```
 
@@ -137,6 +158,8 @@ Add or remove a scene stack as layers on top of the running scenes **without** a
 The scene does **not** have to be loaded first. If its scenes do not exist yet the factory creates them on the spot; if they exist already the factory finds nothing to do and the call is cheap. Either way the factory runs on every call, which is what lets it restore a stack whose scripts were torn down earlier.
 
 Unlike [`loadScene`](#loadscene), this takes effect **immediately**, including when called inside a frame, because nothing is destroyed. The scenes it adds update and draw from that same frame on.
+
+It can also be called from a script's `init` while that script's own stack is still loading — a level that opens its HUD from code, say. The stack it adds is kept when the load finishes, rather than torn down with the scenes the transition replaced.
 
 Returns `false` if the scene is unknown, if it has no add factory and its scenes were never created, or if the factory did not produce the whole stack.
 
@@ -223,4 +246,18 @@ Unregisters all scenes. Used by the editor when resetting state. Does not destro
 * static Scene* **getScenePtr**(uint32_t id)
 * static void **removeScenePtr**(uint32_t id)
 
-Associates a live `Scene*` pointer with a registered scene ID. Used when one scene needs to reference entities in another scene (cross-scene entity resolution).
+Associates a live `Scene*` pointer with a registered scene ID. Used when one scene needs to reference entities in another scene (cross-scene entity resolution), and by an add factory to hand [`addChildScene`](#addchildscene-removechildscene) the scenes it created. `getScenePtr` returns `nullptr` (`nil` in Lua) for an ID with no scene.
+
+=== "Lua"
+    ```lua
+    SceneManager.setScenePtr(2, hudScene)
+    local hud = SceneManager.getScenePtr(2)
+    SceneManager.removeScenePtr(2)
+    ```
+
+=== "C++"
+    ```cpp
+    SceneManager::setScenePtr(2, &hudScene);
+    Scene* hud = SceneManager::getScenePtr(2);
+    SceneManager::removeScenePtr(2);
+    ```
