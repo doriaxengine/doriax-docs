@@ -21,6 +21,11 @@ The field at the top holds the entity name: edit it to rename the entity, or pre
 With several entities selected the field is read-only; with none selected, the window
 shows the [scene settings](#scene-settings) instead and the same field renames it.
 
+While a scene is playing, an entity the game created (drawn in green in the
+[Structure panel](structure.md#while-playing)) is shown read-only: you can watch its
+values change, but not rename it, edit its fields, or add and remove components, because
+**Stop** destroys it.
+
 ## Adding components
 
 Use the **Add Component** button at the bottom of the Properties window. A searchable

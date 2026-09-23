@@ -255,6 +255,31 @@ bundle nodes let you **Insert into bundle**, **Remove from bundle**, or move out
 entities into an existing bundle with **Insert to Bundle**. See [Bundles](bundles.md)
 for the complete workflow.
 
+## While playing
+
+Entities the running game creates (objects a script spawns, models it loads, bundles it
+instantiates) are listed too, drawn in green. Each one sits under its parent, or at the
+scene root when that parent is not listed, such as the editor's view camera in a scene
+without a camera of its own. Entities without a `Transform` go in the
+[non-hierarchical area](#non-hierarchical-area) as usual.
+
+These rows are for inspecting, not editing, because **Stop** destroys the entities
+behind them:
+
+- Selecting one shows its components in [Properties](properties.md#selecting-an-entity),
+  all read-only.
+- It cannot be renamed, deleted, duplicated, dragged, given children, set as the main
+  camera, or saved into a bundle.
+- It cannot be picked in the [Scene view](scene-view.md#selection); select it here.
+
+The list refreshes twice a second, so a new entity can take up to half a second to
+appear. One the game destroys disappears at once and leaves the selection, and **Stop**
+removes the rest.
+
+Terrain [foliage](../manual/terrain.md#foliage) chunks are engine data and are never
+listed. Only the scene you pressed Play on lists runtime entities; a child scene expanded
+inline keeps showing its authored entities.
+
 ## Practical model
 
 Use the Structure panel as a quick diagnostic:
@@ -263,3 +288,5 @@ Use the Structure panel as a quick diagnostic:
 - Entity appears above the hierarchy: it has no `Transform`.
 - Entity cannot be parented: add `Transform` or choose Empty object instead.
 - Visual entity is missing from the hierarchy: check whether `Transform` was removed.
+- Entity drawn in green while playing: the game created it. It is read-only and
+  disappears at **Stop**.

@@ -81,7 +81,9 @@ UI scene overlay.
 
 Press **Play** to run the game inside the editor. The editor takes a snapshot of the
 current scene state before entering play mode and restores it when you stop, so runtime
-mutations do not permanently corrupt your authored data.
+mutations do not permanently corrupt your authored data. Entities the game creates while
+playing are listed in the Structure panel, read-only, until **Stop** destroys them (see
+[Structure panel — While playing](structure.md#while-playing)).
 
 Use play mode for quick iteration. For platform-specific validation (mobile input,
 web memory limits, native graphics), test with a proper exported build. The footer

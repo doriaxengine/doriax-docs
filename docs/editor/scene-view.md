@@ -68,6 +68,9 @@ need to pick a specific child mesh or node (common with multi-node and animated 
 For fine-grained selection in dense scenes, use the **Structure panel** — clicking a
 row there selects the entity without needing to click through overlapping objects.
 
+Entities the game creates while playing cannot be picked in the viewport; select them in
+the [Structure panel](structure.md#while-playing).
+
 ## Drag and drop from the Resources Browser
 
 Files dragged from the [Resources Browser](resources.md) can be dropped directly into
