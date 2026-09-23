@@ -17,7 +17,9 @@ movement, collisions, and interactions without external libraries.
 | 3D | [Jolt Physics](https://github.com/jrouwe/JoltPhysics) |
 
 Both backends are integrated into the engine and exposed through the same ECS-based
-workflow.
+workflow. Each one can be left out of exported games that do not use it — see
+[Project Settings → Physics backends](../editor/project-settings.md#physics-backends).
+The editor and Play always have both.
 
 ## Core concepts
 
@@ -315,6 +317,11 @@ Pass `onlyStatic` or category/mask bits to restrict what counts as ground, for e
 The same `Ray` API is available in Lua (`RayFilter.BODY_2D` or `RayFilter.BODY_3D`). The
 returned [RayReturn](../reference/classes/rayreturn.md) also carries the hit `distance`,
 which is handy for step snapping or coyote-time.
+
+A game without a physics backend can still cast against mesh bounds with
+`RayFilter::BOUNDS`. It tests each mesh's axis-aligned box rather than a collider, so it
+suits picking and line-of-sight more than ground checks — see
+[RayFilter](../reference/classes/ray.md#rayfilter).
 
 ### Contact normal (event-driven)
 

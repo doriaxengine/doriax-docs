@@ -28,6 +28,10 @@ cmake --install build --config Release --strip
 independent of the standard a project selects: the editor compiles script plugins with
 the project's value regardless of how the editor itself was built.
 
+Leave `DORIAX_PHYSICS_2D` and `DORIAX_PHYSICS_3D` on for the editor: it authors every
+component, and Play links against its engine library, so the editor needs both backends.
+They are meant for runtime builds.
+
 On Windows the build also provides `doriax-editor-cmd`, the same editor linked as a
 console application for automation and terminal output. It is excluded from the default
 build, so request it by name:
@@ -71,9 +75,11 @@ cmake --build build --config Debug
 | `DORIAX_WINDOW_RESIZABLE` | `ON` | Allow resizing the window. Ignored by the Sokol app backend, whose windows are always resizable. |
 | `DORIAX_WINDOW_TITLE` | `"Doriax"` | Window title-bar text |
 | `DORIAX_CXX_STANDARD` | `17` | C++ standard for the engine and the game target. Accepts `17`, `20` or `23` only — configuration fails on any other value. |
+| `DORIAX_PHYSICS_2D` | `ON` | Build and link Box2D. `OFF` leaves out 2D bodies, joints and their Lua API. When on, the engine target also defines the `DORIAX_PHYSICS_2D` macro for the game. |
+| `DORIAX_PHYSICS_3D` | `ON` | Build and link Jolt. `OFF` leaves out 3D bodies, joints and their Lua API. When on, the engine target also defines the `DORIAX_PHYSICS_3D` macro for the game. |
 
 The editor writes these options into exported CMake projects from **Project
-Settings** (VSync, the Window settings and the C++ standard). For a manually configured
+Settings** (VSync, the Window settings, the C++ standard and the physics backends). For a manually configured
 standalone runtime, override them at configure time:
 
 ```bash

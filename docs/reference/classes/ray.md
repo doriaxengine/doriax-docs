@@ -8,7 +8,7 @@ description: Ray API reference (C++ and Lua).
 
 ## Description
 
-A ray defined by an origin point and a direction/length vector. Used for raycasting — detecting which objects lie along the ray. Doriax supports raycasts against geometric volumes ([AABB](aabb.md), [OBB](obb.md), [Sphere](sphere.md), [Plane](plane.md)) and against the physics simulation ([Body2D](body2d.md) / [Body3D](body3d.md)).
+A ray defined by an origin point and a direction/length vector. Used for raycasting — detecting which objects lie along the ray. Doriax supports raycasts against geometric volumes ([AABB](aabb.md), [OBB](obb.md), [Sphere](sphere.md), [Plane](plane.md)), against the physics simulation ([Body2D](body2d.md) / [Body3D](body3d.md)), and against the bounds of every mesh in a scene, which needs no physics at all.
 
 The direction vector doubles as the *length* of the ray — objects beyond `origin + direction` are not reported as hits.
 
@@ -76,9 +76,11 @@ Multiple overloads for different collision targets:
 
 Returns a [RayReturn](rayreturn.md) struct. Test the result with `if (result)` or `result.hit`.
 
-Scene queries return the closest hit. [RayFilter](#rayfilter) only selects 2D or 3D bodies — it does not skip a specific entity. Checking `hit.body == entity` after the fact also fails, because that body is already the closest hit and the ray never continues past it. Pass the entity (or a list of entities) to `intersects` so those bodies are ignored and the next hit is returned. This works with both `BODY_2D` and `BODY_3D`.
+Scene queries return the closest hit. [RayFilter](#rayfilter) only selects what is tested — 2D bodies, 3D bodies or mesh bounds — it does not skip a specific entity. Checking `hit.body == entity` after the fact also fails, because that body is already the closest hit and the ray never continues past it. Pass the entity (or a list of entities) to `intersects` so those bodies are ignored and the next hit is returned. This works with every filter.
 
 The `uint8_t broadPhaseLayer3D` overloads test 3D bodies on one broad-phase layer only.
+
+The `Body2D` overloads exist only when the build has 2D physics, and the `Body3D` and `broadPhaseLayer3D` ones only with 3D physics — see [Project Settings → Physics backends](../../editor/project-settings.md#physics-backends). A `BODY_2D` or `BODY_3D` query against a disabled backend returns no hit.
 
 === "C++"
     ```cpp
@@ -110,7 +112,8 @@ The `uint8_t broadPhaseLayer3D` overloads test 3D bodies on one broad-phase laye
 
 ### RayFilter
 
-Selects which physics world a scene raycast tests. Use a separate `ignoreEntity` / `ignoreEntities` argument to skip specific bodies.
+Selects what a scene raycast tests. Use a separate `ignoreEntity` / `ignoreEntities` argument to skip specific entities.
 
 * **BODY_2D** — Test against [Body2D](body2d.md) physics bodies.
 * **BODY_3D** — Test against [Body3D](body3d.md) physics bodies.
+* **BOUNDS** — Test against the world-space [AABB](aabb.md) of every mesh — models, shapes, sprites, tilemaps and terrain. Needs no physics backend. The hit is the box, not the surface, so it is coarser than a collider cast; `body` holds the mesh entity and `normal` the face of the box that was hit (zero when the ray starts inside a box, which hits at distance 0). `onlyStatic` and the category/mask bits are ignored.

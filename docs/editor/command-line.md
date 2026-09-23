@@ -82,6 +82,7 @@ exceptions that the flags own instead:
 | Application name, identifier, version, build | Applied |
 | Per-platform settings (Web, Linux, Windows, macOS, iOS, Android) | Applied — the generated Xcode and Android Studio workspaces are configured from them |
 | Window settings, VSync, canvas | Applied |
+| 2D and 3D Physics | Applied — a disabled backend is left out of the CMake, Xcode and Android Studio builds |
 | Assets and Lua directories | Applied unless `--assets` / `--lua` override them |
 | Start scene | Applied unless `--start-scene` overrides it |
 | **Native Resource Pack** | Applied. There is no command-line override |

@@ -116,6 +116,8 @@ The native resource pack has runtime restrictions — packed entries are read th
 
 | Setting | Default | Effect |
 | --- | --- | --- |
+| **2D Physics** | On | Builds Box2D into exported games |
+| **3D Physics** | On | Builds Jolt into exported games |
 | **C++ Standard** | `C++17` | Language standard the project's C++ scripts are compiled with, in Play and in exported games |
 
 The standard belongs to the project rather than to your machine — a script using
@@ -131,6 +133,21 @@ runs; C++20 and C++23 need a recent MSVC, GCC or Clang.
     `CMAKE_CXX_STANDARD` in the generated project comes from here, so there is nothing to
     change by hand — and any edit is overwritten on the next Play or Save. See [C++ Build
     Setup → Customizing the build](../manual/cpp-build-setup.md#customizing-the-build).
+
+### Physics backends
+
+Turn off a backend the game never uses and the export leaves it out — its library, its
+bodies and joints, and their C++ and Lua API — for a smaller build that compiles faster,
+which matters most on Web and mobile. Desktop, Web and Source Code exports all honor it,
+including the generated Xcode and Android Studio projects.
+
+Play is not affected: the editor always runs with both backends, so a scene can still
+hold a body the export will drop. The export warns when it does, naming the scenes, and
+the exported game runs without those bodies and joints. A C++ script that includes
+`Body2D.h` or `Body3D.h` stops the export build with an error naming this setting; code
+that must build either way can test `DORIAX_PHYSICS_2D` and `DORIAX_PHYSICS_3D`, which are
+only defined for an enabled backend. For picking and line-of-sight without any physics, cast against mesh
+bounds with [`RayFilter::BOUNDS`](../reference/classes/ray.md#rayfilter).
 
 ## Platforms
 
@@ -261,7 +278,7 @@ file.
 
 | Block | Holds |
 | --- | --- |
-| Top level | `name`, `canvasWidth`, `scalingMode`, `vsync`, `windowMode`, `windowTitle`, `windowIcon`, `assetsDir`, `luaDir`, `scriptDirs`, `cxxStandard`, `packNativeResources`, … |
+| Top level | `name`, `canvasWidth`, `scalingMode`, `vsync`, `windowMode`, `windowTitle`, `windowIcon`, `assetsDir`, `luaDir`, `scriptDirs`, `cxxStandard`, `physics2D`, `physics3D`, `packNativeResources`, … |
 | `application` | `name`, `identifier`, `version`, `build` |
 | `web`, `linux`, `windows`, `macos`, `ios`, `android` | That platform's overrides only |
 | `export` | Shader overrides and the graphic backends picked in the [Export Window](export.md) |
