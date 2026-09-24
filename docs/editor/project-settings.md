@@ -65,7 +65,7 @@ type and reshapes the value at export:
 | --- | --- |
 | **Canvas Width / Height** | The design resolution the scene is authored against |
 | **Scaling Mode** | How that canvas maps to the real screen. A live preview under the dropdown shows the result |
-| **Texture Strategy** | How textures are selected for the current resolution |
+| **Texture Strategy** | Whether non-power-of-two textures are padded (Fit), scaled (Resize) or kept as they are (None, the default). Only very old GPUs need the first two. The editor applies a change when the project is reopened |
 
 See [Multiple Resolutions](../manual/multiple-resolutions.md) for what each scaling mode
 does at runtime.

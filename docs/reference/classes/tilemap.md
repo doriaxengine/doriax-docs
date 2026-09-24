@@ -51,7 +51,7 @@ A single tilemap can render at most **16 383** tiles — the index buffer is 16-
 * *Setter*: void **setTextureScaleFactor**(float textureScaleFactor)
 * *Getter*: float **getTextureScaleFactor**() const
 
-Insets each tile's UV rectangle by this many texels on every side, `0.0` by default. A small value such as `0.5` keeps bilinear filtering from bleeding neighbouring tiles of the atlas into the edges of a tile.
+Insets each tile's UV rectangle by this many texels on every side, `0.0` by default. A small value such as `0.5` keeps bilinear filtering from bleeding neighbouring tiles of the atlas into the edges of a tile. It is only exact while the texture keeps its size: the `RESIZE` [texture strategy](engine.md#texturestrategy_1) blurs the bleed further into the tiles.
 
 ---
 

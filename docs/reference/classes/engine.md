@@ -37,7 +37,7 @@ Control engine properties and define defaults used across the whole project. `En
 | Type | Name | Default | Languages |
 | --- | --- | --- | --- |
 | static [Scaling](#scaling) | [scalingMode](#scalingmode) | `FITWIDTH` | C++ \| Lua |
-| static [TextureStrategy](#texturestrategy) | [textureStrategy](#texturestrategy_1) | `RESIZE` | C++ \| Lua |
+| static [TextureStrategy](#texturestrategy) | [textureStrategy](#texturestrategy_1) | `NONE` | C++ \| Lua |
 | static bool | [callMouseInTouchEvent](#callmouseintouchevent) | `false` | C++ \| Lua |
 | static bool | [callTouchInMouseEvent](#calltouchinmouseevent) | `false` | C++ \| Lua |
 | static bool | [useDegrees](#usedegrees) | `true` | C++ \| Lua |
@@ -145,9 +145,9 @@ Control engine properties and define defaults used across the whole project. `En
 
 ### TextureStrategy
 
-* **FIT** — Adjusts non-power-of-two textures using a fit algorithm.
-* **RESIZE** — Resizes textures to the next power of two.
-* **NONE** — No automatic texture resizing.
+* **FIT** — Pads non-power-of-two textures to the next power of two, without scaling them.
+* **RESIZE** — Scales textures to the next power of two. The resampling blurs the edges of atlas tiles, which can show as seams in tilemaps.
+* **NONE** — Keeps textures at their size. Every supported backend handles non-power-of-two textures.
 
 ---
 
@@ -204,7 +204,7 @@ Controls how the logical canvas is mapped to the physical window. See [Scaling](
 * *Setter:* `static void setTextureStrategy(TextureStrategy textureStrategy)`
 * *Getter:* `static TextureStrategy getTextureStrategy()`
 
-Controls automatic resizing of non-power-of-two textures on hardware that requires it.
+Controls automatic resizing of non-power-of-two textures on hardware that requires it. It applies to textures loaded after it is set.
 
 ---
 
