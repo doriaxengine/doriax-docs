@@ -260,7 +260,9 @@ solver already integrates them over the fixed step.
 The physics system exposes contact subscriptions so you can react to collisions in game
 logic. **2D bodies** use `beginContact2D`, `endContact2D`, hit, sensor, and `preSolve2D`
 events — use begin/end for gameplay state, hit for impacts, and pre-solve when a contact
-should be conditionally disabled. **3D bodies** instead use `onContactAdded3D`,
+should be conditionally disabled. A 2D event whose body was destroyed or recreated before
+it was dispatched is dropped, so an end event does not come for a body that no longer exists.
+**3D bodies** instead use `onContactAdded3D`,
 `onContactPersisted3D`, and `onContactRemoved3D` (plus `onBodyActivated3D` /
 `onBodyDeactivated3D`); each added/persisted callback receives a
 [Contact3D](../reference/classes/contact3d.md) carrying the contact normal and points.
