@@ -273,10 +273,34 @@ screens.
     target scene instead — they come up with it in a single `loadScene` call.
 
 !!! note "Called from a running scene"
-    From a script, a physics contact or a button press the transition happens at the start
-    of the **next frame**, so the calling scene and its scripts finish the current frame
+    From a script, a physics contact or an input event the transition happens at the start
+    of the **next frame**, so the calling scene and its scripts finish what they are doing
     intact; `SceneManager::isLoadPending()` is `true` until then. See
     [SceneManager](../reference/classes/scenemanager.md#loadscene).
+
+### Show a loading screen
+
+Building a large scene takes a moment. Register a UI scene as the loading screen and
+`loadScene` shows it over the old scene, replaces the old scene behind it, and removes it
+once the new scene has loaded:
+
+=== "Lua"
+
+    ```lua
+    SceneManager.setLoadingScene("Loading")
+    SceneManager.loadingDelay = 0.3
+    ```
+
+=== "C++"
+
+    ```cpp
+    SceneManager::setLoadingScene("Loading");
+    SceneManager::setLoadingDelay(0.3f);
+    ```
+
+`SceneManager.loading` and `SceneManager.loadingProgress` drive its animation. Turn on
+[async loading](threading-and-async-loading.md#loading-screens) so it keeps animating while
+textures and sounds stream in.
 
 ### Overlay a scene without leaving the current one
 
@@ -364,6 +388,7 @@ save systems:
 | `SceneManager.getCurrentSceneId()` | ID of the most recently loaded scene |
 | `SceneManager.getSceneNames()` | All registered scene names |
 | `SceneManager.getSceneId(name)` | Numeric ID for a name (`0` if unknown) |
+| `SceneManager.loading` | `true` from `loadScene` until the new scene has loaded |
 
 See the [SceneManager reference](../reference/classes/scenemanager.md) for the complete
 API.

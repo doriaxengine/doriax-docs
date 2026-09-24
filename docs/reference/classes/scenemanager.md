@@ -27,6 +27,12 @@ Two operations change what is on screen:
 | static void | [registerScene](#registerscene) | C++ \| Lua |
 | static bool | [loadScene](#loadscene) | C++ \| Lua |
 | static bool | [isLoadPending](#isloadpending) | C++ \| Lua (`loadPending`) |
+| static bool | [setLoadingScene](#setloadingscene-getloadingsceneid) | C++ \| Lua |
+| static uint32_t | [getLoadingSceneId](#setloadingscene-getloadingsceneid) | C++ \| Lua (`loadingSceneId`) |
+| static void | [setLoadingDelay](#setloadingdelay-getloadingdelay) | C++ \| Lua (`loadingDelay`) |
+| static float | [getLoadingDelay](#setloadingdelay-getloadingdelay) | C++ \| Lua (`loadingDelay`) |
+| static bool | [isLoading](#isloading-getloadingprogress) | C++ \| Lua (`loading`) |
+| static float | [getLoadingProgress](#isloading-getloadingprogress) | C++ \| Lua (`loadingProgress`) |
 | static bool | [addChildScene](#addchildscene-removechildscene) | C++ \| Lua |
 | static bool | [removeChildScene](#addchildscene-removechildscene) | C++ \| Lua |
 | static uint32_t | [getSceneId](#getsceneid-getscenename) | C++ \| Lua |
@@ -122,13 +128,17 @@ Loads a registered scene stack by name or ID, performing a full scene transition
 
 Because it clears everything, do not call `loadScene` once per layer. Persistent layers (a HUD, shared lighting) should be **start-active child scenes** of the target scene so they come up in the same call.
 
-Called while a frame is running — from a script callback, a physics contact, a button
-press — the transition is **deferred to the start of the next frame**, because the factory
-tears down the scenes and scripts that are still executing. The call still returns `true`
-when the scene exists; the last request made in a frame wins (a replaced request logs a
-warning), [`isLoadPending`](#isloadpending) reports the wait, and `getCurrentSceneId`
-only changes once the load is applied. Outside a frame (for example in the `init()` entry
-point) the stack is built immediately.
+Called while a scene is running — from a script callback, a physics contact or an input
+event — the transition is **deferred to the start of the next frame**, because the factory
+tears down the scenes and scripts that are still executing. A request from an input event
+gives the old scenes one more update first, so a click sound it played still starts. The
+call returns `true` when the scene exists; the last request wins (a replaced request logs
+a warning), [`isLoadPending`](#isloadpending) reports the wait, and `getCurrentSceneId`
+only changes once the load is applied. Only the first load, with nothing on screen yet
+(the `init()` entry point), builds the stack immediately.
+
+With a [loading scene](#setloadingscene-getloadingsceneid) set, the switch also waits for
+it to be on screen and for the [loading delay](#setloadingdelay-getloadingdelay).
 
 === "Lua"
     ```lua
@@ -205,8 +215,92 @@ In Lua the count is the read-only property `SceneManager.sceneCount`, not a call
 
 * static bool **isLoadPending**()
 
-`true` between a `loadScene` call made during a frame and the next frame, which applies
-it. Lua reads it as the `SceneManager.loadPending` property.
+`true` between a deferred `loadScene` call and the frame that replaces the old stack,
+loading delay included. Lua reads it as the `SceneManager.loadPending` property.
+
+---
+
+### setLoadingScene / getLoadingSceneId
+
+* static bool **setLoadingScene**(const std::string& name)
+* static bool **setLoadingScene**(uint32_t id)
+* static uint32_t **getLoadingSceneId**()
+
+Sets a registered scene stack as the **loading screen** that [`loadScene`](#loadscene)
+shows over every transition. An empty name or `0` turns it off. Returns `false` if the
+scene is unknown.
+
+A transition then runs in three steps:
+
+1. The loading scene is added **on top** of the running scenes, which keep running
+   underneath it.
+2. Once it is drawn with its resources loaded and the
+   [loading delay](#setloadingdelay-getloadingdelay) has passed, the old stack is replaced.
+   The game freezes while the new scenes are built, with the loading scene on screen.
+3. The loading scene is removed once every mesh, UI element and sky of the new stack is
+   loaded, or after 5 seconds without progress, with a warning.
+
+It is kept alive between transitions, so its scripts keep their state. Their `onUpdate`
+also runs while it is off screen, so check [`isLoading`](#isloading-getloadingprogress)
+first. It is not shown for a transition to a stack that includes it.
+
+=== "Lua"
+    ```lua
+    SceneManager.setLoadingScene("Loading")
+    SceneManager.loadingDelay = 0.3
+    SceneManager.loadScene("Level2")   -- Loading appears first, then Level2 behind it
+    ```
+
+=== "C++"
+    ```cpp
+    SceneManager::setLoadingScene("Loading");
+    SceneManager::setLoadingDelay(0.3f);
+    SceneManager::loadScene("Level2");
+    ```
+
+---
+
+### setLoadingDelay / getLoadingDelay
+
+* static void **setLoadingDelay**(float seconds)
+* static float **getLoadingDelay**()
+
+Seconds the [loading scene](#setloadingscene-getloadingsceneid) covers the old scenes
+before they are replaced. Default `0`. The old scenes keep running below it until then,
+which leaves time for a fade in: a script on the loading scene can raise its alpha from
+`0` to `1` over the delay.
+
+---
+
+### isLoading / getLoadingProgress
+
+* static bool **isLoading**()
+* static float **getLoadingProgress**()
+
+`isLoading` is `true` from a [`loadScene`](#loadscene) call until the new stack has loaded
+its resources, with or without a loading scene. A level script can wait for it before it
+starts gameplay.
+
+`getLoadingProgress` is the share of the new stack's meshes, UI elements and skies that
+finished loading: `0` until the old stack is replaced, `1` when done. It only moves across
+several frames with [`Engine::setAsyncLoading(true)`](engine.md#asyncloading); otherwise
+it jumps from `0` to `1`.
+
+=== "Lua"
+    ```lua
+    function LoadingScreen:onUpdate()
+        if not SceneManager.loading then return end
+        self.bar.width = 360 * SceneManager.loadingProgress
+    end
+    ```
+
+=== "C++"
+    ```cpp
+    void LoadingScreen::onUpdate() {
+        if (!SceneManager::isLoading()) return;
+        barFill->setWidth((unsigned int)(360 * SceneManager::getLoadingProgress()));
+    }
+    ```
 
 ---
 

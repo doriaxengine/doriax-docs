@@ -389,6 +389,8 @@ Returns `true` when any OpenGL backend (GLCORE, GLES3) is active.
 
 Enable background resource loading. When active, GPU resource creation must be committed on the main thread via [commitThreadQueue](#startasyncthread-committhreadqueue-endasyncthread-isasyncthread).
 
+The editor always loads asynchronously, Play included, while an exported game starts with it off. Turn it on from a script so both behave the same and a [loading screen](scenemanager.md#setloadingscene-getloadingsceneid) keeps animating.
+
 ---
 
 ### mouseCursor

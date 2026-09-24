@@ -140,15 +140,51 @@ For web, always test async loading with pthreads enabled in your deployment envi
 - Test async loading on the slowest target device — the loading time and race conditions
   may not reproduce on a fast desktop machine.
 
-## Loading screen pattern
+## Loading screens
 
-A common pattern for level loading:
+`SceneManager` shows a loading screen for you. Register a UI scene once and every
+`loadScene` goes through it:
 
-1. Enable async loading and enter a loading scene with a progress bar.
-2. Load (or switch to) the gameplay scene — its resources stream in on worker threads.
-3. Drive the progress bar from `ResourceProgress.getOverallProgress().totalProgress`.
-4. When `ResourceProgress.hasActiveBuilds()` returns `false` and
-   `Engine.getQueuedResourceCount()` reaches zero, hide the loading overlay.
+1. The loading scene appears on top of the running scene, which keeps running below it.
+2. After the loading delay, the old scene is replaced behind it. The new scene's entities
+   and scripts are built on the main thread, so the game freezes for that moment with the
+   loading scene on screen.
+3. With async loading on, the new scene's textures, sounds and models stream in on worker
+   threads while the loading scene keeps animating. It is removed once they are loaded.
+
+=== "Lua"
+
+    ```lua
+    -- once, at startup
+    Engine.asyncLoading = true
+    SceneManager.setLoadingScene("Loading")
+    SceneManager.loadingDelay = 0.3
+
+    -- LoadingScreen.lua, on the Loading scene
+    function LoadingScreen:onUpdate()
+        if not SceneManager.loading then return end
+        self.bar.width = 360 * SceneManager.loadingProgress
+    end
+    ```
+
+=== "C++"
+
+    ```cpp
+    // once, at startup
+    Engine::setAsyncLoading(true);
+    SceneManager::setLoadingScene("Loading");
+    SceneManager::setLoadingDelay(0.3f);
+
+    // LoadingScreen.cpp, on the Loading scene
+    void LoadingScreen::onUpdate() {
+        if (!SceneManager::isLoading()) return;
+        bar->setWidth((unsigned int)(360 * SceneManager::getLoadingProgress()));
+    }
+    ```
+
+A level script can also wait for `SceneManager.loading` to become `false` before it starts
+gameplay. See
+[SceneManager.setLoadingScene](../reference/classes/scenemanager.md#setloadingscene-getloadingsceneid).
 
 ## See also
 
