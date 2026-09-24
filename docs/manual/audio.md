@@ -142,6 +142,10 @@ effects:
     music:play()
     ```
 
+A scene's sounds stop when the scene is deleted, looping ones included, so each level
+can own its music and a scene switch ends it. Music meant to carry on across scenes goes
+in a scene that stays, such as a child scene the next stack keeps.
+
 ## Audio workflow checklist
 
 1. Add audio files to the project resources folder (OGG or WAV recommended).

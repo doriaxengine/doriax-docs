@@ -130,12 +130,13 @@ Because it clears everything, do not call `loadScene` once per layer. Persistent
 
 Called while a scene is running — from a script callback, a physics contact or an input
 event — the transition is **deferred to the start of the next frame**, because the factory
-tears down the scenes and scripts that are still executing. A request from an input event
-gives the old scenes one more update first, so a click sound it played still starts. The
-call returns `true` when the scene exists; the last request wins (a replaced request logs
-a warning), [`isLoadPending`](#isloadpending) reports the wait, and `getCurrentSceneId`
-only changes once the load is applied. Only the first load, with nothing on screen yet
-(the `init()` entry point), builds the stack immediately.
+tears down the scenes and scripts that are still executing. The replaced scenes are
+deleted, which stops their sounds; a [loading delay](#setloadingdelay-getloadingdelay)
+lets a click sound finish first. The call returns `true` when the scene exists; the last
+request wins (a replaced request logs a warning), [`isLoadPending`](#isloadpending)
+reports the wait, and `getCurrentSceneId` only changes once the load is applied. Only
+the first load, with nothing on screen yet (the `init()` entry point), builds the stack
+immediately.
 
 With a [loading scene](#setloadingscene-getloadingsceneid) set, the switch also waits for
 it to be on screen and for the [loading delay](#setloadingdelay-getloadingdelay).
@@ -267,8 +268,9 @@ first. It is not shown for a transition to a stack that includes it.
 
 Seconds the [loading scene](#setloadingscene-getloadingsceneid) covers the old scenes
 before they are replaced. Default `0`. The old scenes keep running below it until then,
-which leaves time for a fade in: a script on the loading scene can raise its alpha from
-`0` to `1` over the delay.
+which leaves time for a fade in (a script on the loading scene can raise its alpha from
+`0` to `1` over the delay) and for their last sounds, such as a button click, which stop
+when the scenes are deleted.
 
 ---
 
