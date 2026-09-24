@@ -25,6 +25,7 @@ description: UILayoutComponent API reference (C++ and Lua).
 | `anchorOffsetRight` | C++ \| Lua |
 | `anchorOffsetBottom` | C++ \| Lua |
 | `positionOffset` | C++ \| Lua |
+| `pivot` | C++ \| Lua |
 | `anchorPreset` | C++ \| Lua |
 | `usingAnchors` | C++ \| Lua |
 | `panel` | C++ \| Lua (read-only) |

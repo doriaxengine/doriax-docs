@@ -16,6 +16,8 @@ The anchor system works in two modes:
 * **Fixed size** — the widget has an explicit `width`/`height`. The anchor points define which corner(s) of the parent the widget is attached to; anchor offsets define the pixel distance from those corners.
 * **Stretch mode** — by setting anchor points on all four edges (e.g. `FULL_LAYOUT`), the widget automatically fills the available space, optionally with pixel margins.
 
+A UI element's position is its top-left corner, and by default it scales and rotates around that corner too. Set a [pivot](#pivot) to grow it from its center instead.
+
 ### Properties
 
 | Type | Name | Default | Langs |
@@ -34,6 +36,7 @@ The anchor system works in two modes:
 | Vector2 | [positionOffset](#positionoffset) | `(0,0)` | C++ \| Lua |
 | float | [positionXOffset](#positionoffset) | `0.0` | C++ \| Lua |
 | float | [positionYOffset](#positionoffset) | `0.0` | C++ \| Lua |
+| Vector2 | [pivot](#pivot) | `(0,0)` | C++ \| Lua |
 | bool | [usingAnchors](#usinganchors) | `true` | C++ \| Lua |
 | bool | [ignoreScissor](#ignorescissor) | `false` | C++ \| Lua |
 
@@ -46,6 +49,7 @@ The anchor system works in two modes:
 | void | [setAnchorOffsets](#anchoroffsets) | C++ \| Lua |
 | void | [setAnchorPreset](#anchorpreset_1) | C++ \| Lua |
 | void | [setPositionOffset](#positionoffset) | C++ \| Lua |
+| void | [setPivot](#pivot) | C++ \| Lua |
 
 ## Enumerations
 
@@ -123,6 +127,43 @@ Applies a [AnchorPreset](#anchorpreset) that sets `anchorPoints` automatically.
 * *Getter*: Vector2 **getPositionOffset**() const
 
 An additional pixel offset applied to the final computed position. Useful for fine-tuning placement without modifying the anchor configuration.
+
+---
+
+### pivot
+
+* *Setter*: void **setPivot**(Vector2 pivot)
+* *Setter*: void **setPivot**(float x, float y)
+* *Getter*: Vector2 **getPivot**() const
+
+The point the element scales and rotates around, as a share of its size: `(0, 0)` is the
+top-left corner (the default), `(0.5, 0.5)` the center and `(1, 1)` the bottom-right
+corner. It does not move the element: the position stays the top-left corner of the
+unscaled element, so anchors and layouts are unaffected.
+
+A [Text](text.md) with its own *Center* or *Baseline* option moves its glyphs away from the
+layout rectangle, so a pivot is measured from that rectangle, not from the glyphs.
+
+=== "C++"
+    ```cpp
+    // a button that grows from its center on hover
+    Button play(&scene);
+    play.setPivot(0.5f, 0.5f);
+    play.getComponent<UIComponent>().onPointerEnter.add("grow", [&](float x, float y){
+        play.setScale(1.05f);
+    });
+    play.getComponent<UIComponent>().onPointerLeave.add("shrink", [&](float x, float y){
+        play.setScale(1.0f);
+    });
+    ```
+
+=== "Lua"
+    ```lua
+    play:setPivot(0.5, 0.5)
+    local ui = play:getUIComponent()
+    ui.onPointerEnter = function(x, y) play:setScale(1.05) end
+    ui.onPointerLeave = function(x, y) play:setScale(1.0) end
+    ```
 
 ---
 
