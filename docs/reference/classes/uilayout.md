@@ -139,7 +139,8 @@ An additional pixel offset applied to the final computed position. Useful for fi
 The point the element scales and rotates around, as a share of its size: `(0, 0)` is the
 top-left corner (the default), `(0.5, 0.5)` the center and `(1, 1)` the bottom-right
 corner. It does not move the element: the position stays the top-left corner of the
-unscaled element, so anchors and layouts are unaffected.
+unscaled element, so anchors and layouts are unaffected. `getWorldPosition()` returns
+where the top-left corner is after scaling and rotation.
 
 A [Text](text.md) with its own *Center* or *Baseline* option moves its glyphs away from the
 layout rectangle, so a pivot is measured from that rectangle, not from the glyphs.
