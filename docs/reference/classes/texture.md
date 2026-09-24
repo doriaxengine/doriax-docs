@@ -23,6 +23,7 @@ A `Texture` object is a lightweight handle; the actual GPU resource is managed i
 | [TextureWrap](#texturewrap) | [wrapU](#wrapu-wrapv) | `REPEAT` | C++ \| Lua |
 | [TextureWrap](#texturewrap) | [wrapV](#wrapu-wrapv) | `REPEAT` | C++ \| Lua |
 | float | [svgScale](#svgscale) | `1.0` | C++ \| Lua |
+| [TextureAlphaBorder](#texturealphaborder) | [alphaBorder](#alphaborder) | `AUTO` | C++ \| Lua |
 | bool | [releaseDataAfterLoad](#releasedataafterload) | `true` | C++ \| Lua |
 
 ### Methods
@@ -75,6 +76,16 @@ Controls what happens when UV coordinates fall outside the `[0, 1]` range.
 
 ---
 
+### TextureAlphaBorder
+
+Whether an image loaded from a file gets its [alpha border](#alphaborder) fixed.
+
+* **AUTO** — Fixed on sprites, tilemaps, polygons, UI and particles, kept everywhere else.
+* **FIX** — Always fixed.
+* **KEEP** — Loaded as the file stores it.
+
+---
+
 ## Property details
 
 ### minFilter / magFilter
@@ -123,6 +134,31 @@ reloads at the new resolution.
     ```lua
     local icon = Texture("ui/icon.svg")
     icon.svgScale = 4  -- a 24x24 SVG rasterizes as 96x96
+    ```
+
+---
+
+### alphaBorder
+
+* *Setter*: void **setAlphaBorder**([TextureAlphaBorder](#texturealphaborder) alphaBorder)
+* *Getter*: [TextureAlphaBorder](#texturealphaborder) **getAlphaBorder**() const
+
+Linear filtering also reads the color of fully transparent pixels next to visible ones, which image editors often save as black, and shows it as a grey or dark outline around the image. With the fix, those pixels take the color of their visible neighbors when the file loads, up to 4 pixels out. Alpha and visible pixels do not change.
+
+`AUTO` fixes it where the image is drawn with transparency (sprites, tilemaps, polygons, UI and particles) and keeps the file as is elsewhere. That protects 3D materials drawn opaque, whose alpha is ignored and whose transparent pixels are visible, and data maps that store other values in their channels. Set `FIX` for a 3D texture that is alpha tested or blended, such as foliage.
+
+Like [svgScale](#svgscale), the fix is part of the texture's identity: the same file fixed and kept is two GPU textures. It only applies to textures loaded from a file.
+
+=== "C++"
+    ```cpp
+    Texture leaves("models/leaves.png");
+    leaves.setAlphaBorder(TextureAlphaBorder::FIX);
+    ```
+
+=== "Lua"
+    ```lua
+    local leaves = Texture("models/leaves.png")
+    leaves.alphaBorder = TextureAlphaBorder.FIX
     ```
 
 ---

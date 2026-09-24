@@ -59,7 +59,7 @@ Most fields are edited with the mouse or keyboard directly in the panel:
 | Booleans | Toggle checkbox |
 | Strings | Inline text input |
 | Fonts | Pick or drag a TTF/OTF/TTC file for the main font; use the stacked layers button for ordered fallback fonts |
-| Textures / assets | Drag from the Resources Browser, type the asset path, or pick a **camera** as the source (camera button / drag a camera entity) for render-to-texture. For image sources, a sliders button opens the **Texture Settings** popup (filter, wrap, and SVG scale) |
+| Textures / assets | Drag from the Resources Browser, type the asset path, or pick a **camera** as the source (camera button / drag a camera entity) for render-to-texture. For image sources, a sliders button opens the **Texture Settings** popup (filter, wrap, alpha border and SVG scale) |
 | Entity references | Drag an entity from the Structure panel |
 | Enumerations | Drop-down selection |
 
@@ -84,6 +84,10 @@ button next to the camera button opens the **Texture Settings** popup:
 * **Min Filter** / **Mag Filter** — sampling filters for minification and magnification.
   Picking a mipmap variant for Min Filter enables mipmap generation for the texture.
 * **Wrap U** / **Wrap V** — wrapping mode per texture axis.
+* **Alpha Border** — whether transparent pixels next to visible ones take their color on
+  load, so filtering does not draw a dark outline. **Auto** fixes sprites, tilemaps, polygons,
+  UI and particles and keeps 3D materials as they are; see
+  [Texture.alphaBorder](../reference/classes/texture.md#alphaborder).
 * **SVG Scale** (only for `.svg` sources) — a multiplier on the vector's intrinsic size
   (a drag field plus 0.5×–4× presets), so the image rasterizes crisp when drawn larger or
   on high-DPI displays. The scale is stored on the texture reference, so different slots
