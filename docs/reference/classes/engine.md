@@ -749,7 +749,7 @@ Called when the graphics surface is being destroyed (e.g. app going to backgroun
 * `static FunctionSubscribe<void()> onDraw`
 * Callback: `void()`
 
-Called every frame after the scene is drawn. Use for custom rendering passes.
+Called every frame after the updates, right before the scenes are drawn.
 
 ---
 

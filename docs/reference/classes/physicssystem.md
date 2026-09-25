@@ -49,12 +49,16 @@ callbacks below run.
 See [Events](../../manual/events.md). Use `onFixedUpdate` for forces.
 
 !!! warning "A filter callback must return a value"
-    `shouldCollide2D` and `shouldCollide3D` are the two events whose return value is
-    read. A Lua handler that falls off the end returns `nil`, which is read as `false`
-    and **rejects the contact**. The `true` default only applies when nothing is
+    `preSolve2D`, `shouldCollide2D`, and `shouldCollide3D` are the events whose return
+    value is read. A Lua handler that falls off the end returns `nil`, which is read as
+    `false` and **rejects the contact**. The `true` default only applies when nothing is
     subscribed at all, so always end the handler with an explicit `return`.
 
     ```lua
+    function Trap:init()
+        RegisterEvent(self, self.scene:getPhysicsSystem().shouldCollide3D, "shouldCollide")
+    end
+
     function Trap:shouldCollide(bodyA, bodyB, offset, result)
         if bodyA.entity == self.ghostEntity then
             return false

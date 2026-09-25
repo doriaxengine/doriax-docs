@@ -18,6 +18,7 @@ dialogs, and a live output panel for compile and export messages.
 | **C++ scripts** | Compiled at export/build time for native performance; require a rebuild to take effect |
 | **GLSL shaders** | Edit forked shader sources (`.vert`/`.frag`/`.glsl`); saving recompiles and refreshes the viewport. See [Custom Shaders](custom-shaders.md) |
 | **Script templates** | Create new Lua or C++ script files from boilerplate using the **New Script** dialog |
+| **Event menu** | Add an engine, input, component, or physics event handler to a script in one click. See [Add events](#add-events) |
 | **API completion** | Engine API suggestions generated from Lua bindings; covers classes, methods, and constants |
 | **Build output** | Compiler errors, warnings, and export messages stream into the Output panel |
 
@@ -49,6 +50,71 @@ The property type comes from the dropped entity (its script class, or wrapper ty
 as `Object`/`Mesh`/`Camera`), and the entity is assigned as the property value
 automatically. See
 [Script Properties](../manual/script-properties.md#insert-entity-references-by-drag-and-drop).
+
+## Add events
+
+The **lightning** button (*Add event*) at the top of a Lua or C++ script window, next to
+the **gear**, opens the menu of events a script can subscribe to:
+
+| Menu | Events |
+| --- | --- |
+| **Engine** | Frame updates (`onUpdate`, `onFixedUpdate`, `onPostUpdate`, `onDraw`) and application events (`onPause`, `onResume`, `onShutdown`, ...) |
+| **Input** | Keyboard, mouse, touch, and gamepad events |
+| **UI**, **Button**, **Scrollbar**, **Panel**, **Text Edit**, **Action**, **Sound** | Events of that component, which the script's entity needs to have |
+| **Physics 2D**, **Physics 3D** | Contacts, sensors, body activation, and collision filters, for every body in the scene |
+
+Each entry shows the handler parameters. Picking one writes the code the event needs and
+puts the caret inside the new handler:
+
+=== "C++"
+
+    The `REGISTER_*` macro goes in the constructor and its `UNREGISTER_*` pair in the
+    destructor. The handler is declared in the header and defined in the source file, and
+    the event's header (such as `ButtonComponent.h`) is included when missing. It works
+    from either file of the script; the other one, with the same name next to it, is
+    opened when the handler goes there.
+
+    ```cpp
+    Menu::Menu(Scene* scene, Entity entity): ScriptBase(scene, entity) {
+        REGISTER_ENGINE_EVENT(onUpdate);
+        REGISTER_BUTTON_EVENT(onPress, onPress);
+    }
+
+    Menu::~Menu() {
+        UNREGISTER_BUTTON_EVENT(onPress, onPress);
+    }
+
+    void Menu::onPress() {
+
+    }
+    ```
+
+=== "Lua"
+
+    The registration goes in `init()`, which is created when missing, and the handler
+    before `return Name`.
+
+    ```lua
+    function Menu:init()
+        RegisterEngineEvent(self, "onUpdate")
+        RegisterEvent(self, Button(self.scene, self.entity):getButtonComponent().onPress, "onPress")
+    end
+
+    function Menu:onPress()
+
+    end
+    ```
+
+An event the script already registers shows a check mark, and picking it moves the caret
+to its handler. Engine and input handlers are named like the event, as
+`REGISTER_ENGINE_EVENT` and `RegisterEngineEvent` require. Other handlers are named after
+the event too (`onPress`, `onBeginContact2D`), with the component added when that name is
+taken: **Sound > onPause** becomes `onSoundPause`, since `onPause` belongs to the engine
+event. Collision filters (`preSolve2D`, `shouldCollide2D`, `shouldCollide3D`) start with
+`return true`, so every contact is kept until you add a condition.
+
+Each change is one undo step in the files open in the Code Editor. A closed header that
+only needs the declaration is saved directly.
 
 ## Script entry point
 
@@ -96,7 +162,8 @@ Scripts subscribe to the engine events they need (`onUpdate`, `onFixedUpdate`,
     }
     ```
 
-See [Creating Scripts](../manual/creating-scripts.md) for the full lifecycle and event
+The [event menu](#add-events) writes this code for any event. See
+[Creating Scripts](../manual/creating-scripts.md) for the full lifecycle and event
 system documentation.
 
 ## DPROPERTY and script properties

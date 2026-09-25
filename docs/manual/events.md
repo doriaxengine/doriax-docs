@@ -11,6 +11,10 @@ previous one, which prevents duplicate subscriptions from the same source.
 Events work identically in C++ and Lua. C++ uses macros from `FunctionSubscribe.h`.
 Lua uses `RegisterEvent` and `RegisterEngineEvent` globals registered by `LuaBinding`.
 
+!!! tip "Let the Code Editor write it"
+    The [event menu](../editor/code-editor.md#add-events) of the Code Editor adds the
+    registration and an empty handler for any event on this page, in C++ or Lua.
+
 ## How dispatch works
 
 ```
@@ -57,7 +61,7 @@ optionally reported through a global crash handler.
 | `onViewLoaded` | `void()` | View/surface ready |
 | `onViewChanged` | `void()` | Canvas/view changed; Lua name: `onCanvasChanged` |
 | `onViewDestroyed` | `void()` | View destroyed |
-| `onDraw` | `void()` | Draw callback (after scene draw) |
+| `onDraw` | `void()` | Every frame, before the scenes are drawn |
 | `onUpdate` | `void()` | Variable-step gameplay update |
 | `onFixedUpdate` | `void()` | Fixed-step simulation update |
 | `onPostUpdate` | `void()` | Work after regular update |
@@ -100,7 +104,7 @@ UNREGISTER_ENGINE_EVENT(onUpdate);
 ### Any FunctionSubscribe member
 
 ```cpp
-auto* physics = scene->getPhysicsSystem();
+PhysicsSystem* physics = scene->getSystem<PhysicsSystem>().get();
 REGISTER_EVENT(physics->beginContact2D, onBeginContact);
 UNREGISTER_EVENT(physics->beginContact2D, onBeginContact);
 ```
@@ -127,14 +131,14 @@ public:
 
     void onUpdate();
     void onClick(float x, float y);
-    void onBeginContact(doriax::Body2D bodyA, int shapeA, doriax::Body2D bodyB, int shapeB);
+    void onBeginContact(doriax::Body2D bodyA, unsigned long shapeA, doriax::Body2D bodyB, unsigned long shapeB);
 
 private:
     doriax::PhysicsSystem* physics = nullptr;
 };
 
 DoorTrigger::DoorTrigger(Scene* scene, Entity entity) : ScriptBase(scene, entity) {
-    physics = scene->getPhysicsSystem();
+    physics = scene->getSystem<PhysicsSystem>().get();
     REGISTER_ENGINE_EVENT(onUpdate);
     REGISTER_UI_EVENT(onClick, onClick);
     if (physics) {
@@ -231,6 +235,10 @@ function Trap:onBeginContact(bodyA, shapeA, bodyB, shapeB)
 end
 ```
 
+The filters (`preSolve2D`, `shouldCollide2D`, `shouldCollide3D`) use what the method
+returns, so end them with an explicit `return`: a method that returns nothing rejects the
+contact. See [PhysicsSystem](../reference/classes/physicssystem.md#events).
+
 ### Custom tag
 
 ```lua
@@ -308,7 +316,7 @@ curves by subscribing to an `Ease` instance.
 | --- | --- |
 | C++ script destructor | Call matching `UNREGISTER_*` macros |
 | Lua script unload | `cleanupLuaScripts` removes tags containing instance pointer |
-| Scene unload | `Scene::removeSubscriptionsByTag` |
+| Scene unload | `Scene::removeSubscriptionsByTag`, including the `PhysicsSystem` events |
 | Component callbacks | `Engine::clearComponentSubscriptions(scene)` |
 | Full reset | `Engine::clearAllSubscriptions()` |
 

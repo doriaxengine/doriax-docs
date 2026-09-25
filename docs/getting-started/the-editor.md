@@ -48,7 +48,8 @@ the bone tools for skeletal animation.
 
 Write Lua and C++ scripts in the integrated code editor without leaving the
 environment. Lua iterates quickly at runtime, while C++ is compiled at build time for
-native performance.
+native performance. Its [event menu](../editor/code-editor.md#add-events) adds engine,
+input, component, and physics event handlers to a script for you.
 
 ## Play mode
 
