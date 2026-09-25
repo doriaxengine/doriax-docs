@@ -190,6 +190,7 @@ nav:
           - Ray: 'reference/classes/ray.md'
   - Building from Source:
       - Overview: 'building/overview.md'
+      - Build Script: 'building/build-script.md'
       - Windows: 'building/windows.md'
       - Linux: 'building/linux.md'
       - macOS: 'building/macos.md'

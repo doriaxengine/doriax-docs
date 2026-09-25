@@ -61,7 +61,7 @@ back. Use a separate build directory (or pass `-DGRAPHIC_BACKEND=` again) to cha
 
 ## Runtime project build
 
-Linux runtime builds default to OpenGL Core and the GLFW app backend.
+Linux runtime builds use the native X11 app backend and default to OpenGL Core.
 
 ```bash
 cmake -S engine -B build-runtime \
@@ -74,11 +74,13 @@ cmake --build build-runtime --config Release --target doriax-project
 Assets and Lua files are copied next to the build output when the project contains
 `assets/` and `lua/` folders.
 
+In a Source Code export, `python3 doriax.py` runs both commands. See
+[Build Script](build-script.md).
+
 ## Vulkan backend
 
 To build a Linux runtime with the Vulkan backend, install the Vulkan SDK development
-packages and pass `-DGRAPHIC_BACKEND=vulkan` at configure time. The Vulkan backend
-requires the sokol app backend, which is selected automatically:
+packages and pass `-DGRAPHIC_BACKEND=vulkan` at configure time:
 
 ```bash
 sudo apt install -y libvulkan-dev vulkan-tools

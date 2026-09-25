@@ -66,6 +66,9 @@ contains `assets/` and `lua/` folders. The experimental Native Resource Pack set
 not apply to Web mode — Emscripten still emits its `.data` bundle from the loose folders.
 Leave packing off if you export Source Code and then run this Emscripten build yourself.
 
+In a Source Code export, `python3 doriax.py -p web` finds the SDK and runs both commands.
+See [Build Script — Web builds](build-script.md#web-builds).
+
 ## Thread support
 
 Thread support is disabled by default for Emscripten builds. Enable it only when your

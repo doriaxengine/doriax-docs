@@ -54,8 +54,9 @@ The build produces `build/Doriax.app`. The executable inside it is
 
 ## Runtime project build
 
-macOS runtime builds default to Metal. When using the Xcode generator, the app backend
-defaults to the native Apple backend; otherwise it defaults to Sokol.
+macOS runtime builds default to Metal. The Xcode generator with Metal builds an `.app`
+bundle on the native Apple backend (`platform/apple`). Every other generator or backend
+builds a plain executable on the native Cocoa backend (`platform/mac`).
 
 ```bash
 cmake -S engine -B build-runtime \
@@ -71,6 +72,9 @@ For Xcode:
 cmake -S engine -B build-xcode -DPROJECT_ROOT=/path/to/project -G "Xcode"
 cmake --build build-xcode --config Release --target doriax-project
 ```
+
+The Xcode app bundle doesn't include `assets/` and `lua/`. In a Source Code export,
+`python3 doriax.py -p macos-xcode` adds them. See [Build Script](build-script.md).
 
 The engine sets the macOS deployment target to 10.15 for runtime builds.
 

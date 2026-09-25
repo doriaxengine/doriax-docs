@@ -106,7 +106,7 @@ Desktop export selector passes the corresponding value automatically; Web export
 | `gles3` | OpenGL ES 3 / WebGL-style targets |
 | `d3d11` | Windows Direct3D 11 |
 | `metal` | macOS and iOS Metal |
-| `vulkan` | Vulkan (Linux and Windows; requires `APP_BACKEND=sokol`) |
+| `vulkan` | Vulkan (Linux and Windows) |
 
 On macOS, `vulkan` builds through MoltenVK but cannot run yet — see
 [Vulkan backend](../building/macos.md#vulkan-backend).
@@ -118,14 +118,18 @@ cached variable, so the build directory keeps the backend it was configured with
 
 ## App backend
 
-| Backend | Target |
-| --- | --- |
-| `glfw` | Desktop editor/windowing |
-| `sdl` | Desktop alternative when configured |
-| `sokol` | Standalone desktop runtime path |
-| `apple` | Native Apple/Xcode path |
-| `android` | Android Native Activity |
-| `emscripten` | HTML5/web builds |
+The target system selects the app backend, which handles the window, input, and main
+loop. Configure prints it as `APP_BACKEND`, but the value is informational: setting it
+has no effect.
+
+| Target system | `APP_BACKEND` | Platform code |
+| --- | --- | --- |
+| Windows | `win` | `platform/win`: native Win32 window with a WGL (OpenGL), Vulkan, or D3D11 context |
+| Linux, FreeBSD | `linux` | `platform/linux`: native X11 window with a GLX (OpenGL) or Vulkan context |
+| macOS | `apple` | `platform/mac`: native Cocoa executable. With the Xcode generator and Metal, `platform/apple` builds an `.app` bundle instead |
+| iOS | `apple` | `platform/apple` |
+| Android | `android` | `platform/android`: GameActivity |
+| Emscripten | `emscripten` | `platform/emscripten` |
 
 ## Generated artifacts
 

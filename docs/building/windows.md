@@ -79,6 +79,9 @@ cmake --build build-runtime --config Release --target doriax-project
 
 Use the generated executable from the selected configuration folder.
 
+In a Source Code export, `python doriax.py` runs both commands with the newest Visual
+Studio. Pass `-G` to choose another generator. See [Build Script](build-script.md).
+
 ## Vulkan backend
 
 To build a Windows runtime with the Vulkan backend, install the

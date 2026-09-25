@@ -177,6 +177,7 @@ you are running on already ticked; once a selection is saved, the window reopens
 ```
 output/
 ├── CMakeLists.txt       ← build system entry point
+├── doriax.py            ← configure and build script
 ├── core/  libs/  platform/  renders/  workspaces/
 │                        ← engine runtime source (copied from the editor's SDK)
 ├── shaders/             ← compiled shader headers for the selected backends
@@ -208,7 +209,9 @@ A folder appears in the export only when a file lands in it, so a folder holding
 but scripts leaves no empty directory behind. The exception is a packed Source Code
 export, which keeps an empty `project/lua/` directory for the generated Xcode workspace.
 
-Build it afterwards with the appropriate [platform toolchain](#platform-toolchains).
+Build it afterwards with the appropriate [platform toolchain](#platform-toolchains), or
+run `python3 doriax.py` in the export folder to configure and build it in one step. See
+[Build Script](../building/build-script.md).
 
 ## Native resource pack
 

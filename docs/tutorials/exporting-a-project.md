@@ -68,7 +68,14 @@ custom build step.
 destination folder, or serve the web files with any local web server
 (`python3 -m http.server`).
 
-**Source Code** exports are built with CMake:
+**Source Code** exports are built with CMake. The export includes a
+[build script](../building/build-script.md) that runs both steps for you:
+
+```bash
+python3 doriax.py
+```
+
+or run CMake yourself:
 
 ```bash
 cmake -S . -B build -DCMAKE_BUILD_TYPE=Release

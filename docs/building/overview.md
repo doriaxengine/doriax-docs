@@ -62,8 +62,13 @@ Useful runtime variables:
 | --- | --- |
 | `APP_NAME` | Output target/application name |
 | `PROJECT_ROOT` | Project folder containing assets, Lua, and source files |
-| `GRAPHIC_BACKEND` | `glcore`, `gles3`, `d3d11`, or `metal` |
-| `APP_BACKEND` | `glfw`, `sokol`, `apple`, `android`, or `emscripten` |
+| `GRAPHIC_BACKEND` | `glcore`, `gles3`, `d3d11`, `metal`, or `vulkan` |
+
+The target system picks the app backend, so there is no variable to set. See
+[App backend](../reference/build-options.md#app-backend).
+
+The [build script](build-script.md) runs these commands in one step:
+`python3 engine/doriax.py` here, or `python3 doriax.py` in a Source Code export.
 
 ## Per-platform guides
 
@@ -103,7 +108,7 @@ The build can generate support files before compiling:
 
 | File | Source |
 | --- | --- |
-| `generated/shaders.h` | Built from shaders under `engine/tools/shaderlib` |
+| `generated/shaders.h` | Built from shaders under `engine/shaderlib` |
 | `generated/engine_api_suggestions.h` | Built from Lua binding files and engine headers |
 
 These generated files support the editor shader library and code editor suggestions.
