@@ -36,6 +36,7 @@ Each target platform provides its own concrete `System` subclass; the engine inj
 | int | [getScreenWidth](#getscreenwidth-getscreenheight) | C++ \| Lua |
 | int | [getScreenHeight](#getscreenwidth-getscreenheight) | C++ \| Lua |
 | int | [getSampleCount](#getsamplecount) | C++ \| Lua |
+| bool | [isTouchDevice](#istouchdevice) | C++ \| Lua |
 | void | [showVirtualKeyboard](#showvirtualkeyboard) | C++ \| Lua |
 | void | [hideVirtualKeyboard](#showvirtualkeyboard) | C++ \| Lua |
 | bool | [isFullscreen](#isfullscreen-requestfullscreen-exitfullscreen) | C++ \| Lua |
@@ -98,6 +99,33 @@ Physical screen (window) dimensions in pixels. These may differ from [Engine::ca
 * `virtual int getSampleCount()`
 
 Returns the MSAA sample count configured for the current graphics backend (e.g. 1, 2, or 4). Useful when creating render targets that must match the main framebuffer.
+
+---
+
+### isTouchDevice
+
+* `virtual bool isTouchDevice()`
+
+Returns `true` when touch is the main input, as on phones and tablets. Android and iOS
+always report it. On the web the browser decides from its primary pointer, so a phone
+reports `true` and a laptop with a touch screen and a mouse reports `false`. Desktop
+platforms report `false`.
+
+Use it to decide whether to start with on-screen controls. The player can still connect a
+keyboard or touch a laptop screen, so following the last input used as well is more
+reliable; see [On-screen controls](../../manual/input.md#on-screen-controls).
+
+=== "C++"
+
+    ```cpp
+    bool showControls = System::instance().isTouchDevice();
+    ```
+
+=== "Lua"
+
+    ```lua
+    local showControls = System.isTouchDevice()
+    ```
 
 ---
 

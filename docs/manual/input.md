@@ -213,6 +213,34 @@ single-touch to also fire mouse events.
 | `getTouchPosition(index)` | Position of a touch point by index |
 | `getTouches()` | Array of all active touch records |
 
+### On-screen controls
+
+[`System::isTouchDevice()`](../reference/classes/system.md#istouchdevice) tells whether the
+game runs on a phone or tablet, so it can show its own buttons from the start. Switch them
+on after a touch and off after a key press too, so a phone with a keyboard or a touch-screen
+laptop gets the right controls.
+
+Movement buttons are held while other buttons are pressed, so read them from the active
+touch points each frame instead of using UI buttons: a UI [Button](../reference/classes/button.md)
+is released as soon as any finger lifts.
+
+=== "C++"
+
+    ```cpp
+    // true while any finger is on the image
+    bool isTouched(Image* button) {
+        Vector3 pos = button->getWorldPosition();
+        Vector3 scale = button->getWorldScale();
+        for (const Touch& touch : Input::getTouches()) {
+            if (touch.position.x >= pos.x && touch.position.x <= pos.x + button->getWidth() * scale.x &&
+                touch.position.y >= pos.y && touch.position.y <= pos.y + button->getHeight() * scale.y) {
+                return true;
+            }
+        }
+        return false;
+    }
+    ```
+
 ## Gamepad
 
 Gamepad (controller) input is available on desktop (Windows, Linux, macOS), mobile
