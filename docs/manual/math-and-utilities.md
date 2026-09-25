@@ -50,8 +50,11 @@ local q = Quaternion(0, 90, 0)
 -- Interpolate (interpolation factor comes first)
 local result = Quaternion.slerp(0.5, q1, q2)
 
--- Rotate a direction (C++: q * v). In Lua, use an axis helper:
-local rotated = q:xAxis()  -- local +X after applying q
+-- Rotate a direction
+local rotated = q * Vector3(1, 0, 0)  -- same as q:xAxis()
+
+-- Face a target with the local +Z axis
+obj.rotation = Quaternion.lookRotation(target - obj.position)
 ```
 
 ## Matrix types

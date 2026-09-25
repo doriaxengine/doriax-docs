@@ -54,6 +54,7 @@ In Doriax, all [Object](object.md) rotations are stored as quaternions. Euler an
 | static Quaternion | [slerp](#slerp) | C++ \| Lua |
 | static Quaternion | [nlerp](#nlerp) | C++ \| Lua |
 | static Quaternion | [squad](#squad) | C++ \| Lua |
+| static Quaternion | [lookRotation](#lookrotation) | C++ \| Lua |
 | std::string | [toString](#tostring) | C++ \| Lua |
 
 ## Enumerations
@@ -253,6 +254,25 @@ Normalised linear interpolation. Cheaper than `slerp()` but not constant-speed; 
 * static Quaternion **squad**(float fT, const Quaternion& rkP, const Quaternion& rkA, const Quaternion& rkB, const Quaternion& rkQ)
 
 Spherical cubic (SQUAD) interpolation between two quaternions `rkP` and `rkQ` with inner control points `rkA` and `rkB`. Used for smooth keyframe animation.
+
+---
+
+### lookRotation
+
+* static Quaternion **lookRotation**(const Vector3& forward)
+* static Quaternion **lookRotation**(const Vector3& forward, const Vector3& up)
+
+Returns a rotation whose local **+Z** axis faces `forward`, keeping local +Y close to `up` (`Vector3::UNIT_Y` by default). A zero `forward` returns `IDENTITY`. Cameras look down **-Z**, so for a camera call [disableTarget](camera.md#settarget-disabletarget-isusingtarget) and pass `position - target`.
+
+=== "C++"
+    ```cpp
+    obj.setRotation(Quaternion::lookRotation(target - obj.getPosition()));
+    ```
+
+=== "Lua"
+    ```lua
+    obj.rotation = Quaternion.lookRotation(target - obj.position)
+    ```
 
 ---
 
