@@ -117,8 +117,8 @@ description: Body2D API reference — 2D physics body powered by Box2D, shapes, 
 * **CIRCLE** — Circle shape defined by center and radius.
 * **CAPSULE** — Two circles connected by a rectangle.
 * **POLYGON** — Arbitrary convex polygon.
-* **SEGMENT** — Line segment (edge shape, no volume).
-* **CHAIN** — Connected chain of line segments; can be open or closed.
+* **SEGMENT** — Line segment (edge shape, no volume). Collides on both sides.
+* **CHAIN** — Connected chain of line segments; can be open or closed. Collides on one side only, see [createChainShape](#createchainshape).
 
 ## Property details
 
@@ -314,7 +314,7 @@ Creates a capsule defined by two center points and a radius. Good for characters
 
 * `int createSegmentShape(Vector2 point1, Vector2 point2)`
 
-Creates a one-sided edge segment. Only dynamic bodies moving from `point1` to `point2` (based on normal direction) are blocked. Useful for platforms.
+Creates a line segment between `point1` and `point2`. It collides on both sides and has no mass. For outlines made of many edges, use a [chain](#createchainshape) instead.
 
 ---
 
@@ -323,6 +323,36 @@ Creates a one-sided edge segment. Only dynamic bodies moving from `point1` to `p
 * `int createChainShape(std::vector<Vector2> vertices, bool loop)`
 
 Creates a chain of connected edge segments. When `loop` is `true`, the last point connects back to the first forming a closed boundary.
+
+A chain collides on one side only, to the right of each edge going from one vertex to the next. With counter-clockwise vertices a closed chain blocks bodies outside it; with clockwise vertices it keeps them inside, like a ring or a bowl. Rotating or mirroring the body doesn't change the side. In the editor, ticks on the edges show the colliding side and **Collision Side → Reverse** flips it.
+
+A chain needs at least 4 vertices, and an open chain doesn't collide on its first and last edges. Chains have no mass, so use them on static or kinematic bodies.
+
+=== "C++"
+
+    ```cpp
+    // clockwise ring: keeps a ball inside
+    std::vector<Vector2> ring;
+    for (int i = 0; i < 16; i++){
+        float a = -2.0f * M_PI * i / 16.0f;
+        ring.push_back(Vector2(170.0f * cos(a), 170.0f * sin(a)));
+    }
+    body.createChainShape(ring, true);
+    body.load();
+    ```
+
+=== "Lua"
+
+    ```lua
+    -- clockwise ring: keeps a ball inside
+    local ring = {}
+    for i = 0, 15 do
+        local a = -2 * math.pi * i / 16
+        ring[#ring + 1] = Vector2(170 * math.cos(a), 170 * math.sin(a))
+    end
+    body:createChainShape(ring, true)
+    body:load()
+    ```
 
 ---
 

@@ -77,15 +77,18 @@ something wakes them.
 
 ## 2D physics
 
-2D physics uses Box2D. A body can contain up to `MAX_SHAPES` shapes and each shape can
-have density, friction, restitution, sensor state, and collision filtering.
+2D physics uses Box2D. A body can contain several shapes and each shape can have
+density, friction, restitution, sensor state, and collision filtering. In exported games
+a body holds at most `MAX_SHAPES_2D` shapes and a shape at most `MAX_SHAPE_POINTS_2D`
+points. They default to 10 and 16, and the export raises them when your scenes use more.
 
 | Shape | Use it for |
 | --- | --- |
 | Box/polygon | Platforms, crates, walls, characters with simple silhouettes |
 | Circle | Balls, radial triggers, wheels |
 | Capsule | Characters, rounded obstacles |
-| Segment/chain | Terrain edges, one-way boundaries, outlines |
+| Segment | Thin walls and edges that block from both sides |
+| Chain | Terrain outlines and hollow containers; blocks from one side only |
 
 ```cpp
 Body2D body = object.getBody2D();
@@ -93,6 +96,20 @@ body.createBoxShape(64, 32);
 body.setType(BodyType::DYNAMIC);
 body.setLinearVelocity(Vector2(200, 0)); // points per second
 ```
+
+### Chain shapes
+
+A chain is a line of connected edges for level outlines: bodies slide along it without
+catching where edges meet. It collides on one side only, to the right of each edge going
+from one vertex to the next. Counter-clockwise vertices make a closed chain solid from the
+outside, like a platform. Clockwise vertices make it solid from the inside, like a ring
+that keeps a ball in. Rotating or mirroring the body doesn't change the side.
+
+When a body is selected, ticks on its chain edges point to the colliding side, and
+**Collision Side → Reverse** in the shape's properties flips it. **Loop** closes the chain.
+An open chain doesn't collide on its first and last edges, so add one extra vertex at each
+end. Chains have no mass, so use them on static or kinematic bodies. See
+[Body2D — createChainShape](../reference/classes/body2d.md#createchainshape) for code.
 
 ## 3D physics
 
@@ -349,9 +366,11 @@ handled correctly.
 
 ## Joints
 
-Doriax exposes 2D and 3D joint wrappers for constrained motion. 2D joint types include
-revolute, prismatic, weld, distance, friction, and motor joints. In 3D, use constraints
-and allowed degrees of freedom to lock or limit movement.
+Doriax exposes 2D and 3D joint wrappers for constrained motion. 2D joint types are
+distance, revolute, prismatic, mouse, wheel, weld, and motor joints. With **Rope**
+enabled, a distance joint lets the bodies move closer but never farther apart than when
+it was created. In 3D, use constraints and allowed degrees of freedom to lock or limit
+movement.
 
 ## Practical guidance
 
