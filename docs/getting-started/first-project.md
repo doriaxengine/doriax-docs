@@ -33,13 +33,21 @@ Use the initial 3D scene, or create a 2D, 3D, or UI scene with
 **Scene → New Scene** or from the Structure panel. Save the scene separately with a
 stable name such as `main`, `level_01`, or `menu`.
 
+![Scene → New Scene with the 3D, 2D, and UI scene types](../assets/screenshots/menu-scene-new.png)
+
+A new 3D scene starts with a **Sun** (a directional light that casts shadows) and a
+**Sky**. 2D and UI scenes start empty and draw through a built-in camera until you add
+one.
+
 Scene type controls editor defaults such as camera setup and viewport behavior. It does
 not create a different runtime type; every scene is still a `Scene` that owns entities,
 components, and systems.
 
 ## Add entities
 
-Open the Structure panel's create menu. The most important first distinction is:
+Open the Structure panel's create menu: click **+** at the top of the panel and point
+at **Create entity**, or right-click empty space in the panel. The most important first
+distinction is:
 
 | Menu item | What it creates | Where it appears |
 | --- | --- | --- |
@@ -57,10 +65,16 @@ For a first visible object, choose one of these:
 - In a 3D scene, create **Basic shape > Box** or **Model**.
 - In a UI scene, create **UI > Button**, **Text**, or **Image**.
 
+![The Structure panel's create menu with the Basic shape submenu open](../assets/screenshots/structure-create-menu.png)
+
 ## Edit components
 
 Select the entity and use the Properties window. You will see the components attached to that
-entity. A sprite, for example, is not a special kind of entity; it is an entity with
+entity.
+
+![A Box selected, with its Transform and MeshComponent in the Properties window](../assets/screenshots/first-project-box.png)
+
+A sprite, for example, is not a special kind of entity; it is an entity with
 components such as `Transform`, `MeshComponent`, and `SpriteComponent`.
 
 Common first edits:
@@ -75,8 +89,13 @@ Common first edits:
 
 ## Add a script
 
-Add a `ScriptComponent` to the selected entity, then create a script from the
-Properties window or code editor workflow. For your first script, choose Lua for fast iteration.
+Select the entity and click **New Script** at the top of the Properties window. Choose
+**Lua Script** — the fastest to iterate on — enter a name, and click **Create**. The
+editor writes the `.lua` file, adds a `ScriptComponent` to the entity, and links the
+script to it. Open the file with the source button on the script entry, or double-click
+it in the Resources Browser.
+
+![A generated Lua script open next to its ScriptComponent](../assets/screenshots/first-project-script.png)
 
 The generated Lua script returns a table. The engine creates an instance, injects
 `self.scene` and `self.entity`, then calls `init()` when the scene starts.
@@ -118,6 +137,8 @@ script. C++ scripts use `DPROPERTY` for values that should appear in the Propert
 
 Press Play in the editor. The editor saves a play-mode snapshot, starts the runtime
 scene, initializes scripts, and restores editable scene state when you stop.
+
+![Play mode: the generated script logs a counter to the Output panel](../assets/screenshots/first-project-play.png)
 
 If something does not appear, check these in order:
 

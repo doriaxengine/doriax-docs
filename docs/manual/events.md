@@ -67,8 +67,8 @@ optionally reported through a global crash handler.
 | `onPostUpdate` | `void()` | Work after regular update |
 | `onPause` / `onResume` | `void()` | App/game pause and resume |
 | `onShutdown` | `void()` | Runtime shutdown |
-| `onTouchStart/End/Move` | `void(int, float, float)` | Touch pointer index, x, y |
-| `onTouchCancel` | `void()` | Touch sequence canceled |
+| `onTouchStart/End/Move` | `void(int, float, float)` | Touch identifier, x, y |
+| `onTouchCancel` | `void(int, float, float)` | One touch canceled; identifier and last recorded canvas position |
 | `onMouseDown/Up` | `void(int, float, float, int)` | Button, x, y, modifiers |
 | `onMouseMove/Scroll` | `void(float, float, int)` | Position or scroll offsets plus modifiers |
 | `onMouseEnter/Leave` | `void()` | Pointer enters/leaves view |
@@ -77,6 +77,45 @@ optionally reported through a global crash handler.
 | `onGamepadConnect/Disconnect` | `void(int)` | Gamepad id connected/disconnected |
 | `onGamepadButtonDown/Up` | `void(int, int)` | Gamepad id, button index |
 | `onGamepadAxisMove` | `void(int, int, float)` | Gamepad id, axis index, value `-1`…`1` |
+
+### Touch cancellation
+
+Use `onTouchEnd` for a finger lifting normally and `onTouchCancel` for an
+interrupted contact. Both identify the finger, but cancellation does not dispatch
+UI pointer-up or click events. In a per-pointer cancellation, the canceled touch is
+removed from `Input` before its callback runs; other fingers remain active. Release
+only the gameplay action associated with that identifier in your handler.
+
+A full cancellation removes all tracked touches before emitting `onTouchCancel`
+once for each of them. There is no separate global notification; an empty full
+cancellation emits no callbacks. Each callback receives the last recorded position
+in logical canvas coordinates. An already removed or unknown identifier produces
+no additional notification. Use `Input::numTouches()` (`Input.numTouches()` in Lua)
+to check whether any fingers remain; it is zero during every full-cancel callback.
+
+Subscribe to `onTouchCancel` as well as `onTouchEnd` when tracking held fingers.
+Cancellation notifications follow `pauseGameEvents`, and are not filtered by
+`setIgnoreEventsHandledByUI` or the current pointer position.
+
+In the Code Editor, choose **Add event > Input > Touch > onTouchCancel**
+(`Touch` is the section label). The generated handler has this signature:
+
+```cpp
+void onTouchCancel(int pointer, float x, float y);
+```
+
+Use `REGISTER_ENGINE_EVENT(onTouchCancel)` in the C++ constructor and
+`UNREGISTER_ENGINE_EVENT(onTouchCancel)` in the destructor. In Lua:
+
+```lua
+function Player:init()
+    RegisterEngineEvent(self, "onTouchCancel")
+end
+
+function Player:onTouchCancel(pointer, x, y)
+    -- Release the action associated with this pointer.
+end
+```
 
 ### Input routing options
 

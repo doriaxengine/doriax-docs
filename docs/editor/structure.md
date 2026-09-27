@@ -8,6 +8,8 @@ The Structure panel is the editor's tree view for scenes and entities. It is als
 clearest way to understand Doriax's ECS model: everything shown under a scene is an
 entity, but only entities with a `Transform` participate in the spatial hierarchy.
 
+![The Structure panel: a child scene first, then entities without a Transform, then the hierarchy](../assets/screenshots/structure-panel.png)
+
 ## Scene root
 
 The top node is the selected scene. Child scenes are shown before entities. If a child
@@ -47,7 +49,12 @@ runtime model.
 
 ## Empty entity vs empty object
 
-![Create entity from the Structure panel](../assets/screenshots/editor-create-entity.png)
+![The create menu, with the Basic shape submenu open](../assets/screenshots/structure-create-menu.png)
+
+Open the create menu with the **+** button at the top of the panel (**Create entity**;
+the same menu starts a new 3D, 2D, or UI scene), by right-clicking empty space in the
+panel, or with **Create child** in an entity's right-click menu, which creates the new
+entity under it.
 
 The create menu has two intentionally different entries:
 
@@ -212,12 +219,23 @@ Typical non-transform entities include:
 An entity can be selected and inspected even if it is not in the transform hierarchy.
 Add a `Transform` if it should become spatial or parentable.
 
+## Search
+
+Type in the field at the top of the panel to filter the tree by entity name. Matching
+ignores case unless you turn on **Match Case** from the magnifier button next to the
+field. Matching rows stay visible together with their ancestors, so you can see where
+each one sits.
+
+![Filtering the Structure panel by name](../assets/screenshots/structure-search.png)
+
 ## Renaming
 
 Right-click an entity or the scene root and edit the **Name** field at the top of its
 menu, or select the row and press **F2** to edit the name in the
 [Properties window](properties.md#selecting-an-entity). A child scene node keeps its
 name read-only here; open the child scene to rename it.
+
+![An entity's right-click menu, with the Name field at the top](../assets/screenshots/structure-context-menu.png)
 
 ## Drag and drop rules
 

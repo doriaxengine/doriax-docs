@@ -19,6 +19,8 @@ marker at the end of a row for the setting's description.
 
 ## General
 
+![The General tab of Project Settings](../assets/screenshots/project-settings-general.png)
+
 ### Project
 
 | Setting | Effect |
@@ -74,6 +76,8 @@ does at runtime.
 
 Controls the OS window desktop builds create at startup.
 
+![The Window tab of Project Settings](../assets/screenshots/project-settings-window.png)
+
 | Setting | Default | Effect |
 | --- | --- | --- |
 | **Window Mode** | Windowed | Initial window state: `Windowed`, `Maximized`, or `Fullscreen` |
@@ -95,6 +99,8 @@ See [Project Workflow — VSync](project-workflow.md#vsync) and
 
 ## Directories
 
+![The Directories tab of Project Settings](../assets/screenshots/project-settings-directories.png)
+
 | Setting | Effect |
 | --- | --- |
 | **Native Resource Pack** | Experimental. Packs exported assets and Lua files into one `resources.pak` for Desktop exports and Android builds made from Source Code exports |
@@ -113,6 +119,8 @@ The native resource pack has runtime restrictions — packed entries are read th
 [Export Window → Native resource pack](export.md#native-resource-pack).
 
 ## Build
+
+![The Build tab of Project Settings](../assets/screenshots/project-settings-build.png)
 
 | Setting | Default | Effect |
 | --- | --- | --- |
@@ -162,6 +170,8 @@ settings are applied to Source Code exports**, which is where the Xcode and Andr
 Studio workspaces are generated.
 
 ### Web
+
+![The Web section of the Platforms tab](../assets/screenshots/project-settings-web.png)
 
 | Setting | Default | Effect |
 | --- | --- | --- |

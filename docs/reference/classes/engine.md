@@ -114,7 +114,7 @@ Control engine properties and define defaults used across the whole project. `En
 | void(int,float,float) | [onTouchStart](#ontouchstart) | C++ \| Lua |
 | void(int,float,float) | [onTouchEnd](#ontouchend) | C++ \| Lua |
 | void(int,float,float) | [onTouchMove](#ontouchmove) | C++ \| Lua |
-| void() | [onTouchCancel](#ontouchcancel) | C++ \| Lua |
+| void(int,float,float) | [onTouchCancel](#ontouchcancel) | C++ \| Lua |
 | void(int,float,float,int) | [onMouseDown](#onmousedown) | C++ \| Lua |
 | void(int,float,float,int) | [onMouseUp](#onmouseup) | C++ \| Lua |
 | void(float,float,int) | [onMouseMove](#onmousemove) | C++ \| Lua |
@@ -845,10 +845,29 @@ Called whenever a touch contact moves.
 
 ### onTouchCancel
 
-* `static FunctionSubscribe<void()> onTouchCancel`
-* Callback: `void()`
+* `static FunctionSubscribe<void(int,float,float)> onTouchCancel`
+* Callback: `void(int pointer, float x, float y)`
+    * **pointer** — Identifier of the canceled touch.
+    * **x** — Last recorded horizontal position in logical canvas coordinates.
+    * **y** — Last recorded vertical position in logical canvas coordinates.
 
-Called when the system cancels the current touch sequence (e.g. an incoming call interrupts input).
+Called when a tracked touch is interrupted, after it has been removed from `Input`.
+A per-pointer cancellation preserves other active touches. A full cancellation
+removes all tracked touches before emitting this callback once per touch. There is
+no separate global callback, and a full cancellation with no tracked touches emits
+nothing. Canceling an unknown or already removed identifier also emits nothing.
+Use `Input::numTouches()` (`Input.numTouches()` in Lua) to check whether any fingers
+remain; it is zero during every full-cancel callback.
+
+Use this alongside [`onTouchEnd`](#ontouchend) to clear actions associated with a
+finger. Cancellation does not call UI pointer-up, `onClick`, or `onTouchEnd`.
+Notifications follow `pauseGameEvents`, but do not depend on whether UI consumed
+the original touch or whether its position is inside the canvas.
+
+C++ scripts subscribe with `REGISTER_ENGINE_EVENT(onTouchCancel)` and
+unsubscribe with `UNREGISTER_ENGINE_EVENT(onTouchCancel)`. Lua scripts use
+`RegisterEngineEvent(self, "onTouchCancel")` with a handler named
+`function Player:onTouchCancel(pointer, x, y)`.
 
 ---
 

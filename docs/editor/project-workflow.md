@@ -28,6 +28,10 @@ To keep a temporary project:
 4. Click **Save**. The editor moves the temporary project into that directory and
    writes its `project.yaml` file.
 
+![Save Scene asks where a never-saved scene goes](../assets/screenshots/project-save-scene.png)
+
+![Save Project asks for the project name and an empty directory](../assets/screenshots/project-save-project.png)
+
 Temporary projects are stored in the operating system's temporary directory. Save the
 project to another directory before relying on it as permanent work.
 

@@ -9,7 +9,7 @@ together scene editing, resource management, scripting, animation, play mode, an
 export tooling in one unified window so you can build, test, and ship games without
 leaving the editor.
 
-![Doriax Engine editor - 3D scene](../assets/screenshots/editor-3d-scene.png)
+![The editor in its default layout: Structure and Resources on the left, the scene in the middle, Properties on the right, Output and Animation below](../assets/screenshots/editor-overview.png)
 
 ## Editor layout
 
@@ -24,6 +24,7 @@ The editor window is divided into a set of resizable panels:
 | **Resources Browser** | Project asset manager: import, preview, and organize files |
 | **Animation Timeline** | Keyframe editor for object animation, sprite frames, and bones |
 | **Code Editor** | Integrated Lua and C++ editor with API completion and an event menu |
+| **AI Chat** | The built-in AI assistant, docked as a tab beside Properties |
 | **Output panel** | Build logs, play-mode diagnostics, and export messages, persisted to [`editor.log`](../about/faq.md#where-can-i-find-the-editor-crash-log) for crash reports |
 | **Footer** | Play / Pause / Stop on the left; FPS, frame time, draw calls, and triangles on the right |
 
@@ -37,6 +38,8 @@ The editor window is divided into a set of resizable panels:
 | **Project** | [Project Settings](project-settings.md), Manage Scenes, Bundles, Empty Project Trash |
 | **Scene** | New Scene (3D / 2D / UI), Run, Pause, Resume, Stop, Remove Scene from Project |
 | **Help** | Documentation (**F1**), Keyboard Shortcuts, Report an Issue, About Doriax |
+
+![The View menu toggles each panel](../assets/screenshots/menu-view.png)
 
 **Save** writes the one thing you were last working on — the focused script, or the
 selected scene. **Save All** writes every changed scene and script *and* `project.yaml`,
@@ -78,6 +81,8 @@ can load multiple scene types simultaneously — for example, a 3D gameplay scen
 UI scene overlay.
 
 ## Play mode
+
+![A 2D game running in play mode; the footer shows Playing](../assets/screenshots/editor-play-mode.png)
 
 Press **Play** to run the game inside the editor. The editor takes a snapshot of the
 current scene state before entering play mode and restores it when you stop, so runtime

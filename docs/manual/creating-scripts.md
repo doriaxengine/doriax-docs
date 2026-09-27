@@ -38,7 +38,7 @@ exist and you only need a new entry pointing at them.
 ### Flow A — New Script (generates the files)
 
 1. Select an entity in the **Structure** panel.
-2. Click **New Script** at the bottom of the **Properties** window (next to
+2. Click **New Script** at the top of the **Properties** window (next to
    **New component**).
 3. Choose **Lua Script**, **C++ Subclass**, or **C++ Script Class**.
 4. Enter a class/module name and confirm.
@@ -50,7 +50,11 @@ The editor then does everything in one undoable step:
 - adds a `ScriptComponent` to the entity if it does not have one,
 - appends an enabled script entry linked to the new files.
 
-![Script creation dialog](../assets/screenshots/editor-script-create-dialog.png)
+![The Create Script dialog](../assets/screenshots/script-create-dialog.png)
+
+The same dialog's **Attach existing** option links a script that already exists: browse
+to the `.lua` file (or the C++ header and source) and click **Attach**. The files are
+not changed.
 
 ### Flow B — Add Script (links existing files)
 

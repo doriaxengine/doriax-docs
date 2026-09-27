@@ -9,10 +9,12 @@ The **Terrain Editor** is the authoring window for entities with a
 blend maps, and foliage density maps — and places props on the surface, all with the same
 brush.
 
+![The Terrain Editor window with a sculpt brush over the terrain](../assets/screenshots/editor-terrain.png)
+
 ## Opening the window
 
 Select the terrain entity and click **Open Terrain Editor** in the
-[Properties](properties.md) window. The window can also stay open while you work: it
+[Properties](properties.md) window, or choose **View → Terrain Editor**. The window can also stay open while you work: it
 follows the selection, and shows a hint instead of the tools when the selected entity is
 not a terrain or a scene is playing.
 
@@ -70,6 +72,8 @@ The terrain's ground is a base texture plus up to nine detail **layers**. Layers
 grouped in threes: each group is weighted by the RGB channels of one blend map, and the
 **Blendmap** row above the list creates the map for the group the selected layer belongs
 to.
+
+![The Sculpt and Texture Paint sections, with PBR layers](../assets/screenshots/terrain-texture-paint.png)
 
 | Row | Meaning |
 | --- | --- |
@@ -146,6 +150,8 @@ Foliage entities are created by the engine, not authored: they never appear in t
 
 The **Objects** section places real props — models or entity [bundles](bundles.md) —
 along the drag, as children of the terrain entity.
+
+![The Objects and Brush sections](../assets/screenshots/terrain-objects-brush.png)
 
 | Setting | Meaning |
 | --- | --- |

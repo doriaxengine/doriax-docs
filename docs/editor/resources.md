@@ -5,9 +5,10 @@ description: Importing, browsing, previewing, and organizing resources in the Do
 # Resources Browser
 
 The **Resources Browser** is the file manager for your project's assets. It lets you
-import new files, preview existing resources, drag assets into scenes, assign them to
-components, and open specialized tool windows such as the Sprite Slicer and Tileset
-Slicer.
+import new files, preview existing resources, drag assets into scenes, and assign them
+to components.
+
+![The Resources Browser showing model thumbnails](../assets/screenshots/resources-browser.png)
 
 ## Supported resource types
 
@@ -152,23 +153,22 @@ the current folder.
 
 ## Sprite and tileset slicing
 
-Two dedicated slicer tools process sprite sheets and tilesets:
+Sprite sheets and tilesets are cut by two slicer tools. Both open from the
+**Slicer Tool** button of a component in the [Properties window](properties.md), not
+from the Resources Browser.
 
 ### Sprite Slicer
 
-The **Sprite Slicer** divides a texture into named frames for sprite animation or
-individual sprite display. Supports grid-based slicing (uniform cell size) and
-free-form rectangle drawing for irregular layouts.
-
-![Sprite Slicer](../assets/screenshots/editor-sprite-slicer.png)
+The **Sprite Slicer** divides a Sprite's texture into named frames on a regular grid,
+for sprite animation or individual sprite display.
 
 See [Sprite Slicer](sprite-slicer.md) for the complete workflow.
 
 ### Tileset Slicer
 
-The **Tileset Slicer** splits a tileset texture into uniformly-sized tiles and assigns
-each tile a numeric ID. Those IDs are used when painting tiles in the Tilemap editor
-and when defining tile data in scripts.
+The **Tileset Slicer** divides a Tilemap's texture into tile rects on a regular grid.
+Each rect has an index and a name; you place tiles by dragging a rect into the viewport,
+and scripts refer to rects by index.
 
 See [Tileset Slicer](tileset-slicer.md) for the complete workflow.
 

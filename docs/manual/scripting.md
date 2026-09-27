@@ -128,7 +128,7 @@ strings, colors, vectors, resource paths, and entity references are the best fit
 
 ## Logging
 
-![Lua output in the Output panel during play mode](../assets/screenshots/runtime-lua-debug.png)
+![Script log output in the Output panel during play mode](../assets/screenshots/scripting-output.png)
 
 Use `Log` for runtime diagnostics in C++:
 

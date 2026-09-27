@@ -8,7 +8,7 @@ This tutorial creates a complete small 3D scene and introduces the essential pie
 a Doriax 3D level: scene setup, camera, directional light, a 3D model, PBR materials,
 and optional collision.
 
-![First 3D scene running](../assets/screenshots/runtime-first-3d-scene.png)
+![The finished 3D scene running in play mode](../assets/screenshots/tutorial-3d-play.png)
 
 ## What you will build
 
@@ -29,27 +29,32 @@ By the end of this tutorial you will have:
 
 ## 2. Set up the camera
 
-The template creates a default camera entity. Select it and:
+A new 3D scene has no camera entity; it renders through a built-in camera until you add
+one. In the **Structure panel**, choose **+ → Create entity → Camera**. The first camera
+you add becomes the scene's main camera. Then:
 
-1. Set **Type** to `PERSPECTIVE`.
-2. Position it at approximately `(0, 3, 8)` facing the origin using the Properties
-   window or by dragging in the viewport.
-3. Set a **Near plane** of `0.1` and a **Far plane** of `200` for a typical scene
-   scale.
+1. Keep **Type** on **Perspective**.
+2. Position it at approximately `(0, 3, 8)`. To keep it facing the origin, enable
+   **Use Target** and set **Target** to `(0, 0, 0)`.
+3. Set **Near** to `0.1` and **Far** to `200` for a typical scene scale.
 
-Use the viewport navigation to verify the camera preview. Press **F** with the camera
-selected to frame it in the editor view.
+Click **View** on the **Preview** row of the CameraComponent to look through the camera,
+and **Exit** to return to the editor view. Press **F** with the camera selected to frame
+it in the editor view.
 
-## 3. Add a directional light
+## 3. Adjust the directional light
 
-1. In the **Structure panel**, right-click and choose **Create → Light**.
-2. Set **Light Type** to `DIRECTIONAL`.
-3. Rotate it to approximately `(-45°, -60°, 0°)` so shadows fall at a diagonal.
-4. Set **Intensity** to `2.0` and choose a warm white color (`1.0, 0.95, 0.8`).
-5. Enable **Shadows** if you want the model to cast a shadow onto the floor.
+A new 3D scene already has a **Sun**: a directional light with shadows enabled. Other
+lights come from **+ → Create entity → Light → Directional**, **Point**, or **Spot**.
 
-Set the scene's **Global Illumination** to a low value (`0.2, 0.2, 0.25`) to prevent
-completely black shadow areas.
+1. Select **Sun**.
+2. Change its **Direction** so shadows fall at a diagonal; it starts at
+   `(-0.2, -0.5, 0.3)`.
+3. Set **Intensity** to `2.0` and choose a warm white **Color** (`1.0, 0.95, 0.8`).
+4. Keep **Shadows → Enabled** on so the model casts a shadow onto the floor.
+
+The scene's **Global Illumination** (select nothing to see the scene settings) starts
+at an intensity of `0.2`, which keeps shadowed areas from going completely black.
 
 ## 4. Import and place a model
 
@@ -66,7 +71,8 @@ completely black shadow areas.
 
 If the model carries its own GLTF materials, they appear automatically. To adjust them:
 
-1. Select the Model entity.
+1. Select the model — or, for a model with several meshes, one of its child mesh
+   entities in the Structure panel.
 2. In the Properties window, expand the **Submesh** material section.
 3. Adjust **Roughness** (lower = shinier), **Metallic** (0 = plastic, 1 = metal), and
    check that the **Base Texture** path is correct.
@@ -85,8 +91,11 @@ Tips:
 
 ## 6. Add a script — rotating object
 
-1. Open **File → New Script**, choose **Lua**, and name it `Rotator`.
-2. Replace the body with:
+1. Select the model and click **New Script** at the top of the Properties window.
+2. Choose **Lua Script**, enter `Rotator` as the module name, and click **Create**. The
+   editor adds a `ScriptComponent` to the model and links the new script to it.
+3. Open the file with the source button on the script entry and replace its contents
+   with:
 
     ```lua
     local Rotator = {
@@ -111,25 +120,25 @@ Tips:
     return Rotator
     ```
 
-3. Select the Model entity, **Add Component → ScriptComponent**, add an entry for
-   `scripts/Rotator.lua`, and enable it.
+4. Save the file (**Ctrl+S**). The **Speed** property appears on the script entry.
+
+![The model with its Rotator script and Speed property](../assets/screenshots/tutorial-3d-edit.png)
 
 ## 7. Add a floor with collision
 
-1. Create a thin **Mesh** entity (or a Plane primitive) as the floor.
+1. Choose **+ → Create entity → Basic shape → Plane** for the floor.
 2. Position it at `(0, -0.5, 0)` and scale it wide.
-3. **Add Component → Body3D** to the floor entity.
-4. Add a **Box Shape** that matches the floor's visual dimensions.
-5. Set **Body Type** to `STATIC`.
+3. Click **New component** and choose **3D Physics Body**.
+4. Choose **Box** in the shape list and click **Add Shape**, then set the shape's
+   **Width**, **Height**, and **Depth** to match the floor.
+5. Keep **Body Type** on **Static**.
 
-Optionally add a `Body3D` with a convex or box shape to the model entity and set it to
-`DYNAMIC` to see it react to gravity.
+Optionally give the model a 3D Physics Body with a **Convex Hull** or **Box** shape and
+set it to **Dynamic** to see it react to gravity.
 
 ## 8. Run the scene
 
 Press **Play**. The model should rotate and be illuminated by the directional light.
-
-![3D scene in play mode](../assets/screenshots/editor-3d-play.png)
 
 If the scene appears completely black:
 

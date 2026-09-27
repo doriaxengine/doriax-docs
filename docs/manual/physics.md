@@ -7,7 +7,7 @@ description: Integrated 2D and 3D physics in Doriax, powered by Box2D and Jolt P
 Doriax includes integrated physics for both 2D and 3D games, so you can add realistic
 movement, collisions, and interactions without external libraries.
 
-![Physics in the editor](../assets/screenshots/editor-physics.png)
+![A platform's Body3D box shape drawn in the editor](../assets/screenshots/editor-physics.png)
 
 ## Physics backends
 
@@ -34,10 +34,14 @@ The editor and Play always have both.
 
 ## Typical workflow
 
-1. Add a physics body component to an entity.
+1. Add a physics body component to an entity (**New component → 2D Physics Body** or
+   **3D Physics Body**), or create an empty body or a joint from
+   **Create entity → Physics** in the Structure panel.
 2. Attach one or more collision shapes that match its geometry.
 3. Configure mass, friction, restitution, and body type.
 4. Let the physics system step the simulation each frame, updating transforms.
+
+![The Physics submenu of Create entity, over a character with its capsule collider](../assets/screenshots/editor-physics-menu.png)
 
 You can react to collisions in your game logic to trigger gameplay events such as
 damage, pickups, or sounds.

@@ -7,7 +7,7 @@ description: Working with 2D graphics in Doriax — sprites, tilemaps, polygons,
 Doriax has full support for 2D game development with sprites, tilemaps, primitive
 shapes, and dedicated 2D lighting with shadows, backed by the same ECS used for 3D.
 
-![2D tilemap editor](../assets/screenshots/editor-2d-tilemap.png)
+![A 2D level built from tilemaps, with the terrain tilemap selected](../assets/screenshots/editor-2d-tilemap.png)
 
 ## Polygons
 

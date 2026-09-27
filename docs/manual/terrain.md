@@ -8,6 +8,8 @@ Doriax renders large outdoor landscapes with a heightmap-based `Terrain` object.
 terrain is a continuous-LOD quadtree, so the polygon count on screen stays roughly
 constant regardless of terrain size, with detail concentrated near the camera.
 
+![A rainforest terrain with PBR layers, foliage, and a river](../assets/screenshots/editor-rainforest.png)
+
 ## Terrain anatomy
 
 | Input | Purpose |
@@ -51,6 +53,8 @@ Three things shape how the layers meet on screen:
 A layer starts as a **color layer**: it blends its texture over the base and leaves every
 other surface property to the terrain material. Turning on **PBR** gives that layer its
 own surface instead.
+
+![Terrain layers marked PBR in the Terrain Editor](../assets/screenshots/terrain-texture-paint.png)
 
 | Map | Read from | Without it |
 | --- | --- | --- |

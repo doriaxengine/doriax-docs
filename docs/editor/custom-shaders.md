@@ -52,6 +52,8 @@ these components has a **Shader** row:
 | **Reset to Built-in** | Clears the custom shader and returns to the engine default. |
 | Drag-and-drop | Drop an existing `.vert`/`.frag` from the [Resources Browser](resources.md) onto the row to assign it. |
 
+![The Shader and Depth Shader rows of a Mesh, both on the built-in shader](../assets/screenshots/properties-shader-rows.png)
+
 **Fork** is available only while the row shows **Built-in** — reset the shader first to
 fork it again, so an existing fork is never orphaned by accident.
 
@@ -308,6 +310,8 @@ A scene can run an ordered chain of **fullscreen passes** over its finished imag
 sharpen, tint, vignette, colour grading, and so on. Each pass is a forked shader, and
 unlike the component shaders above the chain belongs to the scene, not to any entity.
 
+![A stylized outline-and-posterize pass applied to a 3D scene](../assets/screenshots/editor-postprocess.png)
+
 Select the scene (no entity) in the **Structure panel** and open the **Post-processing**
 section of the scene settings in the Properties window.
 
@@ -320,6 +324,8 @@ section of the scene settings in the Properties window.
 | **Shader** row | The same controls as any other shader row — fork, pick files, open, reset, drag-and-drop. |
 
 Every change is undoable, and the chain is saved with the scene.
+
+![A post-process pass: engine-set resolution and time, then the pass's own uniforms](../assets/screenshots/properties-postprocess.png)
 
 The chain runs on the scene's **active camera**, after the opaque, transparent, UI, and
 SSR passes, and before the fixed-resolution upscale. Secondary cameras — minimaps,
@@ -423,6 +429,8 @@ Forked shaders open in the [Code Editor](code-editor.md) with GLSL syntax highli
 (`.vert`, `.frag`, and `.glsl` files). When you **save** a shader source file, the editor
 recompiles the affected forked shaders and refreshes the viewport — no rebuild or replay
 needed.
+
+![A post-process fragment shader open in the Code Editor next to its uniform rows](../assets/screenshots/editor-shader-code.png)
 
 Only shaders that actually reach the edited file through `#include` are rebuilt: the
 editor tracks each fork's real dependency graph rather than assuming everything in a

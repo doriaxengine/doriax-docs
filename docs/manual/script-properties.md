@@ -18,6 +18,8 @@ on play and export.
 At runtime, `ScriptProperty::syncToMember()` (C++) or direct field injection (Lua)
 applies Properties values before `init()` runs.
 
+![DPROPERTY declarations in a C++ header and the fields they create in the Properties window](../assets/screenshots/editor-code-dproperty.png)
+
 ## C++ DPROPERTY macro
 
 Defined in `engine/core/script/ScriptProperty.h`:
@@ -96,6 +98,8 @@ Pointer properties store an `EntityReference` `{ entity, sceneId }` in serialize
 Supported pointer types for entity references include all gameplay wrappers listed in
 `LuaBinding::pushEntityHandleByType` (Object, Mesh, Camera, Light, Sprite, Body2D,
 Action, etc.).
+
+![Entity-reference properties of a Lua script, set by dragging entities from the Structure panel](../assets/screenshots/properties-script.png)
 
 ### Supported default values
 

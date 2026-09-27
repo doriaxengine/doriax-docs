@@ -4,38 +4,41 @@ description: Using the Tileset Slicer tool in Doriax to define tile regions for 
 
 # Tileset Slicer
 
-The **Tileset Slicer** tool divides a tileset texture into uniformly-sized tile regions
-and assigns each region a numeric tile ID. Those IDs are the same values you store in
-`TileData` cells and reference from `Tilemap` objects in script or the editor.
+The **Tileset Slicer** tool divides a tilemap's texture into uniformly-sized tile rects.
+Each rect gets a name and a numeric ID — its index in the tilemap's rect list. Those IDs
+are the values you store in `TileData` cells and reference from `Tilemap` objects in
+script.
 
-![Tileset slicer tool](../assets/screenshots/editor-tileset-slicer.png)
+![The Tileset Slicer cutting a tileset into 81 tile rects](../assets/screenshots/tileset-slicer.png)
 
 ## Opening the Tileset Slicer
 
-Select a texture in the **Resources Browser** and choose **Open in Tileset Slicer**
-from the context menu. Alternatively, select a **Tilemap** entity in the scene, go to
-its TilemapComponent in the **Properties window**, and open the tileset assignment from
-there.
+Select an entity with a **Tilemap** component. In the [Properties window](properties.md),
+click **Slicer Tool** in the component's **Tile Rects** section. The slicer cuts the
+tilemap's texture; when the tilemap uses several textures, pick the one to slice at the
+top of the dialog.
 
 ## Setting up the grid
 
 | Field | Purpose |
 | --- | --- |
-| **Tile Width** | Pixel width of one tile |
-| **Tile Height** | Pixel height of one tile |
-| **Columns** | Number of tile columns (auto-calculated from image width / tile width) |
-| **Rows** | Number of tile rows (auto-calculated from image height / tile height) |
-| **Spacing X / Y** | Pixel gap between tiles (for tilesets with gutters) |
+| **Grid (Columns x Rows)** / **Cell Size (W x H)** | Slice by tile count or by tile size in pixels |
+| **Columns** / **Rows** | Number of tiles across and down; the tile size is derived from the texture size |
+| **Cell Width** / **Cell Height** | Pixel size of one tile; the number of columns and rows is derived |
 | **Offset X / Y** | Pixel inset of the first tile |
+| **Padding X / Y** | Pixel gap between tiles, for tilesets with gutters |
+| **Prefix** | Rect name, followed by its number: `tile_0`, `tile_1`, … |
 
-After entering the values, click **Slice** to populate the tile grid. Tile IDs are
-assigned left-to-right, top-to-bottom starting from `0`.
+The **Preview** shows how many rects the grid produces, and **Rect Details** lists each
+one in pixels. Click **Apply** to replace the rects of the sliced texture; rects that
+belong to the tilemap's other textures are kept, and the new ones follow them, numbered
+left to right, top to bottom. The change is one undoable step.
 
 ## Tile IDs
 
-Tile IDs are plain integers. The tile at column 0, row 0 is ID `0`; column 1, row 0 is
-ID `1`; and so on. Use these IDs when filling `TileData` in script or when painting
-tiles in the tilemap editor.
+Tile IDs are plain integers. In a tilemap with a single texture, the tile at column 0,
+row 0 is ID `0`; column 1, row 0 is ID `1`; and so on. Use these IDs when filling
+`TileData` in script.
 
 ```lua
 -- Create a tilemap, assign a tileset texture, and place tiles
@@ -53,14 +56,14 @@ tilemap:addTile(1, Vector2(32, 0), 32, 32)
 
 ## Painting tiles in the editor
 
-After slicing, the tilemap component in the scene editor lets you paint tile IDs
-directly onto the canvas:
+After slicing, the TilemapComponent's **Tile Rects** list shows a preview of each rect.
+To place tiles:
 
 1. Select the **Tilemap** entity.
-2. In the **Properties window**, open the tileset picker and confirm the sliced
-   texture.
-3. Pick a tile from the tile palette (the sliced grid preview).
-4. Click or drag over the canvas to paint cells.
+2. In the **Properties window**, find the rect in the **Tile Rects** list.
+3. Drag its preview into the viewport to place a tile there.
+
+![Tile rect previews in the Tilemap component, ready to drag into the scene](../assets/screenshots/properties-tilemap.png)
 
 When arranging placed tiles in the [Scene View](scene-view.md), enable **Snap tile**
 in the viewport gear menu so drops and gizmo moves snap to each tile's width and
@@ -68,9 +71,9 @@ height — useful for packing tiles flush without tuning the global grid.
 
 ## Collision tiles
 
-Mark individual tile IDs as **solid** or assign them a collision category in the slicer
-panel. The physics system reads these flags when a `Body2D` is configured with tilemap
-collision. This avoids having to manually define collision shapes for every tile.
+Tiles carry no collision data. Give the level's solid areas their own entity with a
+**2D Physics Body** — for example **Chain** or **Polygon** shapes that follow the
+ground — and keep the tilemap purely visual. See [Physics](../manual/physics.md).
 
 ## Tips
 

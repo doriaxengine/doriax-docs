@@ -9,7 +9,7 @@ lets you read and change their values. It is the primary place to configure tran
 materials, physics, scripts, UI layout, audio, animations, and any other component
 data.
 
-![Properties window with components](../assets/screenshots/editor-inspector-components.png)
+![The Properties window showing a model's Transform, MeshComponent, and ModelComponent](../assets/screenshots/properties-components.png)
 
 ## Selecting an entity
 
@@ -28,24 +28,27 @@ values change, but not rename it, edit its fields, or add and remove components,
 
 ## Adding components
 
-Use the **Add Component** button at the bottom of the Properties window. A searchable
-dialog lists all available component types grouped by category. Components are added to
-the entity immediately and their defaults appear in the panel for editing.
+Use the **New component** button at the top of the Properties window. A searchable
+dialog lists all available component types grouped by category; type in its search
+field to narrow the list. Components are added to the entity immediately and their
+defaults appear in the panel for editing.
 
-![Script component in the Properties window](../assets/screenshots/editor-script-component.png)
+![The Add new component dialog](../assets/screenshots/properties-add-component.png)
 
 ## Component groups
 
-| Group | Typical components |
+The dialog groups the components into these categories:
+
+| Category | Components |
 | --- | --- |
-| **Spatial** | Transform, Camera, Light, Fog, Skybox, Mirror, Reflection Probe |
-| **2D** | Sprite, Sprite Animation, Tilemap, Polygon, 2D Light, 2D Occluder |
-| **3D** | Mesh, Model, Instanced Mesh, Terrain, Bone |
-| **Physics** | Body2D, Body3D, Joint2D, Joint3D |
-| **UI** | UILayout, Button, Text, Image, Panel, Scrollbar, Progressbar, TextEdit |
-| **Animation** | TimedAction, ActionComponent, Animation |
-| **Audio** | SoundComponent |
-| **Scripting** | ScriptComponent and script property fields |
+| **Core** | Transform |
+| **Rendering** | Mesh, Light, Camera, Sky, Fog, Mirror, Reflection Probe, Model, Terrain, Instanced Mesh |
+| **User Interface** | UI Base, UI Layout, UI Container, Image, Text, Button, Panel, Scrollbar, Progressbar, Text Edit |
+| **2D Graphics** | Sprite, 2D Light, 2D Occluder, Sprite Animation, Tilemap, Polygon, Mesh Polygon |
+| **Primitives** | Points, Lines, Particles |
+| **Physics** | 2D Physics Body, 3D Physics Body, 2D Joint, 3D Joint |
+| **Animation** | Animation, Action, Timed Action, Alpha / Color / Position / Rotation / Scale Action, Bone, Keyframe Tracks, Morph / Rotate / Scale / Translate Tracks |
+| **Sound & Script** | Sound, Script |
 
 ## Editing component fields
 
@@ -55,13 +58,15 @@ Most fields are edited with the mouse or keyboard directly in the panel:
 | --- | --- |
 | Numbers (float, int) | Click and drag, or double-click to type a value |
 | Vectors (Vector2, Vector3) | Per-component drag or type fields |
-| Colors | Color picker with RGBA sliders |
+| Colors | Color picker with RGBA, HSV, and hex fields |
 | Booleans | Toggle checkbox |
 | Strings | Inline text input |
 | Fonts | Pick or drag a TTF/OTF/TTC file for the main font; use the stacked layers button for ordered fallback fonts |
 | Textures / assets | Drag from the Resources Browser, type the asset path, or pick a **camera** as the source (camera button / drag a camera entity) for render-to-texture. For image sources, a sliders button opens the **Texture Settings** popup (filter, wrap, alpha border and SVG scale) |
 | Entity references | Drag an entity from the Structure panel |
 | Enumerations | Drop-down selection |
+
+![The color picker](../assets/screenshots/properties-color-picker.png)
 
 When a field differs from the component's default value, a small reset arrow appears next
 to its label; clicking it restores the default. Edits apply to every selected entity and
@@ -92,6 +97,8 @@ button next to the camera button opens the **Texture Settings** popup:
   (a drag field plus 0.5×–4× presets), so the image rasterizes crisp when drawn larger or
   on high-DPI displays. The scale is stored on the texture reference, so different slots
   can use the same SVG at different resolutions.
+
+![The Texture Settings popup](../assets/screenshots/properties-texture-settings.png)
 
 Like any other field, each row shows the reset arrow when it differs from the component's
 default, and the settings are saved with the scene and applied in exported projects. See
@@ -198,6 +205,8 @@ fields you leave alone keep following the file. See
 Expand the Material row to edit **Alpha Mode** and **Alpha Cutoff** alongside the base
 colour, textures, metallic, and roughness controls:
 
+![An expanded PBR material with its base, metallic-roughness, occlusion, and normal textures](../assets/screenshots/properties-pbr-material.png)
+
 | Alpha mode | Use |
 | --- | --- |
 | **Auto** | Compatibility mode for editor-created and older materials. Texture/factor alpha can select transparent rendering automatically. |
@@ -237,6 +246,8 @@ When linked, the material name shows the file name and an **unlink** button (bro
 chain icon) appears. Unlinking keeps the current values on the mesh but stops syncing
 with the file.
 
+![A submesh linked to the terrain material file](../assets/screenshots/properties-material-link.png)
+
 You can also drop a single **image** onto the Material row to assign only the base colour
 texture without replacing the rest of the material.
 
@@ -247,6 +258,8 @@ Mesh, UI, Points, Lines, and Sky components expose a **Shader** row. By default 
 called, then writes it and opens the GLSL in the Code Editor. The remaining buttons pick
 the `.vert`/`.frag` files, reopen the assigned shader, and reset to the engine default.
 You can also drag an existing `.vert`/`.frag` from the Resources Browser onto the row.
+
+![The Shader and Depth Shader rows of a Mesh](../assets/screenshots/properties-shader-rows.png)
 
 A Mesh has a second **Depth Shader** row with the same controls. It forks the shader
 behind the mesh's shadow maps and depth pre-pass, for colour forks that move vertices or
@@ -272,6 +285,8 @@ passes, includes, and project settings.
 ## Sky component
 
 The **Sky** component controls the scene cubemap background and the IBL environment:
+
+![A Sky component using six separate cubemap face files](../assets/screenshots/properties-sky.png)
 
 | Property | Purpose |
 | --- | --- |
@@ -327,8 +342,11 @@ cubemap) regardless of mode.
 
 With no entity selected, Properties edits the scene. Lighting, shadows, SSAO, SSR,
 fixed resolution, default shaders, and post-processing live here — see
-[Rendering Pipeline](../manual/rendering-pipeline.md) for those. Two scene-wide
-performance switches sit with the lighting block:
+[Rendering Pipeline](../manual/rendering-pipeline.md) for those.
+
+![Scene settings with SSAO and SSR enabled](../assets/screenshots/properties-scene-settings.png)
+
+Two scene-wide performance switches sit with the lighting block:
 
 | Section | Purpose |
 | --- | --- |
@@ -339,12 +357,13 @@ Each mesh can still opt out with **Detail Levels** on the Mesh component.
 
 ## Scripts
 
-Two buttons at the bottom of the Properties window create scripts:
+Two buttons at the top of the Properties window create scripts:
 
 - **New Script** — opens a dialog that generates the script files (Lua module, or C++
   header + source), adds a `ScriptComponent` if the entity lacks one, and links an
-  enabled entry to the new files — all in one undoable step.
-- **New component → ScriptComponent**, then **Add Script** inside the component — adds
+  enabled entry to the new files — all in one undoable step. Its **Attach existing**
+  option links script files that already exist instead, without changing them.
+- **New component → Script**, then **Add Script** inside the component — adds
   an *empty* script entry without creating files. Use the entry's pencil button to set
   the class name and link existing header/source (or `.lua`) files.
 
@@ -357,7 +376,7 @@ When a script is linked, the Properties window shows every property declared wit
 `DPROPERTY` macro (C++) or in the `properties` table (Lua). These fields are serialized
 with the scene and injected into the script instance at play and export time.
 
-![Script property fields in the Properties window](../assets/screenshots/editor-script-properties.png)
+![A Lua script's entity-reference properties linked to other entities](../assets/screenshots/properties-script.png)
 
 See [Creating Scripts](../manual/creating-scripts.md) for the full workflow and
 [Script Properties](../manual/script-properties.md) for declaring and typing custom

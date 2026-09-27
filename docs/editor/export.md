@@ -9,7 +9,7 @@ generated scene and bundle C++, resources, scripts, engine runtime files, and co
 shaders — and, depending on the mode, also compiles the result into a ready-to-run
 build.
 
-![Export window](../assets/screenshots/editor-export-window.png)
+![The Export Project window: Source Code, Desktop, and Web modes](../assets/screenshots/export-modes.png)
 
 ## From editor data to runtime code
 
@@ -140,6 +140,8 @@ Exactly the classic export: choose the **graphic backends** to include (OpenGL, 
 3, Direct3D 11, Metal for macOS and iOS, Vulkan) — this decides which shader formats are
 compiled in — and get a buildable CMake project in the target directory.
 
+![Source Code export with the shader list and the platform presets](../assets/screenshots/export-source-code.png)
+
 The source builds for every supported operating system regardless of this choice; only the
 shaders are affected, so include every backend the project may eventually be built with.
 See [Shader compilation](#shader-compilation) for which target needs which backend.
@@ -260,6 +262,8 @@ Builds a native executable for the operating system the editor is running on, us
 CMake and the **compiler kit configured in [Editor
 Settings](editor-settings.md#desktop)** (or the system default toolchain when none is
 selected).
+
+![Desktop export with its graphic backend, compiler, and build jobs](../assets/screenshots/export-desktop.png)
 
 | Setting | Meaning |
 | --- | --- |

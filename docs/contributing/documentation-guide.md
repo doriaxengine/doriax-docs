@@ -57,6 +57,19 @@ Expand these first when touching the reference: `Engine`, `Scene`, `Object`, `In
 | `reference/classes/` | Per-class API (hand-maintained) |
 | `building/` | Platform build setup |
 
+## Screenshots
+
+Screenshots live in `docs/assets/screenshots/` as PNG files.
+
+- Capture the editor at **1920×1080** in its default layout (**View → Reset Layout**),
+  so every page shows the same editor.
+- Use the whole window when a page walks through a workflow. When it documents one
+  panel, menu, or dialog, crop to it at its native size instead of scaling.
+- Keep local paths and personal data out of the Output panel and dialogs.
+- Name the file after what it shows (`properties-script.png`, `export-desktop.png`) and
+  say the same in the alt text.
+- Delete a screenshot once no page references it.
+
 ## Links
 
 Use relative links. Run `mkdocs build --strict` after nav or path changes.

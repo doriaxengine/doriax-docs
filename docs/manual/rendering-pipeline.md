@@ -205,6 +205,8 @@ contribution — ambient light is never shadowed. See
 
 ## Fog
 
+![Linear fog fading distant houses, with the FogComponent settings](../assets/screenshots/editor-fog.png)
+
 `Fog` adds atmospheric depth. Two modes are available:
 
 | Mode | Effect |
@@ -433,6 +435,8 @@ scene lit mainly by direct light.
 
 ## Screen-space reflections (SSR)
 
+![A scene with SSAO and SSR enabled in its settings](../assets/screenshots/editor-pirate-adventure.png)
+
 Screen-space reflections add real-time reflections of on-screen geometry — wet floors,
 polished metal, glossy surfaces — by marching the camera depth buffer in screen space and
 sampling the lit scene colour where a reflected ray hits. Like Godot and Unity, SSR is
@@ -508,6 +512,8 @@ A scene can run an ordered chain of user **fullscreen passes** over its finished
 Each pass is a forked shader picked in the editor's **Post-processing** scene settings;
 see [Custom Shaders — Post-process passes](../editor/custom-shaders.md#post-process-passes)
 for authoring them.
+
+![A post-process pass drawing outlines and posterized colour over a 3D scene](../assets/screenshots/editor-postprocess.png)
 
 The chain runs on the scene's active camera, after the opaque, transparent, UI, and SSR
 passes and before the fixed-resolution upscale. Enabling it redirects the colour

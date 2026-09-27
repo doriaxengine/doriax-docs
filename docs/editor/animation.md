@@ -8,7 +8,7 @@ The **Animation Timeline** edits time-based changes and previews them in the sce
 works with entity transforms, sprite frame sequences, skeletal animation clips, morph
 targets, and runtime action components — all driven by the `ActionSystem` at runtime.
 
-![Animation timeline](../assets/screenshots/editor-animation.png)
+![The Animation Timeline playing a skeletal clip, one track per bone](../assets/screenshots/editor-animation.png)
 
 ## Timeline concepts
 
@@ -199,7 +199,7 @@ The animation selector uses each animation entity's name. Imported clips start w
 name authored in the GLTF; you can rename the entity in the Structure panel. Runtime
 `Model:findAnimation` and `Model:playAnimation` string lookups use that same entity name.
 
-![Bone tools](../assets/screenshots/editor-bones.png)
+![A character's skeleton drawn in the viewport, with its bones in the Structure panel](../assets/screenshots/editor-bones.png)
 
 At runtime, look up a clip by name on the `Model` object:
 

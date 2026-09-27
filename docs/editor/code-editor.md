@@ -8,7 +8,7 @@ The integrated code editor lets you write and edit Lua and C++ scripts without l
 the Doriax editor. It provides syntax highlighting, API completion, script creation
 dialogs, and a live output panel for compile and export messages.
 
-![Integrated code editor](../assets/screenshots/editor-code.png)
+![Lua API completion in the Code Editor](../assets/screenshots/editor-code.png)
 
 ## Supported workflows
 
@@ -24,17 +24,18 @@ dialogs, and a live output panel for compile and export messages.
 
 ## Creating a new script
 
-1. Select an entity and click **New Script** at the bottom of the **Properties** window.
+1. Select an entity and click **New Script** at the top of the **Properties** window.
 2. Choose **Lua Script**, **C++ Subclass**, or **C++ Script Class**.
 3. Enter the class/module name and confirm.
 
-The editor generates the files from templates, attaches a `ScriptComponent` entry to
-the entity, and opens the new files here in the Code Editor. To link *existing* files
-instead, add an empty entry with **Add Script** inside the ScriptComponent and pick the
-files in its edit dialog — see
+The editor generates the files from templates and attaches a `ScriptComponent` entry to
+the entity; open them here with the header and source buttons on that entry. To link
+*existing* files instead, choose **Attach existing** in the same dialog, or add an empty
+entry with **Add Script** inside the ScriptComponent and pick the files in its edit
+dialog — see
 [Creating Scripts](../manual/creating-scripts.md#create-a-script-in-the-editor).
 
-![Script creation dialog](../assets/screenshots/editor-script-create-dialog.png)
+![The Create Script dialog](../assets/screenshots/script-create-dialog.png)
 
 ## Drag entities into your code
 
@@ -62,6 +63,14 @@ the **gear**, opens the menu of events a script can subscribe to:
 | **Input** | Keyboard, mouse, touch, and gamepad events |
 | **UI**, **Button**, **Scrollbar**, **Panel**, **Text Edit**, **Action**, **Sound** | Events of that component, which the script's entity needs to have |
 | **Physics 2D**, **Physics 3D** | Contacts, sensors, body activation, and collision filters, for every body in the scene |
+
+![The Add event menu with the Engine events](../assets/screenshots/code-events-menu.png)
+
+The **Touch** section of **Input** includes `onTouchCancel(pointer, x, y)` for
+releasing an interrupted finger's action without a click. A full cancellation calls
+the handler once per tracked finger. See
+[Touch cancellation](../manual/events.md#touch-cancellation) for notification order
+and how to handle fingers that remain down.
 
 Each entry shows the handler parameters. Picking one writes the code the event needs and
 puts the caret inside the new handler:
@@ -171,7 +180,7 @@ system documentation.
 Properties declared with `DPROPERTY` (C++) or in the `properties` table (Lua) appear
 as editable fields in the **Properties window** automatically.
 
-![DPROPERTY macro in C++ script](../assets/screenshots/editor-code-spROPERTY.png)
+![DPROPERTY declarations in a C++ header next to the fields they create in the Properties window](../assets/screenshots/editor-code-dproperty.png)
 
 ```cpp
 DPROPERTY("Speed")

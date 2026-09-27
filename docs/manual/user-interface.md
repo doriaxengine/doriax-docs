@@ -9,7 +9,7 @@ controls. UI entities are regular ECS entities with UI-specific components and l
 state. Because the UI system is built on the same ECS foundation as the rest of the
 engine, you can combine UI with 3D, 2D, and scripting seamlessly.
 
-![Doriax UI tools](../assets/screenshots/editor-ui.png)
+![Designing a title menu in a UI scene](../assets/screenshots/editor-ui.png)
 
 ## UI scenes
 

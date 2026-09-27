@@ -7,7 +7,7 @@ description: Working with 3D graphics in Doriax — models, materials, lighting,
 Doriax provides a complete 3D pipeline with model loading, physically-based rendering,
 dynamic lighting, and environment effects.
 
-![3D scene in the Doriax editor](../assets/screenshots/editor-3d-scene.png)
+![A 3D tower-defence map in the editor](../assets/screenshots/editor-bastion-vale.png)
 
 ## Models
 
@@ -20,7 +20,7 @@ Models support:
 - **Node animation** — play transform clips on the imported glTF node tree
 - **Morph targets** — blend between mesh shapes for facial animation and deformation
 
-![Bone and skeletal animation tools](../assets/screenshots/editor-bones.png)
+![A rigged character with its skeleton drawn in the viewport](../assets/screenshots/editor-bones.png)
 
 ### GLTF compatibility and limits
 
@@ -153,6 +153,8 @@ Rendering is **physically based (PBR)**, producing realistic surfaces that respo
 correctly to lighting. Materials drive how light interacts with each surface, supporting
 photorealistic results.
 
+![A PBR material in the Properties window](../assets/screenshots/properties-pbr-material.png)
+
 Materials can use albedo, normal, roughness, metallic, and emission data. Imported
 GLTF materials are converted into the engine material representation during loading;
 editor-created materials are serialized with the project and baked into exported
@@ -241,6 +243,8 @@ full workflow.
 Doriax supports multiple light types with **dynamic shadows**, so moving objects cast
 and receive shadows in real time.
 
+![A directional light casting shadows, with its settings in the Properties window](../assets/screenshots/editor-lighting.png)
+
 | Light type | Best use |
 | --- | --- |
 | Directional | Sunlight or broad outdoor lighting |
@@ -323,7 +327,7 @@ for how it works, its lighting, and its performance cost.
 Cameras define the viewpoint into a 3D scene. Position and orient a camera entity, and
 set it as the scene's active camera to control what the player sees.
 
-![Camera and build tools](../assets/screenshots/editor-camera.png)
+![Previewing the view through a scene camera](../assets/screenshots/editor-camera-preview.png)
 
 Cameras can be perspective, orthographic, or UI cameras. A scene owns an active camera
 entity; editor scene cameras are separate from game cameras so you can navigate while

@@ -20,6 +20,8 @@ organize bundles alongside the assets they use (`enemies/`, `ui/`, `props/`, etc
    **Save as Bundle**, or **drag the entity** from the Structure panel and drop it on
    the Resources Browser.
 
+![Save as Bundle and Insert to Bundle in an entity's right-click menu](../assets/screenshots/structure-context-menu.png)
+
 Both routes are the same operation, and both save into the folder the Resources Browser
 is currently showing — the **Save as Bundle** tooltip names that folder so you can check
 it before committing. The menu entry is disabled for locked entities and for entities
@@ -56,6 +58,11 @@ The bundle owns the component data. All instances read from it, so:
 - **Revert to Bundle** on an overridden component discards the local values and
   re-links it to the bundle.
 
+In the Properties window, a component that still follows the bundle has a cube icon and
+a blue header; once it is made unique it is drawn like any other component.
+
+![Make Unique in the component options of a bundle member](../assets/screenshots/bundle-make-unique.png)
+
 The instance root's `Transform` is always per-instance (that is what lets you place
 each copy somewhere different), and it cannot be removed.
 
@@ -89,6 +96,8 @@ Right-click entities in the Structure panel to change what belongs to the bundle
 | **Remove from bundle** | A member entity inside an instance | Entity leaves the bundle but stays in this scene as a regular entity |
 | **Save as Bundle** | Any entity outside a bundle | Saves the hierarchy as a **new** `.bundle` file and replaces it with an instance |
 | **Insert to Bundle ▸** | Any entity outside a bundle | Moves the entity into one of the scene's **existing** bundles |
+
+![The right-click menu of a bundle member](../assets/screenshots/structure-bundle-menu.png)
 
 New entities created under a bundle root from the Structure create menu can join the
 bundle directly. Nested bundle instances have matching *(nested)* menu entries to

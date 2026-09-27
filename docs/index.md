@@ -100,7 +100,7 @@ and efficient open-source game engine with an integrated editor for creating 2D 
 
 ## The editor
 
-![Doriax Engine Editor — 3D scene](assets/screenshots/editor-3d-scene.png)
+![Doriax editor with a 3D pirate adventure scene](assets/screenshots/editor-pirate-adventure.png)
 
 Doriax ships with a complete visual editor: design scenes, edit 2D tilemaps, animate
 characters, write code, and test your game in play mode — all from one unified

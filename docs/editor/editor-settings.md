@@ -36,6 +36,8 @@ waits on the window system either way, so disabling it does not make the editor 
 The C++ toolchain used both when **playing** a scene with C++ scripts and when running a
 **Desktop** export.
 
+![The Desktop tab of Editor Settings](../assets/screenshots/editor-settings-desktop.png)
+
 | Setting | Default | Effect |
 | --- | --- | --- |
 | **CMake** | Auto-detect | Path to the `cmake` executable. **Browse** validates the pick by running it, and reports a folder with no working CMake instead of storing it. **Auto** returns to looking it up on `PATH` |

@@ -9,7 +9,7 @@ scene using editor cameras and overlays gizmos, selection highlights, and tool g
 on top. You place, rotate, scale, and test entities here, and you see the result of
 component changes made in the Properties window immediately.
 
-![Scene view](../assets/screenshots/editor-scene-view.png)
+![The Scene view with its toolbar and the transform gizmo on a selected entity](../assets/screenshots/scene-view.png)
 
 ## Navigation
 
@@ -41,15 +41,27 @@ to move in world space instead of local space.
 ## Viewport settings
 
 Open the **gear** button on the scene view toolbar to toggle display and snap options
-for the current scene. Settings are saved with the project.
+for the current scene. They are saved per user in `.doriax/user/workspace.yaml`, not in
+the scene file.
+
+![The viewport settings of a 3D scene](../assets/screenshots/scene-view-settings.png)
 
 | Setting | Applies to | Purpose |
 | --- | --- | --- |
-| **Snap to grid** | All scene types | Snap transforms to the configured grid spacing |
-| **Snap tile** | 2D / UI | Snap Tilemap tiles to their own width and height so they pack edge-to-edge |
-| **Snap rotation** | All scene types | Snap rotations to the configured step (degrees) |
+| **Show all joints** / **Show all bones** / **Show all bodies** | All scene types | Draw every physics joint, skeleton bone, or collision shape, not only the selected entity's. Unavailable while playing |
+| **Hide camera view** | All scene types | Hide camera icons and frustums |
+| **Hide light icons** | 3D | Hide light icons |
+| **Hide sound icons** | All scene types | Hide sound source icons |
+| **Hide container guides** | 2D / UI | Hide the outlines of UI containers |
 | **Show grid** | All scene types | Draw the editor grid overlay |
-| **Grid spacing** | All scene types | Interval used by the grid and by **Snap to grid** |
+| **Disable face culling** | 3D | Draw back faces in the editor view; play mode keeps culling |
+| **Show origin axis** | 2D / UI | Draw the axes through the scene origin |
+| **Hide selection outline** | All scene types | Hide the outline drawn around selected entities |
+| **Snap to grid** | All scene types | Snap transforms to the configured grid spacing |
+| **Grid spacing** | All scene types | Interval used by the grid and by **Snap to grid**. In 2D and UI scenes it is shown while the grid is on |
+| **Snap tile** | 2D / UI | Snap Tilemap tiles to their own width and height so they pack edge-to-edge |
+| **Snap rotation** / **Rotation step** | All scene types | Snap rotations to the configured step (degrees) |
+| **Editor camera near** / **Editor camera far** | 3D | Clip planes of the editor camera |
 
 **Snap tile** takes priority over **Snap to grid** while you move or resize an
 individual tile inside a Tilemap. Turn it on when laying out floors, walls, or other
@@ -128,11 +140,16 @@ shared file.
 
 The **editor camera** is only for authoring navigation. The **game camera** is a
 `Camera` entity you place in your scene; it defines what the player sees at runtime.
-Always verify gameplay framing with the game camera preview before testing.
+Always verify gameplay framing with the game camera preview before testing: select the
+camera and click **View** on the **Preview** row of its CameraComponent. The toolbar
+shows the camera's name while you look through it; click **Exit** (or the **×** beside
+the name) to return to the editor camera.
+
+![Looking through the scene's main camera](../assets/screenshots/editor-camera-preview.png)
 
 ## 2D and tilemap editing
 
-![2D sprite editing](../assets/screenshots/editor-2d-sprite.png)
+![A 2D level with the player sprite selected](../assets/screenshots/editor-2d-sprite.png)
 
 In a 2D scene the editor uses orthographic projection and a canvas overlay. Sprites,
 tilemaps, UI widgets, and polygons should be positioned in a consistent logical
@@ -141,7 +158,7 @@ coordinate system so that canvas scaling stays predictable across different scre
 Tilemap cells can be painted directly in the scene view when a Tilemap entity is
 selected and the tile-paint mode is active.
 
-![Tilemap in scene](../assets/screenshots/editor-2d-tilemap.png)
+![A tilemap selected, with its tile rects in the Properties window](../assets/screenshots/editor-2d-tilemap.png)
 
 ### Placing and grouping tiles
 
@@ -200,15 +217,16 @@ UI scenes display the canvas in screen-space overlay mode. Anchor gizmos show th
 layout boundaries of UI elements. Drag anchors directly to reposition or stretch
 widgets relative to their parent.
 
-![UI scene editing](../assets/screenshots/editor-ui.png)
+![A UI scene with a button selected and its anchor gizmo shown](../assets/screenshots/editor-ui.png)
 
 ## Physics visualization
 
 When a `Body2D` or `Body3D` is attached, the editor draws the collision shape outline
 in the viewport. This lets you verify that the physics shape matches the visual mesh
-without running the game.
+without running the game. Shapes are drawn for the selected entity; turn on
+**Show all bodies** in the [viewport settings](#viewport-settings) to draw every body.
 
-![Physics visualization](../assets/screenshots/editor-physics.png)
+![A static platform's Body3D box shape drawn around its blocks](../assets/screenshots/editor-physics.png)
 
 ## Play mode in the viewport
 
