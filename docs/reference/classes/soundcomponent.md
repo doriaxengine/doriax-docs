@@ -18,6 +18,7 @@ description: SoundComponent API reference (C++ and Lua).
 | `state` | C++ \| Lua (read-only) |
 | `filename` | C++ \| Lua |
 | `loaded` | C++ \| Lua (read-only) |
+| `loadFailed` | C++ \| Lua (read-only) |
 | `enableClocked` | C++ \| Lua |
 | `lastPosition` | C++ \| Lua (read-only) |
 | `startTrigger` | C++ \| Lua |

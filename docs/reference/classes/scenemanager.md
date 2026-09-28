@@ -37,6 +37,7 @@ Two operations change what is on screen:
 | static float | [getLoadingProgress](#isloading-getloadingprogress) | C++ \| Lua (`loadingProgress`) |
 | static bool | [holdLoading](#holdloading-releaseloading) | C++ \| Lua |
 | static void | [releaseLoading](#holdloading-releaseloading) | C++ \| Lua |
+| static bool | [isCoveredByLoading](#iscoveredbyloading) | C++ \| Lua |
 | static bool | [addChildScene](#addchildscene-removechildscene) | C++ \| Lua |
 | static bool | [removeChildScene](#addchildscene-removechildscene) | C++ \| Lua |
 | static uint32_t | [getSceneId](#getsceneid-getscenename) | C++ \| Lua |
@@ -246,7 +247,7 @@ A transition then runs in three steps:
 2. Once it is drawn with its resources loaded and the
    [loading delay](#setloadingdelay-getloadingdelay) has passed, the old stack is replaced.
    The game freezes while the new scenes are built, with the loading scene on screen.
-3. When every mesh, UI element and sky of the new stack is loaded,
+3. When every mesh, UI element, sky and sound of the new stack is loaded,
    [`Engine::onSceneLoaded`](engine.md#onsceneloaded) fires and the loading scene is
    removed, unless a [hold](#holdloading-releaseloading) keeps it up to fade out.
 
@@ -309,10 +310,13 @@ loading scene. It is already `true` while the new stack's scripts are constructe
 the start scene too. To start gameplay once the level is ready, handle
 [`Engine::onSceneLoaded`](engine.md#onsceneloaded) instead of polling it.
 
-`getLoadingProgress` is the share of the new stack's meshes, UI elements and skies that
-finished loading: `0` until the old stack is replaced, `1` once it has loaded (also after a
-timeout, and while holds keep the load open). It only moves across several frames with
-[async loading](engine.md#asyncloading); otherwise it jumps from `0` to `1`.
+`getLoadingProgress` is the share of the new stack's meshes, UI elements, skies and sounds
+that finished loading: `0` until the old stack is replaced, `1` once it has loaded (also
+after a timeout, and while holds keep the load open). A sound whose file cannot be loaded
+counts as done. The value is updated once per frame and never goes back within a load, even
+when the new scenes create more to load. It only moves across several frames with
+[async loading](engine.md#asyncloading); otherwise it jumps from `0` to `1`. For a smooth
+bar, ease the drawn width toward it.
 
 === "Lua"
     ```lua
@@ -390,6 +394,32 @@ fade. A hold has no timeout, so release it in the script's destructor too.
             holding = false;
             SceneManager::releaseLoading();
         }
+    }
+    ```
+
+---
+
+### isCoveredByLoading
+
+* static bool **isCoveredByLoading**(Scene* scene)
+
+`true` for a running scene below the shown [loading scene](#setloadingscene-getloadingsceneid).
+Such a scene gets no UI input, but its scripts still receive engine input events, so a
+script can check this to ignore keys while its scene is covered.
+
+=== "Lua"
+    ```lua
+    function Menu:onKeyDown(key)
+        if SceneManager.isCoveredByLoading(self.scene) then return end
+        -- menu keys
+    end
+    ```
+
+=== "C++"
+    ```cpp
+    void Menu::onKeyDown(int key, bool repeat, int mods) {
+        if (SceneManager::isCoveredByLoading(scene)) return;
+        // menu keys
     }
     ```
 

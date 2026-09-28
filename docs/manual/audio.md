@@ -127,6 +127,9 @@ Sound coin2(&scene);
 coin2.loadSound("audio/coin.ogg");  // served from the shared cache
 ```
 
+A file that fails to load logs an error and sets `SoundComponent.loadFailed`. It is not
+tried again until a scene that uses it loads or `loadSound` is called for it.
+
 ## Background music
 
 Music typically loops, has no 3D attenuation, and plays at a lower priority than sound
