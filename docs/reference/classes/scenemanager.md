@@ -38,6 +38,9 @@ Two operations change what is on screen:
 | static bool | [holdLoading](#holdloading-releaseloading) | C++ \| Lua |
 | static void | [releaseLoading](#holdloading-releaseloading) | C++ \| Lua |
 | static bool | [isCoveredByLoading](#iscoveredbyloading) | C++ \| Lua |
+| static bool | [preloadScene](#preloadscene-getpreloadprogress-cancelpreload) | C++ \| Lua |
+| static float | [getPreloadProgress](#preloadscene-getpreloadprogress-cancelpreload) | C++ \| Lua |
+| static void | [cancelPreload](#preloadscene-getpreloadprogress-cancelpreload) | C++ \| Lua |
 | static bool | [addChildScene](#addchildscene-removechildscene) | C++ \| Lua |
 | static bool | [removeChildScene](#addchildscene-removechildscene) | C++ \| Lua |
 | static uint32_t | [getSceneId](#getsceneid-getscenename) | C++ \| Lua |
@@ -58,7 +61,7 @@ Two operations change what is on screen:
 * static void **registerScene**(uint32_t id, const std::string& name, std::function<void()> loadFactory)
 * static void **registerScene**(uint32_t id, const std::string& name, std::function<void()> loadFactory, const std::vector<uint32_t>& sceneIds)
 * static void **registerScene**(uint32_t id, const std::string& name, std::function<void()> loadFactory, std::function<void()> addFactory)
-* static void **registerScene**(uint32_t id, const std::string& name, std::function<void()> loadFactory, std::function<void()> addFactory, const std::vector<uint32_t>& sceneIds)
+* static void **registerScene**(uint32_t id, const std::string& name, std::function<void()> loadFactory, std::function<void()> addFactory, const std::vector<uint32_t>& sceneIds, std::function\<SceneResources()\> resources = nullptr)
 
 Registers a named scene stack with the functions that build it. A stack has two of them because coming up *as the world* and coming up *on top of the world* are different jobs.
 
@@ -69,6 +72,8 @@ Registers a named scene stack with the functions that build it. A stack has two 
 A stack registered without an add factory can still be loaded. It can only be added as a child once something else has created its scenes.
 
 The optional `sceneIds` vector lists the scenes that come up **together** with this one — the stack's *active* scenes. It is what `addChildScene` puts on screen, the stack's own scene first so it sits below the layers it owns. A braced list works in C++ (`{1, 2}`), and the stack's own id is added when the list leaves it out.
+
+The optional **`resources`** function lists the files the scene loads — its `textures`, `sounds` and `models` — for [`preloadScene`](#preloadscene-getpreloadprogress-cancelpreload). Exported games and the editor's Play pass it for every scene.
 
 === "C++"
     ```cpp
@@ -420,6 +425,55 @@ script can check this to ignore keys while its scene is covered.
     void Menu::onKeyDown(int key, bool repeat, int mods) {
         if (SceneManager::isCoveredByLoading(scene)) return;
         // menu keys
+    }
+    ```
+
+---
+
+### preloadScene / getPreloadProgress / cancelPreload
+
+* static bool **preloadScene**(const std::string& name)
+* static bool **preloadScene**(uint32_t id)
+* static float **getPreloadProgress**(const std::string& name)
+* static float **getPreloadProgress**(uint32_t id)
+* static void **cancelPreload**(const std::string& name)
+* static void **cancelPreload**(uint32_t id)
+
+`preloadScene` loads the textures, sounds and models of a scene stack in the background
+while the current scene keeps running, so a later [`loadScene`](#loadscene) finds them
+ready and only has to build the scene. Call it early, for example when the player gets
+close to the exit door. It returns `false` for an unknown scene.
+
+The files are held until that scene has loaded, or until `cancelPreload`, which frees the
+ones no running scene uses. Scenes of the stack that are already running, such as a shared
+HUD, are skipped. Calling `loadScene` before the preload finishes is fine: files still
+loading are not loaded twice. `getPreloadProgress` goes from `0` to `1` once the request
+starts at the end of the frame, and is `0` for a scene that was never preloaded.
+
+Preloading needs [async loading](engine.md#asyncloading) to stay smooth. Without it, one
+file loads per frame on the main thread and models are skipped. Preloading only loads
+files: building the scene's entities still happens in `loadScene`. In the editor's Play, a
+scene that is not open is read from its file first, which takes a moment.
+
+=== "Lua"
+    ```lua
+    function ExitDoor:onPlayerNear()
+        SceneManager.preloadScene("Level2")
+    end
+
+    function ExitDoor:onEnter()
+        SceneManager.loadScene("Level2")   -- its files are ready
+    end
+    ```
+
+=== "C++"
+    ```cpp
+    void ExitDoor::onPlayerNear() {
+        SceneManager::preloadScene("Level2");
+    }
+
+    void ExitDoor::onEnter() {
+        SceneManager::loadScene("Level2");   // its files are ready
     }
     ```
 

@@ -191,6 +191,32 @@ A level script starts gameplay in
 and the loading scene still covers it while it places the player and camera. See
 [SceneManager.setLoadingScene](../reference/classes/scenemanager.md#setloadingscene-getloadingsceneid).
 
+## Preloading the next scene
+
+A loading screen hides the wait; preloading removes most of it.
+[`SceneManager.preloadScene`](../reference/classes/scenemanager.md#preloadscene-getpreloadprogress-cancelpreload)
+loads the next scene's textures, sounds and models on worker threads while the player is
+still in the current one. When `loadScene` runs later, only the scene's entities are
+built, and the loading screen closes almost at once.
+
+=== "Lua"
+
+    ```lua
+    SceneManager.preloadScene("Level2")          -- near the end of Level1
+    if SceneManager.getPreloadProgress("Level2") == 1 then
+        -- everything is loaded
+    end
+    ```
+
+=== "C++"
+
+    ```cpp
+    SceneManager::preloadScene("Level2");        // near the end of Level1
+    if (SceneManager::getPreloadProgress("Level2") == 1.0f) {
+        // everything is loaded
+    }
+    ```
+
 ## See also
 
 - [ThreadPoolManager](../reference/classes/threadpoolmanager.md)
