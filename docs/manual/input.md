@@ -218,7 +218,8 @@ single-touch to also fire mouse events.
 [`System::isTouchDevice()`](../reference/classes/system.md#istouchdevice) tells whether the
 game runs on a phone or tablet, so it can show its own buttons from the start. Switch them
 on after a touch and off after a key press too, so a phone with a keyboard or a touch-screen
-laptop gets the right controls.
+laptop gets the right controls. To try them in the editor, turn on
+[touch simulation](../editor/scene-view.md#touch-simulation) before pressing **Play**.
 
 Movement buttons are held while other buttons are pressed, so read them from the active
 touch points each frame instead of using UI buttons: a UI [Button](../reference/classes/button.md)

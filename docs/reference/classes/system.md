@@ -109,7 +109,8 @@ Returns the MSAA sample count configured for the current graphics backend (e.g. 
 Returns `true` when touch is the main input, as on phones and tablets. Android and iOS
 always report it. On the web the browser decides from its primary pointer, so a phone
 reports `true` and a laptop with a touch screen and a mouse reports `false`. Desktop
-platforms report `false`.
+platforms report `false`, and the editor reports `true` while
+[touch simulation](../../editor/scene-view.md#touch-simulation) is on.
 
 Use it to decide whether to start with on-screen controls. The player can still connect a
 keyboard or touch a laptop screen, so following the last input used as well is more

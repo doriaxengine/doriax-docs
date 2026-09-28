@@ -249,3 +249,13 @@ The editor footer on the right shows FPS, frame time, draw calls, and triangles 
 last drawn frame — the same counters `Engine::getFrameStats()` returns. For a scripted
 capture with VSync forced off, use
 [`doriax-editor benchmark`](command-line.md#benchmark-measure-scene-fps).
+
+### Touch simulation
+
+The **phone** button next to **Stop** makes Play behave like a touch device.
+[`System::isTouchDevice()`](../reference/classes/system.md#istouchdevice) returns `true`,
+and the left mouse button acts as one finger: pressing starts a touch, dragging moves it,
+and releasing ends it. As on a phone, the game gets touch events instead of mouse events,
+so there is no hover, right click, or scroll. The keyboard still works. The setting is
+saved per user in `.doriax/user/workspace.yaml` and can only be changed while nothing is
+playing.
