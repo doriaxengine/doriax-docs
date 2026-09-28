@@ -142,20 +142,25 @@ For web, always test async loading with pthreads enabled in your deployment envi
 
 ## Loading screens
 
-`SceneManager` shows a loading screen for you. Register a UI scene once and every
-`loadScene` goes through it:
+`SceneManager` shows a loading screen for you. Pick a UI scene as the **Loading Scene**
+in [Project Settings → General → Loading](../editor/project-settings.md#loading), turn on
+**Async Loading** there, and every `loadScene` goes through it:
 
-1. The loading scene appears on top of the running scene, which keeps running below it.
+1. The loading scene appears on top of the running scene, which keeps running below it but
+   no longer gets UI input.
 2. After the loading delay, the old scene is replaced behind it. The new scene's entities
    and scripts are built on the main thread, so the game freezes for that moment with the
    loading scene on screen.
 3. With async loading on, the new scene's textures, sounds and models stream in on worker
-   threads while the loading scene keeps animating. It is removed once they are loaded.
+   threads while the loading scene keeps animating. Once they are loaded,
+   `Engine.onSceneLoaded` fires and the loading scene is removed, or fades out first if a
+   script [holds the load](../reference/classes/scenemanager.md#holdloading-releaseloading).
+
+The same settings can be made from code, at startup:
 
 === "Lua"
 
     ```lua
-    -- once, at startup
     Engine.asyncLoading = true
     SceneManager.setLoadingScene("Loading")
     SceneManager.loadingDelay = 0.3
@@ -170,7 +175,6 @@ For web, always test async loading with pthreads enabled in your deployment envi
 === "C++"
 
     ```cpp
-    // once, at startup
     Engine::setAsyncLoading(true);
     SceneManager::setLoadingScene("Loading");
     SceneManager::setLoadingDelay(0.3f);
@@ -182,8 +186,9 @@ For web, always test async loading with pthreads enabled in your deployment envi
     }
     ```
 
-A level script can also wait for `SceneManager.loading` to become `false` before it starts
-gameplay. See
+A level script starts gameplay in
+[`Engine.onSceneLoaded`](../reference/classes/engine.md#onsceneloaded): the level is loaded,
+and the loading scene still covers it while it places the player and camera. See
 [SceneManager.setLoadingScene](../reference/classes/scenemanager.md#setloadingscene-getloadingsceneid).
 
 ## See also

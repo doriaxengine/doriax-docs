@@ -111,6 +111,7 @@ Control engine properties and define defaults used across the whole project. `En
 | void() | [onPause](#onpause) | C++ \| Lua |
 | void() | [onResume](#onresume) | C++ \| Lua |
 | void() | [onShutdown](#onshutdown) | C++ \| Lua |
+| void() | [onSceneLoaded](#onsceneloaded) | C++ \| Lua |
 | void(int,float,float) | [onTouchStart](#ontouchstart) | C++ \| Lua |
 | void(int,float,float) | [onTouchEnd](#ontouchend) | C++ \| Lua |
 | void(int,float,float) | [onTouchMove](#ontouchmove) | C++ \| Lua |
@@ -804,6 +805,46 @@ Called when the application returns to the foreground after a pause.
 * Callback: `void()`
 
 Called when the application is closing. Use to flush saves or clean up persistent state.
+
+---
+
+### onSceneLoaded
+
+* `static FunctionSubscribe<void()> onSceneLoaded`
+* Callback: `void()`
+
+Called once a scene stack loaded by [`SceneManager::loadScene`](scenemanager.md#loadscene)
+has loaded its resources, and once for the start scene, both in exported games and in the
+editor's Play. It fires before the [loading scene](scenemanager.md#setloadingscene-getloadingsceneid)
+closes, so a level can place its player and camera behind it. `SceneManager::isLoading()`
+is still `true` here, and a loading scene can [hold](scenemanager.md#holdloading-releaseloading)
+the load to fade out. `addChildScene` does not fire it.
+
+=== "Lua"
+    ```lua
+    function Level:init()
+        RegisterEngineEvent(self, "onSceneLoaded")
+    end
+
+    function Level:onSceneLoaded()
+        self:startLevel()
+    end
+    ```
+
+=== "C++"
+    ```cpp
+    Level::Level(Scene* scene, Entity entity): ScriptBase(scene, entity) {
+        REGISTER_ENGINE_EVENT(onSceneLoaded);
+    }
+
+    Level::~Level() {
+        UNREGISTER_ENGINE_EVENT(onSceneLoaded);
+    }
+
+    void Level::onSceneLoaded() {
+        startLevel();
+    }
+    ```
 
 ---
 

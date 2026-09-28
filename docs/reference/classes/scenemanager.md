@@ -31,8 +31,12 @@ Two operations change what is on screen:
 | static uint32_t | [getLoadingSceneId](#setloadingscene-getloadingsceneid) | C++ \| Lua (`loadingSceneId`) |
 | static void | [setLoadingDelay](#setloadingdelay-getloadingdelay) | C++ \| Lua (`loadingDelay`) |
 | static float | [getLoadingDelay](#setloadingdelay-getloadingdelay) | C++ \| Lua (`loadingDelay`) |
+| static void | [setLoadingTimeout](#setloadingtimeout-getloadingtimeout) | C++ \| Lua (`loadingTimeout`) |
+| static float | [getLoadingTimeout](#setloadingtimeout-getloadingtimeout) | C++ \| Lua (`loadingTimeout`) |
 | static bool | [isLoading](#isloading-getloadingprogress) | C++ \| Lua (`loading`) |
 | static float | [getLoadingProgress](#isloading-getloadingprogress) | C++ \| Lua (`loadingProgress`) |
+| static bool | [holdLoading](#holdloading-releaseloading) | C++ \| Lua |
+| static void | [releaseLoading](#holdloading-releaseloading) | C++ \| Lua |
 | static bool | [addChildScene](#addchildscene-removechildscene) | C++ \| Lua |
 | static bool | [removeChildScene](#addchildscene-removechildscene) | C++ \| Lua |
 | static uint32_t | [getSceneId](#getsceneid-getscenename) | C++ \| Lua |
@@ -229,17 +233,25 @@ loading delay included. Lua reads it as the `SceneManager.loadPending` property.
 
 Sets a registered scene stack as the **loading screen** that [`loadScene`](#loadscene)
 shows over every transition. An empty name or `0` turns it off. Returns `false` if the
-scene is unknown.
+scene is unknown. Exported games and the editor's Play set it from
+[Project Settings → General → Loading](../../editor/project-settings.md#loading), so most
+projects never call it.
 
 A transition then runs in three steps:
 
 1. The loading scene is added **on top** of the running scenes, which keep running
-   underneath it.
+   underneath it. While it is shown, the scenes below it get no UI input: their buttons
+   cannot be pressed and their text fields get no keys. Pointer releases still reach them,
+   so nothing stays pressed. Engine input events such as `Engine::onKeyDown` still fire.
 2. Once it is drawn with its resources loaded and the
    [loading delay](#setloadingdelay-getloadingdelay) has passed, the old stack is replaced.
    The game freezes while the new scenes are built, with the loading scene on screen.
-3. The loading scene is removed once every mesh, UI element and sky of the new stack is
-   loaded, or after 5 seconds without progress, with a warning.
+3. When every mesh, UI element and sky of the new stack is loaded,
+   [`Engine::onSceneLoaded`](engine.md#onsceneloaded) fires and the loading scene is
+   removed, unless a [hold](#holdloading-releaseloading) keeps it up to fade out.
+
+A load that makes no progress for the [loading timeout](#setloadingtimeout-getloadingtimeout)
+stops waiting.
 
 It is kept alive between transitions, so its scripts keep their state. Their `onUpdate`
 also runs while it is off screen, so check [`isLoading`](#isloading-getloadingprogress)
@@ -274,19 +286,33 @@ when the scenes are deleted.
 
 ---
 
+### setLoadingTimeout / getLoadingTimeout
+
+* static void **setLoadingTimeout**(float seconds)
+* static float **getLoadingTimeout**()
+
+Seconds a load waits without progress before it gives up. Default `5`. It applies to the
+loading scene's own resources before the switch, and to the new stack after it, which logs
+a warning naming what did not load. The clock restarts every time another resource
+finishes, so a slow load that keeps moving is never cut short.
+
+---
+
 ### isLoading / getLoadingProgress
 
 * static bool **isLoading**()
 * static float **getLoadingProgress**()
 
 `isLoading` is `true` from a [`loadScene`](#loadscene) call until the new stack has loaded
-its resources, with or without a loading scene. A level script can wait for it before it
-starts gameplay.
+its resources and every [hold](#holdloading-releaseloading) is released, with or without a
+loading scene. It is already `true` while the new stack's scripts are constructed, and for
+the start scene too. To start gameplay once the level is ready, handle
+[`Engine::onSceneLoaded`](engine.md#onsceneloaded) instead of polling it.
 
 `getLoadingProgress` is the share of the new stack's meshes, UI elements and skies that
-finished loading: `0` until the old stack is replaced, `1` when done. It only moves across
-several frames with [`Engine::setAsyncLoading(true)`](engine.md#asyncloading); otherwise
-it jumps from `0` to `1`.
+finished loading: `0` until the old stack is replaced, `1` once it has loaded (also after a
+timeout, and while holds keep the load open). It only moves across several frames with
+[async loading](engine.md#asyncloading); otherwise it jumps from `0` to `1`.
 
 === "Lua"
     ```lua
@@ -301,6 +327,69 @@ it jumps from `0` to `1`.
     void LoadingScreen::onUpdate() {
         if (!SceneManager::isLoading()) return;
         barFill->setWidth((unsigned int)(360 * SceneManager::getLoadingProgress()));
+    }
+    ```
+
+---
+
+### holdLoading / releaseLoading
+
+* static bool **holdLoading**()
+* static void **releaseLoading**()
+
+`holdLoading` keeps the current load open after the new stack has loaded: the loading
+scene stays on screen and [`isLoading`](#isloading-getloadingprogress) stays `true` until
+every hold is released. Returns `false`, and holds nothing, when no load is running.
+Each successful `holdLoading` needs one `releaseLoading`.
+
+The usual use is a fade out: a script on the loading scene holds the load when
+[`Engine::onSceneLoaded`](engine.md#onsceneloaded) fires, lowers its alpha, then releases
+it. The new scene's scripts have already started by then, so the level is ready behind the
+fade. A hold has no timeout, so release it in the script's destructor too.
+
+=== "Lua"
+    ```lua
+    function LoadingScreen:init()
+        RegisterEngineEvent(self, "onUpdate")
+        RegisterEngineEvent(self, "onSceneLoaded")
+    end
+
+    function LoadingScreen:onSceneLoaded()
+        -- only when this loading scene is on screen
+        if Engine.isSceneRunning(self.scene) and SceneManager.holdLoading() then
+            self.fading = 0
+        end
+    end
+
+    function LoadingScreen:onUpdate()
+        if not self.fading then return end
+        self.fading = self.fading + Engine.deltatime
+        self.backdrop.alpha = math.max(0, 1 - self.fading / 0.3)
+        if self.fading >= 0.3 then
+            self.fading = nil
+            SceneManager.releaseLoading()
+        end
+    end
+    ```
+
+=== "C++"
+    ```cpp
+    void LoadingScreen::onSceneLoaded() {
+        // only when this loading scene is on screen
+        if (Engine::isSceneRunning(scene) && SceneManager::holdLoading()) {
+            holding = true;
+            fadeTimer = 0.0f;
+        }
+    }
+
+    void LoadingScreen::onUpdate() {
+        if (!holding) return;
+        fadeTimer += Engine::getDeltatime();
+        backdrop->setAlpha(std::max(0.0f, 1.0f - fadeTimer / 0.3f));
+        if (fadeTimer >= 0.3f) {
+            holding = false;
+            SceneManager::releaseLoading();
+        }
     }
     ```
 

@@ -67,6 +67,7 @@ optionally reported through a global crash handler.
 | `onPostUpdate` | `void()` | Work after regular update |
 | `onPause` / `onResume` | `void()` | App/game pause and resume |
 | `onShutdown` | `void()` | Runtime shutdown |
+| `onSceneLoaded` | `void()` | A scene loaded by `SceneManager` finished loading, before its loading scene closes |
 | `onTouchStart/End/Move` | `void(int, float, float)` | Touch identifier, x, y |
 | `onTouchCancel` | `void(int, float, float)` | One touch canceled; identifier and last recorded canvas position |
 | `onMouseDown/Up` | `void(int, float, float, int)` | Button, x, y, modifiers |

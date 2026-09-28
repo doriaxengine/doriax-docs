@@ -59,7 +59,7 @@ the **gear**, opens the menu of events a script can subscribe to:
 
 | Menu | Events |
 | --- | --- |
-| **Engine** | Frame updates (`onUpdate`, `onFixedUpdate`, `onPostUpdate`, `onDraw`) and application events (`onPause`, `onResume`, `onShutdown`, ...) |
+| **Engine** | Frame updates (`onUpdate`, `onFixedUpdate`, `onPostUpdate`, `onDraw`), application events (`onPause`, `onResume`, `onShutdown`, ...) and `onSceneLoaded` |
 | **Input** | Keyboard, mouse, touch, and gamepad events |
 | **UI**, **Button**, **Scrollbar**, **Panel**, **Text Edit**, **Action**, **Sound** | Events of that component, which the script's entity needs to have |
 | **Physics 2D**, **Physics 3D** | Contacts, sensors, body activation, and collision filters, for every body in the scene |

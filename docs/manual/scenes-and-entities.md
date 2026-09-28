@@ -280,9 +280,10 @@ screens.
 
 ### Show a loading screen
 
-Building a large scene takes a moment. Register a UI scene as the loading screen and
+Building a large scene takes a moment. Pick a UI scene as the **Loading Scene** in
+[Project Settings → General → Loading](../editor/project-settings.md#loading) and
 `loadScene` shows it over the old scene, replaces the old scene behind it, and removes it
-once the new scene has loaded:
+once the new scene has loaded. From code:
 
 === "Lua"
 
@@ -300,7 +301,9 @@ once the new scene has loaded:
 
 `SceneManager.loading` and `SceneManager.loadingProgress` drive its animation. Turn on
 [async loading](threading-and-async-loading.md#loading-screens) so it keeps animating while
-textures and sounds stream in.
+textures and sounds stream in. A level starts its gameplay in
+[`Engine.onSceneLoaded`](../reference/classes/engine.md#onsceneloaded), which fires once it
+has loaded, still behind the loading scene.
 
 ### Overlay a scene without leaving the current one
 
@@ -388,7 +391,7 @@ save systems:
 | `SceneManager.getCurrentSceneId()` | ID of the most recently loaded scene |
 | `SceneManager.getSceneNames()` | All registered scene names |
 | `SceneManager.getSceneId(name)` | Numeric ID for a name (`0` if unknown) |
-| `SceneManager.loading` | `true` from `loadScene` until the new scene has loaded |
+| `SceneManager.loading` | `true` from `loadScene` until the new scene has loaded and its loading scene has closed |
 
 See the [SceneManager reference](../reference/classes/scenemanager.md) for the complete
 API.

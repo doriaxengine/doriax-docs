@@ -35,6 +35,21 @@ two never disagree.
 **Version Control Files** refreshes both files whenever the project is saved, and never
 replaces one the editor did not generate — see [Version Control](version-control.md).
 
+### Loading
+
+The loading screen that `SceneManager::loadScene` shows between scenes. Exported games
+and the editor's Play apply these at startup.
+
+| Setting | Default | Effect |
+| --- | --- | --- |
+| **Loading Scene** | None | UI scene shown on top while the game switches scenes, until the new scene has loaded. Only saved scenes can be chosen |
+| **Loading Delay** | `0 s` | How long the loading scene covers the old scene before it is replaced: time for a fade in and for a click sound to finish |
+| **Loading Timeout** | `5 s` | How long a load waits without progress before it gives up |
+| **Async Loading** | Off | Exported games load textures, models and sounds on worker threads, so the loading scene keeps animating and its progress moves. The editor always loads this way. Web builds without thread support load synchronously |
+
+See [Loading screens](../manual/threading-and-async-loading.md#loading-screens) for how a
+transition runs and how the loading scene can animate its progress and fade out.
+
 ### Application
 
 One identity, shared by every platform. Each platform section can override any of these
