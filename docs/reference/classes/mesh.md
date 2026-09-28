@@ -247,22 +247,22 @@ Shadow participation flags. Enabling both adds depth-map cost; disable on distan
 * *lodBias Setter:* `void setLodBias(float lodBias)`
 * *lodBias Getter:* `float getLodBias() const`
 
-[Mesh detail levels](../../manual/rendering-pipeline.md#mesh-detail-lod). `lodEnabled` (default `true`) lets this mesh pick a simplified index range when it is far enough that the extra triangles would not show. Toggling it reloads the mesh. `lodBias` (default `1`) scales how far detail is kept: above 1 keeps the source longer, below 1 drops to a coarser level sooner.
+[Mesh detail levels](../../manual/rendering-pipeline.md#mesh-detail-lod). `lodEnabled` (default `true`) lets this mesh follow the scene's detail levels; turn it off to keep it at full detail, for example a hero asset whose silhouette must never change. Toggling it reloads the mesh. `lodBias` (default `1`) scales how far detail is kept: above 1 keeps the source longer, below 1 drops to a coarser level sooner.
 
-The scene must also have [meshLodEnabled](scene.md#meshlodenabled-meshlodthreshold) on. Terrain and tilemaps ignore these flags and keep their own LOD.
+Nothing happens until the scene has [meshLodEnabled](scene.md#meshlodenabled-meshlodthreshold) on, which is off by default. Terrain and tilemaps ignore these flags and keep their own LOD.
 
 === "C++"
 
     ```cpp
-    mesh.setLodEnabled(true);
-    mesh.setLodBias(1.5f);
+    mesh.setLodBias(1.5f);       // keep detail longer than the scene threshold
+    statue.setLodEnabled(false); // always full detail
     ```
 
 === "Lua"
 
     ```lua
-    mesh.lodEnabled = true
-    mesh.lodBias = 1.5
+    mesh.lodBias = 1.5         -- keep detail longer than the scene threshold
+    statue.lodEnabled = false  -- always full detail
     ```
 
 ---

@@ -37,7 +37,7 @@ A `Scene` is the root container for all objects, systems, and resources in a pro
 | --- | --- | --- | --- |
 | Vector4 | [backgroundColor](#backgroundcolor) | `(0,0,0,1)` | C++ \| Lua |
 | [ShadowQuality](#shadowquality) | [shadowQuality](#shadowquality_1) | `LOW` | C++ \| Lua |
-| bool | [meshLodEnabled](#meshlodenabled-meshlodthreshold) | `true` | C++ \| Lua |
+| bool | [meshLodEnabled](#meshlodenabled-meshlodthreshold) | `false` | C++ \| Lua |
 | float | [meshLodThreshold](#meshlodenabled-meshlodthreshold) | `1.0` | C++ \| Lua |
 | bool | [depthPrepassEnabled](#depthprepassenabled) | `false` | C++ \| Lua |
 | [LightState](#lightstate) | [lightState](#lightstate_1) | `AUTO` | C++ \| Lua |
@@ -226,7 +226,7 @@ There is no separate `shadow3DQuality` Lua property; `shadowQuality` is the 3D s
 * *meshLodThreshold Setter:* `void setMeshLodThreshold(float pixels)`
 * *meshLodThreshold Getter:* `float getMeshLodThreshold() const`
 
-Scene-wide [mesh detail levels](../../manual/rendering-pipeline.md#mesh-detail-lod). `meshLodEnabled` (default `true`) lets meshes draw a simplified index range once their geometric error projects below `meshLodThreshold` screen pixels (default `1`). The threshold is clamped to `≥ 0`. Changing either takes effect immediately; individual meshes still need [lodEnabled](mesh.md#lodenabled-lodbias).
+Scene-wide [mesh detail levels](../../manual/rendering-pipeline.md#mesh-detail-lod). `meshLodEnabled` (default `false`) turns them on: each mesh gets simplified index ranges and draws one once its geometric error projects below `meshLodThreshold` screen pixels (default `1`). While it is off no levels are built, and turning it off frees their GPU buffers. The threshold is clamped to `≥ 0`. Changing either takes effect immediately; a mesh can opt out with [lodEnabled](mesh.md#lodenabled-lodbias).
 
 In the editor these are **Scene → Mesh Detail (LOD)** when nothing is selected.
 

@@ -189,8 +189,8 @@ The **Mesh** component exposes rendering flags beyond per-submesh material slots
 | **Receive IBL** | When enabled, the mesh is lit with image-based lighting (diffuse irradiance + specular reflections) in addition to punctual lights — from the scene's Sky environment, from a [Reflection Probe](../reference/classes/reflectionprobe.md) covering it, or both. Sky lighting requires a Sky entity with a cubemap texture. |
 | **Receive Lights** | Master switch for dynamic lighting (must be on for IBL to apply). |
 | **Cast / Receive Shadows** | Shadow map participation. |
-| **Detail Levels** | Draw [simplified meshes](../manual/rendering-pipeline.md#mesh-detail-lod) when the extra triangles would not show (scene Mesh Detail must also be on). |
-| **Detail Bias** | Scales how far detail is kept: above 1 keeps it longer, below 1 drops it sooner. |
+| **Detail Levels** | Let this mesh use [simplified meshes](../manual/rendering-pipeline.md#mesh-detail-lod) while the scene's Mesh Detail is on. Turn off to always keep it at full detail. |
+| **Detail Bias** | Scales how far detail is kept: above 1 keeps it longer, below 1 drops it sooner. Shown only while the scene's Mesh Detail is on. |
 | **Render in Probes** | Whether the mesh appears in [Reflection Probe](../reference/classes/reflectionprobe.md) captures. Turn it off so an object wrapped around a probe is not seen in its own reflection. |
 
 Each **Submesh** section contains a **Material** row with a shaded preview sphere. The
@@ -350,7 +350,7 @@ Two scene-wide performance switches sit with the lighting block:
 
 | Section | Purpose |
 | --- | --- |
-| **Mesh Detail (LOD)** | Draw [simplified meshes](../manual/rendering-pipeline.md#mesh-detail-lod) when their geometric error no longer shows. **Enabled** is on by default; **Threshold** is the allowed screen-space error in pixels (lower keeps more detail). |
+| **Mesh Detail (LOD)** | Draw [simplified meshes](../manual/rendering-pipeline.md#mesh-detail-lod) when their geometric error no longer shows. **Enabled** is off by default, and while it is off no levels are built; **Threshold** is the allowed screen-space error in pixels (lower keeps more detail). |
 | **Depth Prepass** | Write [depth before the opaque colour pass](../manual/rendering-pipeline.md#depth-prepass) so each pixel is shaded once. Off by default; pays off with heavy overdraw. |
 
 Each mesh can still opt out with **Detail Levels** on the Mesh component.

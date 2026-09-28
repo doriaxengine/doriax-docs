@@ -24,8 +24,8 @@ Each frame, the engine runs the following phases in order:
 3. **Depth prepass** *(optional)* — When [depth prepass](#depth-prepass) is enabled, opaque
    meshes write depth only so the colour pass can shade each pixel once. Off by default.
 4. **Opaque pass** — Opaque geometry is sorted front-to-back and drawn with depth
-   testing enabled for early-Z efficiency. Each mesh picks a
-   [detail level](#mesh-detail-lod) from its projected geometric error.
+   testing enabled for early-Z efficiency. With [mesh detail](#mesh-detail-lod) on,
+   each mesh picks a detail level from its projected geometric error.
 5. **Lighting and shadows** — Shadow maps are rendered for each shadow-casting light,
    then the lighting pass applies directional, point, and spot lights.
 6. **Skybox and IBL** — The sky cubemap is drawn (when visible). Environment maps derived
@@ -771,12 +771,17 @@ off disables the distance too.
 ## Mesh detail (LOD)
 
 Meshes can drop geometric detail as they recede, so a distant prop costs fewer triangles
-than the same mesh at the camera. The engine builds extra index ranges with
-[meshoptimizer](https://github.com/zeux/meshoptimizer) the first time a mesh loads —
+than the same mesh at the camera. It is **off by default**: every mesh draws its full
+geometry and no levels are built. Turning the scene's **Enabled** switch on is the only
+step needed; each mesh then follows it unless its **Detail Levels** is turned off.
+
+While the switch is on, the engine builds extra index ranges with
+[meshoptimizer](https://github.com/zeux/meshoptimizer) for each mesh —
 asynchronously on the thread pool, keyed by a hash of the geometry so identical meshes
-share the result. Level 0 is the source; up to three simplified levels keep roughly 50%,
-25%, and 12.5% of the source triangles, stopping early when a mesh cannot shrink further.
-`MAX_MESH_LODS` (default 4) is the compile-time cap.
+share the result — and turning it off frees their GPU buffers. Level 0 is the source;
+up to three simplified levels keep roughly 50%, 25%, and 12.5% of the source triangles,
+stopping early when a mesh cannot shrink further. `MAX_MESH_LODS` (default 4) is the
+compile-time cap.
 
 A detail level is chosen from **projected geometric error**: the simplification's
 deviation from the source, in mesh units, is compared with how many world units one
@@ -786,9 +791,9 @@ instead, so casters stay sharp enough for the PCF filter.
 
 | Control | Default | Effect |
 | --- | --- | --- |
-| `Scene::setMeshLodEnabled` | `true` | Master switch for the scene |
+| `Scene::setMeshLodEnabled` | `false` | Master switch; while off no levels are built |
 | `Scene::setMeshLodThreshold` | `1.0` | Allowed screen-space error in pixels; lower keeps more detail |
-| `Mesh::setLodEnabled` | `true` | Per-mesh opt-out; toggling it reloads the mesh |
+| `Mesh::setLodEnabled` | `true` | Per-mesh opt-out (follows the scene switch); toggling it reloads the mesh |
 | `Mesh::setLodBias` | `1.0` | Above 1 keeps detail longer; below 1 drops it sooner |
 
 Terrain and tilemaps keep their own LOD and are not simplified this way. Detail levels
@@ -802,16 +807,16 @@ is selected, and each mesh has **Detail Levels** / **Detail Bias** on the Mesh c
 scene.setMeshLodEnabled(true);
 scene.setMeshLodThreshold(1.0f);
 
-mesh.setLodEnabled(true);
-mesh.setLodBias(1.5f);   // keep this hero prop sharper than the default
+mesh.setLodBias(1.5f);       // keep this hero prop sharper than the default
+statue.setLodEnabled(false); // this silhouette must never change
 ```
 
 ```lua
 scene.meshLodEnabled = true
 scene.meshLodThreshold = 1.0
 
-mesh.lodEnabled = true
 mesh.lodBias = 1.5
+statue.lodEnabled = false
 ```
 
 ## Depth prepass
@@ -846,7 +851,7 @@ scene.depthPrepassEnabled = true
 | Area | Guideline |
 | --- | --- |
 | Draw calls | Reduce with instancing, atlases, and shared `.material` files |
-| Mesh LOD | Leave scene Mesh Detail on; raise **Threshold** or lower a mesh's **Detail Bias** to drop triangles sooner |
+| Mesh LOD | Turn scene Mesh Detail on for triangle-heavy scenes; raise **Threshold** or lower a mesh's **Detail Bias** to drop triangles sooner |
 | Instance culling | Keep **Cull Instances** on unless a shader moves instances off their bounds; split huge batches into regional entities |
 | Depth prepass | Enable for heavy opaque overdraw (forests, interiors); leave off when most pixels are shaded once already |
 | IBL cost | Environment maps are rebuilt when the sky texture changes; disable **Receive IBL** on distant or unimportant meshes |
