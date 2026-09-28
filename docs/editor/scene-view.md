@@ -42,7 +42,8 @@ to move in world space instead of local space.
 
 Open the **gear** button on the scene view toolbar to toggle display and snap options
 for the current scene. They are saved per user in `.doriax/user/workspace.yaml`, not in
-the scene file.
+the scene file. They are grouped into **Overlays**, **Rendering**, **Grid & snapping**,
+and **Editor camera** sections.
 
 ![The viewport settings of a 3D scene](../assets/screenshots/scene-view-settings.png)
 
@@ -53,12 +54,13 @@ the scene file.
 | **Hide light icons** | 3D | Hide light icons |
 | **Hide sound icons** | All scene types | Hide sound source icons |
 | **Hide container guides** | 2D / UI | Hide the outlines of UI containers |
-| **Show grid** | All scene types | Draw the editor grid overlay |
-| **Disable face culling** | 3D | Draw back faces in the editor view; play mode keeps culling |
 | **Show origin axis** | 2D / UI | Draw the axes through the scene origin |
 | **Hide selection outline** | All scene types | Hide the outline drawn around selected entities |
-| **Snap to grid** | All scene types | Snap transforms to the configured grid spacing |
+| **Disable face culling** | 3D | Draw back faces in the editor view. Unavailable while playing |
+| **Disable fog** | All scene types | Draw the editor view without the scene's Fog. Unavailable while playing |
+| **Show grid** | All scene types | Draw the editor grid overlay |
 | **Grid spacing** | All scene types | Interval used by the grid and by **Snap to grid**. In 2D and UI scenes it is shown while the grid is on |
+| **Snap to grid** | All scene types | Snap transforms to the configured grid spacing |
 | **Snap tile** | 2D / UI | Snap Tilemap tiles to their own width and height so they pack edge-to-edge |
 | **Snap rotation** / **Rotation step** | All scene types | Snap rotations to the configured step (degrees) |
 | **Editor camera near** / **Editor camera far** | 3D | Clip planes of the editor camera |
