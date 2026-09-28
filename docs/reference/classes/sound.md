@@ -205,7 +205,7 @@ Controls the intensity of the Doppler pitch shift for this 3D source. `0.0` disa
 
 * int **loadSound**(const std::string& filename)
 
-Loads an audio file from disk. Supported formats depend on the SoLoud build bundled with Doriax (WAV, OGG, FLAC, MP3, and others). Returns `0` on success or a non-zero SoLoud error code on failure.
+Loads an audio file from disk. Supported formats depend on the SoLoud build bundled with Doriax (WAV, OGG, FLAC, MP3, and others). Returns `1` once the file is loaded, and `0` while it is still loading with [async loading](engine.md#asyncloading), when it failed, or before the view is ready. Loading a different file replaces the current one.
 
 === "C++"
     ```cpp
