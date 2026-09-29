@@ -38,6 +38,28 @@ local dot    = pos:dotProduct(dir)
 | `Vector3.UNIT_Y` | (0, 1, 0) |
 | `Vector3.UNIT_Z` | (0, 0, 1) |
 
+### Changing one component of a property
+
+Properties such as `position`, `scale`, `rotation`, `color` or `linearVelocity` return a
+copy of the value. Changing a component of that copy does not reach the object, so
+`self.object.position.y = 2` runs without error but leaves the object where it was.
+Assign the whole value instead:
+
+```lua
+local pos = self.object.position
+pos.y = 2                    -- only the copy changes
+self.object.position = pos   -- now the object moves
+
+-- the same, building a new vector
+self.object.position = Vector3(pos.x, 2, pos.z)
+
+-- or with the component setter
+self.object:setPosition(pos.x, 2, pos.z)
+```
+
+The same holds for methods that change a vector in place, such as `normalize()`, and for
+values returned by methods like `object:getWorldPosition()`: they act on a copy.
+
 ## Quaternion
 
 [`Quaternion`](../reference/classes/quaternion.md) represents 3D rotation. Prefer

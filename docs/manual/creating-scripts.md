@@ -543,6 +543,7 @@ return Follower
 | Property not in Properties | `DPROPERTY` not immediately above member; unsupported type; header path wrong |
 | Entity reference is nil | Target entity missing, wrong scene, or referenced script disabled |
 | Duplicate event callbacks | Same tag registered twice; use `UNREGISTER_*` in destructor |
+| `obj.position.y = v` does not move the object | Properties return a copy of the vector; assign the whole value, e.g. `obj.position = Vector3(x, v, z)` — see [Math & Utilities](math-and-utilities.md#changing-one-component-of-a-property) |
 | C++ build or CMake errors | Missing toolchain, or a leftover deleted script still listed in generated sources — see [C++ Build Setup](cpp-build-setup.md) |
 
 ## Next steps
