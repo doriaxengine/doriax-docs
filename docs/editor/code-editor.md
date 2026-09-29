@@ -19,7 +19,7 @@ dialogs, and a live output panel for compile and export messages.
 | **GLSL shaders** | Edit forked shader sources (`.vert`/`.frag`/`.glsl`); saving recompiles and refreshes the viewport. See [Custom Shaders](custom-shaders.md) |
 | **Script templates** | Create new Lua or C++ script files from boilerplate using the **New Script** dialog |
 | **Event menu** | Add an engine, input, component, or physics event handler to a script in one click. See [Add events](#add-events) |
-| **API completion** | Engine API suggestions generated from Lua bindings; covers classes, methods, and constants |
+| **API completion** | Engine API suggestions generated from Lua bindings; covers classes, methods, properties, and constants. Properties that return a [copy](../manual/math-and-utilities.md#changing-one-component-of-a-property) are marked `(copy)` |
 | **Build output** | Compiler errors, warnings, and export messages stream into the Output panel |
 
 ## Creating a new script

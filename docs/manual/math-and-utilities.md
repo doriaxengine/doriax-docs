@@ -53,12 +53,21 @@ self.object.position = pos   -- now the object moves
 -- the same, building a new vector
 self.object.position = Vector3(pos.x, 2, pos.z)
 
--- or with the component setter
+-- or with a setter that takes the components
 self.object:setPosition(pos.x, 2, pos.z)
 ```
 
-The same holds for methods that change a vector in place, such as `normalize()`, and for
-values returned by methods like `object:getWorldPosition()`: they act on a copy.
+Not every property has such a setter: `setScale` takes one uniform factor, and bodies
+have none for `position` or `linearVelocity`.
+
+The same holds for methods that change a vector in place, such as `normalize()`, for
+values returned by methods like `object:getWorldPosition()`, and for list properties such
+as `scene.postProcessPasses`: they act on a copy. [Code Editor](../editor/code-editor.md)
+completion marks properties that return a copy, e.g. `Object.position -> Vector3 (copy)`.
+
+Component fields are the exception: Lua gets the field itself, not a copy, so
+`image:getUIComponent().color.x = 1` changes the component. Some fields also need their
+`needUpdate…` flag set; see [Writing components directly](entity-component-system.md#writing-components-directly).
 
 ## Quaternion
 

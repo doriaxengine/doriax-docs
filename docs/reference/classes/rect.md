@@ -10,6 +10,11 @@ description: Rect API reference (C++ and Lua).
 
 An axis-aligned rectangle defined by an origin `(x, y)` and size `(width, height)`. Used throughout the engine for screen regions, texture atlas frames, viewport definitions, and UI layouts.
 
+!!! note "Lua components are writable"
+    Lua can read and assign `x`, `y`, `width`, and `height` directly. Engine properties
+    such as `sprite.textureRect` return rect values, so assign a mutated value back to
+    persist it: `local r = sprite.textureRect; r.width = 64; sprite.textureRect = r`.
+
 ### Properties
 
 | Type | Name | Default | Langs |

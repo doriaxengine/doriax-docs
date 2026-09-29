@@ -100,6 +100,11 @@ Local position relative to the parent object (or world origin if no parent). Cha
 
 On an entity with a physics body this is not the way to move it from `onFixedUpdate` — see [Body2D](body2d.md#position-angle) / [Body3D](body3d.md#position-rotation) `position`.
 
+!!! note "Returns a copy"
+    `obj.position.y = 2` changes only the copy, not the object; assign the whole value
+    back. The same goes for `rotation` and `scale` — see
+    [Changing one component of a property](../../manual/math-and-utilities.md#changing-one-component-of-a-property).
+
 === "C++"
 
     ```cpp
@@ -111,7 +116,9 @@ On an entity with a physics body this is not the way to move it from `onFixedUpd
 
     ```lua
     obj.position = Vector3(100, 0, -50)
-    local pos = obj.position
+    local pos = obj.position   -- a copy
+    pos.y = 10
+    obj.position = pos         -- assigning it back moves the object
     ```
 
 ---
