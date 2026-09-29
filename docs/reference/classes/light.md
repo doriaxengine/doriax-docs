@@ -122,7 +122,7 @@ The normalised direction vector the light shines *towards*. Used by `DIRECTIONAL
 * *Setter*: void **setColor**(float r, float g, float b)
 * *Getter*: Vector3 **getColor**() const
 
-The linear-space RGB color of the emitted light. Each channel ranges from `0.0` to `1.0` for standard colours, though values above `1.0` are valid for HDR scenes.
+The RGB color of the emitted light, in sRGB. Each channel ranges from `0.0` to `1.0` for standard colours, though values above `1.0` are valid for HDR scenes. It is stored linear internally, so the value read back is the sRGB form of the stored one.
 
 ---
 

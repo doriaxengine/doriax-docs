@@ -62,7 +62,7 @@ Shadows are opt-in per light and are cast by [Occluder2D](occluder2d.md) compone
 * *Setter*: void **setColor**(float r, float g, float b)
 * *Getter*: Vector3 **getColor**() const
 
-The RGB color of the emitted light. Each channel ranges from `0.0` to `1.0`.
+The RGB color of the emitted light, in sRGB. Each channel ranges from `0.0` to `1.0`. It is stored linear internally, so the value read back is the sRGB form of the stored one.
 
 === "C++"
     ```cpp
