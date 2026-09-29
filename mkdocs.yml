@@ -99,6 +99,7 @@ nav:
       - Custom Shaders: 'editor/custom-shaders.md'
       - Export Window: 'editor/export.md'
       - Command-Line Tools: 'editor/command-line.md'
+      - MCP Server: 'editor/mcp-server.md'
   - Manual:
       - Engine Architecture: 'manual/architecture.md'
       - Scenes & Entities: 'manual/scenes-and-entities.md'

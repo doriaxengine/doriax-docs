@@ -1,19 +1,19 @@
 ---
-description: The Editor Settings dialog — build toolchain, Emscripten SDK, default export directory, and other machine-local editor preferences.
+description: The Editor Settings dialog — build toolchain, Emscripten SDK, default export directory, AI Chat keys, the MCP server, and other machine-local editor preferences.
 ---
 
 # Editor Settings
 
 **Edit → Editor Settings** holds the settings that belong to *this machine* rather than
-to the project: where your compiler and SDKs are, where exports go by default, and how
-the editor itself renders. They are saved to the editor's `settings.yaml`, never to
-`project.yaml`, so they are not shared through version control and a teammate opening
-the same project keeps their own toolchain.
+to the project: where your compiler and SDKs are, where exports go by default, how the
+editor itself renders, and how it talks to AI models and agents. They are saved with the
+editor's own settings, never to `project.yaml`, so they are not shared through version
+control and a teammate opening the same project keeps their own toolchain and keys.
 
 Anything the game itself carries — application identity, canvas, window, directories,
 per-platform settings — is in [Project Settings](project-settings.md) instead.
 
-The dialog is a modal with four tabs and an **OK** / **Cancel** footer.
+The dialog is a modal with five tabs and an **OK** / **Cancel** footer.
 
 ## General
 
@@ -74,6 +74,45 @@ Windows ABI rules, and how to read a failing build.
 The status line updates as soon as you pick a folder, so you can confirm the SDK before
 leaving the dialog. See [Building for HTML5](../building/html5.md) for installing the SDK.
 
+## AI
+
+Two collapsible sections: **AI Chat**, open by default, and **MCP Server** below it. The
+chat's gear button, and its prompts to add a key, open the dialog on this tab.
+
+![The AI tab of Editor Settings](../assets/screenshots/editor-settings-ai.png)
+
+### AI Chat
+
+The keys and limits of the built-in AI Chat. The model and the approval mode stay in the
+chat, beside its message box.
+
+| Setting | Default | Effect |
+| --- | --- | --- |
+| **OpenAI**, **Anthropic**, **Gemini**, **DeepSeek** | Empty | One API key per provider. A green check marks a stored key, typing replaces it, and the trash button deletes it at once |
+| **Custom endpoints** | None | OpenAI-compatible Chat Completions URLs, each with its own key and model list. **Add endpoint** offers presets for OpenCode Zen, OpenRouter and a local Ollama, or a blank one. The pencil renames an endpoint; the cross removes it, and its key on **OK** |
+| **Request Timeout (s)** | `90` | How long to wait for each model response. Raise it for slow local models |
+| **Max Output Tokens** | `8192` | The longest reply a model may write in one turn, including a whole script written in one tool call |
+| **Max Tool Steps** | `24` | How many tool-using model turns one message may take. Raise it if long tasks stop at the tool-step limit |
+
+A custom endpoint works without a key, since a local server usually needs none. The chat's
+model picker lists every provider and endpoint that is ready to use.
+
+### MCP Server
+
+Runs the editor's [MCP server](mcp-server.md), which lets AI agents outside the editor —
+Claude Code, Codex, Gemini CLI — use the AI Chat's tools on the open project. That page
+covers connecting a client and the security model. The section starts collapsed.
+
+| Setting | Default | Effect |
+| --- | --- | --- |
+| **Enable Server** | Off | Starts the server on `127.0.0.1`, now and whenever the editor starts |
+| **Status** | — | **Running**, **Stopped**, or why the server could not start |
+| **Port** | `3674` | The local port the server listens on |
+| **Allow Changes** | On | Off leaves agents only the read-only tools |
+| **Token** | Generated | The secret clients send with every request. Replacing it takes effect at once |
+| **URL** | — | The endpoint, with a copy button |
+| **Clients** | — | Ready commands that add the editor to Claude Code, Codex or Gemini CLI, each with a copy button |
+
 ## Advanced
 
 **Clear Shader Cache** deletes the compiled-shader cache shared by every project on this
@@ -82,8 +121,9 @@ build being slower. The button is disabled while a scene is playing.
 
 ## Where the values are stored
 
-All of it goes to the editor's `settings.yaml`, beside `editor.log` — the
-[FAQ](../about/faq.md#where-can-i-find-the-editor-crash-log) lists the per-platform path.
+Everything but the secrets goes to the editor's `settings.yaml`, beside `editor.log` —
+the [FAQ](../about/faq.md#where-can-i-find-the-editor-crash-log) lists the per-platform
+path.
 
 | Key | Holds |
 | --- | --- |
@@ -92,6 +132,12 @@ All of it goes to the editor's `settings.yaml`, beside `editor.log` — the
 | `export.default_dir` | The default export directory |
 | `project_builds` | Per project: compiler kit and parallel build jobs, keyed by the absolute path of its `project.yaml` |
 | `project_exports` | Per project and export mode: the last output directory used |
+| `ai_assistant` | The AI Chat's provider, model, approval mode, custom endpoints and limits |
+| `mcp_server` | The MCP server's `enabled`, `port` and `allow_changes` |
+
+API keys and the MCP token never go to `settings.yaml`. They are kept in `ai_keys.dat` in
+the same folder, obfuscated with a key derived from that folder's path, so the file does
+not work when copied to another machine.
 
 The per-project entries are keyed by path, so moving a project through **Save Project
 As** re-keys them and your toolchain choice follows the project on this machine.
@@ -115,3 +161,4 @@ an older editor can still read it.
 - [Project Settings](project-settings.md) — the per-project counterpart
 - [C++ Build Setup](../manual/cpp-build-setup.md) — toolchain requirements and troubleshooting
 - [Export Window](export.md) — where the SDK and toolchain settings are used
+- [MCP Server](mcp-server.md) — connecting outside AI agents to the editor

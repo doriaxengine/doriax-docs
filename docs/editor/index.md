@@ -24,7 +24,7 @@ The editor window is divided into a set of resizable panels:
 | **Resources Browser** | Project asset manager: import, preview, and organize files |
 | **Animation Timeline** | Keyframe editor for object animation, sprite frames, and bones |
 | **Code Editor** | Integrated Lua and C++ editor with API completion and an event menu |
-| **AI Chat** | The built-in AI assistant, docked as a tab beside Properties |
+| **AI Chat** | The built-in AI assistant, docked as a tab beside Properties. Its keys are in [Editor Settings → AI](editor-settings.md#ai), and outside agents reach its tools through the [MCP server](mcp-server.md) |
 | **Output panel** | Build logs, play-mode diagnostics, and export messages, persisted to [`editor.log`](../about/faq.md#where-can-i-find-the-editor-crash-log) for crash reports |
 | **Footer** | Play / Pause / Stop on the left; FPS, frame time, draw calls, and triangles on the right |
 
@@ -151,3 +151,4 @@ shortcut never steals a keystroke from an input.
 - [Code Editor](code-editor.md)
 - [Export Window](export.md)
 - [Command-Line Tools](command-line.md)
+- [MCP Server](mcp-server.md)
