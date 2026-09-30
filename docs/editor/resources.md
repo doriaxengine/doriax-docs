@@ -136,6 +136,8 @@ Right-click a file or folder to access:
 
 - **Open (Add)** — `.scene` files only: opens the scene alongside the one already open
   instead of replacing it.
+- **New** — folders only: creates a folder or file inside the folder (see
+  [Creating files and folders](#creating-files-and-folders)).
 - **Copy** / **Cut** / **Paste** — copies or moves the selected files. Paste puts the
   clipboard contents into the right-clicked folder.
 - **Delete** — removes the file from the project and clears every reference to it in
@@ -148,8 +150,33 @@ Right-click a file or folder to access:
   contains it.
 
 Right-click empty space in the listing for **Import Files**, **Import Folders**,
-**New Folder**, **Paste** into the current folder, and **Open in File Manager** for
-the current folder.
+**New**, **Paste** into the current folder, and **Open in File Manager** for the
+current folder.
+
+### Creating files and folders
+
+**New** opens a submenu of the items it can create. Each asks for a name; typing the
+extension is optional.
+
+| Item | Creates |
+| --- | --- |
+| **Folder** | An empty folder |
+| **Lua Script** | A `.lua` module that returns an empty table named after the file |
+| **C++ Source** | An empty `.cpp` file |
+| **C++ Header** | A `.h` file starting with `#pragma once` |
+
+New files are not attached to any entity. Load a Lua module from other scripts with
+[`require()`](../manual/scripting.md#require-and-module-paths), include a header from
+your scripts, or attach a script later with **Add Script** in Properties.
+
+- **Lua Script** is enabled only inside the project's
+  [Lua directory](project-workflow.md#assets-and-lua-directories), which `require()` and
+  script entries resolve against.
+- A **C++ Source** compiles on its own only under one of the
+  [script directories](../manual/cpp-build-setup.md#script-directories); elsewhere it
+  compiles only as an attached script, and the dialog says so.
+
+Undo moves a new file to `.trash`, and redo brings it back with any edits.
 
 ## Sprite and tileset slicing
 

@@ -204,6 +204,10 @@ This lets you lay out code in modules and include across them by short path. Wit
 Add as many roots as you need; they are searched in the order listed. Both roles apply to
 Play builds and to [exported projects](../editor/export.md) alike.
 
+To add files to a root, right-click it in the Resources Browser and use **New → C++
+Source** or **New → C++ Header** — see
+[Creating files and folders](../editor/resources.md#creating-files-and-folders).
+
 !!! note "Keep roots inside the project"
     A folder outside the project compiles in the editor but **cannot be exported** — the
     export copies the project tree only, and warns that the directory was skipped. Use a

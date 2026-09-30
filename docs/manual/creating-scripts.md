@@ -248,6 +248,10 @@ return PlayerController
 `lua://` + path. Both lookups go through `Data`, so they still work when a native export
 packs Lua sources into `resources.pak`.
 
+A module that no entity runs, such as a utility table, is created from the Resources
+Browser with **New → Lua Script** — see
+[Creating files and folders](../editor/resources.md#creating-files-and-folders).
+
 ## Referencing other entities
 
 A script frequently needs to touch entities other than its own — a child model, a sibling
