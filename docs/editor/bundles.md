@@ -33,6 +33,20 @@ bundle** — the entities now live in the bundle, and the scene holds an instanc
 pointing at the file. Dragging a multi-entity selection works the same way and stores
 all of the selected branches in one bundle. The whole operation is undoable.
 
+The instance root takes the entity's position, rotation, and scale, so the bundle stores
+its content at the origin and each new instance starts at its own root. A multi-entity
+selection puts the root at the selection's center, where the move gizmo sits, with no
+rotation or scale. Anchored UI keeps its root at the origin, since its anchors already
+place it.
+
+!!! note "Values relative to the parent are not converted"
+    As when an entity is moved under a new parent, values expressed relative to the
+    saved entity's parent are not converted: a camera's **Target** when **Use Target**
+    is on, and the transform values that actions, keyframe tracks, or scripts use on
+    the entity itself. To keep them working, put that entity under an
+    [Empty object](structure.md#empty-entity-vs-empty-object) and save the parent as
+    the bundle.
+
 ## Instancing a bundle
 
 Drag the `.bundle` file from the Resources Browser onto the **Structure panel**:
