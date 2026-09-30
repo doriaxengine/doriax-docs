@@ -63,8 +63,10 @@ a blue header; once it is made unique it is drawn like any other component.
 
 ![Make Unique in the component options of a bundle member](../assets/screenshots/bundle-make-unique.png)
 
-The instance root's `Transform` is always per-instance (that is what lets you place
-each copy somewhere different), and it cannot be removed.
+The instance root itself is not part of the bundle, so its components are always
+per-instance. Its `Transform` is what lets you place each copy somewhere different, and
+it cannot be removed. Any other component you add to the root, such as a script, stays
+on that instance only and is saved in the scene, not in the `.bundle` file.
 
 ### Model materials inside a bundle
 
