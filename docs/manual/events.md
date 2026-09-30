@@ -303,6 +303,11 @@ Use custom tags when you need to replace or manually remove a specific subscript
 | `preSolve2D` | `bool(Body2D, unsigned long, Body2D, unsigned long, Manifold2D)` | Return `false` to disable contact before solve |
 | `shouldCollide2D` | `bool(Body2D, unsigned long, Body2D, unsigned long)` | Filter pairs before collision |
 
+`beginContact2D`, `endContact2D`, `hitContact2D` and `preSolve2D` fire only for pairs where
+one of the shapes has **Contact Events**, **Enable Hit Events** or **PreSolve Events** on,
+and each is off by default — see
+[Body2D events](../reference/classes/body2d.md#setshapeenablehitevents-setshapecontactevents-setshapepresolveevents-setshapesensorevents).
+
 ### 3D events
 
 | Event | Meaning |

@@ -12,7 +12,8 @@ output log.
 
 The agent brings its own model and account. The editor only runs the tools, so no API key
 is needed here and the AI Chat can stay closed. The server works on whichever project the
-editor has open, so opening another project changes what agents see.
+editor has open, so opening another project changes what agents see, and an agent can
+[open or create one](#opening-and-creating-projects) itself.
 
 ## Turning it on
 
@@ -108,9 +109,10 @@ local (stdio) servers needs a stdio-to-HTTP bridge in between.
 
 ## What agents can do
 
-The server offers every tool the AI Chat uses, with the same checks and the same results.
-Each tool is marked read-only or not (`readOnlyHint`), which clients can use when they ask
-you to confirm a call.
+The server offers every tool the AI Chat uses, with the same checks and the same results,
+plus `open_project` and `create_project`, which only MCP clients get: the chat runs inside
+the editor, and switching projects would end its own turn. Each tool is marked read-only
+or not (`readOnlyHint`), which clients can use when they ask you to confirm a call.
 
 When a client connects, the server also sends the engine rules the AI Chat's model gets:
 how Lua and C++ scripts are written, to confirm an API in the engine source before using
@@ -138,6 +140,49 @@ reading the log. An agent that reads them follows the same conventions as the AI
     files. Scripts are ordinary files, but writing one with the `update_script_file` tool
     also refreshes the properties of every entity that uses it.
 
+## Saving an agent's work
+
+Agents save with `save_scene`, `save_all_scenes` and `save_project`, like the AI Chat.
+Two saves would need a dialog that only you can answer, so the tools take a path instead:
+
+- **A scene that was never saved.** `save_scene` with a project-relative `path`, such as
+  `scenes/Level1.scene`, saves it there. Without one, and with `save_all_scenes`, which
+  takes no paths, the editor opens the **Save Scene** dialog for you.
+- **A [temporary project](project-workflow.md#creating-a-project).** `save_project` with
+  an absolute `path` moves the project out of the system temp folder, as **Save Project**
+  does, into a directory that is empty or does not exist yet. An optional `name` renames
+  it too. A project that is not temporary is saved where it is, without `path`.
+
+Tools that would stop to ask you about unsaved work refuse instead, and tell the agent
+what to save first. `create_scene`, for example, closes the selected scene, so it refuses
+while that scene or one of its child scenes has unsaved changes.
+
+## Opening and creating projects
+
+Two tools replace the project the editor has open, and only MCP clients have them:
+
+- `open_project` opens an existing project directory, the one holding `project.yaml`, as
+  **File → Open Project** does.
+- `create_project` creates a project in an empty or new directory and opens it. It is
+  named after the directory unless the agent passes `name`, and starts with an unsaved 3D
+  scene, *New Scene*, which `save_scene` with a `path` keeps.
+
+Both take an absolute path. The switch happens after the call returns, and the agent's
+next calls wait until the new project has loaded.
+
+The editor does not drop work to switch, so both refuse where its menus would ask you
+first:
+
+| Refused while | Resolved by |
+| --- | --- |
+| A scene is playing, saving or loading | Stopping play mode (`control_play_mode`), or retrying once the save or load ends |
+| A scene has unsaved changes | Saving it with `save_scene`, with a `path` if it has no file yet |
+| A script in the Code Editor has unsaved edits | You saving or discarding them; the agent cannot |
+| The project is temporary and holds work: a saved or changed scene | Moving it out of the temp folder with `save_project` and a `path` |
+
+The temporary project the editor opens at startup holds no work until you or an agent
+change it, so an agent can switch away from it at once.
+
 ## Security
 
 The server is meant for agents running on your own computer:
@@ -164,6 +209,8 @@ token applies from the next request, so every connected client needs the new com
 | The client cannot connect | The server only runs while the editor does, and only with **Enable Server** on. Start the editor, then reconnect from the client; in Claude Code, `/mcp` shows the server's status |
 | Calls fail with *Changes are turned off* | **Allow Changes** is off. Turn it on, or ask the agent only for inspections |
 | Calls fail with *The editor was busy* | A project load took longer than two minutes. Try again once it finishes |
+| `open_project` or `create_project` fails over unsaved work | The editor does not drop work to switch projects. Let the agent save it, or save or discard it yourself; see [Opening and creating projects](#opening-and-creating-projects) |
+| A **Save Scene** dialog opens while an agent works | The agent saved a scene that has no file yet without a `path`. Answer the dialog, or ask the agent to pass `path` to `save_scene` |
 | The agent still lists tools that **Allow Changes** removed, or misses ones it added | Clients keep the tool list they read when they connected. Reconnect the client |
 
 ## Protocol details
@@ -177,7 +224,9 @@ For client authors:
   the `initialize`-based `2025-11-25`, `2025-06-18` and `2025-03-26`. No sessions are
   created.
 - **Capabilities:** tools only, with no resources, prompts or change notifications. The
-  tool list only changes with **Allow Changes**.
+  tool list only changes with **Allow Changes**, but that can happen at any time, so under
+  `2026-07-28` the `server/discover` and `tools/list` results are marked never to be
+  cached (`ttlMs: 0`, `cacheScope: "private"`).
 - **Results:** text content holding the action's message followed by its data as JSON. A
   failed action is a result with `isError: true`, so the model can correct itself; an
   unknown tool or a malformed request is a JSON-RPC error.

@@ -26,6 +26,12 @@ This approach keeps gameplay entities separate from screen-space widgets, makes 
 to swap menus without touching gameplay data, and lets you load/unload UI independently
 (for example, showing a pause menu without reloading the game level).
 
+UI entities are laid out in their scene's camera space. In a 2D or UI scene that is the
+canvas, but in a 3D scene it is the world, so a Text or Image created there is placed among
+the models rather than on the screen. A 3D game's HUD therefore goes in a UI scene, even a
+single element, added as a layer or as a [child scene](scenes-and-entities.md#child-scenes)
+of the level.
+
 Typical UI scene examples:
 
 | UI Scene | Content |
