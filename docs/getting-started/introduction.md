@@ -48,7 +48,7 @@ This documentation follows a broad structure similar to large engine manuals:
 | Capability | Description |
 | --- | --- |
 | 2D games | Sprites, tilemaps, sprite slicing, and 2D physics |
-| 3D games | GLTF/OBJ models, PBR materials, dynamic shadows, fog, and sky |
+| 3D games | GLTF/OBJ/FBX models, PBR materials, dynamic shadows, fog, and sky |
 | Animation | Skeletal animation, morph targets, and a timeline editor |
 | UI | A built-in UI system for menus, HUDs, and overlays |
 | Physics | Integrated 2D and 3D physics via Box2D and Jolt Physics |
@@ -57,7 +57,7 @@ This documentation follows a broad structure similar to large engine manuals:
 ## Engine features
 
 - 2D and 3D scenes with a shared ECS foundation
-- GLTF and OBJ model loading
+- GLTF and OBJ model loading, and FBX import
 - Skeletal animation and morph targets
 - PBR materials, dynamic shadows, fog, and sky
 - Particle systems, UI, terrain LOD, mesh LOD, and instancing

@@ -46,8 +46,9 @@ backend starts, so they work on headless machines. `benchmark` still opens a win
 ## `export` — build a project to a target
 
 Serializes scenes, generates the C++ glue and bundle factories, compiles shaders, copies
-assets and the engine runtime, and writes a self-contained, buildable project directory —
-the same output as the [Export Window](export.md), but scriptable.
+assets (FBX models as their glTF conversion) and the engine runtime, and writes a
+self-contained, buildable project directory — the same output as the
+[Export Window](export.md), but scriptable.
 
 ```bash
 doriax-editor export --project ./MyGame --out ./build/MyGame --backend vulkan
@@ -275,6 +276,10 @@ failed. Example GitHub Actions step:
 The exported directory still needs its native toolchain to produce final binaries — see
 [Platform toolchains](export.md#platform-toolchains) and
 [Building from Source](../building/overview.md).
+
+A clean checkout has no FBX conversions yet; the export makes them. It fails when a
+committed scene was saved with an older version of an FBX it uses — see
+[Export Window — FBX models](export.md#fbx-models).
 
 ## See also
 

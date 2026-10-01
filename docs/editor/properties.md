@@ -134,7 +134,8 @@ the [Text API](../reference/classes/text.md#font) for C++ and Lua access.
 
 ## Model component
 
-The **Model** component loads a GLTF/GLB/OBJ file onto the entity. Multi-node GLTF
+The **Model** component loads a GLTF/GLB/OBJ/FBX file onto the entity (an FBX through
+its [glTF conversion](../manual/3d-graphics.md#fbx-models)). Multi-node GLTF
 files usually create child entities under the model root — the full node tree when the
 file has animation clips or more than one skin, otherwise one child mesh per mesh node.
 See [3D Graphics — GLTF node hierarchy](../manual/3d-graphics.md#gltf-node-hierarchy).

@@ -55,6 +55,7 @@ Each target platform provides its own concrete `System` subclass; the engine inj
 | std::string | [getUserDataPath](#getuserdatapath) | C++ \| Lua |
 | std::string | [getLuaPath](#getluapath) | C++ \| Lua |
 | std::string | [getShaderPath](#getshaderpath) | C++ \| Lua |
+| std::string | [getImportPath](#getimportpath) | C++ |
 | bool | [getBoolForKey](#persistent-keyvalue-storage) | C++ \| Lua |
 | int | [getIntegerForKey](#persistent-keyvalue-storage) | C++ \| Lua |
 | long | [getLongForKey](#persistent-keyvalue-storage) | C++ \| Lua |
@@ -301,6 +302,14 @@ Returns the base path prepended when Lua `require()` looks for script modules an
 * `virtual std::string getShaderPath()`
 
 Returns the directory holding compiled `.sdat` shader binaries, and the root for `shader://` paths: the project's `shaders` folder in the editor, and `assets/shaders` beside the executable in an exported build. The folder name is fixed, not configurable.
+
+---
+
+### getImportPath
+
+* `virtual std::string getImportPath()`
+
+Returns the directory holding the glTF conversions of FBX models: the project's `.doriax/imported` folder in the editor. It is empty in an exported build, where each conversion sits beside its FBX's path as `<name>.fbx.glb`. See [3D Graphics — FBX models](../../manual/3d-graphics.md#fbx-models).
 
 ---
 

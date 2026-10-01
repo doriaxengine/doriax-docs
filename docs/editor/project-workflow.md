@@ -49,7 +49,7 @@ use project templates.
 | `shaders/` | Default location for forked shader sources (`.vert`/`.frag`/`.glsl`), and where compiled `.sdat` output goes — see [Custom Shaders](custom-shaders.md) |
 | `bundles/` | Reusable entity hierarchy files |
 | `settings/` | Scene startup references, build target settings, and export configuration |
-| `.doriax/` | The editor's own working directory: generated C++, build trees, and the settings that belong to your machine and your session. Recreated as needed and never committed — see [Version Control](version-control.md) |
+| `.doriax/` | The editor's own working directory: generated C++, build trees, models converted from FBX, and the settings that belong to your machine and your session. Recreated as needed and never committed — see [Version Control](version-control.md) |
 
 Folder names may differ by project. The structure is a convention, not a strict
 requirement — you can reorganize asset folders and update resource paths accordingly.

@@ -11,8 +11,9 @@ dynamic lighting, and environment effects.
 
 ## Models
 
-Doriax loads 3D models in **GLTF** and **OBJ** formats. Import a model as a resource and
-add it to a scene as an entity, then position it with its transform.
+Doriax loads 3D models in **GLTF** and **OBJ** formats, and **FBX** through an automatic
+conversion to glTF (see [FBX models](#fbx-models)). Import a model as a resource and add it
+to a scene as an entity, then position it with its transform.
 
 Models support:
 
@@ -146,6 +147,68 @@ model with a warning.
 
 Assigning a **different** model file rebuilds everything from that file and does not
 carry attachments or arrangements over.
+
+### FBX models
+
+The engine does not read FBX itself. The editor converts each FBX file to a binary glTF,
+and the engine loads that conversion wherever the FBX is used, so scenes, components, and
+scripts keep the `.fbx` path:
+
+=== "C++"
+    ```cpp
+    Model hero(&scene);
+    hero.loadModel("characters/hero.fbx");
+    ```
+
+=== "Lua"
+    ```lua
+    local hero = Model(scene)
+    hero:loadModel("characters/hero.fbx")
+    ```
+
+A script can load any FBX in the assets directory, because Play and export convert them
+all first. An FBX without a conversion does not load, so an engine build used without the
+editor cannot load FBX at all.
+
+While you work, conversions live in `.doriax/imported/`, which mirrors the assets
+directory (`characters/hero.fbx` becomes `.doriax/imported/characters/hero.fbx.glb`) and is
+not committed. An exported game ships each one beside its FBX as `hero.fbx.glb` and leaves
+the `.fbx` out. See [Export — FBX models](../editor/export.md#fbx-models).
+
+The editor converts an FBX the first time it is used (dropped into a scene, picked for a
+component or a terrain layer, or previewed in the Resources Browser), when Play starts, and
+on export. It converts it again when the FBX or one of its textures changes. Models in open
+scenes then reload the way a re-assigned file does, keeping your arrangement (see
+[Reloading a rearranged model](#reloading-a-rearranged-model)). **Reimport** in the
+[Resources Browser](../editor/resources.md#context-menu) forces a conversion.
+
+Texture paths stored in an FBX often point at the artist's machine, so each texture is
+looked up in this order:
+
+1. The paths stored in the FBX, when they lead inside the assets directory.
+2. The file name in the FBX's folder, in its `textures`, `images`, `materials`, `maps`, or
+   `tex` subfolder, and in the same places of each parent folder up to the assets root.
+3. The stored paths outside the assets directory.
+
+A texture found inside the assets directory stays a separate file that the conversion
+refers to. One found only outside is embedded in the conversion. A texture that is not
+found is left out with a warning in the Output panel, and adding it later converts the FBX
+again. Maps that glTF keeps in one image are combined into a new embedded image: an
+opacity map goes into the base colour's alpha, and separate roughness and metalness maps
+are packed together.
+
+| FBX content | Converted to |
+| --- | --- |
+| Units and axes | Meters, Y up |
+| Meshes and materials | glTF meshes with PBR materials. Instances of one mesh that use different materials keep them |
+| UV sets | The first two. Textures on a third set use the first |
+| Vertex colours | Vertex colours |
+| Skins | Up to four joint influences per vertex |
+| Blend shapes | Morph targets with position offsets, up to 8 rendered (see the capacity table above). An in-between shape keeps only its full-weight target |
+| Animation stacks | Clips sampled at 30 frames per second, blend-shape weights included |
+
+Texture tiling and offset are not converted, and cameras and lights in the file become
+empty nodes.
 
 ## PBR materials
 

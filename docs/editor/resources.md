@@ -15,7 +15,7 @@ to components.
 | Type | Extensions | Typical use |
 | --- | --- | --- |
 | Textures | PNG, JPG, BMP, TGA, PSD, HDR, SVG | Sprites, UI images, albedo/normal/roughness/metallic maps, skyboxes |
-| Models | GLTF, GLB, OBJ | 3D meshes, skins, node hierarchy, animations, morph targets |
+| Models | GLTF, GLB, OBJ, FBX | 3D meshes, skins, node hierarchy, animations, morph targets |
 | Materials | `.material` (YAML) | Reusable PBR material definitions shared across meshes |
 | Audio | OGG, WAV, MP3, FLAC | Sound effects, music, 3D spatial audio |
 | Fonts | TTF, OTF, TTC | Text and UI rendering |
@@ -54,13 +54,26 @@ project folder changes.
     naming avoids case-sensitivity issues on Linux and Android and makes asset paths
     predictable in scripts.
 
+## FBX models
+
+FBX files are used like any other model: drop one into a scene, pick it for a component,
+or load it by its `.fbx` path from a script. The editor converts each one to a binary glTF
+the first time it is needed (the browser's preview counts), keeps the conversion in
+`.doriax/imported/`, and converts it again when the FBX or one of its textures changes.
+Models in open scenes then reload with the new conversion. Warnings, such as a texture
+that could not be found, appear in the Output panel.
+
+**Reimport** in the [context menu](#context-menu) converts a file again on demand. See
+[3D Graphics — FBX models](../manual/3d-graphics.md#fbx-models) for what is converted and
+how textures are found.
+
 ## Dragging assets out of the browser
 
 Files dragged from the Resources Browser are accepted by several editor windows:
 
 | Asset type | Drop target | Result |
 | --- | --- | --- |
-| Model (GLTF/GLB/OBJ) | Scene view (3D scene) | Creates a Model entity at the drop position |
+| Model (GLTF/GLB/OBJ/FBX) | Scene view (3D scene) | Creates a Model entity at the drop position |
 | Image | Scene view, empty space (2D / UI scene) | Creates a Sprite (2D) or Image widget (UI) sized to the texture |
 | Image | Scene view, onto a mesh or UI entity | Assigns the texture (base color / UI texture) with live preview |
 | Material | Scene view, onto a mesh entity | Applies the material to all submeshes with live preview |
@@ -136,6 +149,8 @@ Right-click a file or folder to access:
 
 - **Open (Add)** — `.scene` files only: opens the scene alongside the one already open
   instead of replacing it.
+- **Reimport** — `.fbx` files only: converts the file to glTF again, even when nothing
+  changed (see [FBX models](#fbx-models)).
 - **New** — folders only: creates a folder or file inside the folder (see
   [Creating files and folders](#creating-files-and-folders)).
 - **Copy** / **Cut** / **Paste** — copies or moves the selected files. Paste puts the
@@ -204,6 +219,7 @@ See [Tileset Slicer](tileset-slicer.md) for the complete workflow.
 - Keep source art, imported assets, and generated data in separate folders.
 - Separate audio by category: `sounds/effects/`, `sounds/music/`, etc.
 - Prefer GLTF for animated or material-rich 3D assets; OBJ for simple static geometry.
+  FBX files work as they come from your content tool, through their glTF conversion.
 - Store collision meshes separately from visual meshes.
 - Remove unused large assets before exporting mobile or web builds to keep bundle
   sizes small.

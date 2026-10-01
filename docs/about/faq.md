@@ -75,6 +75,9 @@ import step that rewrites your files. The runtime opens standard formats directl
 OGG/WAV/MP3/FLAC for audio, and TTF/OTF/TTC for fonts. The file your content tool produces
 is the file the game loads.
 
+The exception is FBX: the editor converts it to a standard binary glTF, which the game
+loads in its place. The `.fbx` itself is left as it is.
+
 A native export can optionally combine those original bytes into one `resources.pak`.
 That is packaging and light obfuscation, not a converted engine format — see
 [Native resource pack](../editor/export.md#native-resource-pack).

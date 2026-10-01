@@ -24,6 +24,7 @@ internal project model.
 | User C++ scripts | Source files copied unchanged and compiled alongside generated code, with separate generated script bindings |
 | Lua scripts | Runtime resources loaded by the engine's Lua binding |
 | Textures, models, audio, and other assets | Runtime resources copied or packaged for the target |
+| FBX models | Their glTF conversion, shipped as `<name>.fbx.glb` beside the FBX's path (see [FBX models](#fbx-models)) |
 
 Scene and bundle setup therefore runs as compiled code, without parsing the editor's
 YAML scene and bundle files at runtime. Lua and external assets remain resources;
@@ -34,7 +35,8 @@ export does not convert them all into C++.
 separate build workflow; use export for distribution.
 
 !!! note "Asset directory contents"
-    Files inside the assets directory ship as they are. When that directory is left at
+    Files inside the assets directory ship as they are, except FBX models, which ship as
+    their glTF conversion. When that directory is left at
     the project root, that includes the `.scene`, `.bundle`, and `project.yaml` files.
     The game never reads them, so point the assets directory at a dedicated folder to
     keep authoring files out of the build.
@@ -256,6 +258,27 @@ If you disable the option and export again, the exporter removes a stale pack an
 the loose resource directories again. Command-line exports honor the saved project
 setting; there is no separate CLI switch.
 
+## FBX models
+
+A game never reads FBX. Export ships the glTF conversion of every FBX in the assets
+directory beside it, as `<name>.fbx.glb`, and the engine loads that file wherever the
+`.fbx` path is used. The `.fbx` itself is not exported. See
+[3D Graphics — FBX models](../manual/3d-graphics.md#fbx-models).
+
+Conversions that are missing or out of date, such as on a fresh clone or after an FBX or
+one of its textures changed, are made during the export, so a clean checkout exports
+without opening the editor first. Models in open scenes are reloaded before their scenes
+are saved for the export.
+
+A scene that is not open keeps the model parts it was saved with, and only the editor can
+rebuild them for a changed file. Each scene therefore records which version of an FBX its
+models came from, and export stops when that no longer matches the file on disk: open the
+scene, let its models reload, save it, and export again. A changed texture does not count.
+
+Export also stops when an FBX cannot be converted, or when an asset already has the path a
+conversion ships as (`hero.fbx.glb` beside `hero.fbx`). A texture that a conversion links
+but that is now missing is reported as a warning, and the model is exported without it.
+
 ## Desktop mode
 
 Builds a native executable for the operating system the editor is running on, using
@@ -384,7 +407,7 @@ changed — typically just your scenes and scripts, finishing in seconds.
 | --- | --- |
 | Scene factory generation | Generates a C++ factory function for each scene from its YAML |
 | Bundle factory generation | Generates C++ factory functions for each bundle |
-| Asset packaging | Copies and organizes resource files, then optionally combines native assets and Lua files into `resources.pak` |
+| Asset packaging | Copies and organizes resource files, ships FBX models as their glTF conversion, then optionally combines native assets and Lua files into `resources.pak` |
 | Startup code generation | Generates `main.cpp` / entry point with scene registration |
 | Engine template copy | Copies the runtime engine source and CMake/build files |
 | Shader compilation | Translates shaders for the selected graphics backends |

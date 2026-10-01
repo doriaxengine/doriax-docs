@@ -9,7 +9,7 @@ description: Model API reference (C++ and Lua).
 
 ## Description
 
-Loads and displays 3D model files in a scene. `Model` extends [Mesh](mesh.md) and adds support for loading OBJ and GLTF files (including binary GLB), including skeletal animation (via `Animation` / `Bone`), blend-shape morph targets, and PBR materials.
+Loads and displays 3D model files in a scene. `Model` extends [Mesh](mesh.md) and adds support for loading OBJ and GLTF files (including binary GLB), and FBX files through the glTF conversion the editor makes of them, including skeletal animation (via `Animation` / `Bone`), blend-shape morph targets, and PBR materials.
 
 A single GLTF file can contain multiple meshes, materials, textures, skins, and animations; Doriax imports them into the scene hierarchy and makes each accessible through the API. Files with animation clips, or more than one skin, import the **full glTF node tree** so joints, mesh nodes, and transform-only helpers keep the parentage authored in the file. Use [getAnimation()](#getanimation-findanimation) and [getBone()](#getbone) to drive skeletal playback, and [setMorphWeight()](#getmorphweight-setmorphweight) to control blend shapes. See [3D Graphics — GLTF node hierarchy](../../manual/3d-graphics.md#gltf-node-hierarchy).
 
@@ -69,6 +69,7 @@ Loads a 3D model file from disk. Doriax automatically detects the format based o
 
 * `.obj` — Wavefront OBJ
 * `.gltf` / `.glb` — GL Transmission Format (GLTF 2.0 / binary GLB)
+* `.fbx` — loaded from its glTF conversion, which the editor makes and an export ships as `<name>.fbx.glb` (see [3D Graphics — FBX models](../../manual/3d-graphics.md#fbx-models))
 
 Returns `true` on success. On failure, check the log for details.
 

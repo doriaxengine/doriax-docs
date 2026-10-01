@@ -95,7 +95,7 @@ committed (undoably) when you release the mouse:
 
 | File | Scene type | Result |
 | --- | --- | --- |
-| Model (GLTF/GLB/OBJ) | 3D | Creates a Model entity at the drop position, named after the file |
+| Model (GLTF/GLB/OBJ/FBX) | 3D | Creates a Model entity at the drop position, named after the file |
 | Image | 2D, on empty space | Creates a **Sprite** entity at the drop point, sized to the image |
 | Image | UI, on empty space | Creates an **Image** widget at the drop point, sized to the image |
 
@@ -252,10 +252,22 @@ capture with VSync forced off, use
 
 ### Touch simulation
 
-The **phone** button next to **Stop** makes Play behave like a touch device.
+The **phone** button after the play controls makes Play behave like a touch device.
 [`System::isTouchDevice()`](../reference/classes/system.md#istouchdevice) returns `true`,
 and the left mouse button acts as one finger: pressing starts a touch, dragging moves it,
 and releasing ends it. As on a phone, the game gets touch events instead of mouse events,
 so there is no hover, right click, or scroll. The keyboard still works. The setting is
 saved per user in `.doriax/user/workspace.yaml` and can only be changed while nothing is
 playing.
+
+### Detached camera
+
+The **camera** button next to **Stop** (or **F8**, or **Scene → Detach Camera**) switches
+a running or paused scene from the game camera to the editor camera. The game keeps
+running: scripts, physics, and audio still use the game camera, and `Scene::getCamera()`
+still returns it. The viewport shows the editor overlays again, including the game
+camera's frustum, and you can navigate, frame entities with **F**, and select them by
+clicking. Gizmos stay hidden, so entities can't be moved from the viewport while
+detached. The game gets no mouse or keyboard input while detached, and a captured or
+hidden cursor is released. Press **F8** again to return to the game camera. **Stop**
+always returns to the editor view.

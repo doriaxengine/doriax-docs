@@ -17,7 +17,7 @@ These are read from a file path by the runtime, on demand, at any point during g
 | Asset type | Formats | Loaded by |
 | --- | --- | --- |
 | **Textures** | PNG, JPG, TGA, BMP, PSD, HDR, SVG | `Texture`, texture pools |
-| **3D Models** | GLTF, GLB, OBJ | `Model`, `MeshSystem` |
+| **3D Models** | GLTF, GLB, OBJ, FBX (converted) | `Model`, `MeshSystem` |
 | **Audio** | OGG, WAV, MP3, FLAC | `SoundPool`, `Sound` |
 | **Fonts** | TTF, OTF, TTC | Font pool, `Text` components |
 | **Shaders** | `.sdat` shader data (engine format) | `ShaderPool`, `RenderSystem` |
@@ -26,6 +26,10 @@ There is no import or preprocessing step: the `.glb` or `.png` you export from y
 content tool supplies the same bytes the runtime reads. A native export may package
 those original bytes into `resources.pak`, but it does not convert the asset format or
 create a reprocessed copy.
+
+FBX is the one exception. The editor converts each FBX file to a binary glTF, and the
+runtime loads that conversion wherever the `.fbx` path is used. The FBX file itself is
+never modified. See [3D Graphics — FBX models](3d-graphics.md#fbx-models).
 
 ### Authoring formats
 

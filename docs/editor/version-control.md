@@ -40,10 +40,11 @@ machine-specific — the shader cache, the engine library — come from
 | `LocalPaths.cmake` | The machine-specific paths `CMakeLists.txt` includes |
 | `engine-api/`, `generated/`, `scene_scripts.cpp` | The engine API snapshot and generated C++ glue |
 | `build/`, `externalbuild/` | CMake build trees |
+| `imported/` | Models converted from FBX, laid out like the assets directory (see [FBX models](../manual/3d-graphics.md#fbx-models)) |
 
 The editor recreates all of it, so a fresh clone needs nothing but the editor opened
-once. Deleting `.doriax/` costs you the editor layout you had and a rebuild, never
-project content.
+once. Deleting `.doriax/` costs you the editor layout you had, a rebuild, and the FBX
+conversions, never project content.
 
 ## The generated ignore rules
 
@@ -96,6 +97,11 @@ If a scene file is missing from your checkout — a branch you have not fetched,
 asset still uploading — the editor keeps its entry in `project.yaml` and warns instead of
 quietly dropping the scene from the project. Saving the project will not remove it for
 everyone else.
+
+A scene keeps the parts of each model as it was saved. After replacing an FBX, open every
+scene that uses it so its models reload, save them, and commit those scenes with the FBX.
+An export, on any machine, stops at a scene saved with an older version of an FBX it uses —
+see [Export — FBX models](export.md#fbx-models).
 
 ## Migrating an existing project
 
