@@ -82,8 +82,9 @@ need to pick a specific child mesh or node (common with multi-node and animated 
 For fine-grained selection in dense scenes, use the **Structure panel** — clicking a
 row there selects the entity without needing to click through overlapping objects.
 
-Entities the game creates while playing cannot be picked in the viewport; select them in
-the [Structure panel](structure.md#while-playing).
+Entities the game creates while playing can only be picked in the viewport while the
+camera is [detached](#detached-camera); otherwise select them in the
+[Structure panel](structure.md#while-playing).
 
 ## Drag and drop from the Resources Browser
 
@@ -145,7 +146,8 @@ The **editor camera** is only for authoring navigation. The **game camera** is a
 Always verify gameplay framing with the game camera preview before testing: select the
 camera and click **View** on the **Preview** row of its CameraComponent. The toolbar
 shows the camera's name while you look through it; click **Exit** (or the **×** beside
-the name) to return to the editor camera.
+the name) to return to the editor camera. While the game runs, the viewport shows the
+game camera; [detach the camera](#detached-camera) to look around with the editor camera.
 
 ![Looking through the scene's main camera](../assets/screenshots/editor-camera-preview.png)
 
@@ -265,9 +267,17 @@ playing.
 The **camera** button next to **Stop** (or **F8**, or **Scene → Detach Camera**) switches
 a running or paused scene from the game camera to the editor camera. The game keeps
 running: scripts, physics, and audio still use the game camera, and `Scene::getCamera()`
-still returns it. The viewport shows the editor overlays again, including the game
-camera's frustum, and you can navigate, frame entities with **F**, and select them by
-clicking. Gizmos stay hidden, so entities can't be moved from the viewport while
-detached. The game gets no mouse or keyboard input while detached, and a captured or
-hidden cursor is released. Press **F8** again to return to the game camera. **Stop**
-always returns to the editor view.
+still returns it.
+
+While detached:
+
+- The editor overlays come back, including the game camera's frustum and the icons of
+  lights, cameras, and sounds the game creates.
+- You can navigate, frame entities with **F**, and select them by clicking or with a
+  selection box, including entities the game created.
+- Gizmos stay hidden, so entities can't be moved from the viewport.
+- The game gets no mouse or keyboard input, and a captured or hidden cursor is released.
+
+Press **F8** again to return to the game camera. **Stop** always returns to the editor
+view. While the scene is paused on the game camera, the viewport ignores the mouse;
+detach to look around.

@@ -288,7 +288,8 @@ behind them:
   all read-only.
 - It cannot be renamed, deleted, duplicated, dragged, given children, set as the main
   camera, or saved into a bundle.
-- It cannot be picked in the [Scene view](scene-view.md#selection); select it here.
+- It can be picked in the [Scene view](scene-view.md#selection) only while the camera is
+  [detached](scene-view.md#detached-camera); otherwise select it here.
 
 The list refreshes twice a second, so a new entity can take up to half a second to
 appear. One the game destroys disappears at once and leaves the selection, and **Stop**

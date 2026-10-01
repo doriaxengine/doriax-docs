@@ -83,6 +83,8 @@ A `Scene` is the root container for all objects, systems, and resources in a pro
 | void | [fixedUpdate](#fixedupdate) | C++ \| Lua |
 | void | [setCamera](#setcamera) | C++ \| Lua |
 | Entity | [getCamera](#getcamera) | C++ \| Lua |
+| void | [setViewCamera](#setviewcamera) | C++ |
+| Entity | [getRenderCamera](#getrendercamera) | C++ |
 | void | [setBackgroundColor](#setbackgroundcolor) | C++ \| Lua |
 | Vector4 | [getBackgroundColor](#setbackgroundcolor) | C++ \| Lua |
 | void | [setShadowQuality](#shadowquality_1) | C++ |
@@ -686,6 +688,22 @@ Sets the active camera for this scene. Only one camera can be active at a time. 
 * `Entity getCamera() const`
 
 Returns the entity handle of the currently active camera.
+
+---
+
+### setViewCamera
+
+* `void setViewCamera(Entity camera)`
+
+Draws the scene from `camera` instead of the active camera, while [getCamera](#getcamera) keeps returning the active one, so scripts, audio, and UI events are unaffected. Effects tied to the main camera (shadows, SSAO, SSR, post-processing, terrain and mesh detail) follow the view camera. Pass `NULL_ENTITY` to draw from the active camera again. The editor uses it for its [detached camera](../../editor/scene-view.md#detached-camera).
+
+---
+
+### getRenderCamera
+
+* `Entity getRenderCamera() const`
+
+Returns the camera the scene is drawn from: the view camera when one is set, otherwise the active camera.
 
 ---
 
