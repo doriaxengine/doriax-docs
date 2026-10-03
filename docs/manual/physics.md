@@ -48,8 +48,9 @@ damage, pickups, or sounds.
 
 ## Gravity
 
-Each scene has its own gravity, and the 2D and 3D worlds are independent: `gravity2D`
-drives the Box2D world and `gravity3D` drives the Jolt world. Both default to
+Each scene has its own gravity, because each scene has its own physics worlds (see
+[Physics across scenes](#physics-across-scenes)). The 2D and 3D worlds are independent:
+`gravity2D` drives the Box2D world and `gravity3D` drives the Jolt world. Both default to
 `(0, -9.81)` m/s².
 
 In the editor, select the scene in the Properties window and set **Gravity** in the
@@ -375,6 +376,131 @@ distance, revolute, prismatic, mouse, wheel, weld, and motor joints. With **Rope
 enabled, a distance joint lets the bodies move closer but never farther apart than when
 it was created. In 3D, use constraints and allowed degrees of freedom to lock or limit
 movement.
+
+Both bodies of a joint must be in the joint's own scene.
+
+## Physics across scenes
+
+Every scene owns its own Box2D and Jolt worlds. Only the worker threads and temporary
+memory are shared between them. When a [scene stack](scenes-and-entities.md#scene-stacks)
+runs several scenes at once, for example a gameplay scene with a HUD or a world made of
+chunk scenes, those worlds stay apart:
+
+- A body in one scene never collides with a body in another scene, and never triggers
+  its sensors.
+- A ray cast against a `Scene*` tests only that scene's world. The returned
+  `RayReturn::body` is an entity ID that only means something in that scene.
+- Contact events report only the bodies of their own scene.
+- A joint's `bodyA` and `bodyB` are looked up in the joint's scene. The editor accepts
+  only same-scene entities in those fields.
+- Only scenes on the engine are stepped. A scene removed with
+  `SceneManager.removeChildScene` keeps its bodies, frozen, until it is added again.
+
+There is no API that spans worlds. The approaches below go from simplest to most work.
+
+### Keep interacting bodies in one scene
+
+This is the recommended setup. Put everything that has to touch physically in one scene,
+and use child scenes for the parts that don't take part in gameplay physics: HUD, menus,
+lighting and sky. A gameplay scene with a UI overlay needs nothing more.
+
+### Ray cast several scenes
+
+Cast the same ray against each scene and keep the closest hit. Keep the scene next to
+the hit, because the entity ID needs it. `distance` is a fraction of the ray's length,
+so hits from different scenes compare directly.
+
+=== "C++"
+
+    ```cpp
+    struct SceneHit {
+        Scene* scene = nullptr;
+        RayReturn hit = Ray::NO_HIT;
+    };
+
+    SceneHit raycastScenes(const Ray& ray, RayFilter filter) {
+        SceneHit best;
+        for (Scene* scene : Engine::getScenesSnapshot()) {
+            RayReturn hit = ray.intersects(scene, filter);
+            if (hit.hit && (!best.scene || hit.distance < best.hit.distance)) {
+                best.scene = scene;
+                best.hit = hit;
+            }
+        }
+        return best;
+    }
+    ```
+
+=== "Lua"
+
+    ```lua
+    -- Lua has no getScenesSnapshot: pass the IDs of the scenes to test
+    local function raycastScenes(ray, filter, sceneIds)
+        local bestScene, bestHit = nil, nil
+        for _, id in ipairs(sceneIds) do
+            local scene = SceneManager.getScenePtr(id)
+            if scene then
+                local hit = ray:intersects(scene, filter)
+                if hit.hit and (bestHit == nil or hit.distance < bestHit.distance) then
+                    bestScene, bestHit = scene, hit
+                end
+            end
+        end
+        return bestScene, bestHit
+    end
+
+    local ids = { SceneManager.getSceneId("Level"), SceneManager.getSceneId("Props") }
+    local scene, hit = raycastScenes(ray, RayFilter.BODY_3D, ids)
+    ```
+
+This only works when the scenes share one coordinate space. An overlay drawn with its
+own camera needs its own ray, built with that scene's `Camera::screenToRay`. To test a
+single known body, `ray.intersects(body)` works for a body of any scene.
+
+### Collide across scenes with a proxy body
+
+To make a body in scene A push bodies in scene B, give scene B a **kinematic** stand-in
+with the same shape, and move it to follow the real body.
+
+Move the proxy from `onFixedUpdate`, which runs once per fixed step before any scene's
+world steps. Set its velocity toward the target rather than its position. Setting the
+position teleports it, so it won't push other bodies properly.
+
+=== "C++"
+
+    ```cpp
+    // player: Body3D in scene A, proxy: kinematic Body3D in scene B
+    Vector3 toTarget = player.getPosition() - proxy.getPosition();
+    proxy.setLinearVelocity(toTarget * (1.0f / Engine::getUpdateTime()));
+    ```
+
+=== "Lua"
+
+    ```lua
+    local toTarget = self.player.position - self.proxy.position
+    self.proxy.linearVelocity = toTarget * (1 / Engine.updateTime)
+    ```
+
+This works one way only: the proxy pushes bodies in B, but nothing in B pushes the real
+body back. To get a response, handle the proxy's contacts in scene B
+(`onContactAdded3D`) and apply impulses to the real body in scene A yourself. If you
+need full two-way physics, put both bodies in the same scene.
+
+### Move a body to another scene
+
+Doriax has no transfer API. Recreate the entity in the target scene instead:
+
+1. Read the position, rotation, `linearVelocity` and `angularVelocity` of the old body.
+2. Create the entity in the target scene, or instance a bundle there, and set those
+   values on its new body.
+3. Destroy the old entity.
+
+Don't do this inside a contact callback, while `isSteppingWorld3D()` is `true` (see
+[What a 3D callback may do](#what-a-3d-callback-may-do)). Note what needs to move in the
+callback, then move it in `onUpdate` or `onFixedUpdate`.
+
+The new entity has a new ID, so update anything that refers to it. Contacts, sleep state
+and joints don't carry over.
 
 ## Practical guidance
 

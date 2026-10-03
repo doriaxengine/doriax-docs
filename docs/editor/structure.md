@@ -40,6 +40,14 @@ tooltip. Click the **eye icon** on a child scene node to load it *inline* — it
 appear nested under the node so you can view and edit them in the parent's context. This
 is an editing convenience and does not affect runtime behavior.
 
+The entities shown inline still belong to the child scene. Dragging one only creates a
+reference to it: drop it on a script's entity property in Properties, or on a script open
+in the [Code Editor](code-editor.md#drag-entities-into-your-code). Drop targets that
+would change the parent scene refuse it, with the tooltip *Entity belongs to another
+scene*. That covers reparenting it in this tree, saving it as a bundle in the Resources
+Browser, and assigning it to a component field such as a joint's bodies. To make those
+changes, open the child scene itself.
+
 **Order matters:** scenes render as layers, with the main scene at the bottom and each
 child scene drawn on top of the ones listed above it — so the last child scene is the
 topmost layer. The order follows the order you added the child scenes; to change it,
@@ -255,11 +263,14 @@ Drag and drop also crosses window boundaries:
 | Drag | Drop | Result |
 | --- | --- | --- |
 | Entity (or selection) from Structure | Resources Browser | Saves the hierarchy as a `.bundle` file and replaces it with a bundle instance |
-| Entity from Structure | Entity-reference field in Properties | Assigns the entity to that field |
+| Entity from Structure | Entity-reference field in Properties | Assigns the entity to that field ([which fields accept another scene's entity](properties.md#entity-references)) |
 | Entity from Structure | Script file in the Code Editor | Inserts an entity reference property ([details](code-editor.md#drag-entities-into-your-code)) |
 | Action entity from Structure | [Animation Timeline](animation.md#action-frames) tracks | Adds an action frame at the dropped track and time |
 | `.bundle` file from Resources | Scene root or an entity with `Transform` | Creates a bundle instance there |
 | `.scene` file from Resources | Scene root | Adds it as a child scene |
+
+Of these targets, an entity shown inline under a child scene node is accepted only by a
+script entity property and the Code Editor. See [Child scenes](#child-scenes).
 
 ## Bundles in the tree
 

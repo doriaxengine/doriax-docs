@@ -95,6 +95,14 @@ Pointer properties store an `EntityReference` `{ entity, sceneId }` in serialize
 - **Lua** — Pass 2 of `initializeLuaScripts` resolves to a Lua script instance (if the
   target has a matching enabled script) or a typed wrapper (`Object`, `Mesh`, etc.).
 
+`sceneId` is `0` when the target is in the script's own scene. When you pick an entity
+from a child scene shown inline in the Structure panel, `sceneId` holds that child
+scene's ID instead, and the target is looked up through
+[`SceneManager::getScenePtr`](../reference/classes/scenemanager.md#setsceneptr-getsceneptr-removesceneptr).
+That scene must already be built when the script starts, or the property stays
+`nil`/`nullptr`. The editor's component fields, such as joint bodies, take same-scene
+entities only (see [Entity references](../editor/properties.md#entity-references)).
+
 Supported pointer types for entity references include all gameplay wrappers listed in
 `LuaBinding::pushEntityHandleByType` (Object, Mesh, Camera, Light, Sprite, Body2D,
 Action, etc.).

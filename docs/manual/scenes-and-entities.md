@@ -187,9 +187,22 @@ so they stay cleanly separated. Use them for:
 - **Persistent UI** — a HUD or menu scene that stays loaded across gameplay level changes.
 - **Shared setup** — a single lighting and skybox scene included in every level.
 - **Additive worlds** — large open worlds assembled from independently-authored chunks.
+  Bodies in different chunks don't collide (see the note below).
 - **Scene streaming** — load and unload sections without a full scene transition.
 - **Pop-ups and pause menus** — UI that appears on demand and is removed without
   reloading the level.
+
+!!! warning "Each scene has its own physics world"
+    Every scene runs its own 2D and 3D physics world. A body in one scene never collides
+    with a body in another scene. A ray cast only tests the scene you pass it, and a
+    joint connects only bodies of its own scene. Keep everything that must touch
+    physically in one scene, and use child scenes for parts that don't, such as a HUD,
+    lighting or menus. If chunks of an additive world have to interact, see
+    [Physics across scenes](physics.md#physics-across-scenes).
+
+    Entity IDs are also numbered per scene. That is why the editor only lets you
+    reference a child scene's entity from a
+    [script property](../editor/properties.md#entity-references).
 
 ### Adding a child scene in the editor
 

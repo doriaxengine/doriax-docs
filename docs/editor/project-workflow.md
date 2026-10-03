@@ -88,6 +88,10 @@ Child scenes let one scene reference and load another. This is useful for:
 - **Level assembly** — large worlds assembled from smaller room or chunk scenes.
 - **Streaming** — load and unload sections independently at runtime.
 
+Each scene runs its own physics world, so bodies in different scenes don't collide. See
+[Physics across scenes](../manual/physics.md#physics-across-scenes) before you split
+gameplay physics across chunks.
+
 To add a child scene reference, use the Structure panel's **Add Child Scene** option and
 point it to a saved scene file.
 

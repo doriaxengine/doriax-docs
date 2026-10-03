@@ -385,13 +385,27 @@ script properties.
 
 ## Entity references
 
-Some component fields accept another entity as their value — for example, a physics
-joint links two Body entities, a Camera can follow a target entity, and script
-properties of pointer types display an entity picker. Drag the target entity from the
-Structure panel into the field, or use the picker icon.
+Some fields take another entity as their value. For example, a physics joint links two
+Body entities, an action animates a target entity, and script properties of pointer types
+show an entity picker. Drag the target entity from the Structure panel into the field,
+or use the picker icon.
 
-Keep referenced entities inside the same scene or a consistently-loaded child scene so
-exports can resolve the relationship correctly.
+Which scene the entity can come from depends on the field:
+
+| Field | Accepts |
+| --- | --- |
+| Component fields: joint `bodyA`/`bodyB`, action target, a collision shape's source entity, UI parts, and so on | Only entities of the **same scene**. The value is a bare entity ID, and entity IDs are numbered per scene. |
+| Script entity properties ([pointer types](../manual/script-properties.md#entity-reference-pointers)) | Entities of the same scene, or of a child scene shown inline in the Structure panel. The reference also stores the other scene's ID. |
+
+An entity from a child scene dropped on a component field is refused with the tooltip
+*Entity belongs to another scene*. A joint can therefore never connect bodies in two
+scenes, since each scene runs its own
+[physics world](../manual/physics.md#physics-across-scenes).
+
+A script property that points into another scene is resolved when the script starts.
+That scene must already be built at that point, for example as a child scene of the same
+stack. If it isn't, the property is `nil` in Lua, and `nullptr` in C++ with an error in
+the log.
 
 ## Transform gizmo
 
