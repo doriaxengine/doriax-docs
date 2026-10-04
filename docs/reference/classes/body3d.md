@@ -1,5 +1,5 @@
 ---
-description: Body3D API reference — 3D physics body powered by Jolt Physics, shapes, forces, constraints, and contacts.
+description: Body3D API reference — 3D physics body powered by Jolt Physics, shapes, forces, constraints, buoyancy, and contacts.
 ---
 
 # Body3D
@@ -44,6 +44,9 @@ description: Body3D API reference — 3D physics body powered by Jolt Physics, s
 | Quaternion | [rotation](#position-rotation) | — | C++ \| Lua |
 | float | [mass](#mass) | — | C++ \| Lua |
 | float | [gravityFactor](#gravityfactor) | `1.0` | C++ \| Lua |
+| float | [buoyancy](#buoyancy) | `0.0` | C++ \| Lua |
+| float | [waterDrag](#buoyancy) | `0.5` | C++ \| Lua |
+| float | [waterAngularDrag](#buoyancy) | `0.01` | C++ \| Lua |
 | float | [friction](#friction-restitution) | `0.2` | C++ \| Lua |
 | float | [restitution](#friction-restitution) | `0.0` | C++ \| Lua |
 | Vector3 | [linearVelocity](#linearvelocity-angularvelocity) | `(0,0,0)` | C++ \| Lua |
@@ -156,6 +159,53 @@ Scales the global gravity for this body. `0` = gravity-free, `2` = double gravit
 Stored on the body component, so it can be set **before** [load](#load) and survives a body
 reload. In the editor it is the **Gravity Factor** field of the Body3D component, saved with
 the scene and applied in exported projects.
+
+---
+
+### buoyancy
+
+* *Setter:* `void setBuoyancy(float buoyancy)`
+* *Getter:* `float getBuoyancy() const`
+* *Setter:* `void setWaterDrag(float waterDrag)`
+* *Getter:* `float getWaterDrag() const`
+* *Setter:* `void setWaterAngularDrag(float waterAngularDrag)`
+* *Getter:* `float getWaterAngularDrag() const`
+
+How the body floats in a [Water](water.md). `buoyancy` compares the water's density to the
+body's: `1` is neutral, more floats and less sinks. `0` (the default) ignores the water.
+`waterDrag` is how much the water slows the body down, and `waterAngularDrag` how much it
+slows its rotation.
+
+Every fixed step, a **dynamic** body with a `buoyancy` above `0` whose centre of mass is
+inside a water's area is pushed up by the part of its shape below the wave surface there,
+and tilted by the wave normal, so it bobs and rolls with the waves. No script or
+[applyBuoyancyImpulse](#applybuoyancyimpulse) call is needed. Static and kinematic bodies
+are not affected.
+
+Like [gravityFactor](#gravityfactor), the values are stored on the body component, so they
+can be set before [load](#load). In the editor they are the **Buoyancy** section of the
+Body3D component (shown for dynamic bodies). See
+[Physics — Buoyancy](../../manual/physics.md#buoyancy).
+
+=== "C++"
+
+    ```cpp
+    Body3D body = crate.getBody3D();
+    body.createBoxShape(1.0f, 1.0f, 1.0f);
+    body.setType(BodyType::DYNAMIC);
+    body.setBuoyancy(1.4f);   // floats, about 70% under
+    body.load();
+    ```
+
+=== "Lua"
+
+    ```lua
+    local body = crate:getBody3D()
+    body:createBoxShape(1, 1, 1)
+    body.type = BodyType.DYNAMIC
+    body.buoyancy = 1.4
+    body:load()
+    ```
 
 ---
 
@@ -476,7 +526,7 @@ Instantaneous angular velocity change. Useful for spinning objects on impact.
 
 * `bool applyBuoyancyImpulse(Vector3 surfacePosition, Vector3 surfaceNormal, float buoyancy, float linearDrag, float angularDrag, Vector3 fluidVelocity, Vector3 gravity, float deltaTime)`
 
-Simulates buoyancy for a body partially submerged in a fluid. Returns `true` if the body intersects the water plane. Call once per physics step with the water plane data.
+Simulates buoyancy for a body partially submerged in a fluid. Returns `true` if the body intersects the water plane. Call once per physics step with the water plane data. A body in a [Water](water.md) gets this every fixed step from its [buoyancy](#buoyancy) settings, so call it yourself only for fluids that are not a Water component.
 
 ---
 

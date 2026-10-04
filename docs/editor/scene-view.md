@@ -58,6 +58,7 @@ and **Editor camera** sections.
 | **Hide selection outline** | All scene types | Hide the outline drawn around selected entities |
 | **Disable face culling** | 3D | Draw back faces in the editor view. Unavailable while playing |
 | **Disable fog** | All scene types | Draw the editor view without the scene's Fog. Unavailable while playing |
+| **Disable underwater** | 3D | Draw the editor view as if the camera were never inside a [Water](properties.md#water-component), so the underwater fade does not cover it when the camera dips below the surface. Unavailable while playing |
 | **Show grid** | All scene types | Draw the editor grid overlay |
 | **Grid spacing** | All scene types | Interval used by the grid and by **Snap to grid**. In 2D and UI scenes it is shown while the grid is on |
 | **Snap to grid** | All scene types | Snap transforms to the configured grid spacing |

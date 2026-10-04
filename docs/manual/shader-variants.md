@@ -106,16 +106,29 @@ Bit 5 is reserved: it used to select the PCF shadow filter, which is uniform-dri
 | `points` | `Tex` texture | `Vc3` | `Vc4` | `Txr` texture rect |
 | `lines` | `Vc3` | `Vc4` | - | - |
 
-`sky`, `blit`, `ssao`, `ssaoblur`, `ssr`, `ssrblur`, `composite`, `shadow2d` and
-`postprocess` have no properties; name the type on its own.
+### `water`
+
+| Bit | Name | Feature |
+| --- | --- | --- |
+| 0 | `Fog` | Fog |
+| 1 | `Dep` | Scene depth (**Depth Effects**) |
+| 2 | `Prf` | Planar reflection |
+| 3 | `Shw` | Shadow maps |
+| 4 | `Rfr` | Refraction |
+
+`Fog` and `Shw` follow the scene: a [Water](../reference/classes/water.md) sets them when
+the scene has a Fog component, or a shadow-casting light and **Receive Shadows** on. The
+others follow the water's own switches.
+
+`sky`, `blit`, `ssao`, `ssaoblur`, `ssr`, `ssrblur`, `composite`, `shadow2d`,
+`postprocess`, and `underwater` have no properties; name the type on its own.
 
 ### Combinations that are easy to miss
 
 Several properties come from the scene or the frame rather than from the model, so a
 variant list assembled by hand tends to be short by a factor of two or four:
 
-- **`Sao`** is set on every lit mesh in a scene with SSAO enabled, terrain and water
-  included.
+- **`Sao`** is set on every lit mesh in a scene with SSAO enabled, terrain included.
 - **`Ibl`** is off until the sky's environment maps finish generating, so the same mesh
   needs the variant both with and without it - the first frames are drawn before they
   exist.

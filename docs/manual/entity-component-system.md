@@ -187,7 +187,7 @@ editor inspectors and high-level object wrappers.
 | Core | `Transform`, `ScriptComponent`, `BundleComponent` |
 | 2D | `SpriteComponent`, `SpriteAnimationComponent`, `TilemapComponent`, `PolygonComponent` |
 | 3D | `MeshComponent`, `ModelComponent`, `InstancedMeshComponent`, `TerrainComponent`, `BoneComponent` |
-| Rendering | `CameraComponent`, `LightComponent`, `FogComponent`, `SkyComponent`, `ParticlesComponent`, `LinesComponent`, `PointsComponent` |
+| Rendering | `CameraComponent`, `LightComponent`, `FogComponent`, `SkyComponent`, `WaterComponent`, `ParticlesComponent`, `LinesComponent`, `PointsComponent` |
 | Physics | `Body2DComponent`, `Body3DComponent`, `Joint2DComponent`, `Joint3DComponent` |
 | UI | `UIComponent`, `UIContainerComponent`, `UILayoutComponent`, `ButtonComponent`, `TextComponent`, `ImageComponent`, `PanelComponent`, `ScrollbarComponent`, `ProgressbarComponent`, `TextEditComponent` |
 | Animation/actions | `ActionComponent`, `TimedActionComponent`, `PositionActionComponent`, `RotationActionComponent`, `ScaleActionComponent`, `ColorActionComponent`, `AlphaActionComponent`, keyframe track components |

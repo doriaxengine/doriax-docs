@@ -102,6 +102,7 @@ A few examples:
 | --- | --- |
 | `TerrainComponent` | `Terrain` |
 | `ModelComponent` | `Model` |
+| `WaterComponent` | `Water` |
 | `MeshComponent` (and none of the above) | `Mesh` |
 | `ButtonComponent` | `Button` |
 | `CameraComponent` | `Camera` |
@@ -145,6 +146,7 @@ EntityHandle  →  Object  →  Camera
                          →  Light
                          →  Mesh   →  Shape   →  Mirror
                                    →  Terrain
+                         →  Water
               →  Body3D
 ```
 

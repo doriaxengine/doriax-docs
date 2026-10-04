@@ -69,6 +69,7 @@ A `Scene` is the root container for all objects, systems, and resources in a pro
 | string | [defaultSkyShader](#defaultskyshader) | `""` | C++ \| Lua |
 | string | [defaultPointsShader](#defaultpointsshader) | `""` | C++ \| Lua |
 | string | [defaultLinesShader](#defaultlinesshader) | `""` | C++ \| Lua |
+| string | [defaultWaterShader](#defaultwatershader) | `""` | C++ \| Lua |
 | vector&lt;[PostProcessPass](postprocesspass.md)&gt; | [postProcessPasses](#postprocesspasses) | `{}` | C++ \| Lua |
 | [UIEventState](#uieventstate) | [enableUIEvents](#enableuievents) | `NOT_SET` | C++ \| Lua |
 
@@ -575,6 +576,15 @@ Scene-wide custom shader for Points components. Same semantics as [defaultMeshSh
 * *Getter:* `const std::string& getDefaultLinesShader() const`
 
 Scene-wide custom shader for Lines components. Same semantics as [defaultMeshShader](#defaultmeshshader).
+
+---
+
+### defaultWaterShader
+
+* *Setter:* `void setDefaultWaterShader(const std::string& path)`
+* *Getter:* `const std::string& getDefaultWaterShader() const`
+
+Scene-wide custom shader for [Water](water.md) components. Same semantics as [defaultMeshShader](#defaultmeshshader). It covers the water surface only; the underwater fade has no scene default and is forked per water with [customUnderwaterShader](water.md#customshader-customunderwatershader).
 
 ---
 

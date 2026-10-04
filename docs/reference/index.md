@@ -109,6 +109,7 @@ See also [Enumerations](enums.md) and [Build Options](build-options.md).
 - [Sprite](classes/sprite.md)
 - [Terrain](classes/terrain.md)
 - [Tilemap](classes/tilemap.md)
+- [Water](classes/water.md)
 
 ### UI
 

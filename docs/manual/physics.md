@@ -207,6 +207,51 @@ trigger contacts can be told apart from solid ones. A static sensor only sees **
 dynamic and kinematic bodies; make the sensor itself dynamic or kinematic when it must
 also detect sleeping bodies.
 
+### Buoyancy
+
+A dynamic 3D body floats in a [Water](../reference/classes/water.md) once its
+**buoyancy** is above `0`. Every fixed step, while the body's centre of mass is inside the
+water's area, the engine pushes it up by the part of its shape below the wave surface and
+tilts it with the waves, then drags it with the water. No script is needed.
+
+In the editor, the Body3D component of a dynamic body has a **Buoyancy** section:
+
+| Field | Default | Purpose |
+| --- | --- | --- |
+| **Buoyancy** | `0` | `1` is neutral, more floats and less sinks. `0` ignores the water. |
+| **Drag** | `0.5` | How much the water slows the body down. Shown when Buoyancy is above `0`. |
+| **Angular Drag** | `0.01` | How much the water slows the body rotation. Shown when Buoyancy is above `0`. |
+
+A box with a buoyancy of `2` floats about half under, `1.4` about 70% under, and `0.8`
+sinks slowly. The values are saved with the scene and applied in exported projects; from
+code they are [Body3D — buoyancy](../reference/classes/body3d.md#buoyancy),
+`waterDrag`, and `waterAngularDrag`:
+
+=== "C++"
+
+    ```cpp
+    Body3D body = barrel.getBody3D();
+    body.createCylinderShape(0.5f, 0.4f);
+    body.setType(BodyType::DYNAMIC);
+    body.setBuoyancy(2.0f);
+    body.load();
+    ```
+
+=== "Lua"
+
+    ```lua
+    local body = barrel:getBody3D()
+    body:createCylinderShape(0.5, 0.4)
+    body.type = BodyType.DYNAMIC
+    body.buoyancy = 2
+    body:load()
+    ```
+
+The water has no current: a floating body bobs and rocks with the waves but is not carried
+along by them. Bodies outside every water's area, and static or kinematic bodies, are not
+affected. For an object without physics, read the surface with
+[Water.getHeight](../reference/classes/water.md#getheight-getnormal) instead.
+
 ## Moving a body
 
 A physics body owns its own pose. The engine syncs it with the entity's transform once

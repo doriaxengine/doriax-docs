@@ -88,7 +88,7 @@ and efficient open-source game engine with an integrated editor for creating 2D 
 
 <div class="dx-feature" markdown>
 **PBR Rendering**
-<p>Physically-based rendering with dynamic shadows, fog, sky system, and advanced materials for photorealistic visuals.</p>
+<p>Physically-based rendering with dynamic shadows, fog, sky system, water, and advanced materials for photorealistic visuals.</p>
 </div>
 
 <div class="dx-feature" markdown>

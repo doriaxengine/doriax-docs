@@ -48,7 +48,7 @@ This documentation follows a broad structure similar to large engine manuals:
 | Capability | Description |
 | --- | --- |
 | 2D games | Sprites, tilemaps, sprite slicing, and 2D physics |
-| 3D games | GLTF/OBJ/FBX models, PBR materials, dynamic shadows, fog, and sky |
+| 3D games | GLTF/OBJ/FBX models, PBR materials, dynamic shadows, fog, sky, and water |
 | Animation | Skeletal animation, morph targets, and a timeline editor |
 | UI | A built-in UI system for menus, HUDs, and overlays |
 | Physics | Integrated 2D and 3D physics via Box2D and Jolt Physics |
@@ -59,14 +59,14 @@ This documentation follows a broad structure similar to large engine manuals:
 - 2D and 3D scenes with a shared ECS foundation
 - GLTF and OBJ model loading, and FBX import
 - Skeletal animation and morph targets
-- PBR materials, dynamic shadows, fog, and sky
+- PBR materials, dynamic shadows, fog, sky, and water
 - Particle systems, UI, terrain LOD, mesh LOD, and instancing
 - Scene serialization, texture and shader pools, and multithreading
 - 3D audio
 
 !!! tip "Custom shaders"
-    Fork, edit, and customize the built-in shaders for Mesh, UI, Points, Lines, and Sky
-    components directly in the editor — see [Custom Shaders](../editor/custom-shaders.md).
+    Fork, edit, and customize the built-in shaders for Mesh, UI, Points, Lines, Sky, and
+    Water components directly in the editor — see [Custom Shaders](../editor/custom-shaders.md).
 
 ## Platforms
 

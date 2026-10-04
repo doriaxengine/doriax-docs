@@ -42,7 +42,7 @@ The dialog groups the components into these categories:
 | Category | Components |
 | --- | --- |
 | **Core** | Transform |
-| **Rendering** | Mesh, Light, Camera, Sky, Fog, Mirror, Reflection Probe, Model, Terrain, Instanced Mesh |
+| **Rendering** | Mesh, Light, Camera, Sky, Fog, Mirror, Reflection Probe, Water, Model, Terrain, Instanced Mesh |
 | **User Interface** | UI Base, UI Layout, UI Container, Image, Text, Button, Panel, Scrollbar, Progressbar, Text Edit |
 | **2D Graphics** | Sprite, 2D Light, 2D Occluder, Sprite Animation, Tilemap, Polygon, Mesh Polygon |
 | **Primitives** | Points, Lines, Particles |
@@ -254,7 +254,7 @@ texture without replacing the rest of the material.
 
 ## Custom shaders
 
-Mesh, UI, Points, Lines, and Sky components expose a **Shader** row. By default it shows
+Mesh, UI, Points, Lines, Sky, and Water components expose a **Shader** row. By default it shows
 **Built-in**; **Fork** opens a dialog to choose where the fork is created and what it is
 called, then writes it and opens the GLSL in the Code Editor. The remaining buttons pick
 the `.vert`/`.frag` files, reopen the assigned shader, and reset to the engine default.
@@ -265,7 +265,9 @@ You can also drag an existing `.vert`/`.frag` from the Resources Browser onto th
 A Mesh has a second **Depth Shader** row with the same controls. It forks the shader
 behind the mesh's shadow maps and depth pre-pass, for colour forks that move vertices or
 discard fragments, so the shadow follows — see
-[Custom Shaders — The Depth Shader row](custom-shaders.md#the-depth-shader-row).
+[Custom Shaders — The Depth Shader row](custom-shaders.md#the-depth-shader-row). A Water
+has an **Underwater Shader** row instead, for the fade seen from below the surface — see
+[Custom Shaders — Water shaders](custom-shaders.md#water-shaders).
 
 A fork that declares a `u_vs_customParams` or `u_fs_customParams` block gets one editable
 row per member right under the Shader row (`time` and `resolution` are written by the engine); the values are
@@ -338,6 +340,52 @@ Selecting the probe draws its influence box in the viewport — cyan for static,
 dynamic — with a gold marker at the capture origin when **Box Offset** moves the box away
 from it. The **Refresh Probe** button forces a re-capture (or re-bake of the authored
 cubemap) regardless of mode.
+
+## Water component
+
+The **Water** component draws an animated water surface at the entity's height. Use the
+**Water** entry in the Structure create menu, or add the component to any entity with a
+Transform. See [Rendering Pipeline — Water](../manual/rendering-pipeline.md#water) for how
+each feature is drawn and what it costs.
+
+Under the **Shader** and **Underwater Shader** rows, the fields are grouped into sections:
+
+| Section | Property | Purpose |
+| --- | --- | --- |
+| **Surface** | **Size** | Width (X) and depth (Z) of the surface, centred on the entity and scaled by its transform. |
+| | **Subdivisions** | Grid cells along each side (16–512). Short waves need more cells to keep their shape. |
+| **Color** | **Shallow Color** | Colour of shallow water. With Refraction or Underwater, also the tint of the scene seen through it. |
+| | **Deep Color** | Colour the water turns to as it deepens. |
+| | **Depth Fade** | Depth where the deep colour takes over. Shallower water is lighter and clearer. |
+| **Waves** | **Height** | How far the crests rise above the water level. |
+| | **Length** | Length of the longest wave. Longer waves also travel faster. |
+| | **Speed** | Multiplier on the wave travel speed. |
+| | **Direction** | Angle around Y the waves travel toward, in degrees. `0` is `+X`. |
+| | **Steepness** | `0` gives round waves, `1` sharp crests. Lowered where the waves would fold over. |
+| **Ripples** | **Normal Map** | Tiling normal map of the small ripples; the built-in one when empty. Use a mipmap filter so distant ripples do not shimmer. |
+| | **Tile Size** | World size of one tile of the normal map. |
+| | **Strength** | How much the ripples bend the lighting and reflections. |
+| | **Speed** | How fast the ripple layers drift. |
+| **Reflection** | **Reflectivity** | Strength of the reflection. |
+| | **Specular** | Strength of the sun glints. |
+| | **Roughness** | Spread of the sun highlight. Low values give sharp glints. |
+| | **Receive Shadows** | Shadows of the scene lights darken the glints and the light under the surface. |
+| | **Planar Reflection** | Reflects the scene, not only the sky. Draws the scene a second time at half resolution. |
+| | **Distortion** | *(Planar Reflection)* How much the ripples bend the reflection. |
+| **Refraction** | **Refraction** | Shows the scene behind the water, bent by the ripples and tinted by the water it crosses. Copies the scene once per frame. |
+| | **Distortion** | *(Refraction)* How much the ripples bend the scene behind the water. |
+| **Underwater** | **Underwater** | A camera below the surface sees the scene fade into the water with distance. |
+| **Foam** | **Depth Effects** | Shore foam, soft edges, and depth tint from the scene depth. Adds a depth pass when SSAO and SSR are off. |
+| | **Foam Color** | Colour of the foam. |
+| | **Shore Foam** | Water depth the shore foam covers. Needs Depth Effects. |
+| | **Crest Foam** | Share of the highest crests that turn to foam. |
+
+In the editor the waves and ripples hold still while the scene is stopped or paused, and
+move during Play. To keep the editor view clear when the camera dips below the surface,
+turn on **Disable underwater** in the [viewport settings](scene-view.md#viewport-settings).
+
+A dynamic [3D Physics Body](../manual/physics.md#buoyancy) floats on the water once its
+**Buoyancy** is above `0`.
 
 ## Scene settings
 

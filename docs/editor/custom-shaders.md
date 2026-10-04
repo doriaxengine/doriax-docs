@@ -1,10 +1,11 @@
 ---
-description: Fork, edit, and customize the built-in shaders for Mesh (colour and depth), UI, Points, Lines, and Sky — per component or as scene-wide defaults — feed them custom uniforms from the editor or from scripts, and add custom post-process passes, directly in the Doriax editor.
+description: Fork, edit, and customize the built-in shaders for Mesh (colour and depth), UI, Points, Lines, Sky, and Water (surface and underwater) — per component or as scene-wide defaults — feed them custom uniforms from the editor or from scripts, and add custom post-process passes, directly in the Doriax editor.
 ---
 
 # Custom Shaders
 
-Doriax ships built-in shaders for each renderable type (Mesh, UI, Points, Lines, Sky).
+Doriax ships built-in shaders for each renderable type (Mesh, UI, Points, Lines, Sky,
+Water).
 The editor lets you **fork** any of them into your project, edit the GLSL in the
 [Code Editor](code-editor.md), and see the result in the viewport — without leaving the
 editor. Forked shaders are compiled and shipped with your project just like the built-in
@@ -40,8 +41,8 @@ amount, the current time — reach the fork through its [shader uniforms](#shade
 
 ## The Shader row
 
-Open the **Properties** window for a Mesh, UI, Points, Lines, or Sky entity. Each of
-these components has a **Shader** row:
+Open the **Properties** window for a Mesh, UI, Points, Lines, Sky, or Water entity. Each
+of these components has a **Shader** row:
 
 | Control | Action |
 | --- | --- |
@@ -106,6 +107,36 @@ without a depth fork is left out of the prepass and drawn once in the colour pas
 the built-in depth shader cannot know where the fork moves its vertices. Add a depth fork
 with the same displacement to bring it back in.
 
+## Water shaders
+
+A [Water](../reference/classes/water.md) component has two rows. **Shader** forks
+`water.vert` and `water.frag`, the surface itself. **Underwater Shader** forks
+`fullscreen.vert` and `underwater.frag`, the fullscreen fade drawn over the scene while
+the main camera is below the surface (it needs **Underwater** on). Its fork name is
+pre-filled with an `_underwater` suffix, and a fork that fails to build is reported as
+**Underwater shader failed to build** under the row while the built-in fade keeps
+drawing.
+
+Both forks read the water's [shader uniforms](#shader-uniforms) — the surface through
+`u_vs_customParams` / `u_fs_customParams`, the fade through `u_fs_customParams` — so one
+value can drive both. The surface shader can also be a
+[scene default](#scene-default-shaders); the underwater shader is per water only.
+
+The water fork keeps the engine's variant defines: `HAS_FOG`, `USE_SCENE_DEPTH` (Depth
+Effects), `USE_PLANAR_REFLECTION`, `USE_SHADOWS`, and `USE_REFRACTION` — see
+[Shader Variants — water](../manual/shader-variants.md#water).
+
+!!! warning "Keep the engine blocks and the wave math"
+    The engine fills `u_vs_waterParams`, `u_fs_waterParams`, and `u_fs_underwaterParams`
+    by layout, not by name, so keep them as the fork copied them. New engine versions only
+    append members at the end of `u_fs_waterParams`: a fork made on an older version keeps
+    working without the newer effects, and logs a warning to fork it again.
+
+    [Water.getHeight](../reference/classes/water.md#getheight-getnormal), body
+    [buoyancy](../manual/physics.md#buoyancy), and the sorting of transparent objects
+    around the water use the built-in wave sum. If a fork displaces the surface
+    differently in `water.vert`, they no longer match the waves it draws.
+
 ## The Fork Shader dialog
 
 Forking asks where the new shader goes before writing anything:
@@ -138,8 +169,8 @@ wrote and restores the previous shader.
 Besides per-component shaders, each scene can set a **default custom shader per type**.
 Select the scene (no entity) in the **Structure panel** and look for the **Default
 Shaders** section at the bottom of the scene settings in the Properties window. It shows
-one row per applicable type — 3D scenes list Mesh, Sky, UI, Points, and Lines; 2D scenes
-omit Sky; UI scenes list only UI.
+one row per applicable type — 3D scenes list Mesh, Sky, Water, UI, Points, and Lines; 2D
+scenes omit Sky and Water; UI scenes list only UI.
 
 Each row offers the same controls as the component Shader row (fork, edit files, open
 `.vert`/`.frag`, reset, drag-and-drop), and every change is undoable.
@@ -159,8 +190,9 @@ shader for that component and leave it unedited.
 Scene default shaders are saved with the scene, applied in play mode, and exported like
 any other custom shader — components that inherit them compile and ship the right shader
 variants automatically. They are also scriptable via the `Scene` properties
-`defaultMeshShader`, `defaultUIShader`, `defaultSkyShader`, `defaultPointsShader`, and
-`defaultLinesShader` (see the [Scene reference](../reference/classes/scene.md)).
+`defaultMeshShader`, `defaultUIShader`, `defaultSkyShader`, `defaultPointsShader`,
+`defaultLinesShader`, and `defaultWaterShader` (see the
+[Scene reference](../reference/classes/scene.md)).
 
 ## Shader uniforms
 
@@ -200,10 +232,10 @@ uniform u_fs_customParams {
 g_finalColor.rgb = mix(g_finalColor.rgb, customParams.tint.rgb, 0.5 + 0.5 * sin(customParams.time));
 ```
 
-The built-in Mesh, UI, Points, Lines, Sky, and depth sources all carry a comment showing
-the declaration, so a fresh fork has it at hand. Nothing else is needed: the block is picked
-up from the compiled shader by name, and a fork that declares none behaves exactly as
-before.
+The built-in Mesh, UI, Points, Lines, Sky, Water, underwater, and depth sources all carry a
+comment showing the declaration, so a fresh fork has it at hand. Nothing else is needed:
+the block is picked up from the compiled shader by name, and a fork that declares none
+behaves exactly as before.
 
 ### Editing values
 
@@ -251,7 +283,8 @@ a value with one of these names yourself.
 
 The same values are scriptable, so a uniform can follow gameplay or animate every frame.
 `Mesh` (and everything derived from it — `Shape`, `Model`, `Sprite`, `Terrain`,
-`Tilemap`), `Image`, `Text`, `Polygon`, `Points`, `Lines`, and `SkyBox` all expose:
+`Tilemap`), `Image`, `Text`, `Polygon`, `Points`, `Lines`, `SkyBox`, and `Water` all
+expose:
 
 | Method | Meaning |
 | --- | --- |
@@ -260,6 +293,7 @@ The same values are scriptable, so a uniform can follow gameplay or animate ever
 | `removeShaderUniform(name)` | Drops the value; the member reads zero again. |
 | `customShader` | The fork base path, so a script can assign or reset the fork too. |
 | `customDepthShader` | A Mesh's [depth fork](#the-depth-shader-row) base path; it reads the same values. |
+| `customUnderwaterShader` | A Water's [underwater fork](#water-shaders) base path; it reads the same values. |
 
 Setting a value only rewrites the block bytes — no shader reload — so calling it every
 frame is fine:

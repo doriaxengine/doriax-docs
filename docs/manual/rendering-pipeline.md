@@ -1,5 +1,5 @@
 ---
-description: Cameras, render systems, PBR materials, lighting, shadows, mesh LOD, depth prepass, instancing, shaders, framebuffers, and backend support in Doriax.
+description: Cameras, render systems, PBR materials, lighting, shadows, reflections, water, mesh LOD, depth prepass, instancing, shaders, framebuffers, and backend support in Doriax.
 ---
 
 # Rendering Pipeline
@@ -35,7 +35,8 @@ Each frame, the engine runs the following phases in order:
    write depth in the colour pass, so overlapping translucent surfaces composite instead
    of punching holes in each other. A mesh marked transparent (including by
    `autoTransparency`) is skipped by the SSAO depth pre-pass and the SSR G-buffer;
-   shadow maps still render it.
+   shadow maps still render it. A [Water](#water) surface is drawn inside this pass:
+   transparencies on the far side of it first, then the water, then the rest.
 8. **UI pass** — UI entities are rendered in screen-space canvas coordinates, on top of
    the 3D or 2D scene.
 9. **Post-processing** — Screen-space effects run over the finished image: SSR composites
@@ -44,7 +45,8 @@ Each frame, the engine runs the following phases in order:
    mesh shader.)
 
 Cameras that render to a texture (minimaps, [mirrors](#mirrors-and-planar-reflections),
-portals) run this same flow into their own framebuffer before the main view is drawn.
+[water reflections](#water), portals) run this same flow into their own framebuffer before
+the main view is drawn.
 
 ## Cameras
 
@@ -572,7 +574,8 @@ GPU performance scaling. That is a scene setting rather than a camera one; see
 A **Mirror** turns a flat surface into a true planar reflection — the kind used for
 mirrors, still water, and polished floors. It is built on render-to-texture: the engine
 renders the scene a second time from the viewpoint *reflected across the mirror plane*,
-then maps that image back onto the surface.
+then maps that image back onto the surface. For an animated water surface, use
+[Water](#water) instead, which has a planar reflection option of its own.
 
 The simplest way to add one is the **Mirror** entry in the Structure panel's create menu
 (or **Basic shape → Wall** plus a **Mirror** component). This creates an upright
@@ -657,12 +660,133 @@ them deliberately:
 - The reflection target matches the canvas resolution by default; lowering it trades
   sharpness for performance.
 
+## Water
+
+A **Water** entity draws an animated water surface: waves, ripples, reflections,
+refraction, foam, and a view from below the surface, all from one component. It has its
+own render path, like the sky, so it needs no mesh, material, or camera wiring. Add one
+with the **Water** entry of the Structure panel's create menu, or in code with the
+[Water](../reference/classes/water.md) class:
+
+=== "C++"
+
+    ```cpp
+    Water water(&scene);
+    water.setSize(80.0f, 80.0f);
+    water.setWaveHeight(0.4f);
+    water.setPlanarReflection(true);
+    ```
+
+=== "Lua"
+
+    ```lua
+    local water = Water(scene)
+    water:setSize(80, 80)
+    water.waveHeight = 0.4
+    water.planarReflection = true
+    ```
+
+Every field is listed in [Properties — Water component](../editor/properties.md#water-component).
+
+### Waves and ripples
+
+The surface is a grid **Size** wide (X) and deep (Z), centred on the entity at its
+height, with **Subdivisions** cells along each side. It stays level even when the entity is tilted;
+moving, rotating, or scaling the entity changes the area it covers. Four **Gerstner
+waves** displace the grid, all derived from the wave **Height**, **Length**, **Direction**,
+and **Steepness**. They are computed in world space, so scaling the entity never stretches
+them, and longer waves travel faster, as they do on deep water. Steepness is lowered
+automatically where the crests would fold over.
+
+Small **ripples** come from a tiling normal map (a built-in one unless you assign your
+own), sampled in two layers that drift across each other.
+
+The engine evaluates the same waves on the CPU, so
+[Water.getHeight](../reference/classes/water.md#getheight-getnormal) and the
+[buoyancy](physics.md#buoyancy) of 3D bodies follow the surface the next frame draws.
+
+In the editor the waves hold still while the scene is stopped or paused and move during
+Play. An exported game always animates them.
+
+### Reflection and lighting
+
+The water reflects the sky (or the background colour when the scene has no sky), mixed by
+a Fresnel term so it reflects more at grazing angles and shows its own colour when looked
+into. Scene lights add sun glints and light the water body; with **Receive Shadows** on
+and a shadow-casting light in the scene, shadows darken both. The water is fogged like any
+mesh when the scene has [Fog](#fog).
+
+**Planar Reflection** reflects the scene as well, through a reflection camera mirrored
+across the water plane, like a [Mirror](#mirrors-and-planar-reflections), drawn at half
+the canvas resolution. Only the main camera sees it; render-to-texture cameras, mirrors,
+and other waters' reflection passes see the water reflect the sky.
+
+### Depth effects
+
+With **Depth Effects** on, the water reads the scene depth for shore foam, soft edges
+where it meets geometry, and a tint that deepens with the water under each pixel. The
+depth comes from the [SSR](#screen-space-reflections-ssr) G-buffer or the
+[SSAO](#ambient-occlusion-ssao) / post-process depth pre-pass when one of them already
+ran; otherwise the engine adds a depth pre-pass for the water. Only the main camera has
+the scene depth, so other cameras draw the water without these effects.
+
+### Refraction
+
+With **Refraction** on, the scene behind the water shows through it, bent by the ripples
+and absorbed by the water it crosses: the clearest channel of the shallow colour fades
+over **Depth Fade**, the others faster, and the deep colour fills in the scattered light.
+For it, the main camera splits its colour pass in two:
+
+1. Opaque geometry, the sky, and the transparencies on the far side of the water.
+2. A copy of that image into a scene-copy target.
+3. The water, sampling the copy, then the remaining transparencies.
+
+With [SSR](#screen-space-reflections-ssr) on and a water in view, SSR is composited into
+the copy, so its reflections land under the water and the water is drawn over them. An
+exported game drawing straight to the screen renders into an offscreen target while a
+refracting water is drawn, then copies it to the screen.
+
+Other cameras, and a water with refraction off, show the water alpha-blended over the
+scene instead.
+
+### Transparent objects and water
+
+The water writes depth, so a wave hides the trough behind it. Transparent objects —
+blended meshes, particles, and points — are therefore split per camera: an object entirely
+on the far side of the surface from the eye, within the water's area, is drawn before the
+water and seen through it; everything else, including an object that crosses the surface,
+is drawn after it.
+
+### Underwater
+
+When the main camera goes below the surface, inside the water's area, the surface seen
+from below shows the sky only through a bright window overhead, and the rest of the scene
+fades into the water with distance, using the same shallow colour, deep colour, and
+**Depth Fade**. With Depth Effects off the fade is even, as if everything were Depth Fade
+away. The fade is a fullscreen pass with its own shader, `underwater.frag`, which can be
+[forked](../editor/custom-shaders.md#water-shaders). Turn **Underwater** off on a water to
+skip it; while editing, the viewport's **Disable underwater** setting keeps the editor
+camera's view clear.
+
+### Cost
+
+| Feature | Extra work |
+| --- | --- |
+| Grid | `(Subdivisions + 1)²` vertices, displaced in the vertex shader |
+| Planar Reflection | The visible scene drawn once more, at half resolution |
+| Refraction | One copy of the scene per frame, and the main pass split around it |
+| Depth Effects | A depth pre-pass, only when SSAO, SSR, and post-process depth are all off |
+| Underwater | One fullscreen pass while the camera is below the surface |
+
+Each water compiles its own [shader variant](shader-variants.md#water) from the features
+it uses, and the scene can set a default water shader like it does for other types.
+
 ## Shaders
 
 Shaders are authored in GLSL and transpiled by the shader builder for each supported
 backend. Shader data files are generated at export time.
 
-Each renderable type (Mesh, UI, Points, Lines, Sky) has a built-in shader. In the editor
+Each renderable type (Mesh, UI, Points, Lines, Sky, Water) has a built-in shader. In the editor
 you can **fork** any of them — per component, or as a scene-wide default for that type —
 and edit the GLSL; the engine keeps driving the variant system, lighting, and the
 shadow/depth/G-buffer passes. A Mesh can fork its depth shader too, so a colour fork that
@@ -861,6 +985,7 @@ scene.depthPrepassEnabled = true
 | Mobile shaders | Simplify PBR (skip normal maps, lower cascade count) |
 | Render targets | Minimize framebuffer resolution for off-screen effects |
 | Mirrors | Each mirror re-renders the scene once per frame; keep one hero reflection and lower its target resolution if needed |
+| Water | Keep **Subdivisions** as low as the waves allow; Planar Reflection re-renders the scene and Refraction copies it once per frame |
 | SSR | Adds a G-buffer geometry pass plus fullscreen march/blur/composite passes; lower **Max Steps** for cost, and it shares its geometry pass with SSAO when both are on |
 | Textures | Use compressed formats (ETC2/BC) on mobile/desktop respectively |
 
@@ -878,5 +1003,6 @@ capture with VSync forced off, use the
 - [Fog](../reference/classes/fog.md)
 - [Skybox](../reference/classes/skybox.md)
 - [ReflectionProbe](../reference/classes/reflectionprobe.md)
+- [Water](../reference/classes/water.md)
 - [Mesh](../reference/classes/mesh.md)
 - [RenderSystem](../reference/classes/rendersystem.md)

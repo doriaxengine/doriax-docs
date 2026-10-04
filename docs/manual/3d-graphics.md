@@ -1,5 +1,5 @@
 ---
-description: Working with 3D graphics in Doriax — models, materials, lighting, and the sky system.
+description: Working with 3D graphics in Doriax — models, materials, lighting, the sky system, reflections, and water.
 ---
 
 # 3D Graphics
@@ -346,6 +346,7 @@ Add atmosphere to your scenes with:
   lighting (IBL)** for reflective surfaces
 - **Reflection probes** — local, box-shaped reflection environments for interiors and
   enclosed areas
+- **Water** — animated water surfaces with waves, reflections, refraction, and foam
 
 ### Sky and reflections
 
@@ -384,6 +385,17 @@ camera or texture setup required. Because a mirror shows the side of an object f
 fill light to avoid looking washed out. See
 [Rendering Pipeline — Mirrors and planar reflections](rendering-pipeline.md#mirrors-and-planar-reflections)
 for how it works, its lighting, and its performance cost.
+
+### Water
+
+For a sea, a lake, or a pool, add a **Water** from the Structure panel's create menu. It
+draws an animated surface at the entity's height: Gerstner waves you shape with a height,
+length, direction, and steepness, scrolling ripples, sky or planar reflections, refraction
+of the scene behind it, shore and crest foam, and a fade into the water when the camera
+goes below the surface. Dynamic 3D bodies with a **Buoyancy** above `0` float on its
+waves, and scripts can read the surface with `Water.getHeight`. See
+[Rendering Pipeline — Water](rendering-pipeline.md#water),
+[Physics — Buoyancy](physics.md#buoyancy), and the [Water reference](../reference/classes/water.md).
 
 ## Cameras
 
