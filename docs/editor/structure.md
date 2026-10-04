@@ -114,6 +114,14 @@ entity to set the water level, and adjust its size and waves in
 [Properties](properties.md#water-component). See
 [Rendering Pipeline — Water](../manual/rendering-pipeline.md#water).
 
+### Water Exclusion
+
+**Water Exclusion** creates an entity with a Transform and a
+[Water Exclusion component](properties.md#water-exclusion-component) set to a 1 × 1 × 1 box:
+a volume the water stays out of, for a cabin, a cave, or a diving bell. To keep the water out
+of a boat, add the component to the boat itself instead; its default **Hull** shape wraps the
+boat's mesh.
+
 ## Hierarchical area
 
 Entities with `Transform` appear in the hierarchy area. Their parent-child relation is

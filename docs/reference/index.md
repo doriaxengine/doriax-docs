@@ -110,6 +110,7 @@ See also [Enumerations](enums.md) and [Build Options](build-options.md).
 - [Terrain](classes/terrain.md)
 - [Tilemap](classes/tilemap.md)
 - [Water](classes/water.md)
+- [WaterExclusion](classes/waterexclusion.md)
 
 ### UI
 

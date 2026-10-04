@@ -46,7 +46,8 @@ surface is drawn and what each feature costs.
 
 A dynamic [Body3D](body3d.md#buoyancy) with a **buoyancy** above `0` floats on the waves
 without any script, while the water's own [buoyancy](#buoyancy-buoyancydepth) is on; see
-[Physics — Buoyancy](../../manual/physics.md#buoyancy).
+[Physics — Buoyancy](../../manual/physics.md#buoyancy). A [WaterExclusion](waterexclusion.md)
+keeps the water out of a boat, a cabin, or a cave.
 
 ### Properties
 
@@ -275,7 +276,8 @@ brightest in shallow water, and scale with the directional lights reaching the s
 * *Getter*: bool **isUnderwater**() const
 
 When the main camera goes below the surface, inside the water's area, the scene fades into
-the water with distance, using the same [colours and depth fade](#shallowcolor-deepcolor-depthfade).
+the water with distance, using the same [colours and depth fade](#shallowcolor-deepcolor-depthfade),
+unless the camera is in a [WaterExclusion](waterexclusion.md).
 With [depthEffects](#deptheffects) off the fade is even, as if everything were
 `depthFade` away.
 

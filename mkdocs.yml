@@ -149,6 +149,7 @@ nav:
           - Shape: 'reference/classes/shape.md'
           - Mirror: 'reference/classes/mirror.md'
           - Water: 'reference/classes/water.md'
+          - WaterExclusion: 'reference/classes/waterexclusion.md'
           - Sound: 'reference/classes/sound.md'
           - UI:
               - Button: 'reference/classes/button.md'

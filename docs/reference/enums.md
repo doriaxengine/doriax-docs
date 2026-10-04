@@ -28,6 +28,7 @@ types. C++-only enums are noted below. See [Engine](classes/engine.md) for `Scal
 | `FogType` | Fog mode |
 | `ReflectionProbeMode` | Reflection probe source (`STATIC`, `DYNAMIC`) |
 | `ReflectionProbeUpdateMode` | Dynamic probe capture policy (`ON_LOAD`, `ON_MOVE`, `INTERVAL`, `MANUAL`) |
+| `WaterExclusionShape` | Volume keeping water out (`BOX`, `SPHERE`, `HULL`) |
 | `LightState` / `UIEventState` | Scene flags |
 | `PrimitiveType` / `CullingMode` / `WindingOrder` | Rendering |
 | `MaterialAlphaMode` | Material alpha handling (`AUTO`, `ALPHA_OPAQUE`, `MASK`, `BLEND`) |

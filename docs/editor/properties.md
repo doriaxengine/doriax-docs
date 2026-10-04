@@ -391,6 +391,23 @@ turn on **Disable underwater** in the [viewport settings](scene-view.md#viewport
 A dynamic [3D Physics Body](../manual/physics.md#buoyancy) floats on the water once its
 **Buoyancy** is above `0`, unless the water's own **Buoyancy** is off.
 
+## Water Exclusion component
+
+The **Water Exclusion** component keeps water out of a volume: the water surface is not drawn
+inside it, a camera inside sees no underwater fade, and the dynamic bodies inside get no
+buoyancy. Add it to a boat to keep the waves out of it, or create a **Water Exclusion**
+entity from the Structure create menu for a volume of its own. See
+[WaterExclusion](../reference/classes/waterexclusion.md).
+
+| Property | Purpose |
+| --- | --- |
+| **Shape** | **Hull** wraps the meshes of this entity, like a boat, and follows them when they change. **Box** and **Sphere** fill a volume of their own. |
+| **Center** | *(Box, Sphere)* Centre of the volume in local space. |
+| **Size** | *(Box, Sphere)* Width, height, and depth of the volume in local space. |
+
+While selected, the volume is drawn as an orange wireframe. A Hull on an entity without
+meshes shows *No mesh on this entity to wrap*.
+
 ## Scene settings
 
 With no entity selected, Properties edits the scene. Lighting, shadows, SSAO, SSR,

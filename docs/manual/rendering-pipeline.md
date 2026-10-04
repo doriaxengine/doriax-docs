@@ -777,6 +777,21 @@ away. The fade is a fullscreen pass with its own shader, `underwater.frag`, whic
 skip it; while editing, the viewport's **Disable underwater** setting keeps the editor
 camera's view clear.
 
+### Water exclusions
+
+A [WaterExclusion](../reference/classes/waterexclusion.md) keeps the water out of a volume,
+like a boat floating with its floor below the waterline. The water shader tests the world
+position of each fragment against the volumes over the water, so the cut follows the waves,
+shows in every view, including reflections and render-to-texture cameras, and leaves the
+waves in front of the boat drawn. A box or sphere is tested exactly. A hull, the convex hull
+of the entity's meshes, is kept as a 128 × 128 map of its bottom and top seen from above,
+one layer per hull in a shared texture array: sloped sides come out within a few
+millimetres and straight walls within a texel. Each water draw takes the 8 volumes nearest
+to the camera.
+
+The same volumes stop the underwater fade for a camera inside them and the buoyancy of the
+bodies inside them.
+
 ### Cost
 
 | Feature | Extra work |
@@ -786,6 +801,7 @@ camera's view clear.
 | Refraction | One copy of the scene per frame, and the main pass split around it |
 | Depth Effects | A depth pre-pass, only when SSAO, SSR, and post-process depth are all off |
 | Underwater | One fullscreen pass while the camera is below the surface |
+| Water Exclusion | A volume test per water fragment, with one texture lookup inside a hull's bounds |
 
 Each water compiles its own [shader variant](shader-variants.md#water) from the features
 it uses, and the scene can set a default water shader like it does for other types.

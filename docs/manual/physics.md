@@ -249,7 +249,9 @@ code they are [Body3D — buoyancy](../reference/classes/body3d.md#buoyancy),
 
 The water has no current: a floating body bobs and rocks with the waves but is not carried
 along by them. Bodies outside every water's area, and static or kinematic bodies, are not
-affected. For an object without physics, read the surface with
+affected. Neither are bodies inside a
+[Water Exclusion](../reference/classes/waterexclusion.md), so cargo rests on the floor of a
+boat; the boat, which owns the volume, still floats. For an object without physics, read the surface with
 [Water.getHeight](../reference/classes/water.md#getheight-getnormal) instead.
 
 The Water component has a **Buoyancy** section too:
