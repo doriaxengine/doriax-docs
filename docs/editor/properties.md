@@ -381,13 +381,15 @@ Under the **Shader** and **Underwater Shader** rows, the fields are grouped into
 | | **Foam Color** | Colour of the foam. |
 | | **Shore Foam** | Water depth the shore foam covers. Needs Depth Effects. |
 | | **Crest Foam** | Share of the highest crests that turn to foam. |
+| **Buoyancy** | **Buoyancy** | Floats the dynamic bodies that have Body3D buoyancy. |
+| | **Depth** | *(Buoyancy)* How far below the surface bodies still float, `0` has no bottom. Where waters overlap, the one with the highest bottom is used. |
 
 In the editor the waves and ripples hold still while the scene is stopped or paused, and
 move during Play. To keep the editor view clear when the camera dips below the surface,
 turn on **Disable underwater** in the [viewport settings](scene-view.md#viewport-settings).
 
 A dynamic [3D Physics Body](../manual/physics.md#buoyancy) floats on the water once its
-**Buoyancy** is above `0`.
+**Buoyancy** is above `0`, unless the water's own **Buoyancy** is off.
 
 ## Scene settings
 

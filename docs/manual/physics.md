@@ -252,6 +252,20 @@ along by them. Bodies outside every water's area, and static or kinematic bodies
 affected. For an object without physics, read the surface with
 [Water.getHeight](../reference/classes/water.md#getheight-getnormal) instead.
 
+The Water component has a **Buoyancy** section too:
+
+| Field | Default | Purpose |
+| --- | --- | --- |
+| **Buoyancy** | On | Floats the bodies whose Buoyancy is above `0`. Turn it off for water that is only for show. |
+| **Depth** | `0` | How far below the surface bodies still float. `0` has no bottom. Shown when Buoyancy is on. |
+
+Where waters overlap, a body floats in the one with the highest bottom that it is still
+above, so a pool with a **Depth** over a lake floats only the bodies inside it and the lake
+floats the rest. The bottom is not a floor: a body that plunges below it sinks through, so
+give a pool a collider too. From code they are
+[Water — buoyancy](../reference/classes/water.md#buoyancy-buoyancydepth) and
+`buoyancyDepth`.
+
 ## Moving a body
 
 A physics body owns its own pose. The engine syncs it with the entity's transform once

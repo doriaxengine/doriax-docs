@@ -180,7 +180,8 @@ Every fixed step, a **dynamic** body with a `buoyancy` above `0` whose centre of
 inside a water's area is pushed up by the part of its shape below the wave surface there,
 and tilted by the wave normal, so it bobs and rolls with the waves. No script or
 [applyBuoyancyImpulse](#applybuoyancyimpulse) call is needed. Static and kinematic bodies
-are not affected.
+are not affected, and waters with their own [buoyancy](water.md#buoyancy-buoyancydepth)
+off float nothing.
 
 Like [gravityFactor](#gravityfactor), the values are stored on the body component, so they
 can be set before [load](#load). In the editor they are the **Buoyancy** section of the

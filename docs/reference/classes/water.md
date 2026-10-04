@@ -45,7 +45,8 @@ surface is drawn and what each feature costs.
     ```
 
 A dynamic [Body3D](body3d.md#buoyancy) with a **buoyancy** above `0` floats on the waves
-without any script; see [Physics — Buoyancy](../../manual/physics.md#buoyancy).
+without any script, while the water's own [buoyancy](#buoyancy-buoyancydepth) is on; see
+[Physics — Buoyancy](../../manual/physics.md#buoyancy).
 
 ### Properties
 
@@ -75,6 +76,8 @@ without any script; see [Physics — Buoyancy](../../manual/physics.md#buoyancy)
 | float | [caustics](#caustics-causticsscale) | `0.5` | C++ \| Lua |
 | float | [causticsScale](#caustics-causticsscale) | `2.0` | C++ \| Lua |
 | bool | [underwater](#underwater) | `true` | C++ \| Lua |
+| bool | [buoyancy](#buoyancy-buoyancydepth) | `true` | C++ \| Lua |
+| float | [buoyancyDepth](#buoyancy-buoyancydepth) | `0.0` | C++ \| Lua |
 | bool | [depthEffects](#deptheffects) | `true` | C++ \| Lua |
 | [Vector3](vector3.md) | [foamColor](#foamcolor-shorefoam-crestfoam) | `Vector3(1, 1, 1)` | C++ \| Lua |
 | float | [shoreFoam](#foamcolor-shorefoam-crestfoam) | `0.4` | C++ \| Lua |
@@ -275,6 +278,32 @@ When the main camera goes below the surface, inside the water's area, the scene 
 the water with distance, using the same [colours and depth fade](#shallowcolor-deepcolor-depthfade).
 With [depthEffects](#deptheffects) off the fade is even, as if everything were
 `depthFade` away.
+
+---
+
+### buoyancy / buoyancyDepth
+
+* *Setter*: void **setBuoyancy**(bool buoyancy)
+* *Getter*: bool **isBuoyancy**() const
+* *Setter*: void **setBuoyancyDepth**(float buoyancyDepth)
+* *Getter*: float **getBuoyancyDepth**() const
+
+`buoyancy` lets the water float the dynamic bodies whose [Body3D buoyancy](body3d.md#buoyancy)
+is above `0`; turn it off for water that is only for show. `buoyancyDepth` gives the water
+a bottom: a body whose centre of mass goes deeper than that below the surface no longer
+floats in it. `0` has no bottom.
+
+Where waters overlap, a body floats in the one with the highest bottom that it is still
+above, so a pool with a `buoyancyDepth` over a lake floats only the bodies inside it and the
+lake floats the rest. The bottom is not a floor: a body that plunges below it sinks
+through, so give a pool a collider too.
+
+=== "Lua"
+
+    ```lua
+    local pool = Water(self.scene, self.entity)
+    pool.buoyancyDepth = 1.5
+    ```
 
 ---
 
