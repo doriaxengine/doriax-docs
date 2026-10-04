@@ -59,7 +59,8 @@ Use **Visible = false** for invisible HDR environments that only drive reflectio
 
     ```cpp
     SkyBox sky(&scene);
-    sky.setTextures("outdoor",
+    // faces in +X, -X, +Y, -Y, +Z, -Z order
+    sky.setTextures(
         "sky/px.png", "sky/nx.png",
         "sky/py.png", "sky/ny.png",
         "sky/pz.png", "sky/nz.png");
@@ -70,7 +71,8 @@ Use **Visible = false** for invisible HDR environments that only drive reflectio
 
     ```lua
     local sky = SkyBox(scene)
-    sky:setTextures("outdoor",
+    -- faces in +X, -X, +Y, -Y, +Z, -Z order
+    sky:setTextures(
         "sky/px.png", "sky/nx.png",
         "sky/py.png", "sky/ny.png",
         "sky/pz.png", "sky/nz.png")

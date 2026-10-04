@@ -188,7 +188,7 @@ The **Mesh** component exposes rendering flags beyond per-submesh material slots
 | Property | Purpose |
 | --- | --- |
 | **Receive IBL** | When enabled, the mesh is lit with image-based lighting (diffuse irradiance + specular reflections) in addition to punctual lights — from the scene's Sky environment, from a [Reflection Probe](../reference/classes/reflectionprobe.md) covering it, or both. Sky lighting requires a Sky entity with a cubemap texture. |
-| **Receive Lights** | Master switch for dynamic lighting (must be on for IBL to apply). |
+| **Receive Lights** | Master switch for dynamic lighting (must be on for IBL to apply). Turn it off for an unlit mesh that shows its colours as they are, like a glow or a light beam. |
 | **Cast / Receive Shadows** | Shadow map participation. |
 | **Detail Levels** | Let this mesh use [simplified meshes](../manual/rendering-pipeline.md#mesh-detail-lod) while the scene's Mesh Detail is on. Turn off to always keep it at full detail. |
 | **Detail Bias** | Scales how far detail is kept: above 1 keeps it longer, below 1 drops it sooner. Shown only while the scene's Mesh Detail is on. |
@@ -374,6 +374,8 @@ Under the **Shader** and **Underwater Shader** rows, the fields are grouped into
 | | **Distortion** | *(Planar Reflection)* How much the ripples bend the reflection. |
 | **Refraction** | **Refraction** | Shows the scene behind the water, bent by the ripples and tinted by the water it crosses. Copies the scene once per frame. |
 | | **Distortion** | *(Refraction)* How much the ripples bend the scene behind the water. |
+| | **Caustics** | *(Refraction)* Brightness of the sunlight patterns on the floor seen through the water, 0 turns them off. Needs Depth Effects. |
+| | **Caustics Scale** | *(Refraction)* World size of one cell of the caustics. |
 | **Underwater** | **Underwater** | A camera below the surface sees the scene fade into the water with distance. |
 | **Foam** | **Depth Effects** | Shore foam, soft edges, and depth tint from the scene depth. Adds a depth pass when SSAO and SSR are off. |
 | | **Foam Color** | Colour of the foam. |

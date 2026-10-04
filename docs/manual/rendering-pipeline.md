@@ -749,6 +749,15 @@ refracting water is drawn, then copies it to the screen.
 Other cameras, and a water with refraction off, show the water alpha-blended over the
 scene instead.
 
+#### Caustics
+
+With refraction and **Depth Effects** on, the floor seen through the water carries
+**Caustics**: drifting webs of sunlight focused by the waves. The water places them on the
+floor it finds in the scene depth, so they follow any geometry under it. They are brightest
+in shallow water, fade as it deepens, and scale with the directional light reaching the
+surface, so an overcast or night scene shows little of them. **Caustics Scale** is the
+world size of one cell of the pattern; set **Caustics** to 0 to turn them off.
+
 ### Transparent objects and water
 
 The water writes depth, so a wave hides the trough behind it. Transparent objects —

@@ -72,6 +72,8 @@ without any script; see [Physics — Buoyancy](../../manual/physics.md#buoyancy)
 | float | [reflectionDistortion](#planarreflection-reflectiondistortion) | `0.04` | C++ \| Lua |
 | bool | [refraction](#refraction-refractiondistortion) | `true` | C++ \| Lua |
 | float | [refractionDistortion](#refraction-refractiondistortion) | `0.03` | C++ \| Lua |
+| float | [caustics](#caustics-causticsscale) | `0.5` | C++ \| Lua |
+| float | [causticsScale](#caustics-causticsscale) | `2.0` | C++ \| Lua |
 | bool | [underwater](#underwater) | `true` | C++ \| Lua |
 | bool | [depthEffects](#deptheffects) | `true` | C++ \| Lua |
 | [Vector3](vector3.md) | [foamColor](#foamcolor-shorefoam-crestfoam) | `Vector3(1, 1, 1)` | C++ \| Lua |
@@ -239,6 +241,28 @@ through.
 
 Refraction is drawn for the main camera. Other cameras show the water alpha-blended over
 the scene instead, as does a water with refraction off.
+
+---
+
+### caustics / causticsScale
+
+* *Setter*: void **setCaustics**(float caustics)
+* *Getter*: float **getCaustics**() const
+* *Setter*: void **setCausticsScale**(float causticsScale)
+* *Getter*: float **getCausticsScale**() const
+
+Brightness of the sunlight patterns on the floor seen through the water; `0` turns them
+off. `causticsScale` is the world size of one cell of the pattern. They need
+[refraction](#refraction-refractiondistortion) and [depthEffects](#deptheffects), are
+brightest in shallow water, and scale with the directional lights reaching the surface.
+
+=== "Lua"
+
+    ```lua
+    local water = Water(self.scene, self.entity)
+    water.caustics = 0.9
+    water.causticsScale = 1.6
+    ```
 
 ---
 
