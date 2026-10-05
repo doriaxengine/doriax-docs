@@ -78,6 +78,26 @@ turn the setting off to stop the editor touching them at all.
     marker line from `.gitignore` — the editor then leaves the whole file to you — or
     put them in a second file and reference it from your Git configuration.
 
+## Git in the editor
+
+With **Version Control Files** on and the project inside a Git repository, the editor
+shows where your work stands, as VS Code does:
+
+- **Footer** — the branch at the far left, followed by `*` when there are uncommitted
+  changes, `+` when some of them are staged, and `!` during a merge or rebase or with
+  unresolved conflicts. A detached HEAD shows its tag, or the short commit. When the
+  branch tracks a remote one, the commits behind and ahead follow, as `1↓ 2↑`. Hover them
+  for the details.
+- **Code Editor** — the lines that differ from the staged version of the file are marked
+  in the gutter, with the change shown when you point at a mark. See
+  [Code Editor — Changed lines](code-editor.md#changed-lines).
+
+The editor reads the repository with the `git` command, so Git has to be installed and on
+the `PATH`. It never stages, commits or switches branches; that stays in your Git tool,
+and the editor picks up what it did within a second or two. While the editor is in the
+background it only watches for staging, commits and checkouts, and it reads the rest again
+when you come back to it.
+
 ## Working as a team
 
 Scenes and `project.yaml` are line-based YAML, so Git merges them like any other text

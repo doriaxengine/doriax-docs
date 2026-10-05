@@ -125,6 +125,27 @@ event. Collision filters (`preSolve2D`, `shouldCollide2D`, `shouldCollide3D`) st
 Each change is one undo step in the files open in the Code Editor. A closed header that
 only needs the declaration is saved directly.
 
+## Changed lines
+
+When the project is kept in Git with
+[Version Control Files](version-control.md#git-in-the-editor) on, the gutter marks every
+line that differs from the staged version of the file, as VS Code does:
+
+| Mark | Meaning |
+| --- | --- |
+| Green bar | Added lines |
+| Striped blue bar | Changed lines |
+| Red triangle | Lines were removed here |
+
+The same colors mark the changes on the left of the scrollbar, to find them in a long
+file. Rest the mouse on a mark to see the change: the removed lines in red, the lines that
+replaced them in green, and the characters that changed highlighted. The arrow at the top
+of the popup reverts the change to the staged lines, as one undo step.
+
+The marks follow your typing and compare with what is staged, so staging a change clears
+its marks. Untracked, ignored and conflicted files have none, and neither has a file
+opened through a symbolic link.
+
 ## Script entry point
 
 Scripts subscribe to the engine events they need (`onUpdate`, `onFixedUpdate`,

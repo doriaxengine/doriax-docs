@@ -27,13 +27,14 @@ marker at the end of a row for the setting's description.
 | --- | --- |
 | **Project Name** | The project's name. Also the default application name, window title, and the identifier the exported executable and CMake target are named after |
 | **Start Scene** | Scene the exported game loads at launch. Only saved scenes can be chosen |
-| **Version Control Files** | Enabled. Keeps `.gitignore` and `.gitattributes` written at the project root, so the editor's working directory, your machine's build settings and each developer's own layout stay out of the repository |
+| **Version Control Files** | Enabled. Keeps `.gitignore` and `.gitattributes` written at the project root, so the editor's working directory, your machine's build settings and each developer's own layout stay out of the repository. In a Git repository, it also shows the branch in the footer and marks changed lines in the Code Editor |
 
 The Export Window shows the same **Start Scene** and writes back to this setting, so the
 two never disagree.
 
 **Version Control Files** refreshes both files whenever the project is saved, and never
-replaces one the editor did not generate — see [Version Control](version-control.md).
+replaces one the editor did not generate — see [Version Control](version-control.md). It
+also turns on the [Git status](version-control.md#git-in-the-editor) the editor shows.
 
 ### Loading
 

@@ -26,7 +26,7 @@ The editor window is divided into a set of resizable panels:
 | **Code Editor** | Integrated Lua and C++ editor with API completion and an event menu |
 | **AI Chat** | The built-in AI assistant, docked as a tab beside Properties. Its keys are in [Editor Settings → AI](editor-settings.md#ai), and outside agents reach its tools through the [MCP server](mcp-server.md) |
 | **Output panel** | Build logs, play-mode diagnostics, and export messages, persisted to [`editor.log`](../about/faq.md#where-can-i-find-the-editor-crash-log) for crash reports |
-| **Footer** | Play / Pause / Stop on the left; FPS, frame time, draw calls, and triangles on the right |
+| **Footer** | The [Git branch](version-control.md#git-in-the-editor) and Play / Pause / Stop on the left; FPS, frame time, draw calls, and triangles on the right |
 
 ## Menu bar
 
