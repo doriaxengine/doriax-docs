@@ -462,7 +462,13 @@ every axis locked is invalid in Jolt — use a static body to freeze one complet
 ### setMass / setOverrideMassAndInertia
 
 * `void setMass(float mass)` — Overrides the auto-computed mass.
-* `void setOverrideMassAndInertia(Vector3 solidBoxSize, float solidBoxDensity)` — Computes mass and inertia for a solid box of the given size and density, then applies those values.
+* `void setOverrideMassAndInertia(Vector3 solidBoxSize, float solidBoxDensity)` — Computes mass and inertia for a solid box of the given size and density (kg/m³), then applies those values.
+
+The solid-box override is stored on the body component, so it can be set **before**
+[load](#load) and survives a body reload; on a loaded dynamic body it takes effect at once.
+In the editor it is **Override Mass** on the Body3D component, with **Solid Box Size** and
+**Solid Box Density** (1000 kg/m³ by default, about the density of water), saved with the
+scene and applied in exported projects.
 
 ---
 

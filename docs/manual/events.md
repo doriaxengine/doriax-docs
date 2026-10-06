@@ -49,7 +49,8 @@ Defined in `engine/core/util/FunctionSubscribe.h`.
 | `setEnabled(bool)` | Enable or disable the entire event without removing subscribers |
 
 With `DORIAX_CRASH_GUARD` enabled, failing subscribers are removed automatically and
-optionally reported through a global crash handler.
+optionally reported through a global crash handler. A C++ exception that escapes a
+subscriber counts as a failure too, and the report carries its message.
 
 ## Engine events
 

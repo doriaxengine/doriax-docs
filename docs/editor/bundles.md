@@ -82,6 +82,19 @@ per-instance. Its `Transform` is what lets you place each copy somewhere differe
 it cannot be removed. Any other component you add to the root, such as a script, stays
 on that instance only and is saved in the scene, not in the `.bundle` file.
 
+### Models inside a bundle
+
+A bundle shares a **Model** component's file and its **Merge static model** setting, not
+its nodes: each instance builds its own joints, parts, and animations from the file when
+the scene loads, so they are not stored in the scene. After **Make Unique**, loading
+another file into the Model creates the nodes in the editor, and those are saved with the
+scene like any other entities.
+
+**Revert to Bundle** on a Model removes the instance's nodes and builds them again from
+the shared file. Entities you attached to the old nodes, such as a prop on a hand bone,
+move to the model entity and keep their place in the world, because anything under
+rebuilt nodes would not be saved. Undo puts them back on their nodes.
+
 ### Model materials inside a bundle
 
 Editing a submesh of an imported model stores the change on the member's **Model**

@@ -338,6 +338,10 @@ the settings dialogs apply to the open project immediately but do not write the 
 themselves. **Save Project As** moves the project to another folder, taking its
 machine-local editor settings with it.
 
+Scenes, bundles, and `project.yaml` are written to a temporary file that then replaces the
+old one, so a save that fails (a full disk, a read-only folder) leaves the previous file
+intact.
+
 - Save scenes after structural edits (**Ctrl+S**).
 - Use **Save All** after changing project or export settings, so `project.yaml` is
   written.

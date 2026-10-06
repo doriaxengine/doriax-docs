@@ -146,7 +146,8 @@ lets a click sound finish first. The call returns `true` when the scene exists; 
 request wins (a replaced request logs a warning), [`isLoadPending`](#isloadpending)
 reports the wait, and `getCurrentSceneId` only changes once the load is applied. Only
 the first load, with nothing on screen yet (the `init()` entry point), builds the stack
-immediately.
+immediately. The editor's Play also builds the stack again from the scene files, so a level
+loaded a second time (a retry) starts over as it does in an exported game.
 
 With a [loading scene](#setloadingscene-getloadingsceneid) set, the switch also waits for
 it to be on screen and for the [loading delay](#setloadingdelay-getloadingdelay).
