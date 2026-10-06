@@ -364,6 +364,13 @@ undo step. See [Keying transforms](../editor/animation.md#keying-transforms).
 `TranslateTracks` paths can also be edited visually in the scene view — see
 [Editing movement paths](../editor/scene-view.md#editing-movement-paths-translatetracks).
 
+An animation whose **State** (ActionComponent) is set to **Running** in the Properties
+panel starts with the scene, and **Loop** on its AnimationComponent repeats it, so idle
+motion such as a spinning pickup needs no script. Track values are the target's absolute
+local position, rotation and scale; to reuse a motion wherever an object is placed,
+animate a child of it, like the entities of a bundle, which sit at the origin under each
+placed instance.
+
 ### Per-segment easing
 
 Each segment between two consecutive keys can have its own easing curve: segment `i`
@@ -419,8 +426,9 @@ model.setMorphWeight("blink", 1.0f);
 - Keep looping clips separate from one-shot clips.
 - Use runtime actions for UI and gameplay feedback; use the timeline for complex
   authored motion.
-- Avoid driving physics-controlled entities through animation — let physics simulate
-  them and use animation only for visual overlays.
+- Leave dynamic bodies to the simulation. A kinematic body (a moving platform) can be
+  animated: it follows the animation with a velocity, so it carries and pushes dynamic
+  bodies (see [Moving a body](physics.md#moving-a-body)).
 - Test frame intervals in play mode; what looks good in the editor may feel wrong at
   the actual game frame rate.
 

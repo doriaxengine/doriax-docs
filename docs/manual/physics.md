@@ -338,6 +338,13 @@ Teleporting skips collision detection between the old and new pose, so a body ca
 straight through walls. Do not scale forces or torques by `Engine::getDeltatime()`: the
 solver already integrates them over the fixed step.
 
+A **kinematic** body is the exception to teleporting: when its transform changes outside
+the fixed step — an [animation](animation.md#keyframe-tracks-timeline-authored), a moving
+parent, or `Object::setPosition` in `onUpdate` — the body moves there with a velocity over
+the fixed steps of the frame. That velocity carries the bodies standing on a moving
+platform and pushes the ones in its way. To jump a kinematic body somewhere instead, use
+its `setPosition`.
+
 ## Contacts and filtering
 
 The physics system exposes contact subscriptions so you can react to collisions in game
