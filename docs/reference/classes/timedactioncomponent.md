@@ -14,4 +14,5 @@ description: TimedActionComponent API reference (C++ and Lua).
 | `value` | C++ \| Lua (read-only) |
 | `duration` | C++ \| Lua |
 | `loop` | C++ \| Lua |
+| `pingPong` | C++ \| Lua |
 | `function` | C++ \| Lua |

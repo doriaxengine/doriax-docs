@@ -90,6 +90,59 @@ events. Subscribe to `onStop` to start the next action when one finishes:
     move.start();
     ```
 
+### Looping, ping-pong and spins
+
+`loop` repeats a timed action, and `pingPong` plays it to the end and back, in twice its
+duration, so a floating bob is a single `PositionAction` with both set. A
+`RotationAction` interpolates between two rotations, which never turns more than half a
+turn; for a full spin use `setSpinAction`, which turns the start rotation by an angle of
+any size around an axis (**Spin**, **Axis** and **Angle** in the editor):
+
+=== "Lua"
+
+    ```lua
+    bob = PositionAction(scene)
+    bob:setTarget(coin)
+    bob:setAction(Vector3(0, 1, 0), Vector3(0, 1.4, 0), 0.8, true)
+    bob:setFunctionType(EaseType.SINE_IN_OUT)
+    bob.pingPong = true
+    bob:start()
+
+    spin = RotationAction(scene)
+    spin:setTarget(coin)
+    spin:setSpinAction(Quaternion(), Vector3(0, 1, 0), 360, 2.0, true)
+    spin:start()
+    ```
+
+=== "C++"
+
+    ```cpp
+    PositionAction bob(&scene);
+    bob.setTarget(&coin);
+    bob.setAction(Vector3(0, 1, 0), Vector3(0, 1.4f, 0), 0.8f, true);
+    bob.setFunctionType(EaseType::SINE_IN_OUT);
+    bob.setPingPong(true);
+    bob.start();
+
+    RotationAction spin(&scene);
+    spin.setTarget(&coin);
+    spin.setSpinAction(Quaternion(), Vector3(0, 1, 0), 360.0f, 2.0f, true);
+    spin.start();
+    ```
+
+### Starting, restarting and phase
+
+`start()` resumes a paused action and does nothing to a running one, so a `stop()`
+followed by `start()` in the same frame leaves an action running where it was. To play
+it again from the beginning, call `restart()`.
+
+Copies of the same animation, such as the coins of a level, move in sync. Set an
+action's `startOffset` to start it some seconds in, or `randomStart` to start each copy
+at a random time of its duration (**Start offset** and **Random start** in the
+Properties window). Both apply when an action starts from stopped, not when it resumes
+from a pause, and an action inside an Animation keeps its own offset, so a random start
+on one track shifts only that track.
+
 ## Easing curves
 
 All `TimedAction` subclasses accept an `EaseType` (via `setFunctionType`) that shapes
@@ -364,12 +417,25 @@ undo step. See [Keying transforms](../editor/animation.md#keying-transforms).
 `TranslateTracks` paths can also be edited visually in the scene view — see
 [Editing movement paths](../editor/scene-view.md#editing-movement-paths-translatetracks).
 
-An animation whose **State** (ActionComponent) is set to **Running** in the Properties
-panel starts with the scene, and **Loop** on its AnimationComponent repeats it, so idle
-motion such as a spinning pickup needs no script. Track values are the target's absolute
-local position, rotation and scale; to reuse a motion wherever an object is placed,
-animate a child of it, like the entities of a bundle, which sit at the origin under each
-placed instance.
+An action or animation with **Play on start** checked (ActionComponent) starts with
+the scene, so idle motion such as a spinning pickup needs no script. **Loop** on an
+AnimationComponent repeats the animation, and **Loop** on a track's KeyframeTracks
+component repeats the track when it plays on its own, without an animation.
+
+### Relative tracks
+
+Track values are the target's local position, rotation and scale. With **Relative**
+checked on the KeyframeTracks component (`setRelative(true)`), they are offsets from the
+pose the target has when the track starts instead: the position adds to it, the rotation
+is applied after it and the scale multiplies it. The same track then works wherever the
+target is placed, so one bob or wobble serves every copy of a bundle. A relative track
+that does not end where it began moves the target a bit further each time it is started
+again; a looping animation repeats it from the same starting pose.
+
+A UI element with anchors is placed by its layout every frame, so an absolute track
+cannot move it; a relative track moves it through its layout offset, and the anchors keep
+working. Keying a relative track in the Animation Timeline stores the target's offset
+from where it was when the preview started.
 
 ### Per-segment easing
 

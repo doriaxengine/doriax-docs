@@ -131,6 +131,10 @@ Available presets include `TOP_LEFT`, `CENTER_TOP`, `TOP_RIGHT`, `CENTER_LEFT`,
 `CENTER`, `CENTER_RIGHT`, `BOTTOM_LEFT`, `CENTER_BOTTOM`, `BOTTOM_RIGHT`, `LEFT_WIDE`,
 `RIGHT_WIDE`, `TOP_WIDE`, `BOTTOM_WIDE`, and `FULL_LAYOUT` (stretch to fill parent).
 
+The layout places an anchored element every frame, so to animate its position use a
+[relative track](animation.md#relative-tracks), which moves it by its offset from the
+anchors.
+
 ### Manual anchors
 
 For precise control, set the four anchor points directly. Anchor point values range from
@@ -212,6 +216,11 @@ calling `addChild` on the parent. Button click handlers live on the `ButtonCompo
 UI widgets receive pointer and touch events automatically. The `Button` fires `onPress`
 and `onRelease`; `TextEdit` fires `onChange` when the text changes; `Scrollbar` fires
 `onChange` with the new scroll value.
+
+A button shows its state with a texture and a tint colour per state, and it can also grow
+when hovered or pressed (`scaleHovered`, `scalePressed`). With a **Transition Time**, the
+colour and scale change over that time instead of at once, so menu hover effects need no
+script. See [Button transitions](../reference/classes/button.md#transitions).
 
 To prevent UI clicks from also triggering gameplay input (such as shooting when the
 player taps a UI button), call:

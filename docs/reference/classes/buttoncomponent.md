@@ -23,6 +23,9 @@ description: ButtonComponent API reference (C++ and Lua).
 | `colorHovered` | C++ \| Lua |
 | `colorPressed` | C++ \| Lua |
 | `colorDisabled` | C++ \| Lua |
+| `scaleHovered` | C++ \| Lua |
+| `scalePressed` | C++ \| Lua |
+| `transitionTime` | C++ \| Lua |
 | `onPress` | C++ \| Lua |
 | `onRelease` | C++ \| Lua |
 | `pressed` | C++ \| Lua (read-only) |

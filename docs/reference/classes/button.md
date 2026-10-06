@@ -25,6 +25,9 @@ Use the `onPress` / `onRelease` callbacks to respond to user interaction.
 | Vector4 | [colorHovered](#statecolors) | `(1,1,1,1)` | C++ \| Lua |
 | Vector4 | [colorPressed](#statecolors) | `(1,1,1,1)` | C++ \| Lua |
 | Vector4 | [colorDisabled](#statecolors) | `(1,1,1,1)` | C++ \| Lua |
+| float | [scaleHovered](#transitions) | `1.0` | C++ \| Lua |
+| float | [scalePressed](#transitions) | `1.0` | C++ \| Lua |
+| float | [transitionTime](#transitions) | `0.0` | C++ \| Lua |
 | bool | [disabled](#disabled) | `false` | C++ \| Lua |
 
 ### Methods
@@ -93,6 +96,34 @@ Per-state tint colours multiplied with the current state texture. Use these to c
     btn.colorNormal = Vector4(1.0, 1.0, 1.0, 1.0)
     btn.colorHovered = Vector4(0.85, 0.85, 1.0, 1.0)
     btn.colorPressed = Vector4(0.7, 0.7, 1.0, 1.0)
+    ```
+
+---
+
+### transitions
+
+* *Setter/Getter*: void **setScaleHovered** / float **getScaleHovered**
+* *Setter/Getter*: void **setScalePressed** / float **getScalePressed**
+* *Setter/Getter*: void **setTransitionTime** / float **getTransitionTime**
+
+A hovered or pressed button grows by `scaleHovered` or `scalePressed` (`1.1` is 10%
+bigger), around its [pivot](uilayout.md#pivot), so set the pivot to `(0.5, 0.5)` to grow
+it from the middle. With a `transitionTime` in seconds, the state colour and scale change over that
+time when the pointer enters, leaves, presses or releases the button, instead of at once.
+Textures still swap at once.
+
+=== "C++"
+    ```cpp
+    btn.setScaleHovered(1.08f);
+    btn.setScalePressed(0.95f);
+    btn.setTransitionTime(0.12f);
+    ```
+
+=== "Lua"
+    ```lua
+    btn.scaleHovered = 1.08
+    btn.scalePressed = 0.95
+    btn.transitionTime = 0.12
     ```
 
 ---

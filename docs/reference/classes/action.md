@@ -23,6 +23,8 @@ An action operates on a *target* object. When started, the action applies its ef
 | --- | --- | --- | --- |
 | float | [speed](#speed) | `1.0` | C++ \| Lua |
 | float | [weight](#weight) | `1.0` | C++ \| Lua |
+| float | [startOffset](#startoffset-randomstart) | `0.0` | C++ \| Lua |
+| bool | [randomStart](#startoffset-randomstart) | `false` | C++ \| Lua |
 | bool | [ownedTarget](#ownedtarget) | `false` | C++ \| Lua |
 
 ### Methods
@@ -32,6 +34,7 @@ An action operates on a *target* object. When started, the action applies its ef
 | void | [start](#start-pause-stop) | C++ \| Lua |
 | void | [pause](#start-pause-stop) | C++ \| Lua |
 | void | [stop](#start-pause-stop) | C++ \| Lua |
+| void | [restart](#restart) | C++ \| Lua |
 | void | [setTarget](#settarget) | C++ \| Lua |
 | Entity | [getTarget](#settarget) | C++ \| Lua |
 | bool | [isRunning](#isrunning-ispaused-isstopped) | C++ \| Lua |
@@ -61,6 +64,21 @@ You rarely set this by hand. For [Animation](animation.md) clips it is driven au
 
 ---
 
+### startOffset / randomStart
+
+* *Setter*: void **setStartOffset**(float startOffset)
+* *Getter*: float **getStartOffset**() const
+* *Setter*: void **setRandomStart**(bool randomStart)
+* *Getter*: bool **isRandomStart**() const
+
+Where the action starts, in seconds: `startOffset` starts it that far in, and
+`randomStart` at a random time of its duration instead, so copies of the same animation
+do not move in sync. Both apply when the action starts from stopped, not when it resumes
+from a pause, also for an action that an [Animation](animation.md) plays. The editor
+preview always starts at the beginning.
+
+---
+
 ### ownedTarget
 
 * *Setter*: void **setOwnedTarget**(bool ownedTarget)
@@ -84,6 +102,10 @@ Control playback:
 * `pause()` — freezes time at the current position; `start()` resumes from here.
 * `stop()` — halts and resets the time counter to zero.
 
+The calls take effect on the next update. `start()` does nothing to a running action, so
+`stop()` followed by `start()` in the same frame leaves it running where it was; use
+[restart](#restart) to play it again from the beginning.
+
 === "C++"
     ```cpp
     AlphaAction fadeOut(&scene);
@@ -99,6 +121,16 @@ Control playback:
     fadeOut:setAction(1.0, 0.0, 1.0)
     fadeOut:start()
     ```
+
+---
+
+### restart
+
+* void **restart**()
+
+Plays the action again from the beginning: a running or paused action is stopped and
+started again in the same update (its `onStop` and `onStart` events both fire), and a
+stopped one just starts.
 
 ---
 

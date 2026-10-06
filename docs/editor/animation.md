@@ -99,6 +99,11 @@ entities from the Structure panel.
 Transform keying has two complementary controls: **Snapshot** for the complete pose at
 the playhead, and right-click keying for one block or selected channels.
 
+A track with **Relative** checked stores offsets, not the pose: its keys hold the
+target's offset from where it was when the preview started (see
+[Relative tracks](../manual/animation.md#relative-tracks)). Keyed outside a preview, the
+offset is zero.
+
 ### Snapshot
 
 The camera **Snapshot** button next to **Stop** stores the current position, rotation,
@@ -265,6 +270,13 @@ the runtime action system provides lightweight action types:
 
 All actions support easing curves. See [TimedAction](../reference/classes/timedaction.md)
 for the full list of `EaseType` values.
+
+In the **Properties** window, **Play on start** starts an action or animation with the
+scene (checking it sets its **State** to Running), and **Start offset** or **Random
+start** keep copies out of sync. Timed actions
+have **Loop** and **Ping-pong**, a rotation action can **Spin** by any **Angle**, and
+keyframe tracks have **Loop** and **Relative**, so each of them can also run on its own,
+without an animation. See [Runtime actions](../manual/animation.md#runtime-actions).
 
 ## Easing curves
 

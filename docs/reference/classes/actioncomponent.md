@@ -13,6 +13,8 @@ description: ActionComponent API reference (C++ and Lua).
 | `state` | C++ \| Lua (read-only) |
 | `timecount` | C++ \| Lua (read-only) |
 | `speed` | C++ \| Lua |
+| `startOffset` | C++ \| Lua |
+| `randomStart` | C++ \| Lua |
 | `startTrigger` | C++ \| Lua |
 | `stopTrigger` | C++ \| Lua |
 | `pauseTrigger` | C++ \| Lua |

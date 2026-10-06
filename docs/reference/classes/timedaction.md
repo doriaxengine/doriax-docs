@@ -30,6 +30,7 @@ See [EntityHandle ownership](entityhandle.md#ownership-and-lifetime).
 | --- | --- | --- | --- |
 | float | [duration](#duration) | `1.0` | C++ \| Lua |
 | bool | [loop](#loop) | `false` | C++ \| Lua |
+| bool | [pingPong](#pingpong) | `false` | C++ \| Lua |
 
 ### Methods
 
@@ -42,6 +43,8 @@ See [EntityHandle ownership](entityhandle.md#ownership-and-lifetime).
 | float | [getDuration](#duration) | C++ \| Lua |
 | void | [setLoop](#loop) | C++ \| Lua |
 | bool | [isLoop](#loop) | C++ \| Lua |
+| void | [setPingPong](#pingpong) | C++ \| Lua |
+| bool | [isPingPong](#pingpong) | C++ \| Lua |
 
 ## Enumerations
 
@@ -83,6 +86,17 @@ Length of the tween in **seconds**.
 * *Getter*: bool **isLoop**() const
 
 When `true`, the tween restarts from the beginning after completing.
+
+---
+
+### pingPong
+
+* *Setter*: void **setPingPong**(bool pingPong)
+* *Getter*: bool **isPingPong**() const
+
+When `true`, the tween plays to the end and then back to the start, so one pass takes
+twice the [duration](#duration). With [loop](#loop) it goes back and forth for good, which
+makes a floating bob a single `PositionAction`. The easing applies both ways.
 
 ---
 

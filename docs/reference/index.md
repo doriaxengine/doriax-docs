@@ -23,6 +23,7 @@ See also [Enumerations](enums.md) and [Build Options](build-options.md).
 - [AlphaAction](classes/alphaaction.md)
 - [Animation](classes/animation.md)
 - [ColorAction](classes/coloraction.md)
+- [KeyframeTracks](classes/keyframetracks.md)
 - [MorphTracks](classes/morphtracks.md)
 - [PositionAction](classes/positionaction.md)
 - [RotateTracks](classes/rotatetracks.md)
