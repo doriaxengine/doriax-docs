@@ -345,6 +345,39 @@ the fixed steps of the frame. That velocity carries the bodies standing on a mov
 platform and pushes the ones in its way. To jump a kinematic body somewhere instead, use
 its `setPosition`.
 
+### Smooth motion between steps
+
+The simulation advances in fixed steps, 60 per second by default, while frames come as
+fast as the display allows. So that a body does not jump once per step and stand still
+in between, its transform is **interpolated**: every frame it is drawn between the body's
+poses at the last two steps. The transform then trails the body by less than one step.
+
+- Gameplay logic reads the body: `Body2D`/`Body3D` `getPosition` and `getRotation`.
+- Whatever follows the body on screen, such as a camera, reads the transform
+  (`Object::getWorldPosition`). Following the body pose brings the per-step jumps back.
+- `setPosition` on the body or the object is a jump: the body is drawn there at once,
+  not on its way there.
+- A body moved by its transform, like an animated kinematic platform, is drawn where the
+  transform puts it.
+
+=== "C++"
+
+    ```cpp
+    // camera target, not Body3D(scene, entity).getPosition()
+    Vector3 focus = Object(scene, entity).getWorldPosition();
+    ```
+
+=== "Lua"
+
+    ```lua
+    -- camera target, not body.position
+    local focus = Object(self.scene, self.entity):getWorldPosition()
+    ```
+
+To have the transform hold the body pose of the last step instead, turn it off with
+`PhysicsSystem::setInterpolation(false)` (`scene:getPhysicsSystem().interpolation = false`
+in Lua).
+
 ## Contacts and filtering
 
 The physics system exposes contact subscriptions so you can react to collisions in game

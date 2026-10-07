@@ -267,7 +267,7 @@ Fixed-update interval in **seconds**. Used by `onFixedUpdate` and the physics si
 
 * *Getter:* `static double getInterpolationAlpha()`
 
-Value in `[0, 1)` representing how far the current rendered frame is between the previous and next fixed-update steps. Use to visually interpolate physics-driven entities and avoid temporal aliasing.
+Value in `[0, 1)` representing how far the current rendered frame is between the previous and next fixed-update steps. Physics bodies are already drawn with it (see [PhysicsSystem interpolation](physicssystem.md#properties)); use it to interpolate anything else you move from `onFixedUpdate`.
 
 ---
 

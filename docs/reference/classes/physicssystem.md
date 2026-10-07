@@ -15,6 +15,7 @@ description: PhysicsSystem API reference — Box2D and Jolt (C++ and Lua).
 | Vector3 | gravity | `(0,-9.81,0)` | C++ \| Lua |
 | float | pointsToMeterScale2D | `64.0` | C++ \| Lua |
 | bool | lock3DBodies | `true` | C++ \| Lua |
+| bool | interpolation | `true` | C++ \| Lua |
 | bool | steppingWorld3D | `false` | C++ \| Lua *(read-only)* |
 
 `gravity2D` and `gravity3D` set each world's gravity independently (m/s²); the legacy `gravity` / `setGravity(...)` sets both worlds at once and reads back the 3D value. The same values are exposed directly on [Scene](scene.md#gravity2d) — `scene.gravity2D` / `scene.gravity3D` — which is what the editor's scene **Physics** section edits and saves.
@@ -30,6 +31,12 @@ description: PhysicsSystem API reference — Box2D and Jolt (C++ and Lua).
 `lock3DBodies` decides whether 3D body access takes Jolt's body locks. Leave it on unless
 you drive the world from a worker thread. It is ignored while `steppingWorld3D` is true,
 since the step already holds those locks.
+
+`interpolation` draws each 2D and 3D body between its poses at the last two fixed steps,
+so bodies move smoothly at frame rates above the step rate. The entity's transform then
+trails the body by less than one step: read the body pose for gameplay and the transform
+for what follows the body on screen. Off, the transform holds the body pose of the last
+step. See [Smooth motion between steps](../../manual/physics.md#smooth-motion-between-steps).
 
 `steppingWorld3D` is true while the 3D world simulates, which is exactly when the 3D
 callbacks below run.
