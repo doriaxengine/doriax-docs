@@ -102,11 +102,11 @@ the target:
 
 | Written into | From | Applies to |
 | --- | --- | --- |
-| Web page title, favicon, HTML shell, `<head>` include | [Web settings](project-settings.md#web) | Web mode and Source Code |
+| Web page title, favicon, HTML shell, `<head>` include, and the game portal SDK | [Web settings](project-settings.md#web) | Web mode and Source Code |
 | `.desktop` launcher (`Name`, `Comment`, `Categories`) and `app_icon.png` | [Linux settings](project-settings.md#linux) and the window icon | Linux builds from any mode |
 | Executable icon and `VERSIONINFO` resource (`app_icon.rc`) | [Windows settings](project-settings.md#windows) and the window icon | Windows builds from any mode |
-| `Info.plist`, bundle identifier, `AppIcon` asset set | [macOS](project-settings.md#macos) and [iOS](project-settings.md#ios) settings | Source Code exports (the generated Xcode workspaces) |
-| `build.gradle`, `AndroidManifest.xml`, `strings.xml`, `styles.xml`, launcher icons | [Android settings](project-settings.md#android) | Source Code exports (the generated Android Studio workspace) |
+| `Info.plist`, bundle identifier, `AppIcon` asset set, and on iOS the Google Mobile Ads frameworks and the StoreKit adapter | [macOS](project-settings.md#macos) and [iOS](project-settings.md#ios) settings | Source Code exports (the generated Xcode workspaces) |
+| `build.gradle` (including the AdMob and Play Billing libraries), `AndroidManifest.xml`, `strings.xml`, `styles.xml`, launcher icons | [Android settings](project-settings.md#android) | Source Code exports (the generated Android Studio workspace) |
 
 The executable and CMake target are still named after the **project name**, not the
 application name, so renaming the application does not rename the binary.
@@ -369,7 +369,9 @@ shows the same status and warns before starting a build it cannot run.
 
 The generated page is customized from the [Web settings](project-settings.md#web): page
 title, favicon, an optional custom HTML shell, extra `<head>` markup, canvas resizing,
-and hiding Emscripten's default UI.
+and hiding Emscripten's default UI. The **Game Portal** setting builds in the SDK of one
+web game portal, for the [`WebPortal`](../reference/classes/webportal.md) class; export
+once per portal. See [Monetization → Web portals](../manual/monetization.md#web-portals).
 
 !!! tip "Testing the build"
     Browsers do not load WebAssembly from `file://`. Serve the destination folder with

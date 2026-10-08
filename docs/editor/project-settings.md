@@ -197,6 +197,8 @@ Studio workspaces are generated.
 | **Head Include** | Empty | HTML inserted into the page's `<head>` |
 | **Resize Canvas To Window** | Enabled | Resizes the rendering surface to the browser window. Aspect ratio and stretching still follow the canvas **Scaling Mode** |
 | **Hide Emscripten UI** | Disabled | Hides the default logo, status line, controls and output console. The nodes are kept alive, so the SDK's status callbacks keep working |
+| **Game Portal** | None | The web game portal whose SDK the export builds in, for the [`WebPortal`](../reference/classes/webportal.md) class: CrazyGames, Poki, GameDistribution, Yandex Games or YouTube Playables |
+| **Portal Game ID** | Empty | GameDistribution only: the game's ID from the GameDistribution dashboard. Without it the SDK is not loaded |
 
 A custom shell replaces `{{DORIAX_DEFAULT_HTML}}` with the page Emscripten generated;
 the build fails with a clear CMake error when the marker is missing. Two more optional
@@ -204,6 +206,11 @@ markers give you control over placement: `{{DORIAX_TITLE}}` is replaced with the
 name, and `{{DORIAX_HEAD_INCLUDE}}` receives the favicon link, the head include, and the
 styles the two checkboxes add. Without that second marker the block is inserted before
 `</head>`.
+
+A game sent to several portals needs one export per portal, since each build includes one
+SDK. Choosing YouTube Playables also adds YouTube's SDK `<script>` to the page head, which
+YouTube requires to load before the game. See
+[Monetization → Web portals](../manual/monetization.md#web-portals).
 
 ### Linux
 
@@ -261,10 +268,20 @@ guessing about what lands in the resource.
 | **Hide Status Bar** | Enabled | Hides the status bar while the app runs |
 | **Hide Home Indicator** | Enabled | Requests hiding the home indicator |
 | **High Refresh Rate** | Enabled | Allows 120 Hz displays where supported |
+| **Google AdMob** | Disabled | Links Google Mobile Ads into the app, for the [`AdMob`](../reference/classes/admob.md) class. Without it, `AdMob` calls report errors |
+| **AdMob App ID** | Google's sample app | `GADApplicationIdentifier`: the app ID from the AdMob console. Left empty, the export uses Google's sample app, which only shows test ads |
+| **Tracking Description** | Empty | `NSUserTrackingUsageDescription`, the text of iOS's tracking permission prompt. Needed when the consent message asks for tracking permission |
+| **App Store Purchases** | Disabled | Compiles in StoreKit 2, for the [`InAppPurchase`](../reference/classes/inapppurchase.md) class. Building it needs Xcode 16.3 or later |
 
 Apple bundle identifiers accept letters, digits and hyphens (`com.company.my-game`), and
 Apple versions accept at most three numbers — the dialog warns inline when a value does
 not fit.
+
+**AdMob App ID** and **Tracking Description** apply only with **Google AdMob** on;
+otherwise the export removes both keys from `Info.plist`. The App ID has the form
+`ca-app-pub-…~…`, and the dialog warns when it gets an ad unit ID (with `/`) instead.
+Without **App Store Purchases**, the export leaves the StoreKit adapter out of the app.
+See [Monetization](../manual/monetization.md) for using both services.
 
 ### Android
 
@@ -277,13 +294,16 @@ not fit.
 | **Launcher Icon** | None | Fallback launcher icon |
 | **Adaptive Foreground / Background** | None | Adaptive icon layers. Set **both** to get an adaptive icon; otherwise the launcher icon is used |
 | **Min SDK** | `21` | `minSdkVersion` |
-| **Target SDK** | `33` | `targetSdkVersion`. Never below Min SDK |
+| **Target SDK** | `36` | `targetSdkVersion`. Never below Min SDK |
 | **Orientation** | Unspecified | The activity's requested orientation: Portrait, Landscape, Sensor Portrait, Sensor Landscape, or Full Sensor |
 | **Architectures** | All four | The ABIs in the APK: `armeabi-v7a`, `arm64-v8a`, `x86`, `x86_64` |
 | **Permissions** | None | `<uses-permission>` entries in `AndroidManifest.xml` |
 | **Allow Backup** | Enabled | `android:allowBackup` |
 | **Keep Screen On** | Disabled | Adds `FLAG_KEEP_SCREEN_ON` to the activity |
 | **Fullscreen** | Enabled | Uses the fullscreen theme and hides the system bars |
+| **Google AdMob** | Disabled | Compiles in Google Mobile Ads and Google's consent SDK, for the [`AdMob`](../reference/classes/admob.md) class |
+| **AdMob App ID** | Google's sample app | The `com.google.android.gms.ads.APPLICATION_ID` entry of `AndroidManifest.xml`: the app ID from the AdMob console. Left empty, the export uses Google's sample app, which only shows test ads |
+| **Google Play Billing** | Disabled | Compiles in Google Play Billing, for the [`InAppPurchase`](../reference/classes/inapppurchase.md) class |
 
 The permission list covers the common Android permissions by manifest name. Two
 shortcuts sit above it: **None** clears the list, and **Game Defaults** selects
@@ -295,6 +315,15 @@ code's job.
     Clearing every ABI leaves nothing to build, so **OK** is disabled until one is
     ticked. A Source Code export made with no architecture selected fails with the same
     message.
+
+Google's SDKs go into the export only when their service is enabled, so a game without
+ads or purchases ships without them. Both need newer Android versions than the default
+Min SDK: the export raises it to 24 for AdMob and 23 for Play Billing, with a warning,
+and compiles against SDK 35 or newer. When **Min SDK** is lower, the dialog says so under
+the checkboxes. As on iOS, it also warns when **AdMob App ID** holds an ad unit ID.
+
+With AdMob on, also declare in the Play Console that the app contains ads and uses the
+advertising ID. See [Monetization](../manual/monetization.md) for using both services.
 
 ## Where the values are stored
 

@@ -25,6 +25,18 @@ control, supply a **Custom HTML Shell**: any HTML file containing a
 `{{DORIAX_DEFAULT_HTML}}` marker, which the build replaces with the page Emscripten
 generated. See [Web settings](../editor/project-settings.md#web).
 
+## Game portals
+
+To publish on a web game portal, pick it under **Project Settings → Platforms → Web →
+Game Portal**: CrazyGames, Poki, GameDistribution, Yandex Games or YouTube Playables.
+The export builds that portal's SDK in for the
+[`WebPortal`](../reference/classes/webportal.md) class, so each portal needs its own
+export. A build configured by hand takes the same choice as
+[`-DDORIAX_WEB_PORTAL=poki`](../reference/build-options.md#runtime-project-options),
+plus `-DDORIAX_WEB_PORTAL_GAME_ID=<id>` for GameDistribution. See
+[Monetization → Web portals](../manual/monetization.md#web-portals) for the API and for
+testing each portal on `localhost`.
+
 ## 1. Install Emscripten
 
 Download and install the Emscripten SDK by following the official

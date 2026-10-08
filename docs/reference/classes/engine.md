@@ -786,7 +786,7 @@ Called after the regular update and fixed-update passes each frame. Useful for l
 * `static FunctionSubscribe<void()> onPause`
 * Callback: `void()`
 
-Called when the system suspends the application (e.g. phone call received, app moved to background).
+Called when the system suspends the application (e.g. phone call received, app moved to background). It also fires while a full-screen ad covers the game and while a web portal pauses it; see [Ads pause the game](../../manual/monetization.md#ads-pause-the-game).
 
 ---
 
@@ -795,7 +795,7 @@ Called when the system suspends the application (e.g. phone call received, app m
 * `static FunctionSubscribe<void()> onResume`
 * Callback: `void()`
 
-Called when the application returns to the foreground after a pause.
+Called when the application returns to the foreground after a pause, including after each full-screen ad.
 
 ---
 

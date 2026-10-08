@@ -18,7 +18,7 @@ dialogs, and a live output panel for compile and export messages.
 | **C++ scripts** | Compiled at export/build time for native performance; require a rebuild to take effect |
 | **GLSL shaders** | Edit forked shader sources (`.vert`/`.frag`/`.glsl`); saving recompiles and refreshes the viewport. See [Custom Shaders](custom-shaders.md) |
 | **Script templates** | Create new Lua or C++ script files from boilerplate using the **New Script** dialog |
-| **Event menu** | Add an engine, input, component, or physics event handler to a script in one click. See [Add events](#add-events) |
+| **Event menu** | Add an engine, input, component, physics, or monetization event handler to a script in one click. See [Add events](#add-events) |
 | **API completion** | Engine API suggestions generated from Lua bindings; covers classes, methods, properties, and constants. Properties that return a [copy](../manual/math-and-utilities.md#changing-one-component-of-a-property) are marked `(copy)` |
 | **Build output** | Compiler errors, warnings, and export messages stream into the Output panel |
 
@@ -63,6 +63,7 @@ the **gear**, opens the menu of events a script can subscribe to:
 | **Input** | Keyboard, mouse, touch, and gamepad events |
 | **UI**, **Button**, **Scrollbar**, **Panel**, **Text Edit**, **Action**, **Sound** | Events of that component, which the script's entity needs to have |
 | **Physics 2D**, **Physics 3D** | Contacts, sensors, body activation, and collision filters, for every body in the scene |
+| **AdMob**, **In-App Purchase**, **Web Portal** | Results of the [monetization services](../manual/monetization.md): ads loaded, shown and rewarded, purchases, portal ads and cloud saves. They belong to the class, so any script can add them |
 
 ![The Add event menu with the Engine events](../assets/screenshots/code-events-menu.png)
 
@@ -79,9 +80,10 @@ puts the caret inside the new handler:
 
     The `REGISTER_*` macro goes in the constructor and its `UNREGISTER_*` pair in the
     destructor. The handler is declared in the header and defined in the source file, and
-    the event's header (such as `ButtonComponent.h`) is included when missing. It works
-    from either file of the script; the other one, with the same name next to it, is
-    opened when the handler goes there.
+    the event's header (such as `ButtonComponent.h` or `AdMob.h`) is included when
+    missing. It works from either file of the script; the other one, with the same name
+    next to it, is opened when the handler goes there. Monetization events register with
+    `REGISTER_EVENT(AdMob::onAdLoaded, onAdLoaded)`.
 
     ```cpp
     Menu::Menu(Scene* scene, Entity entity): ScriptBase(scene, entity) {
@@ -101,7 +103,8 @@ puts the caret inside the new handler:
 === "Lua"
 
     The registration goes in `init()`, which is created when missing, and the handler
-    before `return Name`.
+    before `return Name`. Monetization events register with
+    `RegisterEvent(self, AdMob.onAdLoaded, "onAdLoaded")`.
 
     ```lua
     function Menu:init()
@@ -119,8 +122,11 @@ to its handler. Engine and input handlers are named like the event, as
 `REGISTER_ENGINE_EVENT` and `RegisterEngineEvent` require. Other handlers are named after
 the event too (`onPress`, `onBeginContact2D`), with the component added when that name is
 taken: **Sound > onPause** becomes `onSoundPause`, since `onPause` belongs to the engine
-event. Collision filters (`preSolve2D`, `shouldCollide2D`, `shouldCollide3D`) start with
-`return true`, so every contact is kept until you add a condition.
+event. Monetization events add their class instead: the second `onInitialized` a script
+handles becomes `onAdMobInitialized`, `onInAppPurchaseInitialized` or
+`onWebPortalInitialized`. Collision filters (`preSolve2D`, `shouldCollide2D`,
+`shouldCollide3D`) start with `return true`, so every contact is kept until you add a
+condition.
 
 Each change is one undo step in the files open in the Code Editor. A closed header that
 only needs the declaration is saved directly.

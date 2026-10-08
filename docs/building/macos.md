@@ -73,10 +73,12 @@ cmake -S engine -B build-xcode -DPROJECT_ROOT=/path/to/project -G "Xcode"
 cmake --build build-xcode --config Release --target doriax-project
 ```
 
-The Xcode app bundle doesn't include `assets/` and `lua/`. In a Source Code export,
-`python3 doriax.py -p macos-xcode` adds them. See [Build Script](build-script.md).
+The Xcode app bundle gets the project's `assets/` and `lua/` folders in
+`Contents/Resources`, copied after each build. Plain executables get them copied next
+to the executable instead. See [Build Script](build-script.md) for building a Source Code
+export.
 
-The engine sets the macOS deployment target to 10.15 for runtime builds.
+The engine sets the macOS deployment target to 12.0 for runtime builds.
 
 !!! note "VSync"
     The project **VSync** setting applies to editor Play mode and supported desktop

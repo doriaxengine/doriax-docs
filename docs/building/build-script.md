@@ -86,9 +86,9 @@ and `favicon.png`. Serve the files over HTTP as in [Building for HTML5](html5.md
 
 ## Xcode builds
 
-`macos-xcode` and `ios-xcode` generate `build/<platform>/<App>.xcodeproj`. CMake doesn't
-put `assets/` and `lua/` into the app bundle, so the script adds them to the project's
-resources after each configure. macOS `glcore` and `vulkan` builds are plain executables,
-not bundles, so they skip this step.
+`macos-xcode` and `ios-xcode` generate `build/<platform>/<App>.xcodeproj`. CMake copies
+`assets/` and `lua/` into the app bundle after each build, and the script also adds them
+to the project's resources after each configure. macOS `glcore` and `vulkan` builds are
+plain executables, not bundles, so they skip this step.
 
 `ios-xcode` builds for the iOS Simulator. For devices, see [Building for iOS](ios.md).

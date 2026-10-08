@@ -6,7 +6,9 @@ description: Doriax API enumerations exposed to C++ and Lua.
 
 Most enums are exposed as Lua namespaces (`Scaling.FITWIDTH`) and C++ `enum class`
 types. C++-only enums are noted below. See [Engine](classes/engine.md) for `Scaling`,
-`Platform`, and `GraphicBackend`.
+`Platform`, and `GraphicBackend`, and [AdMob](classes/admob.md#enumerations),
+[InAppPurchase](classes/inapppurchase.md#enumerations) and
+[WebPortal](classes/webportal.md#enumerations) for the values of their enums.
 
 | Enum | Typical use |
 | --- | --- |
@@ -35,6 +37,12 @@ types. C++-only enums are noted below. See [Engine](classes/engine.md) for `Scal
 | `TextureFilter` / `TextureWrap` / `TextureType` | Textures |
 | `CursorType` | Mouse cursor |
 | `ResourceLoadState` | Async loading |
+| `AdMobFormat` / `AdMobBannerSize` / `AdMobBannerPosition` | AdMob ad formats and banner layout |
+| `AdMobRating` / `AdMobAgeRestriction` / `AdMobPersonalization` | AdMob request settings |
+| `AdMobConsentStatus` / `AdMobDebugGeography` / `AdMobPrecision` | AdMob consent and paid-event precision |
+| `ProductType` / `PurchaseState` / `BillingResponse` | In-app purchases |
+| `RecurrenceMode` / `SubscriptionReplacementMode` | Subscription pricing and plan changes |
+| `WebPortalType` / `WebPortalAdType` / `WebPortalEnvironment` | Web game portals |
 
 Run `doriax/generate_api_suggestions.py` against the engine binding folder for the
 authoritative member list when documenting new enum values.

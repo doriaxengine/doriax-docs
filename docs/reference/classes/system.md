@@ -1,12 +1,14 @@
 ---
-description: System API reference — screen dimensions, paths, virtual keyboard, fullscreen, user preferences, and ad SDKs.
+description: System API reference — screen dimensions, paths, virtual keyboard, fullscreen, window control, and user preferences.
 ---
 
 # System
 
 ## Description
 
-`System` is a virtual platform-abstraction layer. It provides screen dimensions, file-system paths, virtual keyboard control, fullscreen management, persistent key-value storage, and optional SDK integrations (AdMob, CrazyGames). You access it via `System::instance()` in C++ or the global `System` table in Lua.
+`System` is a virtual platform-abstraction layer. It provides screen dimensions, file-system paths, virtual keyboard control, fullscreen management, and persistent key-value storage. You access it via `System::instance()` in C++ or the global `System` table in Lua.
+
+Ads, in-app purchases and web portal SDKs have their own classes: [AdMob](admob.md), [InAppPurchase](inapppurchase.md) and [WebPortal](webportal.md). See [Monetization](../../manual/monetization.md#migrating) for the `System` methods they replaced.
 
 Each target platform provides its own concrete `System` subclass; the engine injects the correct implementation at startup.
 
@@ -69,6 +71,9 @@ Each target platform provides its own concrete `System` subclass; the engine inj
 | void | [setDoubleForKey](#persistent-keyvalue-storage) | C++ \| Lua |
 | void | [setStringForKey](#persistent-keyvalue-storage) | C++ \| Lua |
 | void | [removeKey](#persistent-keyvalue-storage) | C++ \| Lua |
+| AdMobBackend* | [getAdMobBackend](#service-backends) | C++ |
+| InAppPurchaseBackend* | [getInAppPurchaseBackend](#service-backends) | C++ |
+| WebPortalBackend* | [getWebPortalBackend](#service-backends) | C++ |
 
 ## Method details
 
@@ -363,35 +368,10 @@ The system exposes a simple cross-platform persistent store backed by `NSUserDef
     local best = UserSettings.getIntegerForKey("highScore", 0)
     ```
 
-## AdMob integration
+## Service backends
 
-The following methods are available on Android and iOS when the Google AdMob SDK is linked. They are no-ops on other platforms.
+* `virtual AdMobBackend* getAdMobBackend()`
+* `virtual InAppPurchaseBackend* getInAppPurchaseBackend()`
+* `virtual WebPortalBackend* getWebPortalBackend()`
 
-| Method | Description |
-| --- | --- |
-| `initializeAdMob(childDirected, underAge)` | Initialize the AdMob SDK. |
-| `setMaxAdContentRating(AdMobRating rating)` | Set COPPA-compliant content rating. |
-| `loadInterstitialAd(adUnitID)` | Pre-load an interstitial ad. |
-| `isInterstitialAdLoaded()` | Returns `true` when the ad is ready to show. |
-| `showInterstitialAd()` | Display the loaded interstitial ad. |
-
-### AdMobRating
-
-* **General** — Suitable for all audiences.
-* **ParentalGuidance** — Parental guidance suggested.
-* **Teen** — Suitable for teens.
-* **MatureAudience** — Mature content.
-
-## CrazyGames integration
-
-Methods for the CrazyGames web SDK. Only active on HTML5 builds.
-
-| Method | Description |
-| --- | --- |
-| `initializeCrazyGamesSDK()` | Load and initialize the CrazyGames SDK. |
-| `showCrazyGamesAd(type)` | Show a mid-game or rewarded ad. |
-| `happytimeCrazyGames()` | Signal a positive gameplay moment. |
-| `gameplayStartCrazyGames()` | Notify the SDK that gameplay started. |
-| `gameplayStopCrazyGames()` | Notify the SDK that gameplay stopped. |
-| `loadingStartCrazyGames()` | Notify the SDK that loading started. |
-| `loadingStopCrazyGames()` | Notify the SDK that loading finished. |
+How the [AdMob](admob.md), [InAppPurchase](inapppurchase.md) and [WebPortal](webportal.md) classes reach the platform's SDKs. Each returns the platform's implementation, or `nullptr` where the platform or the build has none, which the classes report as "not available". Games call those classes rather than these methods; a port to a new platform overrides them to plug in its own SDKs.

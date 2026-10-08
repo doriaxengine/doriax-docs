@@ -1,5 +1,5 @@
 ---
-description: Engine, physics, UI, action, and component events in Doriax, including C++ macros and Lua registration helpers.
+description: Engine, physics, UI, action, component, and monetization service events in Doriax, including C++ macros and Lua registration helpers.
 ---
 
 # Events
@@ -247,6 +247,7 @@ end
 | `REGISTER_SCROLLBAR_EVENT(onChange, onChange)` | `RegisterEvent(self, scrollbar:getScrollbarComponent().onChange, "onChange")` |
 | `REGISTER_PANEL_EVENT(onMove, onMove)` | `RegisterEvent(self, panel:getPanelComponent().onMove, "onMove")` |
 | `REGISTER_EVENT(physics->beginContact2D, onBeginContact)` | `RegisterEvent(self, physics.beginContact2D, "onBeginContact")` |
+| `REGISTER_EVENT(AdMob::onAdLoaded, onAdLoaded)` | `RegisterEvent(self, AdMob.onAdLoaded, "onAdLoaded")` |
 
 ```lua
 function MenuButton:init()
@@ -351,6 +352,43 @@ do to the world — see [What a 3D callback may do](physics.md#what-a-3d-callbac
 
 Use these to chain gameplay reactions to tweens, timelines, or audio playback.
 
+## Service events
+
+The [monetization services](monetization.md) report through static events of their
+classes, which belong to no entity or scene:
+
+| Class | Events |
+| --- | --- |
+| [`AdMob`](../reference/classes/admob.md#events) | `onInitialized`, `onConsentUpdated`, `onAdLoaded`, `onAdFailedToLoad`, `onAdShown`, `onAdFailedToShow`, `onAdDismissed`, `onAdClicked`, `onAdImpression`, `onUserEarnedReward`, `onAdPaid`, `onAdInspectorClosed` |
+| [`InAppPurchase`](../reference/classes/inapppurchase.md#events) | `onInitialized`, `onDisconnected`, `onProductsQueried`, `onPurchaseUpdated`, `onPurchaseFailed`, `onPurchasesQueried`, `onPurchaseAcknowledged`, `onPurchaseConsumed` |
+| [`WebPortal`](../reference/classes/webportal.md#events) | `onInitialized`, `onAdStarted`, `onAdFinished`, `onAdError`, `onDataLoaded`, `onDataLoadFailed`, `onDataSaveFailed` |
+
+Pass the static member to `REGISTER_EVENT` in C++ or `RegisterEvent` in Lua:
+
+=== "C++"
+
+    ```cpp
+    REGISTER_EVENT(AdMob::onUserEarnedReward, onUserEarnedReward);
+    UNREGISTER_EVENT(AdMob::onUserEarnedReward, onUserEarnedReward);
+
+    void Shop::onUserEarnedReward(AdMobFormat format, std::string type, int amount) { }
+    ```
+
+=== "Lua"
+
+    ```lua
+    RegisterEvent(self, AdMob.onUserEarnedReward, "onUserEarnedReward")
+
+    function Shop:onUserEarnedReward(format, rewardType, amount) end
+    ```
+
+The platform answers on its own thread, and the engine calls these subscribers at the
+start of the next frame, on the game thread. A C++ handler must take the parameters by
+value, exactly as the event declares them (`std::string`, not `const std::string&`).
+Since the events outlive scenes, remove C++ subscriptions in the destructor; Lua script
+subscriptions go away with the script. See
+[How results arrive](monetization.md#how-results-arrive).
+
 ## Easing as an event
 
 `Ease` extends `FunctionSubscribe<float(float)>`. Timed actions can use custom easing
@@ -387,4 +425,5 @@ component callback of a scene at once.
 
 - [Engine](../reference/classes/engine.md) — engine events (`onUpdate`, input, lifecycle)
 - [PhysicsSystem](../reference/classes/physicssystem.md) — collision and contact events
+- [AdMob](../reference/classes/admob.md), [InAppPurchase](../reference/classes/inapppurchase.md), [WebPortal](../reference/classes/webportal.md) — service events
 - Script workflow: [Creating Scripts](creating-scripts.md)

@@ -124,6 +124,7 @@ nav:
       - Audio: 'manual/audio.md'
       - Math & Utilities: 'manual/math-and-utilities.md'
       - Threading & Async Loading: 'manual/threading-and-async-loading.md'
+      - Monetization: 'manual/monetization.md'
   - Reference:
       - API Index: 'reference/index.md'
       - Enumerations: 'reference/enums.md'
@@ -182,6 +183,10 @@ nav:
       - Managers:
           - SceneManager: 'reference/classes/scenemanager.md'
           - BundleManager: 'reference/classes/bundlemanager.md'
+      - Services:
+          - AdMob: 'reference/classes/admob.md'
+          - InAppPurchase: 'reference/classes/inapppurchase.md'
+          - WebPortal: 'reference/classes/webportal.md'
       - Scripting:
           - ScriptBase: 'reference/classes/scriptbase.md'
       - Math:

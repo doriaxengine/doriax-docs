@@ -190,6 +190,16 @@ See also [Enumerations](enums.md) and [Build Options](build-options.md).
 
 - [ScriptBase](classes/scriptbase.md)
 
+## Services
+
+- [AdMob](classes/admob.md)
+- [InAppPurchase](classes/inapppurchase.md)
+    - [PricingPhase](classes/inapppurchase.md#pricingphase)
+    - [ProductDetails](classes/inapppurchase.md#productdetails)
+    - [ProductOffer](classes/inapppurchase.md#productoffer)
+    - [PurchaseDetails](classes/inapppurchase.md#purchasedetails)
+- [WebPortal](classes/webportal.md)
+
 ## Systems
 
 - [ActionSystem](classes/actionsystem.md)
