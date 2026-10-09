@@ -151,7 +151,10 @@ Only the bundles the project uses are compiled into the game and registered with
 - every bundle listed in **Project → Bundles**.
 
 A bundle that no scene instantiates — one that exists only to be spawned from a script —
-has to be listed, or `createBundle` reports `bundle 'name' not found` at runtime.
+has to be listed, or `createBundle` reports `bundle 'name' not found` at runtime. Listing
+it also compiles the C++ scripts on its entities: each spawned instance runs its scripts,
+Lua and C++, the same way a scene does (see
+[`createBundle`](../reference/classes/bundlemanager.md#createbundle)).
 
 **Project → Bundles** lists every `.bundle` file in the project. The ones a scene
 instantiates are checked and disabled, with the scenes using them in the **Used by**

@@ -174,6 +174,7 @@ nav:
           - Animation: 'reference/classes/animation.md'
           - Particles: 'reference/classes/particles.md'
       - Systems:
+          - SubSystem: 'reference/classes/subsystem.md'
           - MeshSystem: 'reference/classes/meshsystem.md'
           - RenderSystem: 'reference/classes/rendersystem.md'
           - PhysicsSystem: 'reference/classes/physicssystem.md'

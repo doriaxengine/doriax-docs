@@ -4,6 +4,8 @@ description: PhysicsSystem API reference — Box2D and Jolt (C++ and Lua).
 
 # PhysicsSystem
 
+**Inherits:** [SubSystem](subsystem.md)
+
 2D (Box2D) and 3D (Jolt) simulation. `scene:getPhysicsSystem()`.
 
 ## Properties

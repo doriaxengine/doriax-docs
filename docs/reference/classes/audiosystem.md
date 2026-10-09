@@ -4,6 +4,8 @@ description: AudioSystem API reference (C++ and Lua).
 
 # AudioSystem
 
+**Inherits:** [SubSystem](subsystem.md)
+
 SoLoud playback and 3D audio.
 
 ## Methods

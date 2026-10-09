@@ -477,6 +477,12 @@ editor and a build; reach them by name under the instance root with
 [`findEntity(name, root)`](../reference/classes/entityregistry.md#findentity) rather than
 by id.
 
+A spawned instance runs its scripts like the scene does: Lua `init()` and C++ constructors
+run before `createBundle` returns. `destroyBundle` stops them, then removes the instance along
+with anything parented under it since, bundles spawned there included. A C++ script that
+destroys its own bundle is deleted during that call, so it must return without touching its
+members.
+
 !!! note "There is no direct `.bundle` file loader"
     You don't load a `.bundle` file by path at runtime. Export turns each file into a
     registered factory, and you spawn it by the **bundle name** — the file's path with the

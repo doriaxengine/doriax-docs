@@ -340,7 +340,9 @@ objects at runtime.
 
 ## Lua runtime lifecycle
 
-When a scene loads, `LuaBinding::initializeLuaScripts(scene)` runs three passes:
+When a scene loads, and again whenever a bundle is spawned into it,
+`LuaBinding::initializeLuaScripts(scene)` runs three passes over the scripts that have not
+started yet:
 
 ### Pass 1 — Create instances
 
@@ -371,7 +373,8 @@ Register events inside `init()` so `self` and resolved references are ready.
 
 ### Cleanup
 
-`LuaBinding::cleanupLuaScripts(scene)` runs on scene unload:
+`LuaBinding::cleanupLuaScripts(scene)` runs on scene unload, and
+`cleanupLuaScripts(scene, entity)` for each entity `destroyBundle` removes:
 
 1. Remove all `FunctionSubscribe` callbacks whose tag contains the script instance
    address (`Engine::removeSubscriptionsByTag` and `Scene::removeSubscriptionsByTag`).
@@ -470,6 +473,15 @@ void ScoreTracker::onUpdate() {
 }
 ```
 
+## C++ script lifetime
+
+A C++ script is constructed when its scene starts or when
+[`createBundle`](../reference/classes/bundlemanager.md#createbundle) spawns its bundle, and
+deleted when the scene unloads or
+[`destroyBundle`](../reference/classes/bundlemanager.md#destroybundle) removes the instance.
+A script that destroys its own bundle is therefore deleted during that call: return right
+after it without touching a member.
+
 ## Property sync at runtime
 
 Properties values are stored in `ScriptEntry.properties`. At play/export:
@@ -486,8 +498,8 @@ See [Script Properties](script-properties.md) for the full type mapping.
 | --- | --- |
 | Scene save | `ScriptComponent` entries serialize to YAML with paths, types, and property values |
 | Property parse | C++: `ScriptParser` reads `DPROPERTY` from headers. Lua: editor loads `properties` table |
-| Play mode | Editor calls `initializeLuaScripts` on scene load |
-| Export | `Generator` emits C++ that registers scenes, creates C++ script instances, and calls `initializeLuaScripts` |
+| Play mode | Editor calls `initializeLuaScripts` on scene load and after each `createBundle` |
+| Export | `Generator` emits C++ that registers scenes, creates C++ script instances, and calls `initializeLuaScripts`, for scenes and spawned bundles |
 
 ## Common patterns
 

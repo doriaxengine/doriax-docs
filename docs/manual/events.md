@@ -34,6 +34,10 @@ FunctionSubscribe.call ──► C++ callbacks
    UI pointer events, action start/stop).
 4. Each subscriber runs in registration order unless disabled or removed.
 
+A callback can add or remove subscribers, or destroy the object that owns the event. A
+subscriber added during a call first runs on the next one, and one removed before its turn
+is skipped.
+
 ## FunctionSubscribe API
 
 Defined in `engine/core/util/FunctionSubscribe.h`.
@@ -50,7 +54,8 @@ Defined in `engine/core/util/FunctionSubscribe.h`.
 
 With `DORIAX_CRASH_GUARD` enabled, failing subscribers are removed automatically and
 optionally reported through a global crash handler. A C++ exception that escapes a
-subscriber counts as a failure too, and the report carries its message.
+subscriber counts as a failure too, and the report carries its message. Copies of an
+event share their subscribers, so a failing one stops running in all of them.
 
 ## Engine events
 
@@ -261,8 +266,9 @@ function MenuButton:onPress()
 end
 ```
 
-Cleanup is also automatic in Lua: when the scene unloads, all subscriptions tagged with
-the script instance are removed — there is no `UNREGISTER_*` to call.
+Cleanup is also automatic in Lua: when the scene unloads, or `destroyBundle` removes the
+script's entity, all subscriptions tagged with the script instance are removed — there is
+no `UNREGISTER_*` to call.
 
 ### Physics event (Lua)
 
@@ -400,6 +406,7 @@ curves by subscribing to an `Ease` instance.
 | --- | --- |
 | C++ script destructor | Call matching `UNREGISTER_*` macros |
 | Lua script unload | `cleanupLuaScripts` removes tags containing instance pointer |
+| Bundle instance destroyed | `destroyBundle` stops its C++ and Lua scripts as a scene unload does |
 | Scene unload | `Scene::removeSubscriptionsByTag`, including the `PhysicsSystem` events |
 | Component callbacks | `Engine::clearComponentSubscriptions(scene)` |
 | Full reset | `Engine::clearAllSubscriptions()` |

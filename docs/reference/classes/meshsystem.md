@@ -4,6 +4,8 @@ description: MeshSystem API reference (C++ and Lua).
 
 # MeshSystem
 
+**Inherits:** [SubSystem](subsystem.md)
+
 Creates meshes, loads models, builds sprites and tilemaps.
 
 ## Methods

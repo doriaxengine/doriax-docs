@@ -68,6 +68,8 @@ drops, UI cards, and any pooled hierarchy.
 | static std::vector\<std::string\> | [getBundleNames](#getbundlenames) | C++ \| Lua |
 | static void | [destroyAllInstances](#destroyallinstances) | C++ |
 | static void | [clearAll](#clearall) | C++ \| Lua |
+| static void | [setScriptCallbacks](#setscriptcallbacks) | C++ |
+| static bool | [isStopping](#isstopping) | C++ |
 
 ### Constants
 
@@ -131,8 +133,14 @@ times. The third argument only says where the new root is parented:
   to `scene`.
 
 Each successful call tracks the instance internally so [`destroyBundle`](#destroybundle)
-can later remove every entity it created, leaving the parent alone. Note the argument order:
-the bundle **name/ID comes first, then the scene**.
+can later remove it, leaving the parent alone. Note the argument order: the bundle
+**name/ID comes first, then the scene**.
+
+The instance's scripts, Lua and C++, start before `createBundle` returns, the same way a
+scene's scripts do. Only scripts that have not started yet run, so the rest of the scene is
+left alone; spawning into a scene whose scripts were already cleaned up starts all of them
+again. If a script destroys its own instance from `init()` or its constructor,
+`createBundle` returns a null entity.
 
 !!! note "Entity IDs are scene-local"
     Each scene allocates its own entity IDs. When parenting, prefer
@@ -173,9 +181,11 @@ the bundle **name/ID comes first, then the scene**.
 
 * static bool **destroyBundle**(Scene* scene, Entity rootEntity)
 
-Destroys a bundle instance by its root entity, removing every entity the spawn created
-(children first, then the root). The entity the instance was parented to is not touched. If
-the bundle was registered with a custom destroyer, that is called instead of the default
+Destroys a bundle instance by its root entity. Its scripts stop first, then every entity the
+spawn created is removed together with anything parented under the instance since (children
+first, then the root). A bundle spawned under the instance goes through its own
+`destroyBundle` before that. The entity the instance was parented to is not touched. If the
+bundle was registered with a custom destroyer, that is called instead of the default
 destruction. Returns `false` if `rootEntity` is not a tracked bundle root. Note the argument
 order: **scene first, then the root entity**.
 
@@ -187,6 +197,19 @@ order: **scene first, then the root entity**.
 === "C++"
     ```cpp
     BundleManager::destroyBundle(&scene, root);
+    ```
+
+!!! warning "A C++ script destroying its own bundle"
+    The script is deleted during the call, so return right after it without touching a
+    member. A Lua script can finish the callback, but its entity is already gone.
+
+    ```cpp
+    void Bullet::onUpdate() {
+        if (hit) {
+            BundleManager::destroyBundle(getScene(), getEntity()); // the script is on the root
+            return;
+        }
+    }
     ```
 
 ---
@@ -214,7 +237,8 @@ property (Lua) or `getBundleCount()` (C++) for the count.
 * static void **destroyAllInstances**(Scene* scene)
 
 Destroys every tracked bundle instance belonging to `scene`, calling the appropriate
-destroyer for each. C++-only; useful when tearing a scene down manually.
+destroyer for each. An instance spawned under another goes with it. C++-only; useful when
+tearing a scene down manually.
 
 ---
 
@@ -224,3 +248,25 @@ destroyer for each. C++-only; useful when tearing a scene down manually.
 
 Removes all registered bundles **and** all tracked instances. Used by the editor when
 resetting state.
+
+---
+
+### setScriptCallbacks
+
+* static void **setScriptCallbacks**(std::function<void(Scene*)> start, std::function<void(Scene*, Entity)> stop)
+
+Sets how spawned instances start and stop their scripts: `start` runs every script of the
+scene that has not started yet, and `stop` the scripts of one entity. By default only Lua
+scripts run. The generated `main.cpp` passes the project's `initScripts` and
+`cleanupEntityScripts`, and the editor sets its own for Play, so you only call this when
+running the engine without the generated code. C++-only.
+
+---
+
+### isStopping
+
+* static bool **isStopping**(Scene* scene, Entity entity)
+
+Returns `true` while [`destroyBundle`](#destroybundle) stops the scripts of that entity. A
+`start` callback skips such entities, so a script that spawns a bundle from its destructor
+does not restart what is being destroyed. C++-only.

@@ -4,6 +4,8 @@ description: UISystem API reference (C++ and Lua).
 
 # UISystem
 
+**Inherits:** [SubSystem](subsystem.md)
+
 UI layout, focus, and pointer routing.
 
 ## Methods
