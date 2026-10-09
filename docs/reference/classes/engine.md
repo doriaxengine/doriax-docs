@@ -303,7 +303,7 @@ Time elapsed in **seconds** since the last draw frame. Multiply movement speeds 
 
 The value is **clamped** to [maxDeltatime](#maxdeltatime). After a long stall — the first frame of a scene (which includes load time), a debugger break, or an alt-tab — the real elapsed time can be several seconds. Returning that unclamped would teleport anything driven by `deltatime` in a single step (and could trigger a physics "spiral of death"). Clamping makes the simulation skip the lost time instead. This matches Unity's `Time.deltaTime` / `Time.maximumDeltaTime` and Godot's max-step behaviour.
 
-> **Tip:** Even with clamping, prefer [`Vector3::moveTowards`](vector3.md#movetowards) over `direction * speed * deltatime` for "move to a target" logic — it clamps the step to the remaining distance so it can never overshoot, regardless of frame time.
+> **Tip:** Even with clamping, prefer [`moveTowards`](vector3.md#movetowards) over `direction * speed * deltatime` for "move to a target" logic. It clamps the step to the remaining distance, so it can never overshoot, whatever the frame time.
 
 ---
 

@@ -43,6 +43,8 @@ For rotated bounding volumes use [OBB](obb.md).
 | float | [volume](#volume) | C++ \| Lua |
 | void | [scale](#scale) | C++ \| Lua |
 | [OBB](obb.md) | [getOBB](#getobb) | C++ \| Lua |
+| Vector3 | [getCorner](#getcorner-getcorners) | C++ \| Lua |
+| const Vector3* | [getCorners](#getcorner-getcorners) | C++ \| Lua |
 | void | [setNull / setInfinite / setFinite](#null-infinite-finite) | C++ \| Lua |
 | bool | [isNull / isInfinite / isFinite](#null-infinite-finite) | C++ \| Lua |
 
@@ -174,6 +176,32 @@ Scales the AABB from its centre by the given factor.
 * [OBB](obb.md) **getOBB**() const
 
 Converts this AABB to an [OBB](obb.md) with axis-aligned orientation.
+
+---
+
+### getCorner / getCorners
+
+* Vector3 **getCorner**(AABB::CornerEnum corner) const
+* const Vector3* **getCorners**() const
+
+`getCorner()` returns one corner, named by `AABB.CornerEnum` (`FAR_LEFT_BOTTOM`, `NEAR_RIGHT_TOP`, and so on). `getCorners()` returns all eight, in the order of those enum values. Lua gets them as a table of copies, so `corners[c + 1]` is `getCorner(c)`. Only a finite box has corners: in C++ `getCorners()` asserts on a null or infinite box, and Lua gets an empty table.
+
+=== "C++"
+    ```cpp
+    AABB bounds = player.getWorldAABB();
+    const Vector3* corners = bounds.getCorners();
+    for (int i = 0; i < 8; i++) {
+        Log::print("%s", corners[i].toString().c_str());
+    }
+    ```
+
+=== "Lua"
+    ```lua
+    local bounds = player:getWorldAABB()
+    for i, corner in ipairs(bounds:getCorners()) do
+        Log.print(tostring(corner))
+    end
+    ```
 
 ---
 

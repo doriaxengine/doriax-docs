@@ -10,7 +10,7 @@ description: Vector2 API reference (C++ and Lua).
 
 A 2D vector with `float` components `x` and `y`. Used extensively for 2D positions, sizes, UV coordinates, and directions throughout the engine.
 
-All arithmetic operators (`+`, `-`, `*`, `/`) are available for both component-wise vector operations and scalar multiplication/division. Comparison operators (`<`, `>`, `==`) are also supported.
+All arithmetic operators (`+`, `-`, `*`, `/`) are available for both component-wise vector operations and scalar multiplication/division, and the number can also come first in a multiplication (`2 * v`). Comparison operators (`<`, `>`, `==`) are also supported.
 
 !!! note "Lua components are writable"
     Lua can read and assign `x` and `y` directly. Engine properties such as
@@ -49,6 +49,8 @@ All arithmetic operators (`+`, `-`, `*`, `/`) are available for both component-w
 | Vector2 | [normalized](#normalize-normalized) | C++ \| Lua |
 | float | [normalizeL](#normalizel) | C++ \| Lua |
 | Vector2 | [midPoint](#midpoint) | C++ \| Lua |
+| Vector2 | [moveTowards](#movetowards) | C++ \| Lua |
+| Vector2 | [lerp](#lerp) | C++ \| Lua |
 | Vector2 | [perpendicular](#perpendicular) | C++ \| Lua |
 | Vector2 | [reflect](#reflect) | C++ \| Lua |
 | void | [makeFloor](#makefloor-makeceil) | C++ \| Lua |
@@ -126,6 +128,36 @@ Normalises in-place and returns the original length. Combines normalisation with
 * Vector2 **midPoint**(const Vector2& vec) const
 
 Returns the midpoint between this vector and `vec`.
+
+---
+
+### moveTowards
+
+* Vector2 **moveTowards**(const Vector2& target, float maxDistanceDelta) const
+
+Returns `*this` moved toward `target` by at most `maxDistanceDelta`, never past it. See [Vector3 moveTowards](vector3.md#movetowards). On a velocity it gives a steady acceleration toward a wanted speed:
+
+=== "C++"
+    ```cpp
+    Body2D body = Object(getScene(), getEntity()).getBody2D();
+    Vector2 wanted(runSpeed, body.getLinearVelocity().y);
+    body.setLinearVelocity(body.getLinearVelocity().moveTowards(wanted, acceleration * Engine::getDeltatime()));
+    ```
+
+=== "Lua"
+    ```lua
+    local body = Object(self.scene, self.entity):getBody2D()
+    local wanted = Vector2(self.runSpeed, body.linearVelocity.y)
+    body.linearVelocity = body.linearVelocity:moveTowards(wanted, self.acceleration * Engine.deltatime)
+    ```
+
+---
+
+### lerp
+
+* Vector2 **lerp**(const Vector2& target, float t) const
+
+Linear interpolation from `*this` toward `target` by factor `t`. `t = 0` returns `*this`, `t = 1` returns `target`, and values outside `[0, 1]` extrapolate. See [Vector3 lerp](vector3.md#lerp) for following a target at any frame rate.
 
 ---
 

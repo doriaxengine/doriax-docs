@@ -20,13 +20,22 @@ you write efficient, readable Doriax scripts.
 -- Create vectors
 local pos = Vector3(10, 5, 0)
 local dir = Vector3(0, 1, 0)
+local target = Vector3(0, 5, 0)
 
 -- Arithmetic
-local newPos = pos + dir * 3.0
+local newPos = pos + dir * 3.0   -- 3.0 * dir works too
 local dist   = pos:length()
 local unit   = dir:normalized()
 local dot    = pos:dotProduct(dir)
+
+-- Step toward a point without passing it, or blend toward it
+local stepped = pos:moveTowards(target, 4 * Engine.deltatime)
+local halfway = pos:lerp(target, 0.5)
 ```
+
+All three vector types have `moveTowards` and `lerp`. `moveTowards` moves at a fixed speed
+and stops exactly on the target, which suits movement driven by `deltatime`. `lerp` covers a
+fraction of the remaining distance, so it slows down near the target.
 
 ### Common static constants
 

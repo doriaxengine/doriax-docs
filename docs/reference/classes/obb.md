@@ -23,10 +23,12 @@ An **Oriented Bounding Box** — a box whose axes can be rotated arbitrarily in 
 | Type | Name | Langs |
 | --- | --- | --- |
 | void | [setAxes](#setaxes) | C++ \| Lua |
-| void | [setOrientation](#setorientation-getorientation) | C++ \| Lua |
-| Quaternion | [getOrientation](#setorientation-getorientation) | C++ \| Lua |
+| void | [setOrientation](#setorientation-getorientation) | C++ |
+| Quaternion | [getOrientation](#setorientation-getorientation) | C++ |
 | void | [transform](#transform) | C++ \| Lua |
 | AABB | [toAABB](#toaabb) | C++ \| Lua |
+| Vector3 | [getCorner](#getcorner-getcorners) | C++ \| Lua |
+| const Vector3* | [getCorners](#getcorner-getcorners) | C++ \| Lua |
 | bool | [intersects](#intersects) | C++ \| Lua |
 | bool | [contains](#contains) | C++ \| Lua |
 | float | [distance](#distance-squareddistance) | C++ \| Lua |
@@ -62,7 +64,7 @@ Sets the three orthonormal local axes of the OBB. Can also be specified as a qua
 * void **setOrientation**(const Quaternion& orientation)
 * Quaternion **getOrientation**() const
 
-The rotation of the box as a quaternion.
+The rotation of the box as a quaternion. Lua reads and writes it through the `orientation` property.
 
 ---
 
@@ -80,6 +82,15 @@ Applies a transformation to the OBB.
 * [AABB](aabb.md) **toAABB**() const
 
 Returns the axis-aligned bounding box that fully encloses this OBB.
+
+---
+
+### getCorner / getCorners
+
+* Vector3 **getCorner**(OBB::CornerEnum corner) const
+* const Vector3* **getCorners**() const
+
+`getCorner()` returns one corner, named by `OBB.CornerEnum` (`FAR_LEFT_BOTTOM`, `NEAR_RIGHT_TOP`, and so on). `getCorners()` returns all eight, in the order of those enum values. Lua gets them as a table of copies, so `corners[c + 1]` is `getCorner(c)`.
 
 ---
 

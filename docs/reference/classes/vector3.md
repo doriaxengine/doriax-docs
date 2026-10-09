@@ -10,7 +10,7 @@ description: Vector3 API reference (C++ and Lua).
 
 A 3D vector with `float` components `x`, `y`, and `z`. The primary type for 3D positions, directions, normals, colours (RGB), and velocity in Doriax.
 
-Arithmetic operators `+`, `-`, and `*` support both vector and scalar operands. Division (`/`) is **scalar-only** (`Vector3 / float`). Comparison operators (`==`, `<`) are also available.
+`+` and `-` work on two vectors. `*` and `/` take a number or another vector, which multiplies or divides per component, and the number can also come first in a multiplication (`2 * v`). Comparison operators (`==`, `<`) are also available.
 
 !!! note "Lua components are writable"
     Lua can read and assign `x`, `y`, and `z` directly. Engine properties such as
@@ -51,8 +51,8 @@ Arithmetic operators `+`, `-`, and `*` support both vector and scalar operands. 
 | Vector3 | [normalized](#normalize-normalized) | C++ \| Lua |
 | float | [normalizeL](#normalizel) | C++ \| Lua |
 | Vector3 | [midPoint](#midpoint) | C++ \| Lua |
-| Vector3 | [moveTowards](#movetowards) | C++ |
-| Vector3 | [lerp](#lerp) | C++ |
+| Vector3 | [moveTowards](#movetowards) | C++ \| Lua |
+| Vector3 | [lerp](#lerp) | C++ \| Lua |
 | Vector3 | [perpendicular](#perpendicular) | C++ \| Lua |
 | Vector3 | [reflect](#reflect) | C++ \| Lua |
 | void | [makeFloor](#makefloor-makeceil) | C++ \| Lua |
@@ -143,9 +143,7 @@ Returns the midpoint between this vector and `v`.
 
 * Vector3 **moveTowards**(const Vector3& target, float maxDistanceDelta) const
 
-Returns a point moved from `*this` toward `target` by at most `maxDistanceDelta`, **never overshooting** — once the remaining distance is within `maxDistanceDelta`, `target` is returned exactly. Pass `speed * deltatime` as `maxDistanceDelta` for frame-rate independent movement. This is the preferred way to move toward a target, since the naïve `direction * speed * deltatime` overshoots when the step is larger than the remaining distance (for example on the first, large [deltatime](engine.md#deltatime) frame). Equivalent to Unity's `Vector3.MoveTowards` and Godot's `Vector3.move_toward`.
-
-`moveTowards` is currently **C++ only** (not bound to Lua).
+Returns a point moved from `*this` toward `target` by at most `maxDistanceDelta`. It **never overshoots**: once the remaining distance is within `maxDistanceDelta`, `target` is returned exactly. Pass `speed * deltatime` as `maxDistanceDelta` for frame-rate independent movement. This is the preferred way to move toward a target, since the naïve `direction * speed * deltatime` overshoots when the step is larger than the remaining distance (for example on the first, large [deltatime](engine.md#deltatime) frame). A negative `maxDistanceDelta` moves away from `target`. Equivalent to Unity's `Vector3.MoveTowards` and Godot's `Vector3.move_toward`.
 
 === "C++"
     ```cpp
@@ -160,16 +158,8 @@ Returns a point moved from `*this` toward `target` by at most `maxDistanceDelta`
     ```lua
     function MyScript:onUpdate()
         local obj = Object(self.scene, self.entity)
-        local cur = obj.position
-        local to = self.targetPosition
         local step = self.speed * Engine.deltatime
-        local diff = to - cur
-        local dist = diff:length()
-        if dist <= step or dist == 0 then
-            obj.position = to
-        else
-            obj.position = cur + diff * (step / dist)
-        end
+        obj.position = obj.position:moveTowards(self.targetPosition, step)
     end
     ```
 
@@ -179,7 +169,23 @@ Returns a point moved from `*this` toward `target` by at most `maxDistanceDelta`
 
 * Vector3 **lerp**(const Vector3& target, float t) const
 
-Linear interpolation from `*this` toward `target` by factor `t`. `t = 0` returns `*this`, `t = 1` returns `target`. Unlike [moveTowards](#movetowards), the step is proportional to the remaining distance (eases as it approaches). Values outside `[0, 1]` extrapolate.
+Linear interpolation from `*this` toward `target` by factor `t`. `t = 0` returns `*this`, `t = 1` returns `target`, and values outside `[0, 1]` extrapolate. Unlike [moveTowards](#movetowards), the step is proportional to the remaining distance, so the motion slows down as it gets close.
+
+To follow a target smoothly every frame, derive `t` from the frame time as below. A fixed `t`, or `speed * deltatime`, makes the result depend on the frame rate.
+
+=== "C++"
+    ```cpp
+    // A higher sharpness follows the target more tightly
+    float t = 1.0f - std::exp(-sharpness * Engine::getDeltatime());
+    obj.setPosition(obj.getPosition().lerp(targetPosition, t));
+    ```
+
+=== "Lua"
+    ```lua
+    -- A higher sharpness follows the target more tightly
+    local t = 1 - math.exp(-self.sharpness * Engine.deltatime)
+    obj.position = obj.position:lerp(self.targetPosition, t)
+    ```
 
 ---
 
