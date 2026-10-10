@@ -75,10 +75,10 @@ chmod +x doriax-editor
     shortcut was removed.
 
     Downloading from a terminal skips the prompt altogether, because the quarantine flag
-    is set by the browser rather than by macOS:
+    is set by the browser rather than by macOS. This downloads the latest release:
 
     ```bash
-    curl -LO https://github.com/doriaxengine/doriax/releases/download/v0.7/Doriax-v0.7-macos-universal.dmg
+    curl -LO "$(curl -s https://api.github.com/repos/doriaxengine/doriax/releases/latest | grep -o 'https://[^"]*macos-universal\.dmg')"
     ```
 
 ## Build from source
