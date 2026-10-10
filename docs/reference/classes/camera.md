@@ -151,6 +151,8 @@ When `true` (default), the projection is automatically recalculated when the can
 
 Near and far clip plane distances. Objects closer than `nearClip` or further than `farClip` are not rendered. Tighten these bounds to maximise depth-buffer precision.
 
+A perspective camera needs `nearClip` above zero and `farClip` above `nearClip`. Other values are clamped when rendering, but the getters return what you set. An orthographic camera can use a negative `nearClip` to see behind its position, like the default 2D camera (`-10` to `10`).
+
 ---
 
 ### leftClip / rightClip / bottomClip / topClip
@@ -276,7 +278,7 @@ Configures the camera for perspective (3D) projection.
 
 * **yfov** — Vertical field-of-view in degrees.
 * **aspect** — Width ÷ height ratio.
-* **nearValue** — Near clip plane distance (keep as large as possible).
+* **nearValue** — Near clip plane distance, above zero (keep as large as possible).
 * **farValue** — Far clip plane distance.
 
 === "C++"

@@ -51,6 +51,7 @@ and **Editor camera** sections.
 | --- | --- | --- |
 | **Show all joints** / **Show all bones** / **Show all bodies** | All scene types | Draw every physics joint, skeleton bone, or collision shape, not only the selected entity's. Unavailable while playing |
 | **Hide camera view** | All scene types | Hide camera icons and frustums |
+| **Show full camera frustum** | All scene types | Draw camera frustums out to their far clip plane, not just a short preview |
 | **Hide light icons** | 3D | Hide light icons |
 | **Hide sound icons** | All scene types | Hide sound source icons |
 | **Hide container guides** | 2D / UI | Hide the outlines of UI containers |
