@@ -172,7 +172,7 @@ whether they travel with the project:
 | Settings area | Opened from | Stored in | Holds |
 | --- | --- | --- | --- |
 | **[Project settings](project-settings.md)** | Project → Project Settings | `project.yaml` | Start scene, application identity, canvas, window, VSync, asset/Lua/script directories, native resource packaging, and the per-platform settings for Web, Linux, Windows, macOS, iOS and Android |
-| **[Editor settings](editor-settings.md)** | Edit → Editor Settings | `settings.yaml`, with API keys and the MCP token in `ai_keys.dat` | Compiler kit, CMake and Emscripten paths, default export directory, editor VSync, AI Chat keys and limits, the [MCP server](mcp-server.md) |
+| **[Editor settings](editor-settings.md)** | Edit → Editor Settings | `settings.yaml`, with API keys and the MCP token in `ai_keys.dat` | Compiler kit, CMake and Emscripten paths, default export directory, editor VSync, UI scale, AI Chat keys and limits, the [MCP server](mcp-server.md) |
 | **Export settings** | File → Export Project | `project.yaml` (`export`) and the project's `.doriax/user/build.yaml` | Shader overrides and graphic backends in the project; output directories per machine |
 | **Machine settings** | — | `.doriax/user/build.yaml` | The compiler kit, build jobs and export folders chosen for *this* project on *this* machine |
 | **Editor workspace** | — | `.doriax/user/workspace.yaml` | Open tabs and their order, the selected scene, each scene's editor camera and viewport guides, the terrain brush |

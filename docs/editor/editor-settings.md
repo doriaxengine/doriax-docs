@@ -1,5 +1,5 @@
 ---
-description: The Editor Settings dialog — build toolchain, Emscripten SDK, default export directory, AI Chat keys, the MCP server, and other machine-local editor preferences.
+description: The Editor Settings dialog — build toolchain, Emscripten SDK, default export directory, UI scale, AI Chat keys, the MCP server, and other machine-local editor preferences.
 ---
 
 # Editor Settings
@@ -21,6 +21,7 @@ The dialog is a modal with five tabs and an **OK** / **Cancel** footer.
 | --- | --- | --- |
 | **Default Export Directory** | Not set | Pre-fills the output folder in the Export Window for projects that have no remembered export directory yet |
 | **Editor VSync** | Enabled | VSync for the editor's own frames |
+| **UI Scale** | `100%` | Size of the editor text and panels, on top of the display scale the system reports |
 
 The default export directory is only a starting point: once you export a project, the
 folder you actually used is remembered per project *and per export mode*, and that
@@ -30,6 +31,18 @@ remembered value wins the next time you open the Export Window.
 project's own [VSync](project-settings.md#window) setting instead, so the two never apply
 at once. Toggling takes effect on the next frame with no restart, and an idle editor
 waits on the window system either way, so disabling it does not make the editor spin.
+
+**UI Scale** goes from 50% to 300% and multiplies the display scale your system reports.
+On a screen the system scales to 150%, the default 100% keeps the editor at 150%, and 120%
+makes it 180%. The new size applies when you press **OK**, with no restart. Docked panels
+resize with the text, but a panel beside the scene view grows to at most 30% of the
+window's width, or 40% of its height for panels along the bottom, so the scene keeps its
+room.
+
+On Linux the editor reads the display scale from `Xft.dpi`, which desktops such as GNOME,
+KDE, and Xfce set, or from the `GDK_SCALE` and `QT_SCALE_FACTOR` environment variables.
+When none of them is set it uses 100%, as GTK and Qt apps do. To make every app larger,
+raise the scale in your desktop's settings. To change only the editor, use **UI Scale**.
 
 ## Desktop
 
@@ -130,6 +143,7 @@ path.
 | `cmake.path` | The CMake executable override |
 | `emsdk.path` | The Emscripten SDK override |
 | `export.default_dir` | The default export directory |
+| `editor.ui_scale` | The UI scale as a multiplier, `1.25` for 125% |
 | `project_builds` | Per project: compiler kit and parallel build jobs, keyed by the absolute path of its `project.yaml` |
 | `project_exports` | Per project and export mode: the last output directory used |
 | `ai_assistant` | The AI Chat's provider, model, approval mode, custom endpoints and limits |
