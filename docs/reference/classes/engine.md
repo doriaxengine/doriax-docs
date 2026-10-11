@@ -750,7 +750,9 @@ Called when the graphics surface is being destroyed (e.g. app going to backgroun
 * `static FunctionSubscribe<void()> onDraw`
 * Callback: `void()`
 
-Called every frame after the updates, right before the scenes are drawn.
+Called every frame after the updates, right before the scenes are drawn. A minimized
+Windows game keeps updating without drawing and skips it, so keep game logic in
+[onUpdate](#onupdate).
 
 ---
 

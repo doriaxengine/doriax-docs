@@ -28,7 +28,8 @@ FunctionSubscribe.call ──► C++ callbacks
                        └─► Lua closures
 ```
 
-1. The platform layer calls `Engine::systemUpdate()`, `systemTouchStart()`, etc.
+1. The platform layer calls `Engine::systemDraw()` (or `systemUpdate()` when nothing can
+   be drawn), `systemTouchStart()`, etc.
 2. Engine forwards to static `FunctionSubscribe` members (`onUpdate.call()`, etc.).
 3. Subsystems and components fire their own events during simulation (physics contacts,
    UI pointer events, action start/stop).
@@ -67,7 +68,7 @@ event share their subscribers, so a failing one stops running in all of them.
 | `onViewLoaded` | `void()` | View/surface ready |
 | `onViewChanged` | `void()` | Canvas/view changed; Lua name: `onCanvasChanged` |
 | `onViewDestroyed` | `void()` | View destroyed |
-| `onDraw` | `void()` | Every frame, before the scenes are drawn |
+| `onDraw` | `void()` | Every drawn frame, before the scenes are drawn |
 | `onUpdate` | `void()` | Variable-step gameplay update |
 | `onFixedUpdate` | `void()` | Fixed-step simulation update |
 | `onPostUpdate` | `void()` | Work after regular update |

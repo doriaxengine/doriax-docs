@@ -111,7 +111,8 @@ doriax-editor export --project ./MyGame --list-scenes
 
 ## `benchmark` — measure scene FPS
 
-Opens the editor, loads a project, and times the **scene camera** with VSync forced off.
+Opens the editor, loads a project, and times the **scene camera** with VSync forced off
+and no frame cap, whether or not its window has focus.
 Unlike [`export`](#export-build-a-project-to-a-target) and [`shaders`](#shaders-generate-shader-files-standalone),
 this is **not headless**: it needs a window and a GPU, waits until meshes, foliage,
 detail levels, and shaders have finished loading (90 seconds, then it measures anyway), warms up, then

@@ -292,10 +292,13 @@ than the project, so it is not exported and does not travel with a project you s
 The two settings never apply at once: while a scene is running frames follow the project
 setting, and the rest of the time they follow this one. Toggling takes effect on the next
 frame, with no restart. An unfocused editor window drops synchronization either way, so
-a blocked present can never stall the window's event loop.
+a blocked present can never stall the window's event loop. It is paced to the display's
+refresh rate instead, so a running scene keeps its frame rate.
 
 Disabling it only lifts the frame cap while you are interacting or a scene is redrawing.
-An idle editor waits on the window system regardless, so it does not spin.
+An idle editor waits on the window system regardless, so it does not spin. A pointer
+resting on the scene view does not count, and moving it counts only while a gizmo or the
+terrain brush is shown.
 
 ### Window
 
