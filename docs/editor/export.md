@@ -532,10 +532,11 @@ macOS Metal currently has no uncapped application-loop path in Doriax. Metal exp
 therefore remain synchronized and emit a CMake warning when project VSync is disabled.
 See [Project Workflow — VSync](project-workflow.md#vsync) for the full behavior table.
 
-A minimized Windows or Linux build stops drawing but keeps updating 60 times a second, so
-scripts, physics, and sounds go on. Until the window comes back,
-[`onDraw`](../reference/classes/engine.md#ondraw) is skipped and gamepads are released and
-not read.
+A minimized Windows, Linux, or macOS build stops drawing but keeps updating 60 times a
+second, so scripts, physics, and sounds go on. On macOS this also applies to a window that
+is fully covered or on another Space, and App Nap can make a silent game update less
+often. Until the window comes back, [`onDraw`](../reference/classes/engine.md#ondraw) is
+skipped and gamepads are released and not read.
 
 ## Window settings in desktop exports
 

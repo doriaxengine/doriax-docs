@@ -751,8 +751,8 @@ Called when the graphics surface is being destroyed (e.g. app going to backgroun
 * Callback: `void()`
 
 Called every frame after the updates, right before the scenes are drawn. A minimized
-Windows or Linux game keeps updating without drawing and skips it, so keep game logic in
-[onUpdate](#onupdate).
+Windows, Linux, or macOS game keeps updating without drawing and skips it, as does a macOS
+game whose window can't be seen, so keep game logic in [onUpdate](#onupdate).
 
 ---
 
