@@ -173,7 +173,7 @@ you are running on already ticked; once a selection is saved, the window reopens
 | **Linux** | OpenGL, Vulkan |
 | **macOS** | Metal (macOS), OpenGL |
 | **iOS** | Metal (iOS) |
-| **Android** | OpenGL ES 3, Vulkan |
+| **Android** | OpenGL ES 3 |
 | **Web** | OpenGL ES 3 |
 
 ### Generated output structure
@@ -489,7 +489,7 @@ backends by how the exported source will be built:
 | Windows | OpenGL, Direct3D 11, Vulkan |
 | macOS | Metal (macOS), OpenGL |
 | iOS | Metal (iOS) |
-| Android | OpenGL ES 3, Vulkan |
+| Android | OpenGL ES 3 |
 | Web | OpenGL ES 3 |
 
 This is exactly the mapping the [Platform Presets](#choosing-the-backends) tab applies,
