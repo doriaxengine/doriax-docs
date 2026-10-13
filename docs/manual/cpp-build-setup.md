@@ -221,7 +221,7 @@ The `CMakeLists.txt` at your project root is generated: Play and Save overwrite 
 edits to it are lost. To add your own CMake — linking a third-party library, extra
 compile definitions, platform flags — create **`ProjectBuild.cmake`** next to it. The
 editor never creates, reads or overwrites that file, and both the editor build and
-exported builds include it when it exists.
+exported CMake builds include it when it exists.
 
 ```cmake
 target_link_libraries(${DORIAX_TARGET} PRIVATE mylib)
@@ -239,6 +239,12 @@ Two variables are set for you, with the same meaning in both builds:
     The target is named after your project in editor builds and after the application
     name in exported ones, so a hard-coded name works in one and breaks in the other —
     and breaks again if you rename the project.
+
+!!! note "Not used by the exported Xcode workspace"
+    The Xcode workspace of a Source Code export, `workspaces/xcode/Doriax.xcodeproj`, is
+    not a CMake build, so `ProjectBuild.cmake` has no effect there and the export warns
+    about it. Make the same changes in Xcode, or build through CMake with
+    `python3 doriax.py -p ios-xcode` or `-p macos-xcode`, which does include the file.
 
 For include paths alone you do not need this file: [Script
 directories](#script-directories) covers that case from the editor. The language standard

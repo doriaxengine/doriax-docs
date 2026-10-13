@@ -23,16 +23,31 @@ backend and the native Apple app backend.
 3. Export the project as **Source Code** with the iOS backend preset selected. The
    exporter writes those settings into the generated `Info.plist` and `AppIcon` asset
    set, so the workspace opens already configured.
-4. Open the generated Xcode workspace for your exported project.
+4. Open `workspaces/xcode/Doriax.xcodeproj` in the export folder.
 5. Select a simulator or a connected device, then build and run from Xcode.
+
+## The exported workspace
+
+The workspace builds the game without CMake. It compiles the generated scene and bundle
+sources and every C++ source the export copied, in groups that mirror `project/`, and
+searches `project/`, `project/scripts/` and each
+[script directory](../manual/cpp-build-setup.md#script-directories) for headers. Headers
+are not added to the project navigator: Xcode maps every listed header by name for all
+targets, so a project `Log.h` would replace the engine's.
+
+The export also sets the project's [C++ Standard](../editor/project-settings.md#build)
+and the [engine capacity macros](../reference/build-options.md#engine-capacity-macros).
+[`ProjectBuild.cmake`](../manual/cpp-build-setup.md#customizing-the-build) does not
+apply. The **Doriax macOS** scheme of the same workspace builds the game for macOS.
 
 ## Command-line build
 
-The engine repository contains Xcode workspace/project templates under
-`engine/workspaces/xcode/`. For simulator testing, use Xcode or `xcodebuild`:
+A Source Code export has the workspace under `workspaces/xcode/`, and the engine
+repository has its template under `engine/workspaces/xcode/`. For simulator testing, use
+Xcode or `xcodebuild` from that folder:
 
 ```bash
-cd engine/workspaces/xcode
+cd workspaces/xcode
 xcodebuild build -sdk iphonesimulator -project Doriax.xcodeproj \
     -configuration Debug -scheme "Doriax iOS"
 ```

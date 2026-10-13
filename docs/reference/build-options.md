@@ -146,10 +146,10 @@ has no effect.
 
 ## Engine capacity macros
 
-Exported CMake projects receive compiler defines for the largest per-scene capacities the
-editor measured, each floored at the engine default in `engine/core/Engine.h`. Growing
-past the default lets large authored content compile; the floor keeps dynamically spawned
-content inside the known-safe baseline.
+Exported CMake projects and their Xcode workspace receive compiler defines for the largest
+per-scene capacities the editor measured, each floored at the engine default in
+`engine/core/Engine.h`. Growing past the default lets large authored content compile; the
+floor keeps dynamically spawned content inside the known-safe baseline.
 
 | Macro | Default | Controls |
 | --- | --- | --- |
@@ -165,8 +165,10 @@ content inside the known-safe baseline.
 through a storage buffer or a bone texture and do not embed this count. The editor can
 load skins larger than 128; export writes the raised value so the standalone build
 matches. If you load a larger skin only from code, edit the generated
-`add_definitions("-DMAX_BONES=N")` line in the exported CMakeLists (or pass the same
-compiler define in a standalone engine build).
+`add_definitions("-DMAX_BONES=N")` line in the exported CMakeLists, or `MAX_BONES` in the
+project-level **Preprocessor Macros** of the exported Xcode workspace (or pass the same
+compiler define in a standalone engine build). The engine and the game must be built with
+the same value.
 
 ## Platform guides
 
