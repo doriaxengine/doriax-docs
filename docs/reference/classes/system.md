@@ -322,6 +322,8 @@ Returns the directory holding the glTF conversions of FBX models: the project's 
 
 The system exposes a simple cross-platform persistent store backed by `NSUserDefaults` (iOS/macOS), `SharedPreferences` (Android), `localStorage` (Web), and a JSON file (desktop/Linux/Windows).
 
+On the web, keys are stored as `<id>/<key>`, where `<id>` is the [application identifier](../../editor/project-settings.md#application), so games on the same site keep separate values. While the identifier is the default `com.yourcompany.project`, the project name is used instead, so set one before publishing. Characters other than ASCII letters, digits, `.`, and `-` are written as `_` and their hex code, so `My Game` becomes `My_20Game`. Keys saved by builds before v0.8.1 are still read.
+
 **Getters** return the stored value or `defaultValue` if the key does not exist:
 
 | Method | Type |

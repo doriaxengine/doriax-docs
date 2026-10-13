@@ -59,7 +59,7 @@ four values; leaving an override empty inherits from here.
 | Setting | Default | Used for |
 | --- | --- | --- |
 | **Name** | The project name | The name every platform shows to the player |
-| **Identifier** | `com.yourcompany.project` | Reverse-DNS id behind the Apple bundle identifiers and the Android package name |
+| **Identifier** | `com.yourcompany.project` | Reverse-DNS id behind the Apple bundle identifiers, the Android package name, and the [web saves](../reference/classes/system.md#persistent-keyvalue-storage) |
 | **Version** | `1.0` | The version shown to the player |
 | **Build** | `1` | Apple build number and Android version code. Increase it for every release |
 
@@ -192,7 +192,7 @@ Studio workspaces are generated.
 | Setting | Default | Effect |
 | --- | --- | --- |
 | **App Name** | Shared name | Title of the exported web page |
-| **Favicon** | None | Browser-tab icon, copied next to the page and linked from its `<head>` |
+| **Favicon** | Doriax icon | Browser-tab icon, copied next to the page and linked from its `<head>` |
 | **Custom HTML Shell** | None | HTML wrapper for the generated page. The file **must** contain a `{{DORIAX_DEFAULT_HTML}}` marker |
 | **Head Include** | Empty | HTML inserted into the page's `<head>` |
 | **Resize Canvas To Window** | Enabled | Resizes the rendering surface to the browser window. Aspect ratio and stretching still follow the canvas **Scaling Mode** |

@@ -80,9 +80,11 @@ The script finds `emcmake` in the `EMSDK`, `EMSCRIPTEN_ROOT`, or `EMSCRIPTEN` fo
 `PATH`. Running `emsdk_env` sets `EMSDK`.
 
 An exported project also gets `<App>.export.html`, the page with the
-[Web settings](../editor/project-settings.md#web) applied. Publish it (renamed to
-`index.html` if you like) with `<App>.js`, `<App>.wasm`, and, when present, `<App>.data`
-and `favicon.png`. Serve the files over HTTP as in [Building for HTML5](html5.md#3-run-it).
+[Web settings](../editor/project-settings.md#web) applied, and a copy of it named
+`index.html` (unless the project itself is named `index`), so serving the build folder
+opens the game. Publish it with `<App>.js`, `<App>.wasm`, `favicon.png`, and, when
+present, `<App>.data`, not the plain Emscripten page `<App>.html`. Serve the files over
+HTTP as in [Building for HTML5](html5.md#3-run-it).
 
 ## Xcode builds
 
