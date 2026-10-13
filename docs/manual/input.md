@@ -67,6 +67,11 @@ events instead.
 
 See [Input](../reference/classes/input.md) for the full constant list.
 
+On Android, the Back button and the back gesture arrive as `D_KEY_ESCAPE`, so a game that
+pauses or closes a menu on Escape does the same on Back. Back never closes the game by
+itself. To close it from the main menu, call [`System::quit()`](../reference/classes/system.md#quit)
+when Escape is pressed there.
+
 ## Mouse
 
 Like the keyboard, `Input.isMousePressed(button)` returns `true` while the button is
@@ -218,7 +223,8 @@ single-touch to also fire mouse events.
 [`System::isTouchDevice()`](../reference/classes/system.md#istouchdevice) tells whether the
 game runs on a phone or tablet, so it can show its own buttons from the start. Switch them
 on after a touch and off after a key press too, so a phone with a keyboard or a touch-screen
-laptop gets the right controls. To try them in the editor, turn on
+laptop gets the right controls. Ignore Escape for this, because Android's Back button sends
+it. To try them in the editor, turn on
 [touch simulation](../editor/scene-view.md#touch-simulation) before pressing **Play**.
 
 Movement buttons are held while other buttons are pressed, so read them from the active
