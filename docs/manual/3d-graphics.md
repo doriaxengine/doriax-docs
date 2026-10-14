@@ -64,6 +64,10 @@ How a GLTF becomes entities depends on what the file contains:
 | Several mesh nodes, no clips and a single skin (or none) | One **child mesh entity per mesh node**, parented under the model root. Joints still use the legacy skeleton path when the file has one skin and no clips. |
 | A single static mesh | Geometry lives on the Model entity itself. |
 
+On both child paths the Model entity keeps only its `Transform` and `ModelComponent`. It
+gets a `MeshComponent` only when the geometry lives on it: a single mesh, an OBJ, or a
+[merged](#merging-static-model-meshes) model.
+
 On the full-tree path, bone and mesh mappings point into those node entities rather than
 sitting in a separate skeleton. Animation channels target the node they were authored
 against, so transform-only nodes (not just joints) play back. Models may use **more than
@@ -100,6 +104,12 @@ into the root:
 animated, or morph-target models, and when the flattened result would exceed the root
 submesh limit. It is also refused while the parts are rearranged inside the model; use
 **Reset mesh parenting** first.
+
+Mesh settings (lighting, shadows, detail levels, transparency and the custom shaders)
+follow the geometry. A reload of the same file gives each part the settings saved for its
+node, found by name and then by index, so reordered nodes keep theirs. Restoring gives the
+merged mesh's settings to every part, and merging takes those of the first part. A different
+file is a fresh import, so the meshes it creates start with the defaults.
 
 ### Reloading a rearranged model
 

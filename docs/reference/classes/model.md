@@ -13,6 +13,10 @@ Loads and displays 3D model files in a scene. `Model` extends [Mesh](mesh.md) an
 
 A single GLTF file can contain multiple meshes, materials, textures, skins, and animations; Doriax imports them into the scene hierarchy and makes each accessible through the API. Files with animation clips, or more than one skin, import the **full glTF node tree** so joints, mesh nodes, and transform-only helpers keep the parentage authored in the file. Use [getAnimation()](#getanimation-findanimation) and [getBone()](#getbone) to drive skeletal playback, and [setMorphWeight()](#getmorphweight-setmorphweight) to control blend shapes. See [3D Graphics — GLTF node hierarchy](../../manual/3d-graphics.md#gltf-node-hierarchy).
 
+The Model entity has a `MeshComponent` only when the geometry loads into it (a single mesh, an OBJ, or a merged model). When the meshes go to child entities it keeps just `Transform` and `ModelComponent`, and the inherited [Mesh](mesh.md) methods act on those parts: setters change every part, getters read the first one, and a submesh index counts across the parts the way the merged model numbers its submeshes. `getAABB()` covers all the parts in the model's space and `getWorldAABB()` in the world. Settings made before the model has any geometry are held on a `MeshComponent` of the model's own until the load passes them to the meshes it builds.
+
+Reloading the same file with `loadModel()` keeps the mesh settings (lighting, shadows, detail levels, transparency and the custom shaders) of each part, found by node name and then by index. Another file is a fresh import, and the meshes it creates start with the default settings.
+
 For static multi-node GLTFs that need [GPU instancing](../../manual/rendering-pipeline.md#gpu-instancing) on the root entity, set `ModelComponent::mergeStaticMeshes` (or use **Merge static model** in the editor) so child transforms bake into the root mesh instead of creating child mesh entities. See [3D Graphics — Merging static model meshes](../../manual/3d-graphics.md#merging-static-model-meshes).
 
 ### Methods
@@ -215,6 +219,8 @@ Returns a [Bone](bone.md) handle by joint name or by glTF node index (`id`). Tha
 * void **setMorphWeight**(int id, float value)
 
 Read or write the weight of a blend-shape morph target. Weights range from `0.0` (no influence) to `1.0` (full influence). Multiple morphs can be active simultaneously. Access by exported name or by zero-based index.
+
+When the model's meshes are child entities, each part numbers its own targets. A name finds the parts that have that target. An index sets every part, and reads the part that has morph targets.
 
 === "C++"
     ```cpp

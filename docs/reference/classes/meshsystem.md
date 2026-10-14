@@ -49,7 +49,7 @@ selection also works before the sprite geometry has been built.
 
 ## Static model hierarchy
 
-`bool canMergeStaticModel(const ModelComponent& model, const MeshComponent& mesh, std::string* reason = nullptr) const` reports whether a loaded GLTF can flatten its mesh nodes into the root entity (`ModelComponent::mergeStaticMeshes`). Returns `false` with an optional reason for skinned, animated, morph-target, or single-node models, and when the flatten would exceed the root submesh limit. Animated models and models with more than one skin import a full node tree rather than mesh children only — see [3D Graphics — GLTF node hierarchy](../../manual/3d-graphics.md#gltf-node-hierarchy) and [Merging static model meshes](../../manual/3d-graphics.md#merging-static-model-meshes).
+`bool canMergeStaticModel(const ModelComponent& model, std::string* reason = nullptr) const` reports whether a loaded GLTF can flatten its mesh nodes into the root entity (`ModelComponent::mergeStaticMeshes`). Returns `false` with an optional reason for skinned, animated, morph-target, or single-node models, and when the flatten would exceed the root submesh limit. Animated models and models with more than one skin import a full node tree rather than mesh children only — see [3D Graphics — GLTF node hierarchy](../../manual/3d-graphics.md#gltf-node-hierarchy) and [Merging static model meshes](../../manual/3d-graphics.md#merging-static-model-meshes).
 
 `bool canEditModelHierarchy(const ModelComponent& model, std::string* reason = nullptr) const` reports whether the model's child mesh entities may be reparented at all. Returns `false` with an optional reason while the model is still loading and when it has no separate mesh parts (a single mesh or a merged model).
 
