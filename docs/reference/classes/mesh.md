@@ -541,10 +541,11 @@ A value is stored on the mesh and applied to every submesh — of the colour for
 [depth fork](#customdepthshader) alike; a narrower value leaves the
 remaining components at zero, and an `int` member takes the truncated value. Setting a
 value only rewrites the uploaded block, so it can be called every frame. Names the shader
-does not declare are kept but unused, and a member with no value reads zero.
+does not declare are kept but unused, and a member with no value reads zero, or the
+scene's value while the mesh inherits a [scene default shader](scene.md#setdefaultshaderuniform).
 
-`getShaderUniform` returns the stored value (zero when unset) — the value list, not the
-uploaded block, so an `int` member set to `3.7` reads back `3.7` while the shader sees `3`,
+`getShaderUniform` returns the stored value (zero when unset) — the mesh's own value list, not the
+uploaded block or the scene's values, so an `int` member set to `3.7` reads back `3.7` while the shader sees `3`,
 and the engine-written names are not in it. `removeShaderUniform` drops a value and returns
 whether it existed; the member reads zero again. Matrix and array members take no value.
 

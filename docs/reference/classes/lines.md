@@ -157,7 +157,7 @@ Project-relative base path of a forked shader (`"shaders/laser"` resolves to `sh
 * `Vector4 getShaderUniform(const std::string& name) const`
 * `bool removeShaderUniform(const std::string& name)`
 
-Values for the members of the custom shader's `u_vs_customParams` / `u_fs_customParams` blocks, by member name. Setting a value only rewrites the uploaded block, so it can run every frame; a member with no value reads zero, and `time` (seconds since startup) and `resolution` (render target size) are reserved for the engine. Same semantics as [Mesh.setShaderUniform](mesh.md#setshaderuniform); see [Custom Shaders — Shader uniforms](../../editor/custom-shaders.md#shader-uniforms).
+Values for the members of the custom shader's `u_vs_customParams` / `u_fs_customParams` blocks, by member name. Setting a value only rewrites the uploaded block, so it can run every frame; a member with no value reads zero, or the scene's value under a [scene default shader](scene.md#setdefaultshaderuniform), and `time` (seconds since startup) and `resolution` (render target size) are reserved for the engine. Same semantics as [Mesh.setShaderUniform](mesh.md#setshaderuniform); see [Custom Shaders — Shader uniforms](../../editor/custom-shaders.md#shader-uniforms).
 
 === "C++"
 

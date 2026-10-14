@@ -32,6 +32,7 @@ types. C++-only enums are noted below. See [Engine](classes/engine.md) for `Scal
 | `ReflectionProbeUpdateMode` | Dynamic probe capture policy (`ON_LOAD`, `ON_MOVE`, `INTERVAL`, `MANUAL`) |
 | `WaterExclusionShape` | Volume keeping water out (`BOX`, `SPHERE`, `HULL`) |
 | `LightState` / `UIEventState` | Scene flags |
+| `ShaderType` | Scene default shader types for [Scene.setDefaultShaderUniform](classes/scene.md#setdefaultshaderuniform) (`MESH`, `UI`, `SKYBOX`, `POINTS`, `LINES`, `WATER`) |
 | `PrimitiveType` / `CullingMode` / `WindingOrder` | Rendering |
 | `MaterialAlphaMode` | Material alpha handling (`AUTO`, `ALPHA_OPAQUE`, `MASK`, `BLEND`) |
 | `TextureFilter` / `TextureWrap` / `TextureType` | Textures |

@@ -178,8 +178,8 @@ Each row offers the same controls as the component Shader row (fork, edit files,
 The shader used by a component is resolved with this priority:
 
 1. **Component shader** — a custom shader assigned on the component always wins.
-2. **Scene default shader** — used by every component of that type whose Shader row
-   still shows **Built-in**.
+2. **Scene default shader** — used by every component of that type with no shader of its
+   own. Its Shader row shows the default's name followed by *(scene default)*.
 3. **Engine built-in** — used when neither is set.
 
 A component with no custom shader *inherits* the scene default; resetting a component's
@@ -187,12 +187,21 @@ shader returns it to the scene default (or the built-in if the scene has none). 
 single component on stock shading while a scene default is active, fork the built-in
 shader for that component and leave it unedited.
 
-Scene default shaders are saved with the scene, applied in play mode, and exported like
-any other custom shader — components that inherit them compile and ship the right shader
-variants automatically. They are also scriptable via the `Scene` properties
-`defaultMeshShader`, `defaultUIShader`, `defaultSkyShader`, `defaultPointsShader`,
+A default that declares [shader uniforms](#shader-uniforms) lists them under its row, below
+a line named after the fork (for example **toon Uniforms**). Values set there belong to the
+scene, and every component that inherits the shader reads them. A component can still set
+its own value for a member, and that value wins (see [Editing values](#editing-values)).
+The rows appear once a component renders with the fork, and they cover the members of
+every shader variant in use.
+
+Scene default shaders and their uniform values are saved with the scene, applied in play
+mode, and exported like any other custom shader — components that inherit them compile and
+ship the right shader variants automatically. They are also scriptable via the `Scene`
+properties `defaultMeshShader`, `defaultUIShader`, `defaultSkyShader`, `defaultPointsShader`,
 `defaultLinesShader`, and `defaultWaterShader` (see the
-[Scene reference](../reference/classes/scene.md)).
+[Scene reference](../reference/classes/scene.md)), and the values through
+[`setDefaultShaderUniform`](../reference/classes/scene.md#setdefaultshaderuniform), which
+takes the shader type (`ShaderType.MESH`, `ShaderType.UI`, and so on).
 
 ## Shader uniforms
 
@@ -239,12 +248,15 @@ behaves exactly as before.
 
 ### Editing values
 
-Every member becomes a row under the component's **Shader** row in the Properties window
-— save the file and the rows appear. Values are stored **on the component**, by name:
+Every member becomes a row in the Properties window, below the component's **Shader** row
+and under a line named after the fork (for example **wave Uniforms**). Save the file and
+the rows appear. Values are stored **on the component**, by name:
 
 - A Mesh keeps one set of values for all of its submeshes.
-- A component that inherits a [scene default shader](#scene-default-shaders) still has
-  its own values, so two meshes on the same default shader can be tinted differently.
+- A component that inherits a [scene default shader](#scene-default-shaders) shows the
+  scene's value for any member it has not set. Editing the row gives the component its
+  own value, which wins, so two meshes on the same default shader can still be tinted
+  differently. A row with its own value has a reset arrow that goes back to the scene's.
 - Reordering members keeps their values; renaming or deleting one drops its value. A
   member with no value reads zero — GLSL uniform blocks have no initializers.
 
@@ -260,7 +272,7 @@ scalar or vector member per value instead.
     not on the Model root.
 
 Two names are **reserved** and written by the engine every frame instead of being edited;
-they show in the rows as *Set by the engine*:
+they head the list, dimmed, as *Set by the engine*:
 
 | Name | Contents |
 | --- | --- |
@@ -275,9 +287,9 @@ a value with one of these names yourself.
 !!! warning "Do not mix int and float members"
     The OpenGL backends flatten a uniform block into a single upload typed after its
     first member, so a block holding both `int` and `float` members uploads incorrectly
-    there. Keep one block to one scalar kind. The rows show a warning when a block mixes
-    them, and when a name is declared with different types in the vertex and fragment
-    blocks (one value feeds both).
+    there. Keep one block to one scalar kind. A warning under the **Shader** row flags a
+    block that mixes them, and a name declared with different types in the vertex and
+    fragment blocks (one value feeds both).
 
 ### Setting values from scripts
 
@@ -289,7 +301,7 @@ expose:
 | Method | Meaning |
 | --- | --- |
 | `setShaderUniform(name, value)` | Sets a member. `value` is a `float`, `Vector2`, `Vector3`, or `Vector4`; the components a narrower value leaves out read zero. |
-| `getShaderUniform(name)` | The stored value as a `Vector4` (zero when unset). It reads the value list, not the block — `time` and `resolution` are not there; scripts read the same clock as `Engine.systemTime`. |
+| `getShaderUniform(name)` | The stored value as a `Vector4` (zero when unset). It reads the value list, not the block — `time` and `resolution` are not there; scripts read the same clock as `Engine.systemTime`. Values inherited from a [scene default](#scene-default-shaders) are not there either. |
 | `removeShaderUniform(name)` | Drops the value; the member reads zero again. |
 | `customShader` | The fork base path, so a script can assign or reset the fork too. |
 | `customDepthShader` | A Mesh's [depth fork](#the-depth-shader-row) base path; it reads the same values. |
@@ -352,14 +364,15 @@ section of the scene settings in the Properties window.
 | Control | Action |
 | --- | --- |
 | **Add Pass** | Appends a pass. A new pass starts on the built-in passthrough, which copies the image unchanged. |
-| Checkbox | Enables or disables the pass without removing it. |
-| **↑** / **↓** | Moves the pass in the chain. Passes run top to bottom. |
-| **🗑** | Removes the pass. |
+| Pass header | Names the pass after its shader, followed by its place in the chain when the panel is wide enough (**NewScenePost1 [Pass 1]**). Click it to fold the pass. It is dimmed while the pass is disabled. |
+| **↑** / **↓** | On the header. Moves the pass in the chain. Passes run top to bottom. |
+| **🗑** | On the header. Removes the pass. Right-clicking the header offers the same actions. |
+| Checkbox | Before the shader name in the **Shader** row. Enables or disables the pass without removing it. |
 | **Shader** row | The same controls as any other shader row — fork, pick files, open, reset, drag-and-drop. |
 
 Every change is undoable, and the chain is saved with the scene.
 
-![A post-process pass: engine-set resolution and time, then the pass's own uniforms](../assets/screenshots/properties-postprocess.png)
+![A post-process pass: its header, the Shader row, and the NewScenePost1 Uniforms section](../assets/screenshots/properties-postprocess.png)
 
 The chain runs on the scene's **active camera**, after the opaque, transparent, UI, and
 SSR passes, and before the fixed-resolution upscale. Secondary cameras — minimaps,
@@ -390,8 +403,8 @@ bound:
 
 ### Pass uniforms
 
-Declaring a `u_fs_postParams` block makes every member an editable row in the
-**Post-processing** list — no extra declaration file, and no editor change needed:
+Declaring a `u_fs_postParams` block makes every member an editable row of its pass, under
+a line named after the fork. No extra declaration file or editor change is needed:
 
 ```glsl
 uniform u_fs_postParams {
@@ -408,7 +421,7 @@ A member with no saved value is zero — GLSL uniform blocks have no initializer
 is no shader-side default to read.
 
 Two names are **reserved** and written by the engine every frame instead of being edited.
-They show in the list as *Set by the engine*:
+They head the list, dimmed, as *Set by the engine*:
 
 | Name | Contents |
 | --- | --- |

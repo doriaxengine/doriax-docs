@@ -270,17 +270,22 @@ has an **Underwater Shader** row instead, for the fade seen from below the surfa
 [Custom Shaders — Water shaders](custom-shaders.md#water-shaders).
 
 A fork that declares a `u_vs_customParams` or `u_fs_customParams` block gets one editable
-row per member right under the Shader row (`time` and `resolution` are written by the engine); the values are
-saved on the component, shared with the depth fork, and also scriptable through
-`setShaderUniform` — see [Custom Shaders — Shader uniforms](custom-shaders.md#shader-uniforms).
+row per member below the Shader row, under a line named after the fork (`time` and
+`resolution` come first, written by the engine); the values are saved on the component,
+shared with the depth fork, and also scriptable through `setShaderUniform` — see
+[Custom Shaders — Shader uniforms](custom-shaders.md#shader-uniforms).
 
 A scene can also define a **default custom shader per type** (in the scene settings'
-**Default Shaders** section); components whose Shader row shows **Built-in** inherit it.
-A shader assigned on the component always takes priority over the scene default.
+**Default Shaders** section). Components with no shader of their own inherit it, and their
+Shader row shows its name followed by *(scene default)*. A shader assigned on the component
+always takes priority over the scene default. When the default declares uniforms, the
+section has rows for them too: those values belong to the scene, and an inheriting
+component reads them for every member it does not set itself.
 
 The scene settings also have a **Post-processing** section: an ordered list of fullscreen
-passes, each one a forked shader with its own enable checkbox, reorder and remove buttons.
-Any value the pass declares in its `u_fs_postParams` block becomes an editable row here.
+passes, each one a forked shader under a collapsible header with reorder and remove
+buttons, and an enable checkbox in its Shader row. Any value the pass declares in its
+`u_fs_postParams` block becomes an editable row here.
 
 See [Custom Shaders](custom-shaders.md) for the full workflow, scene defaults, post-process
 passes, includes, and project settings.

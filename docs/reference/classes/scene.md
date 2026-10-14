@@ -143,6 +143,11 @@ A `Scene` is the root container for all objects, systems, and resources in a pro
 | void | [setFixedResolutionSize](#fixedresolutionwidth-fixedresolutionheight) | C++ \| Lua |
 | void | [setFixedResolutionFilter](#fixedresolutionfilter) | C++ \| Lua |
 | TextureFilter | [getFixedResolutionFilter](#fixedresolutionfilter) | C++ \| Lua |
+| void | [setDefaultShaderUniform](#setdefaultshaderuniform) | C++ \| Lua |
+| Vector4 | [getDefaultShaderUniform](#setdefaultshaderuniform) | C++ \| Lua |
+| bool | [removeDefaultShaderUniform](#setdefaultshaderuniform) | C++ \| Lua |
+| void | [setDefaultShaderUniforms](#setdefaultshaderuniform) | C++ |
+| const ShaderUniformValues& | [getDefaultShaderUniforms](#setdefaultshaderuniform) | C++ |
 | void | [setPostProcessPasses](#postprocesspasses) | C++ \| Lua |
 | vector&lt;PostProcessPass&gt; | [getPostProcessPasses](#postprocesspasses) | C++ \| Lua |
 | void | [setPostProcessUniform](#setpostprocessuniform) | C++ \| Lua |
@@ -186,6 +191,19 @@ PCF filter quality of shadow edges, shared by [shadowQuality](#shadowquality) (3
 * **LOW** — 3×3 taps in 3D / 5 taps in 2D (default)
 * **MEDIUM** — 5×5 taps in 3D / 9 taps in 2D
 * **HIGH** — 7×7 taps in 3D / 13 taps in 2D
+
+---
+
+### ShaderType
+
+The shader types that can have a scene default, as taken by [setDefaultShaderUniform](#setdefaultshaderuniform). The C++ enum has more values, for the engine's internal passes; Lua exposes only these.
+
+* **MESH** — Mesh components ([defaultMeshShader](#defaultmeshshader))
+* **UI** — UI components ([defaultUIShader](#defaultuishader))
+* **SKYBOX** — the Sky component ([defaultSkyShader](#defaultskyshader))
+* **POINTS** — Points components ([defaultPointsShader](#defaultpointsshader))
+* **LINES** — Lines components ([defaultLinesShader](#defaultlinesshader))
+* **WATER** — the water surface ([defaultWaterShader](#defaultwatershader))
 
 ## Property details
 
@@ -527,7 +545,7 @@ Sampling filter used when the fixed-resolution image is upscaled to the view rec
 * *Setter:* `void setDefaultMeshShader(const std::string& path)`
 * *Getter:* `const std::string& getDefaultMeshShader() const`
 
-Scene-wide custom shader for Mesh components. The value is a project-relative base path to a forked shader (for example `"shaders/myMesh"`, resolving to `.vert`/`.frag`), or `"a.vert|b.frag"` for separately named files. Every Mesh whose own custom shader is empty uses it; an empty string (default) means the engine built-in. A shader assigned on the component always takes priority. Changing the value reloads the affected meshes. See [Custom Shaders — Scene default shaders](../../editor/custom-shaders.md#scene-default-shaders).
+Scene-wide custom shader for Mesh components. The value is a project-relative base path to a forked shader (for example `"shaders/myMesh"`, resolving to `.vert`/`.frag`), or `"a.vert|b.frag"` for separately named files. Every Mesh whose own custom shader is empty uses it; an empty string (default) means the engine built-in. A shader assigned on the component always takes priority. Changing the value reloads the affected meshes. The fork's uniform values can be set for the whole scene with [setDefaultShaderUniform](#setdefaultshaderuniform). See [Custom Shaders — Scene default shaders](../../editor/custom-shaders.md#scene-default-shaders).
 
 === "C++"
 
@@ -821,6 +839,35 @@ Returns `true` if this scene is currently the topmost scene that is able to rece
 * `void updateCameraSize()`
 
 Recalculates the active camera's projection to match the current canvas size. Called automatically when the canvas changes; call manually after resizing the viewport from script.
+
+---
+
+### setDefaultShaderUniform
+
+* `void setDefaultShaderUniform(ShaderType type, const std::string& name, const Vector4& value)`
+* `void setDefaultShaderUniform(ShaderType type, const std::string& name, const Vector3& value)`
+* `void setDefaultShaderUniform(ShaderType type, const std::string& name, const Vector2& value)`
+* `void setDefaultShaderUniform(ShaderType type, const std::string& name, float value)`
+* `Vector4 getDefaultShaderUniform(ShaderType type, const std::string& name) const`
+* `bool removeDefaultShaderUniform(ShaderType type, const std::string& name)`
+* `void setDefaultShaderUniforms(ShaderType type, const ShaderUniformValues& values)` (C++ only)
+* `const ShaderUniformValues& getDefaultShaderUniforms(ShaderType type) const` (C++ only)
+
+Scene values for the custom blocks (`u_vs_customParams` / `u_fs_customParams`) of the scene default shader of `type` (see [ShaderType](#shadertype)), by member name. Every component that inherits that default reads them for the members it does not set itself; a value set on the component with [setShaderUniform](mesh.md#setshaderuniform) wins. Setting a value only rewrites the uploaded blocks, so it can run every frame. A narrower value leaves the remaining components at zero, and a member with no value on either side reads zero. A type without a scene default is ignored, and a reserved name (`time`, `resolution`) logs an error. `getDefaultShaderUniform` returns the scene's stored value, zero when unset; `removeDefaultShaderUniform` drops it and returns whether it existed. The values stay when the default shader changes, so a fork with the same member names picks them up. See [Custom Shaders — Scene default shaders](../../editor/custom-shaders.md#scene-default-shaders).
+
+=== "C++"
+
+    ```cpp
+    scene.setDefaultShaderUniform(ShaderType::MESH, "exposure", 0.5f);
+    scene.setDefaultShaderUniform(ShaderType::MESH, "rimColor", Vector4(0.2f, 0.6f, 1.0f, 1.0f));
+    ```
+
+=== "Lua"
+
+    ```lua
+    scene:setDefaultShaderUniform(ShaderType.MESH, "exposure", 0.5)
+    scene:setDefaultShaderUniform(ShaderType.MESH, "rimColor", Vector4(0.2, 0.6, 1, 1))
+    ```
 
 ---
 
