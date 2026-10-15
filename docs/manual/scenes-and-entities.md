@@ -212,6 +212,9 @@ Select the parent scene in the [Structure panel](../editor/structure.md) and eit
 - drag a `.scene` file from the [Resources Browser](../editor/resources.md) onto the
   scene root.
 
+A child scene can have child scenes of its own, but a scene can't contain itself, directly
+or through other child scenes. The editor refuses an add that would create such a cycle.
+
 Child scenes are listed **above** the parent's entities. Click the eye icon next to a
 child scene to load it *inline*, so you can see and edit its entities in context — this
 is an editor convenience and does not change runtime behavior.

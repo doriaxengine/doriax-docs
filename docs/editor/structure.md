@@ -24,8 +24,14 @@ above the parent's entities, tinted soft teal to set them apart.
 **Add a child scene** in one of two ways:
 
 - Right-click the scene root and choose **Add child scene → _SceneName_** (the submenu
-  lists every other scene that is not already attached).
+  lists every other scene that is not already attached and does not already contain
+  this one).
 - Drag a `.scene` file from the [Resources Browser](resources.md) onto the scene root.
+
+A scene can't end up inside itself, directly or through other child scenes. An add that
+would create such a cycle is refused with an error in the Output panel. So is an undo or
+redo that would bring one back after another scene changed, and the history then stays
+where it is.
 
 **Right-click a child scene node** for its menu:
 
