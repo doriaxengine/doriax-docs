@@ -80,9 +80,14 @@ the numeric form is what a scene file's `shaderKeys` entries hold.
 | 25 | `Aop` | Alpha opaque |
 | 26 | `Ifd` | Instance distance fade |
 | 27 | `Tpb` | Terrain PBR layers |
+| 28 | `Dlo` | Directional lights only |
 
 Bit 5 is reserved: it used to select the PCF shadow filter, which is uniform-driven now
 (Scene shadow quality).
+
+A scene whose lights are all directional draws built-in lit meshes with `Dlo`, which leaves
+out the point and spot light code. An export ships every built-in lit mesh variant both
+with and without it, so a script can still add a point or spot light at runtime.
 
 ### `depth`
 
