@@ -31,8 +31,8 @@ are uploaded each frame through a **storage buffer** (Vulkan, Metal, Direct3D 11
 every backend.
 
 The CPU bone-matrix array still has a compile-time capacity, `MAX_BONES` (default
-**128**). The editor grows that array for larger skins; export then raises `MAX_BONES` in
-the generated CMake project to cover the largest skin in your scenes (never below 128).
+**96**). The editor grows that array for larger skins; export then raises `MAX_BONES` in
+the generated CMake project to cover the largest skin in your scenes (never below 96).
 A model loaded only at runtime that exceeds the exported capacity is rejected and the
 loader writes an error to the log. Raise `MAX_BONES` yourself in a standalone engine
 build if you spawn such models from code. See the

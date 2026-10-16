@@ -825,7 +825,7 @@ on Vulkan, Metal, and Direct3D 11, or through an **unfilterable RGBA32F bone tex
 sampled with `texelFetch` on OpenGL / OpenGL ES. The colour, depth/shadow, and G-buffer
 passes share that path, so large skeletons are not capped by a uniform-block size. Shader
 reflection keeps the backend-specific storage-buffer bindings, which Metal requires for
-validation. The CPU array is still sized by `MAX_BONES` (default 128); see
+validation. The CPU array is still sized by `MAX_BONES` (default 96); see
 [3D Graphics — GLTF compatibility and limits](3d-graphics.md#gltf-compatibility-and-limits).
 The editor revisions its compiled shader cache when this built-in shader interface
 changes, so an updated editor does not reuse incompatible older skinned variants.

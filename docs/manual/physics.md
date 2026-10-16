@@ -81,7 +81,8 @@ something wakes them.
 2D physics uses Box2D. A body can contain several shapes and each shape can have
 density, friction, restitution, sensor state, and collision filtering. In exported games
 a body holds at most `MAX_SHAPES_2D` shapes and a shape at most `MAX_SHAPE_POINTS_2D`
-points. They default to 10 and 16, and the export raises them when your scenes use more.
+points. They default to 4 and 8, and the export raises them when your scenes or bundles
+use more.
 
 | Shape | Use it for |
 | --- | --- |

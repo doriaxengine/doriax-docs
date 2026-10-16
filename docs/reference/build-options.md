@@ -147,23 +147,29 @@ has no effect.
 ## Engine capacity macros
 
 Exported CMake projects and their Xcode workspace receive compiler defines for the largest
-per-scene capacities the editor measured, each floored at the engine default in
-`engine/core/Engine.h`. Growing past the default lets large authored content compile; the
-floor keeps dynamically spawned content inside the known-safe baseline.
+capacities the editor measured in the project's scenes and bundles, each floored at the
+engine default in `engine/core/Engine.h`. Growing past the default lets large authored
+content compile; the floor keeps dynamically spawned content inside the known-safe
+baseline.
 
 | Macro | Default | Controls |
 | --- | --- | --- |
-| `MAX_SUBMESHES` | 16 | Submeshes per mesh |
-| `MAX_TILEMAP_TILESRECT` | 200 | Tilemap rectangle tiles |
-| `MAX_TILEMAP_TILES` | 2048 | Tiles per tilemap |
-| `MAX_SPRITE_FRAMES` | 128 | Sprite atlas frames |
-| `MAX_EXTERNAL_BUFFERS` | 30 | External vertex/index buffers per mesh |
-| `MAX_BONES` | 128 | Bone matrices per skinned mesh |
+| `MAX_SUBMESHES` | 4 | Submeshes per mesh |
+| `MAX_TILEMAP_TILESRECT` | 64 | Tilemap rectangle tiles |
+| `MAX_TILEMAP_TILES` | 512 | Tiles per tilemap |
+| `MAX_SPRITE_FRAMES` | 32 | Sprite atlas frames |
+| `MAX_EXTERNAL_BUFFERS` | 20 | External vertex/index buffers per mesh |
+| `MAX_BONES` | 96 | Bone matrices per skinned mesh |
+| `MAX_SHAPES_2D` | 4 | Shapes per 2D body |
+| `MAX_SHAPE_POINTS_2D` | 8 | Points per 2D polygon or chain shape |
+| `MAX_SHAPES_3D` | 4 | Shapes per 3D body |
+| `MAX_SHAPE_VERTICES_3D` | 64 | Vertices per 3D convex hull or mesh shape |
+| `MAX_SHAPE_INDICES_3D` | 192 | Indices per 3D mesh shape |
 | `MAX_MESH_LODS` | 4 | Detail levels per mesh submesh (source plus simplified index ranges) |
 
 `MAX_BONES` is the CPU array size used at runtime. Skinned shaders bind those matrices
 through a storage buffer or a bone texture and do not embed this count. The editor can
-load skins larger than 128; export writes the raised value so the standalone build
+load skins larger than 96; export writes the raised value so the standalone build
 matches. If you load a larger skin only from code, edit the generated
 `add_definitions("-DMAX_BONES=N")` line in the exported CMakeLists, or `MAX_BONES` in the
 project-level **Preprocessor Macros** of the exported Xcode workspace (or pass the same
