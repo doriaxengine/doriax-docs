@@ -135,6 +135,7 @@ Add a layer, pick its **mesh** (a model file), create its **Density map**, then 
 | **Rotation** | Random yaw as a share of a full turn |
 | **Normal alignment** | Blends from upright (0%) to lying along the surface normal (100%) |
 | **Draw distance** | Visibility distance in world units; instances fade in over the last quarter of it |
+| **Min distance** | Instances nearer than this are skipped. A copy of the layer with a simpler mesh, a min distance near this layer's draw distance and a longer draw distance becomes its far detail level |
 | **Cast shadows** | Put this layer into the shadow cascades. Turn off for grass-scale scatter so it still draws in the colour pass without the extra shadow geometry |
 | **Seed** | Change it to reshuffle instance positions |
 
@@ -143,8 +144,9 @@ Foliage entities are created by the engine, not authored: they never appear in t
 
 !!! note "Draw distance while editing"
     While the Terrain Editor is open on a terrain, that terrain's foliage is scattered
-    over its whole surface so you can see what you painted. The **Draw distance** is
-    applied again when the window closes, the selection changes, or play mode starts.
+    over its whole surface so you can see what you painted. **Draw distance** and **Min
+    distance** apply again when the window closes, the selection changes, or play mode
+    starts.
 
 ## Objects
 

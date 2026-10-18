@@ -90,7 +90,8 @@ map at runtime, in fixed cells batched into per-chunk instanced entities around 
 camera, and re-resolved when the camera moves. Each layer filters by ground slope and
 height, jitters scale and yaw, can lean instances along the surface normal, and has its
 own draw distance, with instances scaling in over the last quarter of it instead of
-popping. **Cast shadows** (default on) puts those instances into the shadow cascades;
+popping. A **min draw distance** skips the instances nearer than it, so a copy of a layer
+with a simpler mesh can take over where the detailed one ends. **Cast shadows** (default on) puts those instances into the shadow cascades;
 turn it off on grass-scale scatter so the foliage still draws in the colour pass but
 skips the extra shadow geometry.
 
