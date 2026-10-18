@@ -66,6 +66,11 @@ The value is decided by which constructor you use:
 - **Wrapping** an existing entity (`Type(scene, entity)`) never owns it, so references you
   pass around — including handles resolved from script properties or
   [`Scene:findEntity`](entityregistry.md#findentity) — are safe to copy and discard.
+- **Destroying the entity yourself** is fine: an owning handle whose entity no longer
+  exists skips it when the handle is destroyed.
+- **Outliving the scene** releases the ownership. When a scene is deleted, for example when
+  [`SceneManager.loadScene`](scenemanager.md#loadscene) loads its stack again, its owning
+  handles stop owning, so a Lua handle collected later leaves the new scene alone.
 
 !!! warning "Keep owning handles alive"
     An owning handle destroys its entity when it is itself destroyed — in Lua that happens
