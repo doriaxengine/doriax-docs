@@ -13,6 +13,8 @@ Represents a light source in a 3D scene. Doriax supports three light types — d
 
 Shadows are opt-in per-light and render via a shadow map. Cascaded shadow maps (CSM) are available for directional lights to spread shadow quality across a large view distance.
 
+Up to `MAX_LIGHTS` (6) lights are used at once. A scene with more uses its directional lights first, then the lights nearest the camera; see [Rendering Pipeline — More lights than `MAX_LIGHTS`](../../manual/rendering-pipeline.md#more-lights-than-max_lights).
+
 ### Properties
 
 | Type | Name | Default | Langs |
@@ -140,7 +142,7 @@ The maximum distance (in world units) at which the light has any effect. Relevan
 * *Setter*: void **setIntensity**(float intensity)
 * *Getter*: float **getIntensity**() const
 
-A multiplier applied to the light's [color](#color). `1.0` is the default. Higher values create a brighter light without altering the hue.
+A multiplier applied to the light's [color](#color). `1.0` is the default. Higher values create a brighter light without altering the hue. At `0` the light is off and leaves its slot to another light.
 
 ---
 

@@ -137,6 +137,23 @@ sun.setIntensity(3.0f);
 sun.setShadows(true);
 ```
 
+### More lights than `MAX_LIGHTS`
+
+The shaders take `MAX_LIGHTS` (6) lights at once, but a scene can hold more. Each frame
+the lights with an intensity above zero fill those slots: directional lights first, then
+the point and spot lights nearest the main camera. A light already in a slot counts as 10%
+nearer, so two lights at about the same distance don't swap back and forth as the camera
+moves. A light at intensity `0` takes no slot, so switching it off frees one for another
+light.
+
+Shadow atlas slots then go to the shadow-casting lights among the selected ones. The
+shader variants still follow every light in the scene, so a light moving in or out of the
+selection never rebuilds a shader.
+
+Render-to-texture cameras, mirrors, reflecting water and reflection probes pick the lights
+nearest to their own position the same way, favouring the ones the main camera uses. A
+light that only such a view picks has no shadow or spot mask there.
+
 ### Shadow maps
 
 Each shadow-casting light renders a depth map. Engine limits (adjustable at build

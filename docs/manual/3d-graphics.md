@@ -324,9 +324,11 @@ and receive shadows in real time.
 | Point | Lamps, torches, explosions, and local lights |
 | Spot | Flashlights, cones, and focused effects |
 
-The runtime supports up to six active lights and cascaded shadow maps for directional
-lighting. Tune edge smoothness with `Scene::setShadowQuality` (`NONE` / `LOW` / `MEDIUM` /
-`HIGH` PCF filtering).
+A scene can have any number of lights, but only six are used at once: past that,
+directional lights come first, then the ones nearest the camera (see
+[Rendering Pipeline — More lights than `MAX_LIGHTS`](rendering-pipeline.md#more-lights-than-max_lights)).
+Directional lights support cascaded shadow maps. Tune edge smoothness with
+`Scene::setShadowQuality` (`NONE` / `LOW` / `MEDIUM` / `HIGH` PCF filtering).
 
 ### Projected spot-light masks
 
