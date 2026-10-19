@@ -899,8 +899,10 @@ distances are plain uniforms that can be dragged freely.
 
 On the built-in triangle mesh shaders — no custom colour or depth fork, no scene default
 mesh shader, and [SSR](#screen-space-reflections-ssr) off — instances past **Fade End**
-are also dropped from the draw list, so they cost neither vertices nor a fragment. Custom
-shaders and the SSR G-buffer still draw every instance and rely on the vertex scale alone.
+are also dropped from the draw list, so they cost neither vertices nor a fragment. The
+list keeps a small margin past it and is cut again only once the camera has moved beyond
+that margin, not on every frame it moves. Custom shaders and the SSR G-buffer still draw
+every instance and rely on the vertex scale alone.
 
 Fade is what keeps a field of instances from popping at the edge of its draw distance;
 the terrain's [foliage layers](terrain.md#foliage) set it up for themselves from each

@@ -156,6 +156,8 @@ in [Project Settings → General → Loading](../editor/project-settings.md#load
    `Engine.onSceneLoaded` fires and the loading scene is removed, or fades out first if a
    script [holds the load](../reference/classes/scenemanager.md#holdloading-releaseloading).
 
+The start scene goes through it too, with nothing running below the loading scene yet.
+
 The same settings can be made from code, at startup:
 
 === "Lua"

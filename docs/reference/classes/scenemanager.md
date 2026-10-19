@@ -146,8 +146,10 @@ lets a click sound finish first. The call returns `true` when the scene exists; 
 request wins (a replaced request logs a warning), [`isLoadPending`](#isloadpending)
 reports the wait, and `getCurrentSceneId` only changes once the load is applied. Only
 the first load, with nothing on screen yet (the `init()` entry point), builds the stack
-immediately. The editor's Play also builds the stack again from the scene files, so a level
-loaded a second time (a retry) starts over as it does in an exported game.
+immediately, unless a [loading scene](#setloadingscene-getloadingsceneid) is set: the
+start scene then waits for the first frame too, so the loading scene covers it. The
+editor's Play also builds the stack again from the scene files, so a level loaded a
+second time (a retry) starts over as it does in an exported game.
 
 With a [loading scene](#setloadingscene-getloadingsceneid) set, the switch also waits for
 it to be on screen and for the [loading delay](#setloadingdelay-getloadingdelay).
@@ -239,8 +241,8 @@ loading delay included. Lua reads it as the `SceneManager.loadPending` property.
 * static uint32_t **getLoadingSceneId**()
 
 Sets a registered scene stack as the **loading screen** that [`loadScene`](#loadscene)
-shows over every transition. An empty name or `0` turns it off. Returns `false` if the
-scene is unknown. Exported games and the editor's Play set it from
+shows over every transition, the start scene included. An empty name or `0` turns it
+off. Returns `false` if the scene is unknown. Exported games and the editor's Play set it from
 [Project Settings → General → Loading](../../editor/project-settings.md#loading), so most
 projects never call it.
 

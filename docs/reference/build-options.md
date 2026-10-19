@@ -167,6 +167,10 @@ baseline.
 | `MAX_SHAPE_INDICES_3D` | 192 | Indices per 3D mesh shape |
 | `MAX_MESH_LODS` | 4 | Detail levels per mesh submesh (source plus simplified index ranges) |
 
+`MAX_EXTERNAL_BUFFERS` is counted from the glTF files the models and foliage layers use
+(an FBX through its imported `.glb`), including the buffers the loader generates, so it
+is right even in a [command line](../editor/command-line.md) export that never loads them.
+
 `MAX_BONES` is the CPU array size used at runtime. Skinned shaders bind those matrices
 through a storage buffer or a bone texture and do not embed this count. The editor can
 load skins larger than 96; export writes the raised value so the standalone build

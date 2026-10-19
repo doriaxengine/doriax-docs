@@ -192,7 +192,8 @@ leaves the rest of a PBR layer's surface alone. `setTextureDetailRed` / `Green` 
 are layers 0, 1 and 2 under the names they had when a terrain had a single blend map.
 `setLayerFromMaterial` fills a layer from a [Material](../reference/classes/material.md)
 in one call. Foliage layers have no runtime setters — they are authored in the editor and
-read back from the component.
+read back from the component. `setFoliageDistanceScale` scales the draw distances of all of
+them at once, for a quality setting.
 
 ## LOD tuning
 

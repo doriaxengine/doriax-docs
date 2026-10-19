@@ -24,6 +24,7 @@ The terrain geometry is a CDLOD quadtree: `rootGridSize` × `rootGridSize` root 
 | int | [textureDetailTiles](#texturebasetiles-texturedetailtiles) | `20` | C++ \| Lua |
 | int | [rootGridSize](#rootgridsize) | `2` | C++ \| Lua |
 | int | [levels](#levels) | `6` | C++ \| Lua |
+| float | [foliageDistanceScale](#foliagedistancescale) | `1.0` | C++ \| Lua |
 
 ### Methods
 
@@ -100,6 +101,15 @@ Depth of the LOD quadtree. Each level halves the node size, so the leaf node cov
 The quadtree materializes `rootGridSize^2 * (4^levels - 1) / 3` nodes, so the node count grows exponentially with `levels`; past the engine's node budget the terrain refuses to build and logs an error.
 
 With automatic ranges the LOD distances follow from these node sizes: the first range is twice the leaf node size and each level doubles it, with only the last range stretched to the camera's far clip.
+
+---
+
+### foliageDistanceScale
+
+* *Setter*: void **setFoliageDistanceScale**(float scale)
+* *Getter*: float **getFoliageDistanceScale**() const
+
+Multiplies the draw distance and min distance of every foliage layer, for a quality setting: `0.5` draws foliage half as far, `1` as authored. Negative values clamp to `0`, which hides the foliage. It applies on the next frame, is not saved with the scene, and the editor's foliage preview ignores it.
 
 ---
 
