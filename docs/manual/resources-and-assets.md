@@ -193,7 +193,7 @@ use the same file path share the underlying data.
 | Pool | Managed resource |
 | --- | --- |
 | `TextureDataPool` | Raw decoded texture data (pixels) |
-| `TexturePool` | GPU-side texture handles |
+| `TexturePool` | GPU-side texture handles, one per image and filter/wrap combination |
 | `ModelPool` | Parsed 3D model and skeleton data |
 | `ShaderPool` | Compiled shader programs |
 | `SoundPool` | Loaded audio data |

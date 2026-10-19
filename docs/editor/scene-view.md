@@ -121,6 +121,11 @@ original value:
 This makes texturing a scene fast: drop a texture onto each model to assign it, or
 drop a saved material onto several meshes to keep them consistent.
 
+Sprites and UI images that get their texture from a drop clamp it at the edges
+(`CLAMP_TO_EDGE`). With the default repeat, linear filtering would pull the opposite edge
+into a thin line along the border. To tile the image instead, set the wrap back to repeat
+in the [Texture Settings](properties.md#editing-component-fields) popup.
+
 ### Shared materials across meshes
 
 When you drop the same `.material` file onto different mesh entities, each submesh

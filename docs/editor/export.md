@@ -213,6 +213,10 @@ A folder appears in the export only when a file lands in it, so a folder holding
 but scripts leaves no empty directory behind. The exception is a packed Source Code
 export, which keeps an empty `project/lua/` directory for the generated Xcode workspace.
 
+A target directory inside the project, such as `<project>/export`, is left out of
+everything the export copies, so an export never copies itself. The target can't be the
+project directory itself, or its assets or Lua directory.
+
 Build it afterwards with the appropriate [platform toolchain](#platform-toolchains), or
 run `python3 doriax.py` in the export folder to configure and build it in one step. See
 [Build Script](../building/build-script.md).

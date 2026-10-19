@@ -108,6 +108,9 @@ Whether an image loaded from a file gets its [alpha border](#alphaborder) fixed.
 
 Wrapping mode along the horizontal (U) and vertical (V) texture coordinates.
 
+Filter and wrap modes are part of the GPU texture, so an image used with different
+settings is uploaded once for each combination.
+
 ---
 
 ### svgScale
