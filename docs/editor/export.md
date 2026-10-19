@@ -132,9 +132,10 @@ addition and exclusion at once.
 
 Additions and exclusions are saved in `project.yaml` under `export`, and they are
 **shared by all three export modes** — a shader you exclude for a Desktop test build is
-excluded from the Source Code export too. Forked shaders are stored by their
-project-relative path rather than by a session id, so the list survives reopening the
-project.
+excluded from the Source Code export too. A [command-line export](command-line.md#project-settings-the-command-line-uses)
+applies them as well, unless `--shader` lists the shaders itself, and AI agents edit them
+with the `set_export_shaders` tool. Forked shaders are stored by their project-relative
+path rather than by a session id, so the list survives reopening the project.
 
 ## Source Code mode
 

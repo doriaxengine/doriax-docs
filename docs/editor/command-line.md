@@ -64,7 +64,7 @@ doriax-editor export --project ./MyGame --out ./build/MyGame --backend vulkan
 | `--lua <path>` | Lua directory, relative to the project or absolute. Defaults to the project's Lua directory. |
 | `--start-scene <id\|name>` | Override the start scene by numeric ID, scene name, or file stem. |
 | `--backend <list>` | Graphic backend(s) to compile shaders for. Repeatable, or a list (see below). Defaults to **all** supported backends. |
-| `--shader <spec>` | Shader(s) to compile, replacing what the scenes report. Repeatable (see [Shader specs](#shader-specs)). If omitted, shaders discovered while regenerating scenes are exported. |
+| `--shader <spec>` | Shader(s) to compile, replacing what the scenes report and the project's shader additions and exclusions. Repeatable (see [Shader specs](#shader-specs)). If omitted, shaders discovered while regenerating scenes are exported, with the project's additions and exclusions applied. |
 | `--list-scenes` | Print the project's scenes (`id`, `name`, `path`) and exit. |
 | `-h`, `--help` | Show usage for this subcommand. |
 
@@ -75,8 +75,8 @@ different root ships files the stored paths do not resolve against.
 ### Project settings the command line uses
 
 The export reads `project.yaml`, so the [Project Settings](project-settings.md) that
-shape the output apply here exactly as they do in the editor — with two deliberate
-exceptions that the flags own instead:
+shape the output apply here exactly as they do in the editor — with one deliberate
+exception that a flag owns instead:
 
 | Project setting | In a CLI export |
 | --- | --- |
@@ -87,12 +87,12 @@ exceptions that the flags own instead:
 | Assets and Lua directories | Applied unless `--assets` / `--lua` override them |
 | Start scene | Applied unless `--start-scene` overrides it |
 | **Native Resource Pack** | Applied. There is no command-line override |
-| **Shader additions and exclusions** | **Ignored.** Use `--shader`, or let the export use the shaders discovered in the scenes |
+| **Shader additions and exclusions** | Applied unless `--shader` lists the shaders, which are then compiled exactly as given |
 | **Graphic backends saved by the Export Window** | **Ignored.** `--backend` decides, and defaults to every supported backend |
 
-The two ignored ones keep a scripted build reproducible from its command line: a CI job
-compiles what its flags say, not what someone last ticked in the Export Window. Pass the
-same backends you selected there when you want the two to match.
+Ignoring the backends keeps a scripted build reproducible from its command line: a CI job
+compiles for what its flags say, not what someone last ticked in the Export Window. Pass
+the same backends you selected there when you want the two to match.
 
 When Native Resource Pack is enabled, the source output contains
 `project/assets/resources.pak` in place of loose asset and Lua contents; see
