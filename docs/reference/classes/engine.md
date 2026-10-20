@@ -1012,9 +1012,13 @@ Called when any keyboard key is released.
 
 * `static FunctionSubscribe<void(wchar_t)> onCharInput`
 * Callback: `void(wchar_t codepoint)`
-    * **codepoint** — Unicode code point of the typed character, including composed/accented characters.
+    * **codepoint** — Unicode code point of the typed character, including composed/accented characters. Lua receives it as a one-character UTF-8 string.
 
 Called for text input. Prefer this over [onKeyDown](#onkeydown) when implementing text fields.
+
+On Windows, macOS, and iOS, a character past U+FFFF, such as an emoji, arrives as two calls
+carrying its UTF-16 halves. A [TextEdit](textedit.md) joins them into one character, while
+Lua receives each half as U+FFFD.
 
 ---
 
