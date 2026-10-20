@@ -126,7 +126,7 @@ the scene has a Fog component, or a shadow-casting light and **Receive Shadows**
 others follow the water's own switches.
 
 `sky`, `blit`, `ssao`, `ssaoblur`, `ssr`, `ssrblur`, `composite`, `shadow2d`,
-`postprocess`, and `underwater` have no properties; name the type on its own.
+`postprocess`, `underwater`, and `probefilter` have no properties; name the type on its own.
 
 ### Combinations that are easy to miss
 

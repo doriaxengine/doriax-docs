@@ -322,11 +322,9 @@ irradiance when one is present.
 | **Static** | Uses an authored cubemap when one is assigned; otherwise captures the scene once at load (or when **Refresh Probe** is pressed) and keeps that result. |
 | **Dynamic** | Re-captures the scene at runtime according to its update policy. |
 
-An authored cubemap is the best-quality and cheapest option: it is GGX-prefiltered and
-cached like the sky environment, so rough surfaces get correct blurry reflections.
-Runtime captures have no prefiltered mip chain — rough surfaces approximate the blur
-with a small angular filter — so prefer static probes with authored cubemaps for
-strongly rough materials.
+An authored cubemap is the cheapest option: it is GGX-prefiltered once and cached like
+the sky environment. Runtime captures are GGX-prefiltered on the GPU each time they
+finish, so rough surfaces get correct blurry reflections from both.
 
 Dynamic probes choose when to re-capture with **Update**:
 
