@@ -158,7 +158,8 @@ centre is nearest the mesh wins.
 * *Getter*: unsigned int **getResolution**() const
 
 Capture cubemap face size, clamped to 16–1024 at capture time. Changing it restarts any
-in-flight capture.
+in-flight capture. The capture is prefiltered into 128-pixel faces like an authored
+cubemap, so sizes above 128 make reflections smoother, not sharper.
 
 ---
 

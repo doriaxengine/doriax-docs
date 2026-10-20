@@ -359,7 +359,7 @@ falls back to the sky environment.
 | Property | Purpose |
 | --- | --- |
 | **Cubemap** | *(static only)* Authored six-face cubemap. Leave empty to capture at load instead. |
-| **Resolution** | Capture cubemap face size (16–1024, default 128). |
+| **Resolution** | Capture cubemap face size (16–1024, default 128). The capture is prefiltered into 128-pixel faces, so sizes above 128 make reflections smoother, not sharper. |
 | **Near / Far** | Clip planes of the capture cameras. |
 | **Include Sky** | Whether the sky (and scene background colour) appears in the capture. |
 
