@@ -252,10 +252,10 @@ Add a `Transform` if it should become spatial or parentable.
 
 ## Search
 
-Type in the field at the top of the panel to filter the tree by entity name. Matching
-ignores case unless you turn on **Match Case** from the magnifier button next to the
-field. Matching rows stay visible together with their ancestors, so you can see where
-each one sits.
+Type in the field at the top of the panel to filter the tree by entity name, or by id
+for an entity without one. Matching ignores case unless you turn on **Match Case** from
+the magnifier button next to the field. Matching rows stay visible together with their
+ancestors, so you can see where each one sits.
 
 ![Filtering the Structure panel by name](../assets/screenshots/structure-search.png)
 
@@ -314,6 +314,10 @@ instantiates) are listed too, drawn in green. Each one sits under its parent, or
 scene root when that parent is not listed, such as the editor's view camera in a scene
 without a camera of its own. Entities without a `Transform` go in the
 [non-hierarchical area](#non-hierarchical-area) as usual.
+
+Scripts often create entities without a name, and their rows show the entity id
+instead, like `(1004)`, in a dimmer green. Set the object's
+[`name`](../reference/classes/entityhandle.md#name) in the script to show a name.
 
 These rows are for inspecting, not editing, because **Stop** destroys the entities
 behind them:
