@@ -423,8 +423,8 @@ changed — typically just your scenes and scripts, finishing in seconds.
 | Configure & build *(Desktop/Web)* | Runs CMake and the compiler on the build cache |
 | Collect artifacts *(Desktop/Web)* | Copies the executable or web files to the destination |
 
-If a file the export needs cannot be copied, the export stops and the Output panel names
-the file. Folders the editor cannot read are left out instead.
+If a scene cannot be saved or a file the export needs cannot be copied, the export stops
+and the Output panel names it. Folders the editor cannot read are left out instead.
 
 ## Generated scene data
 
