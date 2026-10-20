@@ -62,6 +62,7 @@ Insets each tile's UV rectangle by this many texels on every side, `0.0` by defa
 
 Pre-allocates GPU buffer space for this many tiles. If you know the maximum tile count
 in advance, set this before the tilemap is first built to avoid mid-game reallocations.
+Changing it later rebuilds the tilemap.
 
 ---
 
@@ -74,7 +75,8 @@ in advance, set this before the tilemap is first built to avoid mid-game realloc
 Explicitly builds or rebuilds the tilemap's geometry and GPU buffers. Configure the
 texture, rects, and tiles first, then call this method if C++ code needs the geometry
 immediately. It is **not bound to Lua**; the mesh system builds and rebuilds tilemaps
-automatically during rendering.
+automatically during rendering. Adding, removing, or clearing rects and tiles, and setting
+`textureScaleFactor` or `reserveTiles`, marks the tilemap to be rebuilt on the next frame.
 
 === "C++"
     ```cpp
@@ -140,7 +142,8 @@ The `id` parameter is an explicit integer key; use the simpler overloads when yo
 * void **removeRect**(int id)
 * void **removeRect**(const std::string& name)
 
-Removes an atlas-frame definition. Any tiles that reference the removed rect will no longer render correctly until they are updated.
+Removes an atlas-frame definition. Tiles that used the removed rect stop drawing. Rects with
+higher IDs move down by one, and the tiles that used them follow, so they keep their image.
 
 ---
 
@@ -148,7 +151,8 @@ Removes an atlas-frame definition. Any tiles that reference the removed rect wil
 
 * void **clearRects**()
 
-Removes all rect definitions. Equivalent to calling `removeRect()` for every registered rect.
+Removes all rect definitions. Tiles keep their rect IDs, so they stop drawing until rects
+with those IDs are added again.
 
 ---
 
@@ -157,7 +161,9 @@ Removes all rect definitions. Equivalent to calling `removeRect()` for every reg
 * [TileRectData](tilerectdata.md)& **getRect**(int id)
 * [TileRectData](tilerectdata.md)& **getRect**(const std::string& name)
 
-Returns a reference to the [TileRectData](tilerectdata.md) struct for the given rect. You can modify the struct fields in place to update the atlas frame at runtime.
+Returns a reference to the [TileRectData](tilerectdata.md) struct for the given rect. Editing
+the struct in place does not rebuild the tilemap. To change a frame at runtime, call
+[addRect](#addrect) again with the same ID.
 
 ---
 
@@ -216,7 +222,9 @@ Removes all tile instances. The rect definitions are preserved.
 * [TileData](tiledata.md)& **getTile**(int id)
 * [TileData](tiledata.md)& **getTile**(const std::string& name)
 
-Returns a reference to the [TileData](tiledata.md) struct for the given tile. Modify the struct fields in place to move, resize, or remap tiles at runtime.
+Returns a reference to the [TileData](tiledata.md) struct for the given tile. Editing the
+struct in place does not rebuild the tilemap. To move, resize, or remap a tile at runtime,
+call [addTile](#addtile) again with the same ID.
 
 ---
 

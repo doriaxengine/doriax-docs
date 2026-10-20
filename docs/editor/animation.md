@@ -40,9 +40,10 @@ run at a **start time** on a **track** (a timeline lane, used only for visual
 organization — overlapping frames are re-laned automatically).
 
 Add frames with the **+ Add Action** button (which creates a new action entity of the
-chosen type), or **drag an action entity from the Structure panel onto the tracks
-area** — a ghost block previews the target track, the grid-snapped start time, and the
-frame length before you drop. Invalid drops are rejected with an explanatory tooltip:
+chosen type; one undo removes both the entity and its frame), or **drag an action
+entity from the Structure panel onto the tracks area** — a ghost block previews the
+target track, the grid-snapped start time, and the frame length before you drop.
+Invalid drops are rejected with an explanatory tooltip:
 entities without an `ActionComponent`, entities from another scene, and anything that
 would make an animation contain itself, directly or through nested animations.
 

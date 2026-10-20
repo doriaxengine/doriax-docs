@@ -95,6 +95,14 @@ Configure the frame sequence.
     walk:start()
     ```
 
+The range includes both ends and counts from 0, so `setAnimation(0, 0, 100, false)` shows
+frame 0 alone. A negative start, or an end before the start, logs an error and keeps the
+current animation.
+
+Without `loop`, the animation stops when it reaches its last frame and leaves that frame
+showing. A one-frame animation stops after its interval. A frame time of 0 moves on one
+frame per update.
+
 ## See also
 
 - [SpriteAnimationComponent](spriteanimationcomponent.md)

@@ -28,5 +28,5 @@ label — for example with [`Scene::findEntity`](entityregistry.md#findentity).
 
 `frames` is a list of sprite atlas **frame indices**; `framesTime` is the matching list
 of per-frame durations in **milliseconds**. `loop` restarts the sequence when it
-finishes. `frameIndex`, `frameTimeIndex`, and `spriteFrameCount` are runtime playback
-state (shown read-only in the editor).
+finishes. Without it, playback stops on the last frame. `frameIndex`, `frameTimeIndex`,
+and `spriteFrameCount` are runtime playback state (shown read-only in the editor).

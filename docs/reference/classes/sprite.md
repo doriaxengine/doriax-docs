@@ -310,7 +310,8 @@ when the saved sprite state is restored.
 Plays a frame animation. Time values are in milliseconds.
 
 * The first overload accepts explicit frame ID lists and per-frame durations.
-* The second overload plays a contiguous range of frame IDs at a fixed interval.
+* The second overload plays a contiguous range of frame IDs at a fixed interval. The range
+  includes both ends, so `startAnimation(0, 0, 100, false)` shows frame 0 alone.
 * The third overload plays all frames whose names begin with `name` at a fixed interval.
 
 === "C++"

@@ -404,7 +404,9 @@ Requires the emitter mesh to have an atlas configured (see [Sprite](sprite.md) f
 * void **setSpriteModifier**(float fromTime, float toTime, std::vector\<int\> frames)
 * void **setSpriteModifier**(float fromTime, float toTime, std::vector\<int\> frames, EaseType functionType)
 
-Cycles through a list of sprite frames during the particle's lifetime, enabling flip-book animation.
+Plays `frames` in order between `fromTime` and `toTime` of each particle's life, in seconds,
+ending on the last frame. With the default linear easing each frame gets an equal share of
+that time.
 
 ---
 

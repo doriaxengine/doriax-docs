@@ -19,3 +19,6 @@ Result of a ray cast (hit point, normal, distance).
 | `normal` | C++ \| Lua (read-only) |
 | `body` | C++ \| Lua (read-only) |
 | `shapeIndex` | C++ \| Lua (read-only) |
+
+`distance` is where the hit lies along the ray, as a fraction from 0 at its origin to 1 at
+`origin + direction`. `point` is the hit position in world space.

@@ -43,7 +43,9 @@ The direction vector doubles as the *length* of the ray — objects beyond `orig
 
 * Vector3 **getPoint**(float distance) const
 
-Returns the world-space point at `distance` units along the ray: `origin + direction.normalized() * distance`.
+Returns `origin + direction * distance`. Hits report `distance` as a fraction of the ray,
+from 0 at `origin` to 1 at `origin + direction`, so `getPoint(hit.distance)` is the hit
+point.
 
 ---
 
@@ -75,6 +77,10 @@ Multiple overloads for different collision targets:
 * [RayReturn](rayreturn.md) **intersects**(Scene* scene, uint8_t broadPhaseLayer3D, uint16_t categoryBits, uint16_t maskBits, const std::vector\<Entity\>& ignoreEntities) const
 
 Returns a [RayReturn](rayreturn.md) struct. Test the result with `if (result)` or `result.hit`.
+
+The `Body2D` overload returns the closest hit among the body's shapes. Both `Body2D`
+overloads return no hit for a body that is not in the physics world yet, and the shape
+overload also for an index past the body's shapes.
 
 Scene queries return the closest hit. [RayFilter](#rayfilter) only selects what is tested — 2D bodies, 3D bodies or mesh bounds — it does not skip a specific entity. Checking `hit.body == entity` after the fact also fails, because that body is already the closest hit and the ray never continues past it. Pass the entity (or a list of entities) to `intersects` so those bodies are ignored and the next hit is returned. This works with every filter.
 
