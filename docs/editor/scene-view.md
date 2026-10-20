@@ -242,8 +242,8 @@ without running the game. Shapes are drawn for the selected entity; turn on
 ## Play mode in the viewport
 
 Press **Play** to run the scene inside the viewport. All input and logic operate
-normally. While the viewport has focus the game gets every key, **Escape** included, so
-a pause menu bound to it works. When you press **Stop**, the scene is restored to the
+normally. While the viewport has focus the game gets every key except **F8** and
+**F11**, so a pause menu bound to **Escape** works. When you press **Stop**, the scene is restored to the
 pre-play snapshot. Entities spawned by scripts during play are removed even if they
 never appeared in the Structure panel. Pending sprite frame selections from play are
 cleared so they cannot overwrite the restored texture rectangles after Stop.
@@ -289,3 +289,14 @@ While detached:
 Press **F8** again to return to the game camera. **Stop** always returns to the editor
 view. While the scene is paused on the game camera, the viewport ignores the mouse;
 detach to look around.
+
+### Full screen
+
+The **maximize** button next to the **camera** button (or **F11**, or
+**Scene → Full Screen**) shows a running or paused scene over the whole editor window,
+covering the menu bar and every panel. The game gets the bigger canvas, as if you had
+enlarged the viewport. It fills the editor window, not the monitor, so maximize the
+editor first for the biggest view.
+
+**Escape** still goes to the game, so press **F11** again to leave; a hint at the top
+reminds you for a few seconds. **Stop** also leaves full screen.

@@ -36,7 +36,7 @@ The editor window is divided into a set of resizable panels:
 | **Edit** | Undo, Redo, Duplicate, Delete, and [Editor Settings](editor-settings.md) |
 | **View** | Show or hide each panel, Detachable Windows, Reset Layout |
 | **Project** | [Project Settings](project-settings.md), Manage Scenes, Bundles, Empty Project Trash |
-| **Scene** | New Scene (3D / 2D / UI), Run, Pause, Resume, Stop, [Detach Camera](scene-view.md#detached-camera), Remove Scene from Project |
+| **Scene** | New Scene (3D / 2D / UI), Run, Pause, Resume, Stop, [Detach Camera](scene-view.md#detached-camera), [Full Screen](scene-view.md#full-screen), Remove Scene from Project |
 | **Help** | Documentation (**F1**), Keyboard Shortcuts, Report an Issue, About Doriax |
 
 ![The View menu toggles each panel](../assets/screenshots/menu-view.png)
@@ -122,6 +122,7 @@ shortcuts use **Command** instead of Ctrl.
 | **F6** | Pause |
 | **F7** | Stop |
 | **F8** | Detach or re-attach the camera while running ([Detached camera](scene-view.md#detached-camera)) |
+| **F11** | Show the running scene over the whole editor window, or go back ([Full screen](scene-view.md#full-screen)) |
 | **W** / **E** / **R** | Move / Rotate / Scale gizmo |
 | **T** | Toggle local / global transforms |
 | **F** / **Home** | Frame selection / all objects (3D) |
