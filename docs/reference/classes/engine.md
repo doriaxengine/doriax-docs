@@ -196,7 +196,7 @@ Control engine properties and define defaults used across the whole project. `En
 * *Setter:* `static void setScalingMode(Scaling scalingMode)`
 * *Getter:* `static Scaling getScalingMode()`
 
-Controls how the logical canvas is mapped to the physical window. See [Scaling](#scaling) for each mode.
+Controls how the logical canvas is mapped to the physical window. See [Scaling](#scaling) for each mode. Like [setCanvasSize](#setcanvassize), a change applies immediately to the running scenes.
 
 ---
 
@@ -566,7 +566,7 @@ Pauses delivery of gameplay events (onUpdate, onFixedUpdate, input callbacks) wi
 
 * `static void setCanvasSize(int canvasWidth, int canvasHeight)`
 
-Sets the preferred logical canvas dimensions. The actual [canvasWidth](#canvaswidth-canvasheight)/[canvasHeight](#canvaswidth-canvasheight) reported at runtime may differ depending on the active [scalingMode](#scalingmode).
+Sets the preferred logical canvas dimensions. The actual [canvasWidth](#canvaswidth-canvasheight)/[canvasHeight](#canvaswidth-canvasheight) reported at runtime may differ depending on the active [scalingMode](#scalingmode). It applies immediately, also while a scene runs: UI and auto-resized cameras follow the new size.
 
 ---
 

@@ -41,7 +41,8 @@ game runs on:
     ```
 
 In editor projects, the canvas size and scaling mode are set in **Project Settings**
-and applied automatically to exported builds.
+and applied automatically to exported builds. Both can also change while the game runs:
+UI and auto-resized cameras follow the new canvas right away.
 
 The canvas is independent of the OS window itself: the initial window size, state
 (windowed, maximized, or fullscreen), resizability, and title of a desktop build are
