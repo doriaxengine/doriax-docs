@@ -443,12 +443,15 @@ the ECS. This prevents those payloads from inflating the scene factory's stack f
 ### Scene stacks
 
 `main.cpp` gives every scene two functions and registers them together, as
-`SceneManager::registerScene(id, name, load_<name>, add_<name>, {start-active scene ids})`.
-Both begin the same way: for the scene and every child scene it involves, a `new Scene()`
+`SceneManager::registerScene(id, name, load_<file>, add_<file>, {start-active scene ids}, resources_<file>)`,
+where `<file>` is the name of the scene's generated source, `scene_<name>_<id>`. The id
+keeps two scenes apart even when their names make the same C++ identifier, like `A-B`
+and `A B`. Both functions begin the same way: for the scene and every child scene it
+involves, a `new Scene()`
 registered with `SceneManager::setScenePtr`, the scene factory, then `initScripts` —
-skipping any that already exist. `load_<name>()` goes on to call `Engine::setScene` and
+skipping any that already exist. `load_<file>()` goes on to call `Engine::setScene` and
 `Engine::addSceneLayer` for the start-active scenes and to tear down every scene the new
-stack does not involve; `add_<name>()` stops after creating, and
+stack does not involve; `add_<file>()` stops after creating, and
 [`SceneManager::addChildScene`](../reference/classes/scenemanager.md#addchildscene-removechildscene)
 puts the scenes on screen. A scene is not torn down while a stack that involves it is
 running, which is what keeps a stack a script adds from its `init` alive across the load.

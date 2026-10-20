@@ -22,8 +22,8 @@ To keep a temporary project:
 1. Choose **File → Save All** (**Ctrl+Shift+S**). On a temporary project, **Save**
    (**Ctrl+S**) does the same thing, because there is nowhere to save a single file to
    yet.
-2. The editor saves the open scenes and scripts, asking where any never-saved scene
-   should go, and then asks for the project itself.
+2. The editor saves the open scenes and scripts, asking where in the project any
+   never-saved scene should go, and then asks for the project itself.
 3. Enter the project name, click **Browse**, and select an empty directory.
 4. Click **Save**. The editor moves the temporary project into that directory and
    writes its `project.yaml` file.
