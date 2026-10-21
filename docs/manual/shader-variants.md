@@ -41,6 +41,9 @@ editor has actually drawn. Two consequences:
   already carry.
 
 Opening the project in the editor and playing each scene once is what fills the list in.
+When Play finds variants that a scene file does not list yet, Stop adds them. A scene that
+only loaded during Play, such as a level opened from the title menu, gets just its
+`shaderKeys` rewritten, and the rest of its file stays as it was.
 
 ## Property reference
 
