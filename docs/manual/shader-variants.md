@@ -145,8 +145,16 @@ variant list assembled by hand tends to be short by a factor of two or four:
 
 ## When a build is missing one
 
-An exported game checks its precompiled set at startup. If a variant it needs is absent,
-it prints the missing specs together with the command that generates them, then exits:
+An exported game loads each variant from its precompiled set. When one is absent, it
+draws with the nearest variant that leaves out some optional features, such as fog,
+shadows, or a texture, and logs a warning:
+
+```
+Shader mesh_Uv1Uv2PucShwNorTanFogSkiSaoAop is missing, using mesh_PucShwNorTanFogSkiSaoAop
+```
+
+If no such variant exists either, it prints the missing specs together with the command
+that generates them, then exits:
 
 ```
 Doriax is missing precompiled shaders in:

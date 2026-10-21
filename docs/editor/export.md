@@ -495,6 +495,9 @@ WebGL 2, and Source Code mode compiles one format per backend you ticked:
 Metal is the one backend split by operating system, because the cross-compiler emits
 different MSL for macOS and iOS.
 
+On Windows, Direct3D 11 shaders are also compiled to bytecode, so the game does not
+compile them each time it starts. Exports made on Linux or macOS keep the HLSL source.
+
 ### Choosing backends
 
 The runtime loads only the format matching the backend it was compiled with, so pick the
