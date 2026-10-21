@@ -374,6 +374,10 @@ variable or `emcmake` on `PATH`. If neither is set, point at your `emsdk` folder
 across projects, and the dialog reports whether the SDK was found. The Export Window
 shows the same status and warns before starting a build it cannot run.
 
+On Windows the build runs with Ninja, taken from `PATH` or from the **C++ CMake tools
+for Windows** component of Visual Studio. Without either, the configuration step fails; see
+[Building for HTML5](../building/html5.md#1-install-emscripten).
+
 The generated page is customized from the [Web settings](project-settings.md#web): page
 title, favicon, an optional custom HTML shell, extra `<head>` markup, canvas resizing,
 and hiding Emscripten's default UI. The **Game Portal** setting builds in the SDK of one

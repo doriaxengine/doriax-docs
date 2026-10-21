@@ -60,6 +60,11 @@ After installation, make the SDK available in your environment:
     emcc --version
     ```
 
+    Emscripten builds on Windows with Ninja, not with Visual Studio. The editor and
+    `doriax.py` take Ninja from `PATH`, or else the one the **C++ CMake tools for Windows**
+    component of Visual Studio installs. Without it, install
+    [Ninja](https://ninja-build.org) and add it to `PATH`.
+
 ## 2. Build the web target
 
 Configure and build using the Emscripten toolchain. The output is a set of `.js`,

@@ -77,7 +77,8 @@ directory.
 ## Web builds
 
 The script finds `emcmake` in the `EMSDK`, `EMSCRIPTEN_ROOT`, or `EMSCRIPTEN` folder, or on
-`PATH`. Running `emsdk_env` sets `EMSDK`.
+`PATH`. Running `emsdk_env` sets `EMSDK`. On Windows it builds with Ninja, from `PATH` or
+from the C++ CMake tools of Visual Studio.
 
 An exported project also gets `<App>.export.html`, the page with the
 [Web settings](../editor/project-settings.md#web) applied, and a copy of it named
