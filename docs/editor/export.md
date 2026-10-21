@@ -375,7 +375,8 @@ across projects, and the dialog reports whether the SDK was found. The Export Wi
 shows the same status and warns before starting a build it cannot run.
 
 On Windows the build runs with Ninja, taken from `PATH` or from the **C++ CMake tools
-for Windows** component of Visual Studio. Without either, the configuration step fails; see
+for Windows** component of Visual Studio. Without either, Emscripten falls back to MinGW's
+`mingw32-make` on `PATH`, and the configuration step fails when that is missing too; see
 [Building for HTML5](../building/html5.md#1-install-emscripten).
 
 The generated page is customized from the [Web settings](project-settings.md#web): page
