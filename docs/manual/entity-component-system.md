@@ -167,6 +167,16 @@ does.
 The flags are named after what they refresh: `needUpdate`, `needUpdateSizes`,
 `needUpdateButton`, `needUpdateTilemap`, `needReload`, and so on.
 
+!!! note "Fetch a sprite's mesh in the frame you change it"
+    A sprite that nothing changes keeps its batch data in `RenderSystem` from frame to
+    frame (see [Sprite batching](rendering-pipeline.md#sprite-batching)). In C++, fetching
+    its `MeshComponent` with `getComponent` or `findComponent` is what tells the renderer
+    to rebuild that data, so get the component again in the frame you write it. A write
+    through a reference kept from an earlier frame can be missed. Wrapper setters such as
+    `Mesh::setColor` fetch it on every call. Reading by index through a
+    `const ComponentArray<MeshComponent>*` rebuilds nothing, while any other fetch counts as
+    a change, even one that only reads.
+
 Two kinds of field are read-only from Lua, because writing them can only desync the
 system that owns them: values a system produces (`playingTime`, `state`, `pressed`,
 `loaded`) and the child-entity handles of a widget (`label`, `bar`, `fill`, and the
@@ -186,7 +196,7 @@ editor inspectors and high-level object wrappers.
 | --- | --- |
 | Core | `Transform`, `ScriptComponent`, `BundleComponent` |
 | 2D | `SpriteComponent`, `SpriteAnimationComponent`, `TilemapComponent`, `PolygonComponent` |
-| 3D | `MeshComponent`, `ModelComponent`, `InstancedMeshComponent`, `TerrainComponent`, `BoneComponent` |
+| 3D | `MeshComponent`, `ModelComponent`, `InstancedMeshComponent`, `TerrainComponent`, `BoneComponent`, `SkinComponent` |
 | Rendering | `CameraComponent`, `LightComponent`, `FogComponent`, `SkyComponent`, `WaterComponent`, `WaterExclusionComponent`, `ParticlesComponent`, `LinesComponent`, `PointsComponent` |
 | Physics | `Body2DComponent`, `Body3DComponent`, `Joint2DComponent`, `Joint3DComponent` |
 | UI | `UIComponent`, `UIContainerComponent`, `UILayoutComponent`, `ButtonComponent`, `TextComponent`, `ImageComponent`, `PanelComponent`, `ScrollbarComponent`, `ProgressbarComponent`, `TextEditComponent` |

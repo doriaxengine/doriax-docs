@@ -39,7 +39,7 @@ For static multi-node GLTFs that need [GPU instancing](../../manual/rendering-pi
 
 | Feature | Import behaviour |
 | --- | --- |
-| Skinning | Bone matrices are a storage buffer (Vulkan, Metal, Direct3D 11) or an unfilterable bone texture (OpenGL / OpenGL ES), so shader variants are not capped by a uniform-block size. The CPU array is still limited by `MAX_BONES` (default **128**). The editor grows past that for large skins; export raises `MAX_BONES` to the largest skin in the project's scenes. A runtime load above the compiled capacity is rejected and logged. |
+| Skinning | Bone matrices are a storage buffer (Vulkan, Metal, Direct3D 11) or an unfilterable bone texture (OpenGL / OpenGL ES), so shader variants are not capped by a uniform-block size. Each skinned mesh entity gets a `SkinComponent` holding its matrices, limited by `MAX_BONES` (default **96**). The editor grows past that for large skins; export raises `MAX_BONES` to the largest skin in the project's scenes and bundles. A runtime load above the compiled capacity is rejected and logged. |
 | Multiple skins | Supported. Each skinned mesh keeps its own joint order and inverse-bind matrices. |
 | Node hierarchy | Animation clips, or more than one skin, import every glTF node as a child entity. Animation channels target those nodes, including transform-only helpers. |
 | Position-only morph targets | Up to **8** targets per mesh primitive. |

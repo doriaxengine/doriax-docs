@@ -215,8 +215,10 @@ Start with the defaults; raise `levels` when the ground near the camera looks to
 and `resolution` when it still does at the highest level. Both are paid for in nodes and
 triangles: the quadtree materializes `rootGridSize² × (4^levels - 1) / 3` nodes, so
 `levels` grows the node count exponentially and the engine refuses to build a terrain
-past its node budget (it logs an error asking for a lower **Levels** or **Root Grid
-Size**).
+past its node budget of two million nodes (it logs an error asking for a lower
+**Levels** or **Root Grid Size**). `rootGridSize` also goes no higher than 4. Properties
+keeps **Root Grid Size** between 1 and 4 and **Levels** between 1 and 9, which always
+fit.
 
 !!! note "Resolution is rounded to a multiple of 4"
     Nodes stitch to their coarser neighbours by morphing only their odd vertices, and the

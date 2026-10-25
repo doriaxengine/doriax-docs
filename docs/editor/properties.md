@@ -47,7 +47,7 @@ The dialog groups the components into these categories:
 | **2D Graphics** | Sprite, 2D Light, 2D Occluder, Sprite Animation, Tilemap, Polygon, Mesh Polygon |
 | **Primitives** | Points, Lines, Particles |
 | **Physics** | 2D Physics Body, 3D Physics Body, 2D Joint, 3D Joint |
-| **Animation** | Animation, Action, Timed Action, Alpha / Color / Position / Rotation / Scale Action, Bone, Keyframe Tracks, Morph / Rotate / Scale / Translate Tracks |
+| **Animation** | Animation, Action, Timed Action, Alpha / Color / Position / Rotation / Scale Action, Bone, Skin, Keyframe Tracks, Morph / Rotate / Scale / Translate Tracks |
 | **Sound & Script** | Sound, Script |
 
 ## Editing component fields
@@ -158,6 +158,11 @@ what you arranged: a static model whose parts you have
 and refreshes them in place, an animated model is rebuilt and your moved parts are put
 back by node name, and entities attached to bones or parts are kept in both cases. See
 [3D Graphics — Reloading a rearranged model](../manual/3d-graphics.md#reloading-a-rearranged-model).
+
+Each skinned mesh of a model gets a **Skin** component with its bone matrices. The loader
+adds and fills it, so Properties only shows how many bones the skin has. A mesh without
+one draws rigid, in its bind pose. Scenes save the Skin only for meshes you build
+yourself; a model rebuilds its skins when it loads.
 
 ## Instanced Mesh
 

@@ -11,6 +11,8 @@ description: Container API reference (C++ and Lua).
 
 An invisible layout container that automatically arranges child UI elements in a vertical or horizontal stack, with optional wrapping. Add UI children as child entities of the container's [Object](object.md); the container measures and positions them each frame.
 
+A container lays out up to 30 visible children (`MAX_CONTAINER_BOXES`). A child past that loses its parent and an error is logged.
+
 ### Properties
 
 | Type | Name | Default | Langs |

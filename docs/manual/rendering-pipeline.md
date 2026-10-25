@@ -1,5 +1,5 @@
 ---
-description: Cameras, render systems, PBR materials, lighting, shadows, reflections, water, mesh LOD, depth prepass, instancing, shaders, framebuffers, and backend support in Doriax.
+description: Cameras, render systems, PBR materials, lighting, shadows, reflections, water, mesh LOD, depth prepass, sprite batching, instancing, shaders, framebuffers, and backend support in Doriax.
 ---
 
 # Rendering Pipeline
@@ -156,8 +156,8 @@ light that only such a view picks has no shadow or spot mask there.
 
 ### Shadow maps
 
-Each shadow-casting light renders a depth map. Engine limits (adjustable at build
-time):
+Each shadow-casting light renders a depth map. Engine limits, which the editor compiles
+into the shaders it builds, so an exported project can't change them:
 
 | Constant | Default | Controls |
 | --- | --- | --- |
@@ -506,7 +506,7 @@ Properties window, plus a **Debug View** dropdown for tuning.
 | --- | --- |
 | **Max Distance** | How far a reflection ray travels in view space before giving up |
 | **Thickness** | Depth tolerance for accepting a hit — smaller is stricter; larger fills gaps but can smear at contacts |
-| **Max Steps** | March sample count — higher gives sharper/longer reflections at more cost; raise it if reflections miss thin contacts |
+| **Max Steps** | March sample count — higher gives sharper/longer reflections at more cost; raise it if reflections miss thin contacts. The shader stops at 128 |
 | **Intensity** | Overall reflection strength |
 | **Glossy Blur** | `0` = mirror; raise to blur reflections by surface roughness |
 
@@ -840,7 +840,8 @@ on Vulkan, Metal, and Direct3D 11, or through an **unfilterable RGBA32F bone tex
 sampled with `texelFetch` on OpenGL / OpenGL ES. The colour, depth/shadow, and G-buffer
 passes share that path, so large skeletons are not capped by a uniform-block size. Shader
 reflection keeps the backend-specific storage-buffer bindings, which Metal requires for
-validation. The CPU array is still sized by `MAX_BONES` (default 96); see
+validation. The matrices come from the mesh's `SkinComponent`, an array sized by
+`MAX_BONES` (default 96); see
 [3D Graphics — GLTF compatibility and limits](3d-graphics.md#gltf-compatibility-and-limits).
 The editor revisions its compiled shader cache when this built-in shader interface
 changes, so an updated editor does not reuse incompatible older skinned variants.
@@ -851,6 +852,10 @@ binding, and draw commands against the failed handle. Diagnose the original pipe
 creation message in the Output panel; the dependent validation-error cascade is
 suppressed.
 
+Objects with the same shader variant, vertex layout, and render state share one GPU
+pipeline, and equal static vertex and index data is uploaded once and shared, so many
+copies of a mesh cost one set of GPU resources.
+
 Supported graphics backends (`GraphicBackend` enum):
 
 | Backend constant | Target |
@@ -860,6 +865,28 @@ Supported graphics backends (`GraphicBackend` enum):
 | `D3D11` | Windows Direct3D 11 |
 | `METAL` | macOS and iOS Metal |
 | `WGPU` | WebGPU |
+
+## Sprite batching
+
+Sprites drawn one after another share one draw call when they use the same texture,
+shader, and blending. A sprite qualifies when it is a single quad drawn unlit with the
+built-in mesh shader: no light reaches it (the scene has none, or its Mesh has
+**Receive Lights** off), neither the mesh nor the scene sets a custom mesh shader, and
+its texture is an image rather than a [framebuffer](#framebuffers-and-render-to-texture).
+Instanced meshes, tilemaps, and terrains are drawn on their own and never join a sprite
+batch.
+
+Batches follow draw order. Without a depth test, as in most 2D scenes, objects draw in
+hierarchy order, so keep sprites that share a texture or atlas next to each other: an
+object with another texture between them splits the batch.
+
+A sprite that nothing changes keeps its batch data from frame to frame, so drawing it
+costs very little, and moving it only moves its corners. Changing it through its Mesh,
+such as a new texture region, color, or flip, rebuilds that data on the next frame.
+Billboards, and sprites whose entity also has a camera, light, sound, model, or bone
+component, are rebuilt every frame. C++ code that writes a sprite's `MeshComponent`
+should fetch it in the frame it writes, see
+[Writing components directly](entity-component-system.md#writing-components-directly).
 
 ## GPU instancing
 
@@ -1016,7 +1043,7 @@ scene.depthPrepassEnabled = true
 
 | Area | Guideline |
 | --- | --- |
-| Draw calls | Reduce with instancing, atlases, and shared `.material` files |
+| Draw calls | Reduce with instancing, atlases, and shared `.material` files; keep sprites that share a texture next to each other so they [batch](#sprite-batching) |
 | Mesh LOD | Turn scene Mesh Detail on for triangle-heavy scenes; raise **Threshold** or lower a mesh's **Detail Bias** to drop triangles sooner |
 | Instance culling | Keep **Cull Instances** on unless a shader moves instances off their bounds; split huge batches into regional entities |
 | Depth prepass | Enable for heavy opaque overdraw (forests, interiors); leave off when most pixels are shaded once already |

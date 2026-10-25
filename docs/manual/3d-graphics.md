@@ -30,9 +30,12 @@ are uploaded each frame through a **storage buffer** (Vulkan, Metal, Direct3D 11
 **unfilterable bone texture** (OpenGL / OpenGL ES), so large skeletons skin correctly on
 every backend.
 
-The CPU bone-matrix array still has a compile-time capacity, `MAX_BONES` (default
-**96**). The editor grows that array for larger skins; export then raises `MAX_BONES` in
-the generated CMake project to cover the largest skin in your scenes (never below 96).
+Each skinned mesh keeps its bone matrices in a `SkinComponent`, which the loader adds
+to the mesh entity. A mesh without one draws rigid, in its bind pose. The matrix array
+has a compile-time capacity, `MAX_BONES` (default **96**), and meshes without a skin
+don't carry it. The editor grows that array for larger skins; export then raises
+`MAX_BONES` in the generated CMake project to cover the largest skin in your scenes
+(never below 96).
 A model loaded only at runtime that exceeds the exported capacity is rejected and the
 loader writes an error to the log. Raise `MAX_BONES` yourself in a standalone engine
 build if you spawn such models from code. See the
@@ -72,7 +75,7 @@ On the full-tree path, bone and mesh mappings point into those node entities rat
 sitting in a separate skeleton. Animation channels target the node they were authored
 against, so transform-only nodes (not just joints) play back. Models may use **more than
 one skin**: each skinned mesh keeps its own joint order and inverse-bind matrices, and
-the renderer builds that mesh's bone matrices from those joints.
+the renderer builds that mesh's bone matrices from those joints into its `SkinComponent`.
 
 Imported models with child nodes start collapsed in the
 [Structure panel](../editor/structure.md#tree-marks-and-collapse). Expand the model when

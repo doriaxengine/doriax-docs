@@ -70,6 +70,11 @@ Common sprite operations include:
 | Register animation frame | `addFrame(name, x, y, width, height)` |
 | Play frame range | `startAnimation(startFrame, endFrame, interval, loop)` |
 
+Unlit sprites that share a texture are drawn together, and a sprite that doesn't change
+keeps its batch data between frames. Keep sprites that use the same atlas next to each
+other in the hierarchy so they batch. See
+[Sprite batching](rendering-pipeline.md#sprite-batching).
+
 ## Tilemaps
 
 Tilemaps let you compose large 2D worlds from reusable tiles. Use the **tileset

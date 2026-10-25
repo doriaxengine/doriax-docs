@@ -157,21 +157,21 @@ baseline.
 | `MAX_SUBMESHES` | 4 | Submeshes per mesh |
 | `MAX_TILEMAP_TILESRECT` | 64 | Tilemap rectangle tiles |
 | `MAX_TILEMAP_TILES` | 512 | Tiles per tilemap |
-| `MAX_SPRITE_FRAMES` | 32 | Sprite atlas frames |
+| `MAX_SPRITE_FRAMES` | 32 | Atlas frames per sprite or `Points` object, and frames per sprite animation |
 | `MAX_EXTERNAL_BUFFERS` | 20 | External vertex/index buffers per mesh |
-| `MAX_BONES` | 96 | Bone matrices per skinned mesh |
+| `MAX_BONES` | 96 | Bone matrices per skinned mesh, held in its `SkinComponent` |
 | `MAX_SHAPES_2D` | 4 | Shapes per 2D body |
 | `MAX_SHAPE_POINTS_2D` | 8 | Points per 2D polygon or chain shape |
 | `MAX_SHAPES_3D` | 4 | Shapes per 3D body |
 | `MAX_SHAPE_VERTICES_3D` | 64 | Vertices per 3D convex hull or mesh shape |
 | `MAX_SHAPE_INDICES_3D` | 192 | Indices per 3D mesh shape |
-| `MAX_MESH_LODS` | 4 | Detail levels per mesh submesh (source plus simplified index ranges) |
 
 `MAX_EXTERNAL_BUFFERS` is counted from the glTF files the models and foliage layers use
 (an FBX through its imported `.glb`), including the buffers the loader generates, so it
 is right even in a [command line](../editor/command-line.md) export that never loads them.
 
-`MAX_BONES` is the CPU array size used at runtime. Skinned shaders bind those matrices
+`MAX_BONES` is the size of the matrix array in each skinned mesh's `SkinComponent`;
+meshes without a skin don't carry it. Skinned shaders bind those matrices
 through a storage buffer or a bone texture and do not embed this count. The editor can
 load skins larger than 96; export writes the raised value so the standalone build
 matches. If you load a larger skin only from code, edit the generated
@@ -179,6 +179,25 @@ matches. If you load a larger skin only from code, edit the generated
 project-level **Preprocessor Macros** of the exported Xcode workspace (or pass the same
 compiler define in a standalone engine build). The engine and the game must be built with
 the same value.
+
+Export measures only the macros above. These other limits keep their engine values in
+every build:
+
+| Macro | Value | Controls |
+| --- | --- | --- |
+| `MAX_MESH_LODS` | 4 | Detail levels per submesh, the source plus three simplified ones (see [Mesh detail](../manual/rendering-pipeline.md#mesh-detail-lod)) |
+| `MAX_MORPHTARGETS` | 8 | Morph targets per mesh, fewer when they carry normals or tangents (see [GLTF limits](../manual/3d-graphics.md#gltf-compatibility-and-limits)) |
+| `MAX_TEXT_FONTS` | 4 | Font slots per text, the main font and three fallbacks |
+| `MAX_BROADPHASELAYER_3D` | 6 | 3D broad-phase layers |
+| `MAX_TERRAINGRID` | 16 | Root nodes per terrain, so `rootGridSize` goes up to 4 |
+| `MAX_CONTAINER_BOXES` | 30 | Children laid out by one UI container |
+| `MAX_WATER_EXCLUSIONS` | 8 | Water exclusions per water draw, the ones nearest the camera |
+
+The light and shadow limits are listed under
+[Shadow maps](../manual/rendering-pipeline.md#shadow-maps) and
+[2D lighting and shadows](../manual/rendering-pipeline.md#2d-lighting-and-shadows) in
+Rendering Pipeline. The editor compiles them into the shaders it builds, so an exported
+project can't change them.
 
 ## Platform guides
 

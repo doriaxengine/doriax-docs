@@ -223,7 +223,8 @@ GLTF files that contain clips, or more than one skin, import the **full node tre
 the Model entity. Animation channels target those node entities — joints *and*
 transform-only helpers — so node animation authored in the DCC plays back, not only
 skeletal deformation. Models may use several skins; each skinned mesh keeps its own joint
-list and inverse-bind matrices. See
+list and inverse-bind matrices, and its bone matrices live in a `SkinComponent` on the
+mesh entity. See
 [3D Graphics — GLTF node hierarchy](3d-graphics.md#gltf-node-hierarchy).
 
 ### Playing a clip on a model already in the scene

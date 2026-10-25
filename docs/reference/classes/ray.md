@@ -84,7 +84,7 @@ overload also for an index past the body's shapes.
 
 Scene queries return the closest hit. [RayFilter](#rayfilter) only selects what is tested — 2D bodies, 3D bodies or mesh bounds — it does not skip a specific entity. Checking `hit.body == entity` after the fact also fails, because that body is already the closest hit and the ray never continues past it. Pass the entity (or a list of entities) to `intersects` so those bodies are ignored and the next hit is returned. This works with every filter.
 
-The `uint8_t broadPhaseLayer3D` overloads test 3D bodies on one broad-phase layer only.
+The `uint8_t broadPhaseLayer3D` overloads test 3D bodies on one broad-phase layer only. Layers go from 0 to 5 (`MAX_BROADPHASELAYER_3D` is 6); a higher one returns no hit.
 
 The `Body2D` overloads exist only when the build has 2D physics, and the `Body3D` and `broadPhaseLayer3D` ones only with 3D physics — see [Project Settings → Physics backends](../../editor/project-settings.md#physics-backends). A `BODY_2D` or `BODY_3D` query against a disabled backend returns no hit.
 

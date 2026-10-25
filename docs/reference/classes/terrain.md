@@ -87,7 +87,7 @@ How many times the base and detail textures tile across the full terrain. Higher
 * *Setter*: void **setRootGridSize**(int rootGridSize)
 * *Getter*: int **getRootGridSize**() const
 
-The number of root quadtree nodes per side of the terrain. The coarsest node covers `size / rootGridSize` world units, so larger values start the quadtree with smaller nodes. Capped by the terrain node budget together with `levels`.
+The number of root quadtree nodes per side of the terrain. The coarsest node covers `size / rootGridSize` world units, so larger values start the quadtree with smaller nodes. At most 4, and capped by the terrain node budget together with `levels`: a larger value leaves the terrain unbuilt and logs an error.
 
 ---
 
@@ -98,7 +98,7 @@ The number of root quadtree nodes per side of the terrain. The coarsest node cov
 
 Depth of the LOD quadtree. Each level halves the node size, so the leaf node covers `size / (rootGridSize * 2^(levels-1))` world units — more levels means finer geometry near the camera, not a longer view distance.
 
-The quadtree materializes `rootGridSize^2 * (4^levels - 1) / 3` nodes, so the node count grows exponentially with `levels`; past the engine's node budget the terrain refuses to build and logs an error.
+The quadtree materializes `rootGridSize^2 * (4^levels - 1) / 3` nodes, so the node count grows exponentially with `levels`; past the engine's budget of two million nodes, or above 20 levels, the terrain refuses to build and logs an error.
 
 With automatic ranges the LOD distances follow from these node sizes: the first range is twice the leaf node size and each level doubles it, with only the last range stretched to the camera's far clip.
 
