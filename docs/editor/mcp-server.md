@@ -127,8 +127,9 @@ reading the log. An agent that reads them follows the same conventions as the AI
   agent did.
 - Each change an agent makes is logged in the Output panel as `MCP: <what it did>`, and a
   failed call as a warning or an error.
-- While a project is loading, calls wait. A call still waiting after two minutes fails,
-  and the agent is told to try again.
+- While a project is loading, calls wait. While a scene is saving, calls that change the
+  project wait as well, and read-only ones still run. A call still waiting after two
+  minutes fails, and the agent is told to try again.
 - A call the client gives up on before it starts, for example when you cancel it, is
   dropped. One already running is asked to stop early where the action supports it, as an
   export or an asset download does.
@@ -208,7 +209,7 @@ token applies from the next request, so every connected client needs the new com
 | The client reports `401` or *Missing or wrong token* | The token was replaced, or the command came from another machine. Run the client's command from **Clients** again, after `claude mcp remove doriax` for Claude Code; for Codex, update `DORIAX_MCP_TOKEN` instead |
 | The client cannot connect | The server only runs while the editor does, and only with **Enable Server** on. Start the editor, then reconnect from the client; in Claude Code, `/mcp` shows the server's status |
 | Calls fail with *Changes are turned off* | **Allow Changes** is off. Turn it on, or ask the agent only for inspections |
-| Calls fail with *The editor was busy* | A project load took longer than two minutes. Try again once it finishes |
+| Calls fail with *The editor was busy* | A project load or a scene save took longer than two minutes. Try again once it finishes |
 | `open_project` or `create_project` fails over unsaved work | The editor does not drop work to switch projects. Let the agent save it, or save or discard it yourself; see [Opening and creating projects](#opening-and-creating-projects) |
 | A **Save Scene** dialog opens while an agent works | The agent saved a scene that has no file yet without a `path`. Answer the dialog, or ask the agent to pass `path` to `save_scene` |
 | The agent still lists tools that **Allow Changes** removed, or misses ones it added | Clients keep the tool list they read when they connected. Reconnect the client |
