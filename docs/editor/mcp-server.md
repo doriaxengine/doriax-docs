@@ -121,6 +121,15 @@ model has in its prompt, such as how scripts are written and how physics bodies 
 shapes, come from `get_editor_guidance`, a read-only tool only MCP clients get. Agents are
 asked to call it once before their first change.
 
+Some of those rules, which the AI Chat follows too, cover setting a project up. The agent
+gives the [assets and Lua directories](project-workflow.md#assets-and-lua-directories)
+their own folders before adding files, so an export leaves the project's own files out,
+and asks you first when the project already has content at its root. It keeps the script
+language a project already uses. In a project without scripts it writes C++ once
+`check_cpp_build_tools` finds CMake and a compiler. It uses Lua instead when that check
+fails, when the build fails outside its code, or when its first C++ script still does not
+compile after two fixes, and tells you why.
+
 ## How calls run
 
 - Each call runs on the editor's main thread between frames, one at a time, exactly as if

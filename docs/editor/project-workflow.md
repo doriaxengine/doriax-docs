@@ -212,11 +212,26 @@ directory set to `assets`, a texture in `assets/textures/hero.png` is stored as
 Changing either directory migrates the project in one step:
 
 - referenced files that would fall outside the new root are **moved into it**, keeping
-  their folder layout so a model still finds its `.bin` and textures;
+  their folder layout so a model still finds its `.bin` and textures. Files nothing
+  references, such as one a script loads by path, stay where they are;
 - every reference is rewritten in scenes, bundles and `.material` files — scenes that are
   not open are loaded for the rewrite and closed again;
 - if any file cannot be moved, every move is undone and the directories are left
   unchanged, so the project is never half-migrated.
+
+Before it moves anything, the editor checks that the change can finish, and refuses it
+with the reason in an alert when:
+
+- a different file is already where a moved file would go. An identical copy is fine, and
+  the reference points at it. Otherwise move or rename one of the two first;
+- a move would leave the new directory through a symbolic link;
+- the new directory is a file, or a path under one;
+- a scene, bundle, `.material` file or `project.yaml` cannot be written, since the
+  rewrite may have to save it.
+
+If a save still fails after the files have moved, for example on a full disk, the alert
+lists the files that kept the old paths. Open scenes and bundles keep the new paths in
+the editor, so saving them again fixes them.
 
 Because a reference cannot leave its root, the editor only accepts assets from inside the
 assets directory: dropping a file from elsewhere previews it but shows a warning instead of
