@@ -114,10 +114,12 @@ plus `open_project` and `create_project`, which only MCP clients get: the chat r
 the editor, and switching projects would end its own turn. Each tool is marked read-only
 or not (`readOnlyHint`), which clients can use when they ask you to confirm a call.
 
-When a client connects, the server also sends the engine rules the AI Chat's model gets:
-how Lua and C++ scripts are written, to confirm an API in the engine source before using
-it, how physics bodies get their shapes, how to verify a script by running the scene and
-reading the log. An agent that reads them follows the same conventions as the AI Chat.
+When a client connects, the server also sends the editor's main rules: build scenes in
+the editor and leave scripts to drive them, share repeated entities through bundles, give
+a HUD its own UI scene, and animate with native animations. The other rules the AI Chat's
+model has in its prompt, such as how scripts are written and how physics bodies get their
+shapes, come from `get_editor_guidance`, a read-only tool only MCP clients get. Agents are
+asked to call it once before their first change.
 
 ## How calls run
 
