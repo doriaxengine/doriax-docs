@@ -196,9 +196,9 @@ system that owns them: values a system produces (`playingTime`, `state`, `presse
 
 ### Reaching a component from Lua
 
-Lua has one accessor per component, on the wrapper that adds it: `object:getTransform()`,
-`camera:getCameraComponent()`, `text:getTextComponent()`. Each page under
-[Components](../reference/index.md#components) names its accessor. On an entity without
+Lua has an accessor for each component in the reference, on the wrapper that adds it:
+`object:getTransform()`, `camera:getCameraComponent()`, `text:getTextComponent()`. Each page
+under [Components](../reference/index.md#components) names its accessor. On an entity without
 that component the call raises an error, except `mesh:getInstancedMeshComponent()`, which
 returns `nil` until the mesh is instanced.
 
