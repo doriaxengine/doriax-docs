@@ -216,6 +216,9 @@ Changing either directory migrates the project in one step:
   references, such as one a script loads by path, stay where they are;
 - every reference is rewritten in scenes, bundles and `.material` files — scenes that are
   not open are loaded for the rewrite and closed again;
+- folders the moves leave empty are deleted. The project folder and the two new
+  directories stay even when empty, and so does a linked folder, whose target may hold
+  other files;
 - if any file cannot be moved, every move is undone and the directories are left
   unchanged, so the project is never half-migrated.
 
