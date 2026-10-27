@@ -98,6 +98,7 @@ description: Body3D API reference — 3D physics body powered by Jolt Physics, s
 | bool | [applyBuoyancyImpulse](#applybuoyancyimpulse) | C++ \| Lua |
 | Vector3 | [getCenterOfMassPosition](#getcenterofmassposition) | C++ \| Lua |
 | Object | [getAttachedObject](#getattachedobject) | C++ \| Lua |
+| [Body3DComponent](body3dcomponent.md) | `getBody3DComponent` | Lua |
 
 ## Enumerations
 

@@ -4,7 +4,7 @@ description: TilemapComponent API reference (C++ and Lua).
 
 # TilemapComponent
 
-`TilemapComponent` API exposed to Lua and C++ gameplay code.
+The data behind a [Tilemap](tilemap.md). In Lua, get it with `tilemap:getTilemapComponent()`.
 
 ## Properties
 

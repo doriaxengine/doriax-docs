@@ -4,7 +4,8 @@ description: ParticlesComponent API reference (C++ and Lua).
 
 # ParticlesComponent
 
-Particle system configuration component.
+The data behind [Particles](particles.md). In Lua, get it with `particles:getParticlesComponent()`.
+The old misspelled `getParticlesomponent()` still works.
 
 ## Properties
 

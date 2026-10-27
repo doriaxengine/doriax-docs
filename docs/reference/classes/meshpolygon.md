@@ -25,3 +25,4 @@ description: MeshPolygon API reference (C++ and Lua).
 | Name | Languages |
 | --- | --- |
 | `addVertex` | C++ \| Lua |
+| `getMeshPolygonComponent` ([MeshPolygonComponent](meshpolygoncomponent.md)) | Lua |

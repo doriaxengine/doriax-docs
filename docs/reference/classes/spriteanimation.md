@@ -33,6 +33,7 @@ See [EntityHandle ownership](entityhandle.md#ownership-and-lifetime).
 | Type | Name | Langs |
 | --- | --- | --- |
 | void | [setAnimation](#setanimation) | C++ \| Lua |
+| [SpriteAnimationComponent](spriteanimationcomponent.md) | `getSpriteAnimationComponent` | Lua |
 
 ## Property details
 

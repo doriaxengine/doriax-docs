@@ -16,6 +16,7 @@ SoLoud playback and 3D audio.
 | `pauseAll` | C++ \| Lua |
 | `resumeAll` | C++ \| Lua |
 | `checkActive` | C++ \| Lua |
+| `stopSceneSounds` | C++ \| Lua |
 | `setMuted` | C++ |
 
 ## Constants

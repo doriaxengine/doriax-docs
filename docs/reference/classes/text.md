@@ -48,6 +48,8 @@ Text is shaped before it is drawn, so scripts that need contextual glyph forms w
 | void | [setShaderUniform](#setshaderuniform) | C++ \| Lua |
 | Vector4 | [getShaderUniform](#setshaderuniform) | C++ \| Lua |
 | bool | [removeShaderUniform](#setshaderuniform) | C++ \| Lua |
+| [TextComponent](textcomponent.md) | `getTextComponent` | Lua |
+| [UIComponent](uicomponent.md) | `getUIComponent` | Lua |
 
 ## Property details
 

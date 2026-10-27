@@ -30,6 +30,7 @@ You typically do not instantiate `KeyframeTracks` directly.
 | void | [setTimes](#settimes) | C++ \| Lua |
 | void | [setEasings](#seteasings-seteasing) | C++ \| Lua |
 | void | [setEasing](#seteasings-seteasing) | C++ \| Lua |
+| [KeyframeTracksComponent](keyframetrackscomponent.md) | `getKeyframeTracksComponent` | Lua |
 
 ## Property details
 

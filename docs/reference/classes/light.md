@@ -72,6 +72,7 @@ Up to `MAX_LIGHTS` (6) lights are used at once. A scene with more uses its direc
 | bool | [isAutomaticShadowCamera](#automaticshadowcamera) | C++ \| Lua |
 | void | [setNumCascades](#numcascades) | C++ \| Lua |
 | float | [getNumCascades](#numcascades) | C++ \| Lua |
+| [LightComponent](lightcomponent.md) | `getLightComponent` | Lua |
 
 ## Enumerations
 

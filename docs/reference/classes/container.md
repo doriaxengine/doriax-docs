@@ -30,6 +30,7 @@ A container lays out up to 30 visible children (`MAX_CONTAINER_BOXES`). A child 
 | unsigned int | [getContentWidth](#getcontentwidth-getcontentheight) | C++ \| Lua |
 | unsigned int | [getContentHeight](#getcontentwidth-getcontentheight) | C++ \| Lua |
 | void | [setBoxExpand](#setboxexpand) | C++ \| Lua |
+| [UIContainerComponent](uicontainercomponent.md) | `getUIContainerComponent` | Lua |
 
 ## Enumerations
 

@@ -43,6 +43,7 @@ A single tilemap can render at most **16 383** tiles — the index buffer is 16-
 | unsigned int | [getWidth](#getwidth-getheight) | C++ \| Lua |
 | unsigned int | [getHeight](#getwidth-getheight) | C++ \| Lua |
 | void | [clearAll](#clearall) | C++ \| Lua |
+| [TilemapComponent](tilemapcomponent.md) | `getTilemapComponent` | Lua |
 
 ## Property details
 

@@ -4,7 +4,7 @@ description: AnimationComponent API reference (C++ and Lua).
 
 # AnimationComponent
 
-`AnimationComponent` API exposed to Lua and C++ gameplay code.
+The data behind an [Animation](animation.md). In Lua, get it with `animation:getAnimationComponent()`.
 
 ## Properties
 

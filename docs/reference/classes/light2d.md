@@ -51,6 +51,7 @@ Shadows are opt-in per light and are cast by [Occluder2D](occluder2d.md) compone
 | float | [getShadowSoftness](#shadowsoftness) | C++ \| Lua |
 | void | [setMapResolution](#mapresolution) | C++ \| Lua |
 | unsigned int | [getMapResolution](#mapresolution) | C++ \| Lua |
+| [Light2DComponent](light2dcomponent.md) | `getLight2DComponent` | Lua |
 
 ---
 

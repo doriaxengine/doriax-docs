@@ -74,6 +74,7 @@ See [EntityHandle ownership](entityhandle.md#ownership-and-lifetime).
 | void | [setRotationModifier](#setrotationmodifier) | C++ \| Lua |
 | void | [setScaleInitializer](#setscaleinitializer) | C++ \| Lua |
 | void | [setScaleModifier](#setscalemodifier) | C++ \| Lua |
+| [ParticlesComponent](particlescomponent.md) | `getParticlesComponent` | Lua |
 
 ## Enumerations
 

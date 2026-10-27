@@ -63,6 +63,7 @@ for how the surface is cut.
 | void | [setCenter](#center-size) | C++ \| Lua |
 | void | [setSize](#center-size) | C++ \| Lua |
 | bool | [contains](#contains) | C++ \| Lua |
+| [WaterExclusionComponent](waterexclusioncomponent.md) | `getWaterExclusionComponent` | Lua |
 
 ## Enumerations
 

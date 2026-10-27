@@ -51,6 +51,7 @@ for how probes are selected, blended, and captured.
 | void | [setTextures](#settextures-settexture) | C++ \| Lua |
 | void | [setTexture](#settextures-settexture) | C++ \| Lua |
 | void | [refresh](#refresh) | C++ \| Lua |
+| [ReflectionProbeComponent](reflectionprobecomponent.md) | `getReflectionProbeComponent` | Lua |
 
 ## Enumerations
 

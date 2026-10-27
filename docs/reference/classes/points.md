@@ -42,6 +42,7 @@ Like [Lines](lines.md), `Points` uses a dynamic GPU buffer. Call `updatePoints()
 | void | [setShaderUniform](#setshaderuniform) | C++ \| Lua |
 | Vector4 | [getShaderUniform](#setshaderuniform) | C++ \| Lua |
 | bool | [removeShaderUniform](#setshaderuniform) | C++ \| Lua |
+| [PointsComponent](pointscomponent.md) | `getPointsComponent` | Lua |
 
 ## Property details
 

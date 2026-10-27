@@ -30,6 +30,8 @@ description: Polygon API reference (C++ and Lua).
 | [`setShaderUniform`](#setshaderuniform) | C++ \| Lua |
 | [`getShaderUniform`](#setshaderuniform) | C++ \| Lua |
 | [`removeShaderUniform`](#setshaderuniform) | C++ \| Lua |
+| `getPolygonComponent` ([PolygonComponent](polygoncomponent.md)) | Lua |
+| `getUIComponent` ([UIComponent](uicomponent.md)) | Lua |
 
 ## Method details
 

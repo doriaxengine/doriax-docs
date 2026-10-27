@@ -27,6 +27,7 @@ See [EntityHandle ownership](entityhandle.md#ownership-and-lifetime).
 | Type | Name | Langs |
 | --- | --- | --- |
 | void | [setAction](#setaction) | C++ \| Lua |
+| [ColorActionComponent](coloractioncomponent.md) | `getColorActionComponent` | Lua |
 
 ## Method details
 

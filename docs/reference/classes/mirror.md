@@ -53,6 +53,7 @@ component without replacing the geometry.
 | --- | --- | --- |
 | void | [setNormal](#normal) | C++ \| Lua |
 | Vector3 | [getNormal](#normal) | C++ \| Lua |
+| [MirrorComponent](mirrorcomponent.md) | `getMirrorComponent` | Lua |
 
 ---
 

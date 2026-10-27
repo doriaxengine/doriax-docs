@@ -27,6 +27,7 @@ See [EntityHandle ownership](entityhandle.md#ownership-and-lifetime).
 | Type | Name | Langs |
 | --- | --- | --- |
 | void | [setAction](#setaction) | C++ \| Lua |
+| [AlphaActionComponent](alphaactioncomponent.md) | `getAlphaActionComponent` | Lua |
 
 ## Method details
 

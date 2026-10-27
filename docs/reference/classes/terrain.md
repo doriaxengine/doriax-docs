@@ -42,6 +42,7 @@ The terrain geometry is a CDLOD quadtree: `rootGridSize` × `rootGridSize` root 
 | void | [setTextureDetailRed](#settexturedetailred-settexturedetailgreen-settexturedetailblue) | C++ \| Lua |
 | void | [setTextureDetailGreen](#settexturedetailred-settexturedetailgreen-settexturedetailblue) | C++ \| Lua |
 | void | [setTextureDetailBlue](#settexturedetailred-settexturedetailgreen-settexturedetailblue) | C++ \| Lua |
+| [TerrainComponent](terraincomponent.md) | `getTerrainComponent` | Lua |
 
 ## Property details
 

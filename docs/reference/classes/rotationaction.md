@@ -28,6 +28,7 @@ See [EntityHandle ownership](entityhandle.md#ownership-and-lifetime).
 | --- | --- | --- |
 | void | [setAction](#setaction) | C++ \| Lua |
 | void | [setSpinAction](#setspinaction) | C++ \| Lua |
+| [RotationActionComponent](rotationactioncomponent.md) | `getRotationActionComponent` | Lua |
 
 ## Method details
 

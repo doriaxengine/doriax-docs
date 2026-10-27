@@ -34,6 +34,7 @@ For static multi-node GLTFs that need [GPU instancing](../../manual/rendering-pi
 | float | [getMorphWeight](#getmorphweight-setmorphweight) | C++ \| Lua |
 | void | [setMorphWeight](#getmorphweight-setmorphweight) | C++ \| Lua |
 | void | [resetToBindPose](#resettobindpose) | C++ \| Lua |
+| [ModelComponent](modelcomponent.md) | `getModelComponent` | Lua |
 
 ## GLTF import support and limits
 

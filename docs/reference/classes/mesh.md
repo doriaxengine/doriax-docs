@@ -156,6 +156,8 @@ See [EntityHandle ownership](entityhandle.md#ownership-and-lifetime).
 | bool | [isCullInstances](#cullinstances) | C++ \| Lua |
 | void | [setCullDistance](#culldistance) | C++ \| Lua |
 | float | [getCullDistance](#culldistance) | C++ \| Lua |
+| [MeshComponent](meshcomponent.md) | `getMeshComponent` | Lua |
+| [InstancedMeshComponent](instancedmeshcomponent.md) | `getInstancedMeshComponent` | Lua |
 
 ## Enumerations
 

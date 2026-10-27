@@ -100,6 +100,7 @@ description: Body2D API reference — 2D physics body powered by Box2D, shapes, 
 | std::vector\<Contact2D\> | [getShapeContacts](#getbodycontacts-getshapecontacts) | C++ \| Lua |
 | Object | [getAttachedObject](#getattachedobject) | C++ \| Lua |
 | float | [getPointsToMeterScale](#getpointstometerscale) | C++ \| Lua |
+| [Body2DComponent](body2dcomponent.md) | `getBody2DComponent` | Lua |
 
 ## Enumerations
 

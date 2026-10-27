@@ -13,6 +13,7 @@ Creates meshes, loads models, builds sprites and tilemaps.
 | Name | Languages |
 | --- | --- |
 | `createPlane` | C++ \| Lua |
+| `createWall` | C++ \| Lua |
 | `createBox` | C++ \| Lua |
 | `createSphere` | C++ \| Lua |
 | `createCylinder` | C++ \| Lua |
@@ -28,10 +29,11 @@ Creates meshes, loads models, builds sprites and tilemaps.
 | `loadOBJ` | C++ \| Lua |
 | `createInstancedMesh` | C++ \| Lua |
 | `removeInstancedMesh` | C++ \| Lua |
-| `hasPendingAsyncModelLoads` | C++ |
-| `isAsyncModelLoadPending` | C++ |
-| `cancelAsyncModelLoad` | C++ |
-| `cancelAsyncModelLoads` | C++ |
+| `hasInstancedMesh` | C++ \| Lua |
+| `hasPendingAsyncModelLoads` | C++ \| Lua |
+| `isAsyncModelLoadPending` | C++ \| Lua |
+| `cancelAsyncModelLoad` | C++ \| Lua |
+| `cancelAsyncModelLoads` | C++ \| Lua |
 | `cancelAllAsyncModelLoads` | C++ |
 
 ## Sprite frame rectangles
@@ -60,8 +62,8 @@ sets the sprite's `needUpdateBatch`, so a sprite drawn from a kept copy shows th
 
 ## Asynchronous model-load control
 
-These C++-only methods inspect or stop model loads started by the asynchronous resource
-pipeline:
+These methods inspect or stop model loads started by the asynchronous resource
+pipeline. All but `cancelAllAsyncModelLoads` are also bound to Lua:
 
 | Method | Scope |
 | --- | --- |

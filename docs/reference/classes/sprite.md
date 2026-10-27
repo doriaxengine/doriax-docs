@@ -68,6 +68,7 @@ description: Sprite API reference — 2D images, texture atlas frames, pivot, an
 | void | [pauseAnimation](#pauseanimation) | C++ \| Lua |
 | void | [resumeAnimation](#resumeanimation) | C++ \| Lua |
 | void | [stopAnimation](#stopanimation) | C++ \| Lua |
+| [SpriteComponent](spritecomponent.md) | `getSpriteComponent` | Lua |
 
 ## Enumerations
 

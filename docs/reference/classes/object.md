@@ -86,6 +86,7 @@ description: Object API reference — transform, hierarchy, visibility, billboar
 | [Body3D](body3d.md) | [getBody3D](#getbody3d) | C++ \| Lua |
 | void | [removeBody3D](#removebody3d) | C++ \| Lua |
 | [Ray](ray.md) | [getRay](#getray) | C++ \| Lua |
+| [Transform](transform.md) | `getTransform` | Lua |
 
 ## Property details
 

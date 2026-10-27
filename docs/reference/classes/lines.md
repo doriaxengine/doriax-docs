@@ -35,6 +35,7 @@ The `Lines` object maintains an internal dynamic buffer. Call `updateLines()` af
 | void | [setShaderUniform](#setshaderuniform) | C++ \| Lua |
 | Vector4 | [getShaderUniform](#setshaderuniform) | C++ \| Lua |
 | bool | [removeShaderUniform](#setshaderuniform) | C++ \| Lua |
+| [LinesComponent](linescomponent.md) | `getLinesComponent` | Lua |
 
 ## Property details
 

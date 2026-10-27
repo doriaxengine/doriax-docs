@@ -37,6 +37,7 @@ A timeline-based animation composed of `ActionFrame` entries. Each frame schedul
 | void | [setActionFrameDuration](#setactionframestarttime-setactionframeduration) | C++ \| Lua |
 | void | [setActionFrameEntity](#setactionframeentity) | C++ \| Lua |
 | void | [clearActionFrames](#clearactionframes) | C++ |
+| [AnimationComponent](animationcomponent.md) | `getAnimationComponent` | Lua |
 
 ## Property details
 

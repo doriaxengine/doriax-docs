@@ -1,5 +1,5 @@
 ---
-description: SpriteAnimationComponent API reference.
+description: SpriteAnimationComponent API reference (C++ and Lua).
 ---
 
 # SpriteAnimationComponent
@@ -7,18 +7,23 @@ description: SpriteAnimationComponent API reference.
 `SpriteAnimationComponent` holds the frame sequence and playback state for a
 [SpriteAnimation](spriteanimation.md) action. Configure it through
 [`SpriteAnimation::setAnimation`](spriteanimation.md#setanimation) or in the editor
-**Properties** window (**Sprite Animation**).
+**Properties** window (**Sprite Animation**). In Lua, get it with
+`animation:getSpriteAnimationComponent()`.
 
 ## Properties
 
 | Name | Languages |
 | --- | --- |
-| `loop` | C++ |
-| `frames` / `framesSize` | C++ |
-| `framesTime` / `framesTimeSize` | C++ |
-| `frameIndex` | C++ |
-| `frameTimeIndex` | C++ |
-| `spriteFrameCount` | C++ |
+| `loop` | C++ \| Lua |
+| `frames` | C++ |
+| `framesSize` | C++ \| Lua (read-only) |
+| `framesTime` | C++ |
+| `framesTimeSize` | C++ \| Lua (read-only) |
+| `frameIndex` | C++ \| Lua (read-only) |
+| `frameTimeIndex` | C++ \| Lua (read-only) |
+| `spriteFrameCount` | C++ \| Lua (read-only) |
+
+From Lua, change the frames with [`SpriteAnimation:setAnimation`](spriteanimation.md#setanimation).
 
 `SpriteAnimationComponent` does not store a separate name. Sprite animations are
 entities, so their display and lookup name comes from the inherited

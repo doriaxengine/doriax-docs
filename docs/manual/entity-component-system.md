@@ -194,6 +194,32 @@ system that owns them: values a system produces (`playingTime`, `state`, `presse
     sRGB; the component field stores the linear value. Writing `color` directly stores
     exactly what you pass, so prefer the setter unless you already have linear values.
 
+### Reaching a component from Lua
+
+Lua has one accessor per component, on the wrapper that adds it: `object:getTransform()`,
+`camera:getCameraComponent()`, `text:getTextComponent()`. Each page under
+[Components](../reference/index.md#components) names its accessor. On an entity without
+that component the call raises an error, except `mesh:getInstancedMeshComponent()`, which
+returns `nil` until the mesh is instanced.
+
+Field writes land on the component, but lists such as `points` or `times` come to Lua as
+copies: change the table, then assign it back.
+
+```lua
+local tracks = KeyframeTracks(self.scene, self.entity):getKeyframeTracksComponent()
+local times = tracks.times
+times[#times] = 2.0
+tracks.times = times
+```
+
+!!! warning "Get the component where you use it"
+    Components of one kind are packed in an array that moves when entities or components
+    are added or removed, so a component kept in a script field can end up pointing at
+    another entity's data. Call the accessor again instead, as you would re-fetch a
+    `Component&` in C++. A component taken from a temporary such as
+    `Object(scene):getTransform()` goes stale as soon as Lua collects that object, since
+    it destroys its entity.
+
 ## Built-in component groups
 
 The engine includes a broad set of built-in components. Most are exposed through both

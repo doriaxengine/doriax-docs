@@ -18,6 +18,7 @@ Box2D joint constraint.
 | `setWeldJoint` | C++ \| Lua |
 | `setMotorJoint` | C++ \| Lua |
 | `getType` | C++ \| Lua |
+| `getJoint2DComponent` ([Joint2DComponent](joint2dcomponent.md)) | Lua |
 
 ## Method details
 

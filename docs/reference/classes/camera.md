@@ -116,6 +116,7 @@ description: Camera API reference — orthographic and perspective projection, t
 | Ray | [screenToRay](#screentoray) | C++ \| Lua |
 | float | [getDistanceFromTarget](#getdistancefromtarget) | C++ \| Lua |
 | void | [updateCamera](#updatecamera) | C++ \| Lua |
+| [CameraComponent](cameracomponent.md) | `getCameraComponent` | Lua |
 
 ## Enumerations
 

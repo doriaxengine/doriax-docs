@@ -101,6 +101,7 @@ keeps the water out of a boat, a cabin, or a cave.
 | bool | [removeShaderUniform](#setshaderuniform) | C++ \| Lua |
 | float | [getHeight](#getheight-getnormal) | C++ \| Lua |
 | Vector3 | [getNormal](#getheight-getnormal) | C++ \| Lua |
+| [WaterComponent](watercomponent.md) | `getWaterComponent` | Lua |
 
 ---
 

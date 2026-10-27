@@ -57,6 +57,9 @@ callbacks below run.
 
 See [Events](../../manual/events.md). Use `onFixedUpdate` for forces.
 
+`clearSubscriptions()` removes every callback from these events, and
+`removeSubscriptionsByTag(substring)` removes the ones whose tag contains `substring`.
+
 !!! warning "A filter callback must return a value"
     `preSolve2D`, `shouldCollide2D`, and `shouldCollide3D` are the events whose return
     value is read. A Lua handler that falls off the end returns `nil`, which is read as

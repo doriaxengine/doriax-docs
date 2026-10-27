@@ -23,3 +23,4 @@ Jolt 3D joint constraint.
 | `setRackAndPinionJoint` | C++ \| Lua |
 | `setPulleyJoint` | C++ \| Lua |
 | `getType` | C++ \| Lua |
+| `getJoint3DComponent` ([Joint3DComponent](joint3dcomponent.md)) | Lua |

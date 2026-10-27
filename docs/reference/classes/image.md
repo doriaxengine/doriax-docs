@@ -43,6 +43,7 @@ All UI elements also expose a rich set of pointer/focus callback events (inherit
 | void | [setShaderUniform](#setshaderuniform) | C++ \| Lua |
 | Vector4 | [getShaderUniform](#setshaderuniform) | C++ \| Lua |
 | bool | [removeShaderUniform](#setshaderuniform) | C++ \| Lua |
+| [ImageComponent](imagecomponent.md) | `getImageComponent` | Lua |
 
 ### Callback events
 

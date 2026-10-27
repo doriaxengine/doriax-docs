@@ -33,6 +33,7 @@ Three fog models are supported: linear, exponential, and squared-exponential.
 | void | [setLinearStart](#linearstart-linearend) | C++ \| Lua |
 | void | [setLinearEnd](#linearstart-linearend) | C++ \| Lua |
 | void | [setLinearStartEnd](#linearstart-linearend) | C++ \| Lua |
+| [FogComponent](fogcomponent.md) | `getFogComponent` | Lua |
 
 ## Enumerations
 

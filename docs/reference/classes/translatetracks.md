@@ -26,6 +26,7 @@ See [EntityHandle ownership](entityhandle.md#ownership-and-lifetime).
 | Name | Languages |
 | --- | --- |
 | `setValues` | C++ \| Lua |
+| `getTranslateTracksComponent` ([TranslateTracksComponent](translatetrackscomponent.md)) | Lua |
 
 The key times, easing, `loop` and `relative` come from [KeyframeTracks](keyframetracks.md).
 Tracks imported from GLTF `CUBICSPLINE` clips carry per-key Hermite tangents and

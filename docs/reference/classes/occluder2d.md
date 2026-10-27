@@ -39,6 +39,7 @@ See [2D Graphics — 2D shadows](../../manual/2d-graphics.md#2d-shadows) for the
 | bool | [isClosed](#closed) | C++ \| Lua |
 | void | [setEnabled](#enabled) | C++ \| Lua |
 | bool | [isEnabled](#enabled) | C++ \| Lua |
+| [Occluder2DComponent](occluder2dcomponent.md) | `getOccluder2DComponent` | Lua |
 
 ## Enumerations
 

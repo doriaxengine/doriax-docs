@@ -52,6 +52,7 @@ Use **Visible = false** for invisible HDR environments that only drive reflectio
 | [`setShaderUniform`](#setshaderuniform) | C++ \| Lua |
 | [`getShaderUniform`](#setshaderuniform) | C++ \| Lua |
 | [`removeShaderUniform`](#setshaderuniform) | C++ \| Lua |
+| `getSkyComponent` ([SkyComponent](skycomponent.md)) | Lua |
 
 ## Example
 
