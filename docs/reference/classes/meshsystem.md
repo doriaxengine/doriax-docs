@@ -45,7 +45,8 @@ Rectangles with all four values in `[0, 1]` are treated as UVs. Other rectangles
 are converted from pixels using the texture dimensions. If dimensions are not yet
 available, the helper stores one pending rectangle on the sprite for mesh updates
 to retry. Subsequent calls replace that request; requests are not queued. Frame
-selection also works before the sprite geometry has been built.
+selection also works before the sprite geometry has been built. Applying a rectangle
+sets the sprite's `needUpdateBatch`, so a sprite drawn from a kept copy shows the new frame.
 
 ## Static model hierarchy
 

@@ -880,12 +880,13 @@ Batches follow draw order. Without a depth test, as in most 2D scenes, objects d
 hierarchy order, so keep sprites that share a texture or atlas next to each other: an
 object with another texture between them splits the batch.
 
-A sprite that nothing changes keeps its batch data from frame to frame, so drawing it
-costs very little, and moving it only moves its corners. Changing it through its Mesh,
-such as a new texture region, color, or flip, rebuilds that data on the next frame.
-Billboards, and sprites whose entity also has a camera, light, sound, model, or bone
-component, are rebuilt every frame. C++ code that writes a sprite's `MeshComponent`
-should fetch it in the frame it writes, see
+A sprite that nothing changes keeps a copy of its batch data from frame to frame, so
+drawing it costs very little, and moving it only moves its corners. Changing it through
+the Sprite or Mesh API, such as a new texture region, color, or flip, makes it take the
+copy again on the next update. Only sprites keep a copy: other quads still batch but are
+rebuilt every frame, and so are billboards and sprites whose entity also has a camera,
+light, sound, model, or bone component. C++ code that writes a sprite's `MeshComponent`
+directly sets `SpriteComponent::needUpdateBatch`, see
 [Writing components directly](entity-component-system.md#writing-components-directly).
 
 ## GPU instancing

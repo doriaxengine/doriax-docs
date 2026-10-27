@@ -167,15 +167,22 @@ does.
 The flags are named after what they refresh: `needUpdate`, `needUpdateSizes`,
 `needUpdateButton`, `needUpdateTilemap`, `needReload`, and so on.
 
-!!! note "Fetch a sprite's mesh in the frame you change it"
-    A sprite that nothing changes keeps its batch data in `RenderSystem` from frame to
-    frame (see [Sprite batching](rendering-pipeline.md#sprite-batching)). In C++, fetching
-    its `MeshComponent` with `getComponent` or `findComponent` is what tells the renderer
-    to rebuild that data, so get the component again in the frame you write it. A write
-    through a reference kept from an earlier frame can be missed. Wrapper setters such as
-    `Mesh::setColor` fetch it on every call. Reading by index through a
-    `const ComponentArray<MeshComponent>*` rebuilds nothing, while any other fetch counts as
-    a change, even one that only reads.
+!!! note "Changing a sprite's mesh directly"
+    A sprite that nothing changes is drawn from a copy of its mesh that `RenderSystem`
+    keeps (see [Sprite batching](rendering-pipeline.md#sprite-batching)). After writing a
+    sprite's `MeshComponent` yourself in C++, set `needUpdateBatch` on its
+    `SpriteComponent`, or the sprite keeps drawing its old texture region, color, or
+    texture:
+
+    ```cpp
+    MeshComponent& mesh = scene.getComponent<MeshComponent>(entity);
+    mesh.submeshes[0].material.baseColorFactor = Vector4(1, 0, 0, 1);
+    scene.getComponent<SpriteComponent>(entity).needUpdateBatch = true;
+    ```
+
+    Wrapper setters such as `Mesh::setColor` and `Sprite::setTextureRect` set it for you,
+    and reading a component never counts as a change. Like the other flags, it is picked
+    up on the next update.
 
 Two kinds of field are read-only from Lua, because writing them can only desync the
 system that owns them: values a system produces (`playingTime`, `state`, `pressed`,
