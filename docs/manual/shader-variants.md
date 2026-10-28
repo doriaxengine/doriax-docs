@@ -49,7 +49,8 @@ only loaded during Play, such as a level opened from the title menu, gets just i
 
 A property name is a three-letter abbreviation of the feature it switches on, and its
 position in the list below is the bit it occupies in the numeric mask. Both spellings
-are accepted by `--shader` (`mesh:Uv1,Nor` and `mesh:0x42` are the same variant), and
+are accepted by `--shader` and the `set_export_shaders` AI tool (`mesh:Uv1,Nor` and
+`mesh:0x42` are the same variant), and
 the numeric form is what a scene file's `shaderKeys` entries hold.
 
 ### `mesh`
