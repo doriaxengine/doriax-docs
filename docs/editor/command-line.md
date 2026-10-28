@@ -99,6 +99,13 @@ When Native Resource Pack is enabled, the source output contains
 [Native resource pack](export.md#native-resource-pack) before using it in an automated
 Android export.
 
+### Shader variants from scenes
+
+The command line draws nothing, so it exports the shader variants saved in each scene file
+(see [Shaders](export.md#shaders)). A scene changed outside the editor, or using a bundle
+that was, gets a warning, since a missing variant makes the game exit at startup. Open and
+save it in the editor, or list the variants with `--shader`.
+
 ### List a project's scenes
 
 Useful for discovering a start-scene ID before exporting:

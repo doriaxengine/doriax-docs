@@ -225,9 +225,9 @@ See [Tileset Slicer](tileset-slicer.md) for the complete workflow.
   sizes small.
 - Do not name a top-level file or folder in the assets directory `resources.pak` or
   `resources.pak.tmp`. Those names are reserved for the optional native resource pack.
-- On Windows, the editor and exports skip files and folders whose names use characters
-  outside the system code page, such as Chinese names on a system set to a Western
-  language. Rename them with characters the system supports.
+- On Windows 10 before version 1903, the editor and exports skip files and folders whose
+  names use characters outside the system code page, such as Chinese names on a system set
+  to a Western language. Later versions handle any name.
 
 ## See also
 

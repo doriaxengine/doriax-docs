@@ -115,7 +115,16 @@ application name, so renaming the application does not rename the binary.
 
 The shader list is populated automatically from every saved scene, including a live scan
 of the currently open scenes — so a component added since the last save (for example a
-shadow-casting 2D light) is already accounted for. Each entry shows where it came from:
+shadow-casting 2D light) is already accounted for.
+
+The editor records a scene's variants while drawing it and saves them in the scene file.
+Closed scenes, and every scene in a [command-line export](command-line.md#shader-variants-from-scenes),
+use the saved ones. If a scene file, or a bundle it uses, was changed outside the editor,
+the export warns and names the scene, since a missing variant makes the game exit at
+startup. Open and save the scene in the editor to update it. Changes to model or material
+files are not detected.
+
+Each entry shows where it came from:
 
 | Icon | Entry | Meaning |
 | --- | --- | --- |
