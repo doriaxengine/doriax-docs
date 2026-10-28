@@ -23,9 +23,12 @@ Each frame, the engine runs the following phases in order:
    atlas slot, so instances outside a view are not submitted to it.
 3. **Depth prepass** *(optional)* — When [depth prepass](#depth-prepass) is enabled, opaque
    meshes write depth only so the colour pass can shade each pixel once. Off by default.
-4. **Opaque pass** — Opaque geometry is sorted front-to-back and drawn with depth
-   testing enabled for early-Z efficiency. With [mesh detail](#mesh-detail-lod) on,
-   each mesh picks a detail level from its projected geometric error.
+4. **Opaque pass** — Opaque geometry is drawn with depth testing, nearest first in
+   distance bands (one per doubling of the distance) so early-Z rejects most hidden
+   surfaces. Inside a band, meshes that share a pipeline, vertex buffer, and texture are
+   drawn one after another, so the GPU state changes less. With
+   [mesh detail](#mesh-detail-lod) on, each mesh picks a detail level from its projected
+   geometric error.
 5. **Lighting and shadows** — Shadow maps are rendered for each shadow-casting light,
    then the lighting pass applies directional, point, and spot lights.
 6. **Skybox and IBL** — The sky cubemap is drawn (when visible). Environment maps derived
