@@ -136,6 +136,9 @@ compile after two fixes, and tells you why.
   the AI Chat made it. A long action such as an export holds the editor until it ends.
 - Scene edits go through the editor's undo history, so **Edit → Undo** reverts what an
   agent did.
+- Agents see the files the [Resources Browser](resources.md) shows: searches skip hidden
+  files and folders, and the file tools refuse paths in `.trash`, where deleted files wait
+  for undo.
 - Each change an agent makes is logged in the Output panel as `MCP: <what it did>`, and a
   failed call as a warning or an error.
 - While a project is loading, calls wait. While a scene is saving, calls that change the
