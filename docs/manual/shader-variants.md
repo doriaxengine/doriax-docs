@@ -45,6 +45,17 @@ When Play finds variants that a scene file does not list yet, Stop adds them. A 
 only loaded during Play, such as a level opened from the title menu, gets just its
 `shaderKeys` rewritten, and the rest of its file stays as it was.
 
+Each save also stores a `shaderKeysHash` of the rest of the scene and of the bundles its
+instances use. When the scene file or one of those bundles changed outside the editor, or
+the scene was saved before everything in it had loaded, the export warns:
+
+```
+Shader keys of Level1 may be out of date, and the game exits if it needs a missing shader. Open and save these scenes in the editor to update them.
+```
+
+Opening the scene lets the editor draw what changed, and saving it then writes a complete
+list.
+
 ## Property reference
 
 A property name is a three-letter abbreviation of the feature it switches on, and its
