@@ -72,6 +72,12 @@ When a field differs from the component's default value, a small reset arrow app
 to its label; clicking it restores the default. Edits apply to every selected entity and
 every change is undoable.
 
+On a button, the UIComponent **Color** and **Texture** are greyed out: the button replaces
+them with the ones of its current state whenever it loads or changes state. Set **Color
+Normal** and **Texture Normal**, and the hovered, pressed and disabled ones, in the
+ButtonComponent instead. MCP agents are refused those two fields on a button for the same
+reason.
+
 A texture field set to a camera shows that camera's live output (render-to-texture). The
 camera is switched to render-to-texture automatically and can no longer be the scene's
 main camera. This is the manual building block behind effects like minimaps and monitors;

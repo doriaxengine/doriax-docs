@@ -71,7 +71,7 @@ The text displayed inside the button. Setting a non-empty label automatically cr
 * *Setter/Getter*: void **setColorPressed** / **getColorPressed**
 * *Setter/Getter*: void **setColorDisabled** / **getColorDisabled**
 
-Per-state tint colours multiplied with the current state texture. Use these to create hover and press effects with a single texture.
+Per-state tint colours multiplied with the current state texture. Use these to create hover and press effects with a single texture. The current state colour replaces the colour of the button's [UIComponent](uicomponent.md), so change `colorNormal` rather than the image colour.
 
 === "C++"
     ```cpp
@@ -144,7 +144,7 @@ When `true`, the button ignores pointer events and displays with `colorDisabled`
 * void **setTexturePressed**(const std::string& path)
 * void **setTextureDisabled**(const std::string& path)
 
-Assigns a unique texture for each interaction state. If not set, all states use the base texture from [Image](image.md) tinted by the state colour.
+Assigns a unique texture for each interaction state. If not set, all states use the base texture from [Image](image.md) tinted by the state colour. Whenever the button loads or changes state, the state texture replaces the image texture, so change the button's look with `setTextureNormal`, which sets both, rather than `setTexture`.
 
 ---
 
