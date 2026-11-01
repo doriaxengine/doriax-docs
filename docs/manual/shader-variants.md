@@ -33,9 +33,10 @@ it**, and loading needs a live graphics context. The refresh therefore only sees
 editor has actually drawn. Two consequences:
 
 - Saving **merges** into the stored list instead of replacing it, so a component that has
-  not been rendered yet does not lose its variant from the file. Entries accumulate and
-  are never pruned automatically — drop stale ones in the Export Window's **Shaders**
-  list.
+  not been rendered yet does not lose its variant from the file. Entries accumulate; the
+  only ones a save drops are those of a forked shader whose files were deleted from the
+  project, which no export could build. Drop other stale ones in the Export Window's
+  **Shaders** list.
 - A headless [`doriax-editor export`](../editor/command-line.md#export-build-a-project-to-a-target)
   has no renderer, so it discovers nothing and exports exactly what the `.scene` files
   already carry.
