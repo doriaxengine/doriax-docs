@@ -124,8 +124,9 @@ it — physics, a script or an animation — so a boat only needs these set:
 Both grow with the speed relative to the hull speed of the volume's length, so a small
 boat drifting leaves almost nothing and one near its hull speed a full wake. The water
 keeps the wakes in a square around the camera and fades them over its
-[wakeFade](water.md#wakearea-wakefade). The waterline is taken as an ellipse inside the
-volume's bounds, facing the motion.
+[wakeFade](water.md#wakearea-wakefade). Waves stay on the water they were made on, even
+after the volume leaves it. The waterline is taken as an ellipse inside the volume's
+bounds, facing the motion.
 
 === "C++"
 
