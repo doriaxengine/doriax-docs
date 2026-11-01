@@ -50,6 +50,8 @@ The data behind [Water](water.md). In Lua, get it with `water:getWaterComponent(
 | `underwater` | C++ \| Lua |
 | `buoyancy` | C++ \| Lua |
 | `buoyancyDepth` | C++ \| Lua |
+| `wakeArea` | C++ \| Lua |
+| `wakeFade` | C++ \| Lua |
 | `needUpdateTexture` | C++ \| Lua |
 | `needReload` | C++ \| Lua |
 

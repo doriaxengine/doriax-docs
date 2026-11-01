@@ -79,6 +79,8 @@ keeps the water out of a boat, a cabin, or a cave.
 | bool | [underwater](#underwater) | `true` | C++ \| Lua |
 | bool | [buoyancy](#buoyancy-buoyancydepth) | `true` | C++ \| Lua |
 | float | [buoyancyDepth](#buoyancy-buoyancydepth) | `0.0` | C++ \| Lua |
+| float | [wakeArea](#wakearea-wakefade) | `64.0` | C++ \| Lua |
+| float | [wakeFade](#wakearea-wakefade) | `8.0` | C++ \| Lua |
 | bool | [depthEffects](#deptheffects) | `true` | C++ \| Lua |
 | [Vector3](vector3.md) | [foamColor](#foamcolor-shorefoam-crestfoam) | `Vector3(1, 1, 1)` | C++ \| Lua |
 | float | [shoreFoam](#foamcolor-shorefoam-crestfoam) | `0.4` | C++ \| Lua |
@@ -307,6 +309,25 @@ through, so give a pool a collider too.
     local pool = Water(self.scene, self.entity)
     pool.buoyancyDepth = 1.5
     ```
+
+---
+
+### wakeArea / wakeFade
+
+* *Setter*: void **setWakeArea**(float wakeArea)
+* *Getter*: float **getWakeArea**() const
+* *Setter*: void **setWakeFade**(float wakeFade)
+* *Getter*: float **getWakeFade**() const
+
+The wakes of the [Water Exclusions](waterexclusion.md#wakefoam-wakewaves) moving across the
+water are kept in a square around what the main camera looks at, `wakeArea` world units on
+a side, in 256 × 256 texels: the default 64 resolves a quarter of a unit, enough for the
+foam along a small boat. A larger area reaches farther with coarser foam. The square moves
+with the camera without moving what it holds; a wake that leaves it is dropped.
+`wakeFade` is the seconds a wake takes to fade, foam and waves alike.
+
+The map exists only while a wake is being made or fading, and costs one texture update a
+frame then. Stopping Play in the editor clears it.
 
 ---
 

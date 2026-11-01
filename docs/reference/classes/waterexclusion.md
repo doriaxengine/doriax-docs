@@ -55,6 +55,8 @@ for how the surface is cut.
 | [WaterExclusionShape](#waterexclusionshape) | [shape](#shape) | `HULL` | C++ \| Lua |
 | [Vector3](vector3.md) | [center](#center-size) | `Vector3(0, 0, 0)` | C++ \| Lua |
 | [Vector3](vector3.md) | [size](#center-size) | `Vector3(1, 1, 1)` | C++ \| Lua |
+| float | [wakeFoam](#wakefoam-wakewaves) | `0.0` | C++ \| Lua |
+| float | [wakeWaves](#wakefoam-wakewaves) | `0.0` | C++ \| Lua |
 
 ### Methods
 
@@ -99,6 +101,50 @@ unless they turn `DORIAX_PHYSICS_3D` off (see [Build Options](../build-options.m
 
 The box or sphere in the entity's local space: `size` is its width, height, and depth,
 centred on `center`. A hull ignores them.
+
+---
+
+### wakeFoam / wakeWaves
+
+* *Setter*: void **setWakeFoam**(float wakeFoam)
+* *Getter*: float **getWakeFoam**() const
+* *Setter*: void **setWakeWaves**(float wakeWaves)
+* *Getter*: float **getWakeWaves**() const
+
+What the volume leaves on a [Water](water.md) while it moves across its surface, from `0`
+(nothing, the default) to `2`. The wake follows the motion of the entity, whatever moves
+it — physics, a script or an animation — so a boat only needs these set:
+
+- **Foam** stays where it forms and fades there: churned behind the stern and, closer to
+  hull speed, along the sides and at the bow, where the bow waves of a fast hull break.
+- **Waves** spread from where the bow passed, at the Kelvin angle of 19.5° on each side,
+  narrowing past a length Froude number of about 0.5, with the transverse waves crossing
+  between them. They bend the surface, so they show in its light and reflections.
+
+Both grow with the speed relative to the hull speed of the volume's length, so a small
+boat drifting leaves almost nothing and one near its hull speed a full wake. The water
+keeps the wakes in a square around the camera and fades them over its
+[wakeFade](water.md#wakearea-wakefade). The waterline is taken as an ellipse inside the
+volume's bounds, facing the motion.
+
+=== "C++"
+
+    ```cpp
+    WaterExclusion hull(&scene, boat);
+    hull.setWakeFoam(1.0f);
+    hull.setWakeWaves(1.0f);
+    ```
+
+=== "Lua"
+
+    ```lua
+    local hull = WaterExclusion(self.scene, self.entity)
+    hull.wakeFoam = 1
+    hull.wakeWaves = 1
+    ```
+
+The wake is drawn by the built-in water shader; a fork of an older version draws none until
+it is forked again.
 
 ---
 

@@ -399,6 +399,8 @@ Under the **Shader** and **Underwater Shader** rows, the fields are grouped into
 | | **Crest Foam** | Share of the highest crests that turn to foam. |
 | **Buoyancy** | **Buoyancy** | Floats the dynamic bodies that have Body3D buoyancy. |
 | | **Depth** | *(Buoyancy)* How far below the surface bodies still float, `0` has no bottom. Where waters overlap, the one with the highest bottom is used. |
+| **Wake** | **Area** | World size of the square around the camera that keeps the wakes of moving Water Exclusions. Larger reaches farther with less detail. |
+| | **Fade** | Seconds a wake takes to fade. |
 
 In the editor the waves and ripples hold still while the scene is stopped or paused, and
 move during Play. To keep the editor view clear when the camera dips below the surface,
@@ -421,8 +423,16 @@ entity from the Structure create menu for a volume of its own. See
 | **Center** | *(Box, Sphere)* Centre of the volume in local space. |
 | **Size** | *(Box, Sphere)* Width, height, and depth of the volume in local space. |
 
-While selected, the volume is drawn as an orange wireframe. A Hull on an entity without
-meshes shows *No mesh on this entity to wrap*.
+A Hull on an entity without meshes shows *No mesh on this entity to wrap*. While selected,
+the volume is drawn as an orange wireframe.
+
+Under **Wake**, the volume leaves a [wake](../reference/classes/waterexclusion.md#wakefoam-wakewaves)
+on the water while it moves. It is made only during Play, from how the entity moves.
+
+| Property | Purpose |
+| --- | --- |
+| **Foam** | Foam left behind and along the sides while moving, more near hull speed. `0` leaves none, up to `2`. |
+| **Waves** | Kelvin wake waves left while moving. `0` leaves none, up to `2`. The water's **Fade** sets how long they last. |
 
 ## Scene settings
 

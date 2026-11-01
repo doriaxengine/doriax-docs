@@ -17,7 +17,10 @@ The data behind a [WaterExclusion](waterexclusion.md). In Lua, get it with `excl
 | `shape` | C++ \| Lua |
 | `center` | C++ \| Lua |
 | `size` | C++ \| Lua |
+| `wakeFoam` | C++ \| Lua |
+| `wakeWaves` | C++ \| Lua |
 | `aabb` | C++ \| Lua (read-only) |
 | `worldAABB` | C++ \| Lua (read-only) |
 
 `center` and `size` place a `BOX` or `SPHERE` shape. A `HULL` is built from the entity's meshes.
+`wakeFoam` and `wakeWaves` are the [wake](waterexclusion.md#wakefoam-wakewaves) it leaves while it moves.
