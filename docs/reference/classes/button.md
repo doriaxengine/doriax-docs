@@ -11,7 +11,7 @@ description: Button API reference (C++ and Lua).
 
 An interactive UI button widget. `Button` extends [Image](image.md) with four visual states — *normal*, *hovered*, *pressed*, and *disabled* — each of which can have a distinct texture or tint colour. An optional text label can be embedded inside the button.
 
-Use the `onPress` / `onRelease` callbacks to respond to user interaction.
+Respond to a click with the `onClick` event of its [UIComponent](uicomponent.md), which fires only when the pointer is released over the button. `onPress` / `onRelease` follow the press itself, for actions held while the button is down.
 
 ### Properties
 
@@ -173,7 +173,7 @@ Returns a handle to the child [Text](text.md) entity. Useful for advanced label 
 * *Property*: FunctionSubscribe<void()\> **onPress**
 * *Property*: FunctionSubscribe<void()\> **onRelease**
 
-`onPress` fires when the mouse button is pressed over the button element. `onRelease` fires when it is released.
+`onPress` fires when the mouse button is pressed over the button element. `onRelease` fires when that press ends, even if the pointer has left the button. For a click, use the `onClick` event of the button's [UIComponent](uicomponent.md).
 
 === "C++"
     ```cpp
