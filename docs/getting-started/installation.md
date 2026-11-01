@@ -54,7 +54,7 @@ The macOS download is a disk image holding `Doriax.app`. Open the `.dmg` and dra
 onto the **Applications** shortcut inside it.
 
 Beside the disk image, macOS is also offered as a plain zip of loose binaries —
-`doriax-editor` next to `libdoriax.dylib` and the `engine/` runtime, with no `.app`
+`doriax-editor` next to `libdoriax.dylib` and the `engine-sdk/` folder, with no `.app`
 bundle. It is the same build, for cases where a bundle is inconvenient (a CI checkout, a
 tool that expects the binary directly). A zip that came through GitHub Actions drops the
 executable bit, so mark it once if the binary refuses to run:

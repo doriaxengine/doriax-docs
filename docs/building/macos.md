@@ -33,13 +33,13 @@ cmake --build build --config Release --target doriax-editor
 
 The build produces `build/Doriax.app`. The executable inside it is
 `Doriax.app/Contents/MacOS/Doriax`, the engine runtime sits beside it as
-`libdoriax.dylib`, and the engine SDK is copied to `Contents/Resources/engine`.
+`libdoriax.dylib`, and the engine SDK is copied to `Contents/Resources/engine-sdk`.
 
 !!! note "Why the SDK is in `Contents/Resources`"
     `codesign` treats everything under `Contents/MacOS` as code and refuses to sign a
     bundle that has plain files there. The editor resolves the SDK through
-    `FileUtils::getEngineDir()`, which checks `Contents/Resources/engine` first and falls
-    back to the directory next to the executable on other platforms.
+    `FileUtils::getEngineDir()`, which checks `Contents/Resources/engine-sdk` first and
+    falls back to `engine-sdk/` next to the executable, as on the other platforms.
 
 !!! tip "Using the Xcode generator"
     To work inside Xcode, generate an Xcode project instead:
