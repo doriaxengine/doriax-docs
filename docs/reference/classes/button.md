@@ -60,7 +60,7 @@ Use the `onPress` / `onRelease` callbacks to respond to user interaction.
 * *Setter*: void **setLabelFont**(const std::string& font)
 * *Setter*: void **setLabelFontSize**(unsigned int fontSize)
 
-The text displayed inside the button. Setting a non-empty label automatically creates a child [Text](text.md) entity. Font and colour apply to that label text.
+The text displayed inside the button. Setting a non-empty label automatically creates a child [Text](text.md) entity. Font and colour apply to that label text. The label ignores the button's scissor, so 9-patch margins do not clip it.
 
 ---
 

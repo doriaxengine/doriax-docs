@@ -101,6 +101,8 @@ Flips the texture vertically. Useful when a texture is loaded upside-down or for
 
 Sets the 9-patch insets. When all four margins are zero (the default), the image is scaled uniformly. Setting the margins enables 9-patch mode where the corners are preserved.
 
+An image clips its child elements to its rectangle inside these margins. A child that should draw past that area, such as text in a short panel, sets [ignoreScissor](uilayout.md#ignorescissor). A [Button](button.md) label does so by default.
+
 === "C++"
     ```cpp
     Image panel(&scene);
