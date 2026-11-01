@@ -394,8 +394,9 @@ probe:refresh()   -- manual re-capture from code
 
 With [SSR](#screen-space-reflections-ssr) enabled, a ray that finds a hit replaces the
 probe's reflection, as it does the sky's. The composite rebuilds up to four probes a
-frame, the first ones the visible objects use; an object lit by any other probe keeps its
-probe reflection, with SSR added on top.
+frame, the first ones used by visible objects that receive IBL (two probes sharing a
+cubemap take two); an object lit by any other probe keeps its probe reflection, with SSR
+added on top.
 
 !!! note "Capture scope and limitations"
     Runtime captures render opaque meshes and (optionally) the sky. Transparent meshes,
