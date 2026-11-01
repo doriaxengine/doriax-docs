@@ -439,7 +439,7 @@ Debug aid: when enabled, lit meshes output the raw screen-space AO buffer as gra
 * *Setter:* `void setSSREnabled(bool ssrEnabled)`
 * *Getter:* `bool isSSREnabled() const`
 
-Enables screen-space reflections. SSR reflects on-screen geometry by marching the camera depth/G-buffer, and where it finds a hit it *replaces* the surface's IBL environment reflection rather than adding to it (falling back to IBL where the ray misses). Requires a framebuffer destination (editor viewport, render-to-texture camera, or engine framebuffer) and applies to the main camera. Toggling it reloads meshes to build the G-buffer shaders.
+Enables screen-space reflections. SSR reflects on-screen geometry by marching the camera depth/G-buffer, and where it finds a hit it *replaces* the surface's environment reflection (the IBL sky or a reflection probe) rather than adding to it, falling back to that reflection where the ray misses. Requires a framebuffer destination (editor viewport, render-to-texture camera, or engine framebuffer) and applies to the main camera. Toggling it reloads meshes to build the G-buffer shaders.
 
 ---
 

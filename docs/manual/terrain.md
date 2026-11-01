@@ -80,7 +80,7 @@ detail tiling, so one layer can tile finer than its neighbours.
     adding a PBR layer never changes how the existing ones look.
 
 Painted layers are written to the G-buffer as well, so screen-space reflections see the
-same normal, roughness and metallic the lit surface shades with.
+same normal, roughness, metallic and occlusion the lit surface shades with.
 
 ## Foliage
 

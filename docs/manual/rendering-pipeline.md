@@ -392,9 +392,10 @@ probe.updateMode = ReflectionProbeUpdateMode.MANUAL
 probe:refresh()   -- manual re-capture from code
 ```
 
-With [SSR](#screen-space-reflections-ssr) enabled, surfaces lit by a local probe keep
-their probe reflection and SSR adds on-screen detail on top; only sky-IBL surfaces use
-SSR's energy-conserving replace path.
+With [SSR](#screen-space-reflections-ssr) enabled, a ray that finds a hit replaces the
+probe's reflection, as it does the sky's. The composite rebuilds up to four probes a
+frame, the first ones the visible objects use; an object lit by any other probe keeps its
+probe reflection, with SSR added on top.
 
 !!! note "Capture scope and limitations"
     Runtime captures render opaque meshes and (optionally) the sky. Transparent meshes,
@@ -460,22 +461,25 @@ scene lit mainly by direct light.
 Screen-space reflections add real-time reflections of on-screen geometry — wet floors,
 polished metal, glossy surfaces — by marching the camera depth buffer in screen space and
 sampling the lit scene colour where a reflected ray hits. Like Godot and Unity, SSR is
-*energy-conserving*: where a ray finds a hit it **replaces** the surface's
-[IBL](#image-based-lighting-ibl) environment reflection rather than adding on top of it, and
-where a ray misses (off-screen or occluded) the IBL reflection remains as the fallback. So
-SSR refines what IBL already provides instead of double-counting it.
+*energy-conserving*: where a ray finds a hit it **replaces** the surface's environment
+reflection — the [IBL](#image-based-lighting-ibl) sky or a
+[reflection probe](#reflection-probes) — rather than adding on top of it, and where a ray
+misses (off-screen or occluded) that reflection remains as the fallback. So SSR refines
+what IBL and probes already provide instead of double-counting it.
 
 When SSR is enabled the main camera first renders a small **G-buffer** geometry pre-pass —
-packed depth, view-space normal, roughness/metallic, and base colour — then runs three
-fullscreen passes. [Terrain](terrain.md#pbr-layers) evaluates its painted layers in this
+packed depth, view-space normal, roughness/metallic, base colour, and the material's
+ambient occlusion — then runs three fullscreen passes. [Terrain](terrain.md#pbr-layers) evaluates its painted layers in this
 pass too, so a reflective wet patch reflects like one:
 
 1. **March** — reflect the view ray about the G-buffer normal and step it through depth
    (with a binary-search refine) until it crosses on-screen geometry.
 2. **Glossy blur** *(optional)* — blurs the reflection in proportion to surface roughness,
    so rough materials get soft reflections while mirrors stay sharp.
-3. **Composite** — recomputes the surface's IBL specular and blends the reflection over it
-   with the correct GGX reflectance (including metal tint), writing the final image.
+3. **Composite** — recomputes the surface's environment specular (the sky, or its probe
+   blended over it) and blends the reflection over it with the correct GGX reflectance
+   (including metal tint), darkened by the material's ambient occlusion and SSAO as the
+   colour pass darkens it, writing the final image. Pixels with nothing reflected skip it.
 
 The opaque colour pass is rendered into an offscreen buffer first so the march has a full
 scene-colour image to sample. SSR therefore requires a framebuffer destination — the editor
