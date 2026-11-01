@@ -170,6 +170,13 @@ into the shaders it builds, so an exported project can't change them:
 | `MAX_POINT_SHADOW_LIGHTS` | 4 | Shadow-casting point lights (derived from the two above) |
 | `MAX_SHADOWCASCADES` | 4 | Cascades for directional CSM |
 
+Like Unity, Unreal, and Godot, directional cascades are **stable**: each one covers the
+bounding sphere of its slice of the view and moves in whole texels, so shadow edges keep
+their width when the camera turns and stay put when it moves, at the cost of some
+resolution. Past each split the next cascade fades in over a short band, and only the
+pixels in that band sample two cascades. An orthographic camera uses a single cascade
+fitted to its view.
+
 Shadow edge smoothness is a per-scene setting, `Scene::setShadowQuality`, with
 **Percentage Closer Filtering (PCF)** kernels of `NONE` (1 tap), `LOW`
 (3x3, default), `MEDIUM` (5x5), or `HIGH` (7x7). The kernel size is uniform-driven, so
