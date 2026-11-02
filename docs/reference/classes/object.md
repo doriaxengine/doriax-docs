@@ -37,6 +37,7 @@ description: Object API reference — transform, hierarchy, visibility, billboar
 | Quaternion | [rotation](#rotation) | identity | C++ \| Lua |
 | Vector3 | [scale](#scale) | `(1,1,1)` | C++ \| Lua |
 | bool | [visible](#visible) | `true` | C++ \| Lua |
+| bool | [visibleInHierarchy](#visibleinhierarchy) | `true` | C++ \| Lua (read-only) |
 | bool | [billboard](#billboard) | `false` | C++ \| Lua |
 | bool | [fakeBillboard](#fakebillboard) | `false` | C++ \| Lua |
 | bool | [cylindricalBillboard](#cylindricalbillboard) | `false` | C++ \| Lua |
@@ -67,7 +68,7 @@ description: Object API reference — transform, hierarchy, visibility, billboar
 | Vector3 | [getWorldScale](#setscale) | C++ \| Lua |
 | void | [setVisible](#setvisible) | C++ \| Lua |
 | bool | [isVisible](#setvisible) | C++ \| Lua |
-| void | [setVisibleOnly](#setvisibleonly) | C++ \| Lua |
+| bool | [isVisibleInHierarchy](#visibleinhierarchy) | C++ \| Lua |
 | void | [setBillboard](#setbillboard) | C++ \| Lua |
 | bool | [isBillboard](#billboard) | C++ \| Lua |
 | void | [setFakeBillboard](#fakebillboard) | C++ \| Lua |
@@ -162,7 +163,15 @@ Local scale relative to the parent.
 * *Setter:* `void setVisible(bool visible)`
 * *Getter:* `bool isVisible() const`
 
-Hides or shows the object **and all of its children**. To hide only this object without affecting children, use [setVisibleOnly](#setvisibleonly).
+Hides or shows the object. Its children are hidden with it but keep their own flag, so showing the object again shows only the children that are visible themselves.
+
+---
+
+### visibleInHierarchy
+
+* *Getter:* `bool isVisibleInHierarchy() const`
+
+`true` when the object and all of its ancestors are visible. The render system refreshes it on each update, so right after a `setVisible` call it still holds the previous value.
 
 ---
 
@@ -350,15 +359,7 @@ Returns the effective world-space scale, multiplied through the parent chain.
 * `void setVisible(bool visible)`
 * `bool isVisible() const`
 
-Shows or hides this object and all its descendants.
-
----
-
-### setVisibleOnly
-
-* `void setVisibleOnly(bool visible)`
-
-Shows or hides only this object without propagating the change to children.
+Shows or hides this object. Descendants are hidden with it but keep their own `visible` flag.
 
 ---
 

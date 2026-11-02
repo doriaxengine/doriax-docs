@@ -23,13 +23,13 @@ Position, rotation, and scale of an entity, plus the world values and matrices t
 | `localMatrix` | C++ \| Lua (read-only) |
 | `modelMatrix` | C++ \| Lua (read-only) |
 | `visible` | C++ \| Lua |
+| `visibleInHierarchy` | C++ \| Lua (read-only) |
 | `parent` | C++ \| Lua (read-only) |
 | `distanceToCamera` | C++ \| Lua (read-only) |
 | `billboardRotation` | C++ \| Lua |
 | `billboard` | C++ \| Lua |
 | `fakeBillboard` | C++ \| Lua |
 | `cylindricalBillboard` | C++ \| Lua |
-| `needUpdateChildVisibility` | C++ \| Lua |
 | `needUpdate` | C++ \| Lua |
 
-Set `needUpdate` after writing `position`, `rotation`, `scale`, or `billboardRotation`, and `needUpdateChildVisibility` after `visible`. Reparent with [`addChild`](object.md#addchild).
+Set `needUpdate` after writing `position`, `rotation`, `scale`, or `billboardRotation`. A hidden entity hides its children too, while each child keeps its own `visible` flag. `visibleInHierarchy` combines the flags of the entity and its ancestors and is refreshed by the render system on each update. Reparent with [`addChild`](object.md#addchild).
