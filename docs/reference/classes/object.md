@@ -165,6 +165,8 @@ Local scale relative to the parent.
 
 Hides or shows the object. Its children are hidden with it but keep their own flag, so showing the object again shows only the children that are visible themselves.
 
+Scenes saved by earlier editors, where showing a parent made all its children visible, are converted when opened: the children of a hidden entity are made visible, so showing it brings them back as before.
+
 ---
 
 ### visibleInHierarchy
