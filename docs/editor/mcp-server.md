@@ -168,6 +168,11 @@ Two saves would need a dialog that only you can answer, so the tools take a path
   does, into a directory that is empty or does not exist yet. An optional `name` renames
   it too. A project that is not temporary is saved where it is, without `path`.
 
+A scene saved before the editor drew its last changes, or while something in it still
+loads, lists only the [shader variants](../manual/shader-variants.md) drawn so far.
+`save_scene` then returns `shader_keys_stale`, and the agent selects the scene, lets it draw
+and saves it again, so an export does not warn about it.
+
 Tools that would stop to ask you about unsaved work refuse instead, and tell the agent
 what to save first. `create_scene`, for example, closes the selected scene, so it refuses
 while that scene or one of its child scenes has unsaved changes.
