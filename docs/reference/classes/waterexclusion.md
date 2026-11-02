@@ -48,6 +48,10 @@ keeps its buoyancy while what it carries loses it. See
 [Rendering Pipeline — Water exclusions](../../manual/rendering-pipeline.md#water-exclusions)
 for how the surface is cut.
 
+Hidden, on its own entity or through an ancestor, the volume no longer cuts the surface,
+stops the underwater fade or leaves a wake, and its wake starts afresh when it shows again.
+Bodies inside it still lose their buoyancy, as hiding leaves physics running.
+
 ### Properties
 
 | Type | Name | Default | Langs |

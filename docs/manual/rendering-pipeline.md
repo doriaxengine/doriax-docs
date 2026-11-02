@@ -816,8 +816,8 @@ shows in every view, including reflections and render-to-texture cameras, and le
 waves in front of the boat drawn. A box or sphere is tested exactly. A hull, the convex hull
 of the entity's meshes, is kept as a 128 × 128 map of its bottom and top seen from above,
 one layer per hull in a shared texture array: sloped sides come out within a few
-millimetres and straight walls within a texel. Each water draw takes the 8 volumes nearest
-to the camera.
+millimetres and straight walls within a texel. Each water draw takes the 8 visible volumes
+nearest to the camera.
 
 The same volumes stop the underwater fade for a camera inside them and the buoyancy of the
 bodies inside them.
