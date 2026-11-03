@@ -56,7 +56,7 @@ Most fields are edited with the mouse or keyboard directly in the panel:
 
 | Field type | Editing method |
 | --- | --- |
-| Numbers (float, int) | Click and drag, or double-click to type a value |
+| Numbers (float, int) | Click and drag, or click without dragging to type a value |
 | Vectors (Vector2, Vector3) | Per-component drag or type fields |
 | Colors | Color picker with RGBA, HSV, and hex fields |
 | Booleans | Toggle checkbox |
@@ -65,6 +65,12 @@ Most fields are edited with the mouse or keyboard directly in the panel:
 | Textures / assets | Drag from the Resources Browser, type the asset path, or pick a **camera** as the source (camera button / drag a camera entity) for render-to-texture. For image sources, a sliders button opens the **Texture Settings** popup (filter, wrap, alpha border and SVG scale) |
 | Entity references | Drag an entity from the Structure panel |
 | Enumerations | Drop-down selection |
+
+A typed number can also be a math expression, such as `288*3` or `(10+5)/2`. Number fields
+accept `+`, `-`, `*`, `/`, and parentheses, and integer fields round the result. The value
+is applied when you press **Enter** or **Tab**, or click somewhere else, and **Esc** cancels
+the edit. An expression that can't be calculated leaves the value unchanged. This works in
+every number field of the editor, not only in Properties.
 
 ![The color picker](../assets/screenshots/properties-color-picker.png)
 
