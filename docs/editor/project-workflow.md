@@ -35,6 +35,12 @@ To keep a temporary project:
 Temporary projects are stored in the operating system's temporary directory. Save the
 project to another directory before relying on it as permanent work.
 
+A project can be open in only one editor at a time, so two editors never overwrite each
+other's saves. If the last project is already open in another Doriax editor, a newly
+started editor says so and opens a temporary project instead. **Open Project** and
+**Recent Projects** refuse it with the same message. Each editor keeps its temporary
+project in a folder of its own.
+
 New projects begin with a 3D scene. To add a different scene type, choose
 **Scene → New Scene → 2D Scene** or **Scene → New Scene → UI Scene**. Doriax does not
 use project templates.

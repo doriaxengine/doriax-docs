@@ -230,6 +230,7 @@ token applies from the next request, so every connected client needs the new com
 | Calls fail with *Changes are turned off* | **Allow Changes** is off. Turn it on, or ask the agent only for inspections |
 | Calls fail with *The editor was busy* | A project load or a scene save took longer than two minutes. Try again once it finishes |
 | `open_project` or `create_project` fails over unsaved work | The editor does not drop work to switch projects. Let the agent save it, or save or discard it yourself; see [Opening and creating projects](#opening-and-creating-projects) |
+| `open_project` says the project is already open in another Doriax editor | A project opens in one editor at a time. Close it in that editor first, or connect the agent to that editor's server |
 | A **Save Scene** dialog opens while an agent works | The agent saved a scene that has no file yet without a `path`. Answer the dialog, or ask the agent to pass `path` to `save_scene` |
 | The agent still lists tools that **Allow Changes** removed, or misses ones it added | Clients keep the tool list they read when they connected. Reconnect the client |
 

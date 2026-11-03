@@ -41,6 +41,7 @@ machine-specific — the shader cache, the engine library — come from
 | `engine-api/`, `generated/`, `scene_scripts.cpp` | The engine API snapshot and generated C++ glue |
 | `build/`, `externalbuild/` | CMake build trees |
 | `imported/` | Models converted from FBX, laid out like the assets directory (see [FBX models](../manual/3d-graphics.md#fbx-models)) |
+| `editor.lock` | Locked while an editor has the project open, so a second editor cannot open it too. The lock ends when that editor closes, even if it crashes |
 
 The editor recreates all of it, so a fresh clone needs nothing but the editor opened
 once. Deleting `.doriax/` costs you the editor layout you had, a rebuild, and the FBX
