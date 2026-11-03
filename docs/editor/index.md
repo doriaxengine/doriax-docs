@@ -132,9 +132,9 @@ Duplicate and Delete follow the selection: with a tile or a tilemap instance sel
 they act on that, otherwise on the selected entities, and Delete also removes a selected
 child scene reference. F2 jumps to the name field in the
 [Properties window](properties.md#selecting-an-entity) for the selected entity, or for the
-scene when nothing is selected; in the [Resources window](resources.md#context-menu) it
-renames the selected file instead. They are ignored while typing in a text field, so a
-shortcut never steals a keystroke from an input.
+scene when nothing is selected. In the [Resources window](resources.md#context-menu), F2
+renames the selected file and Ctrl+D duplicates the selected files. They are ignored while
+typing in a text field, so a shortcut never steals a keystroke from an input.
 
 ## Detailed pages
 

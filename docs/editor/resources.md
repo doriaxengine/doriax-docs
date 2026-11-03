@@ -49,6 +49,10 @@ Copy files into your project folder or drag them from your OS file manager into 
 Resources Browser. The editor scans the asset directories on startup and whenever the
 project folder changes.
 
+A dragged-in file never replaces one with the same name: it arrives with a number added,
+such as `grass_2.png`. To update an asset in place, overwrite it from the file manager
+instead.
+
 !!! tip "File naming"
     Use lowercase, hyphen-or-underscore-separated file names without spaces. Consistent
     naming avoids case-sensitivity issues on Linux and Android and makes asset paths
@@ -153,8 +157,14 @@ Right-click a file or folder to access:
   changed (see [FBX models](#fbx-models)).
 - **New** — folders only: creates a folder or file inside the folder (see
   [Creating files and folders](#creating-files-and-folders)).
-- **Copy** / **Cut** / **Paste** — copies or moves the selected files. Paste puts the
-  clipboard contents into the right-clicked folder.
+- **Copy** / **Cut** / **Paste** (`Ctrl+C` / `Ctrl+X` / `Ctrl+V`) — copies or moves the
+  selected files. Paste puts the clipboard contents into the right-clicked folder, or
+  next to the right-clicked file. Nothing is overwritten: when the name is taken, as when
+  pasting into the same folder, the new file gets a number, such as `player_2.lua`.
+- **Duplicate** (`Ctrl+D`) — copies the selected files into the same folder with a
+  number added to the name, and selects the copies. A copied scene, from Duplicate or
+  Paste, gets its own scene ID, so the original and the copy can both be part of the
+  project.
 - **Delete** — removes the file from the project and clears every reference to it in
   scenes, bundles and `.material` files, including C++ and Lua script entries. Undo
   restores the file, not the references.
