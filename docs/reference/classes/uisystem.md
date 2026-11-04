@@ -24,6 +24,7 @@ UI layout, focus, and pointer routing.
 | `hasPendingImages` | C++ \| Lua |
 | `resetButtonStates` | C++ \| Lua |
 | `setFocus` | C++ \| Lua |
+| `hideFocus` | C++ \| Lua |
 | `eventOnCharInput` | C++ \| Lua |
 | `eventOnKeyDown` | C++ \| Lua |
 | `eventOnPointerDown` | C++ \| Lua |
@@ -48,7 +49,9 @@ focused.
 one is, in any scene, the engine leaves the arrows and the submit keys to it.
 
 `setFocus(entity)` gives an entity the keyboard and gamepad focus and shows it, and
-`NULL_ENTITY` clears it. The engine calls `eventOnNavigate` with a
+`NULL_ENTITY` clears it. `hideFocus()` stops showing it until the next key or gamepad press,
+the same as moving the mouse, and the focused button doesn't take Enter, Space, or A
+meanwhile. The engine calls it for a scene it removes. The engine calls `eventOnNavigate` with a
 [NavigationDirection](engine.md#navigationdirection) for the arrow keys, Tab, the d-pad, and
 the left stick, and `eventOnSubmitDown` / `eventOnSubmitUp` for Enter, Space, and the A
 button. `eventOnSubmitCancel` lets go of the pressed button without a click, for a

@@ -253,8 +253,10 @@ Pressing it fires `onPress`, and letting go fires `onRelease` and the `onClick` 
 UIComponent, the same as a mouse click. Moving or clicking the mouse hides the focus
 until the next key or gamepad press.
 
-To open a menu with a button already selected, focus it from a script. The focus shows
-right away:
+A menu scene that is removed and added back, like a pause menu, shows no focus until the
+next key or gamepad press, so a press right after it opens doesn't click the button left
+focused last time. To open a menu with a button already selected, focus it from a script.
+The focus shows right away:
 
 === "Lua"
 
