@@ -280,10 +280,11 @@ rest, so gameplay doesn't keep the last tilt, and once no menu takes it anymore,
 it back as it is. `Input.isKeyPressed` and the other polling functions still see everything.
 
 !!! warning "Buttons on a HUD"
-    In a game that uses the arrow keys, Space, Enter, or the A button for gameplay, turn
-    off **Focusable** on the HUD buttons, in the Button section of the Properties panel or
-    with `focusable = false` from a script. Otherwise an arrow key can focus a HUD button,
-    and the next Space or A press clicks it instead of reaching your script.
+    In a game that uses the arrow keys, Space, Enter, the d-pad, the left stick, or the A
+    button for gameplay, turn off **Focusable** on the HUD buttons, in the Button section of
+    the Properties panel or with `focusable = false` from a script. Otherwise those inputs
+    move and press the HUD buttons instead of reaching your script, so an arrow key can focus
+    one and the next Space or A press clicks it.
 
 ## 9-patch scaling
 
