@@ -22,11 +22,16 @@ UI layout, focus, and pointer routing.
 | `isTextEditFocused` | C++ \| Lua |
 | `hasPendingImages` | C++ \| Lua |
 | `resetButtonStates` | C++ \| Lua |
+| `setFocus` | C++ \| Lua |
 | `eventOnCharInput` | C++ \| Lua |
 | `eventOnKeyDown` | C++ \| Lua |
 | `eventOnPointerDown` | C++ \| Lua |
 | `eventOnPointerUp` | C++ \| Lua |
 | `eventOnPointerMove` | C++ \| Lua |
+| `eventOnNavigate` | C++ \| Lua |
+| `eventOnSubmitDown` | C++ \| Lua |
+| `eventOnSubmitUp` | C++ \| Lua |
+| `eventOnSubmitCancel` | C++ \| Lua |
 
 An anchored element's offset is measured in the space of its nearest layout parent, and its
 position in its own parent's space. `parentToLayoutSpace(entity, point)` and
@@ -34,4 +39,15 @@ position in its own parent's space. `parentToLayoutSpace(entity, point)` and
 
 `hasPendingImages()` is true while an image still waits for its texture to build its
 geometry. `resetButtonStates()` puts every pressed button back to its normal look, without
-calling `onRelease`.
+calling `onRelease`, and keeps the keyboard and gamepad focus. The engine calls it when it
+removes a scene and when it adds one, so a button focused before the scene runs stays
+focused.
+
+`setFocus(entity)` gives an entity the keyboard and gamepad focus and shows it, and
+`NULL_ENTITY` clears it. The engine calls `eventOnNavigate` with a
+[NavigationDirection](engine.md#navigationdirection) for the arrow keys, Tab, the d-pad, and
+the left stick, and `eventOnSubmitDown` / `eventOnSubmitUp` for Enter, Space, and the A
+button. `eventOnSubmitCancel` lets go of the pressed button without a click, for a
+controller that was unplugged or a scene that stopped taking UI events. Each returns `true`
+when the scene used the event. See
+[Keyboard and gamepad navigation](../../manual/user-interface.md#keyboard-and-gamepad-navigation).

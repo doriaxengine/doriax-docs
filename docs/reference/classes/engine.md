@@ -42,7 +42,7 @@ Control engine properties and define defaults used across the whole project. `En
 | static bool | [callTouchInMouseEvent](#calltouchinmouseevent) | `false` | C++ \| Lua |
 | static bool | [useDegrees](#usedegrees) | `true` | C++ \| Lua |
 | static bool | [allowEventsOutCanvas](#alloweventsoutcanvas) | `false` | C++ \| Lua |
-| static bool | [ignoreEventsHandledByUI](#ignoreeventshandledbyui) | `false` | C++ \| Lua |
+| static bool | [ignoreEventsHandledByUI](#ignoreeventshandledbyui) | `true` | C++ \| Lua |
 | static float | [updateTime](#updatetime) | `0.03` | C++ \| Lua |
 | static double | [interpolationAlpha](#interpolationalpha) | — | C++ \| Lua |
 | static int | [canvasWidth](#canvaswidth-canvasheight) | — | C++ \| Lua |
@@ -189,6 +189,15 @@ Control engine properties and define defaults used across the whole project. `En
 | `CAPTURED` | hidden | locked to the window; relative motion only (mouse-look) |
 | `CONFINED` | visible | cannot leave the window bounds |
 
+---
+
+### NavigationDirection
+
+`NONE`, `UP`, `DOWN`, `LEFT`, `RIGHT`, `NEXT`, `PREVIOUS`
+
+Where [UISystem.eventOnNavigate](uisystem.md) moves the button focus. `NEXT` and
+`PREVIOUS` follow reading order, like Tab and Shift+Tab.
+
 ## Property details
 
 ### scalingMode
@@ -250,7 +259,7 @@ When `true`, mouse move and scroll events are delivered even when the cursor is 
 * *Setter:* `static void setIgnoreEventsHandledByUI(bool ignoreEventsHandledByUI)`
 * *Getter:* `static bool isIgnoreEventsHandledByUI()`
 
-When `true`, gameplay input callbacks are skipped for events already consumed by a UI widget.
+When `true`, gameplay input callbacks are skipped for events already consumed by a UI widget. That covers pointer and touch events, and the keys, gamepad buttons, and left stick that move and press the [focused button](../../manual/user-interface.md#keyboard-and-gamepad-navigation).
 
 ---
 
@@ -615,7 +624,7 @@ Same as [updateTime](#updatetime) but accepts the interval in **milliseconds**.
 
 * `static bool isUIEventReceived()`
 
-Returns `true` if any UI widget consumed a pointer event during the current frame. Use with [ignoreEventsHandledByUI](#ignoreeventshandledbyui) to prevent gameplay from reacting to UI clicks.
+Returns `true` inside an input callback when a UI widget consumed that event. With [ignoreEventsHandledByUI](#ignoreeventshandledbyui) turned off, gameplay code can use it to skip UI clicks and menu keys.
 
 ---
 

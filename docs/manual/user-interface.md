@@ -222,20 +222,66 @@ when hovered or pressed (`scaleHovered`, `scalePressed`). With a **Transition Ti
 colour and scale change over that time instead of at once, so menu hover effects need no
 script. See [Button transitions](../reference/classes/button.md#transitions).
 
-To prevent UI clicks from also triggering gameplay input (such as shooting when the
-player taps a UI button), call:
+UI clicks don't also trigger gameplay input (such as shooting when the player taps a UI
+button), because `ignoreEventsHandledByUI` is on by default. Turn it off to let the
+gameplay handlers see those events too:
 
 === "Lua"
 
     ```lua
-    Engine.ignoreEventsHandledByUI = true   -- property in Lua
+    Engine.ignoreEventsHandledByUI = false   -- property in Lua
     ```
 
 === "C++"
 
     ```cpp
-    Engine::setIgnoreEventsHandledByUI(true);
+    Engine::setIgnoreEventsHandledByUI(false);
     ```
+
+## Keyboard and gamepad navigation
+
+Menus also work without a mouse. The arrow keys, the d-pad, and the left stick move a
+focus between the visible buttons, and Enter, Space, or the gamepad A button presses the
+focused one. Tab and Shift+Tab go through the buttons in reading order. Hidden and
+disabled buttons are skipped, and so are buttons clipped out of view by a parent image or
+panel. A held d-pad or stick repeats after a short delay, like a held key.
+
+The first press only shows where the focus is, and the next ones move it to the nearest
+button in that direction. A focused button looks hovered, with its hovered colour,
+texture, and scale, so a menu that already has a hover effect needs nothing else.
+Pressing it fires `onPress`, and letting go fires `onRelease` and the `onClick` of its
+UIComponent, the same as a mouse click. Moving or clicking the mouse hides the focus
+until the next key or gamepad press.
+
+To open a menu with a button already selected, focus it from a script. The focus shows
+right away:
+
+=== "Lua"
+
+    ```lua
+    self.playButton:setFocus()
+    ```
+
+=== "C++"
+
+    ```cpp
+    playButton->setFocus();
+    ```
+
+When more than one UI scene is shown, the topmost scene with a focusable button gets the
+keys, so a pause menu over the HUD takes them first. A focused TextEdit keeps the arrow
+keys and Enter for its own text. The keys and buttons that the UI uses don't reach
+`onKeyDown`, `onKeyUp`, `onGamepadButtonDown`, and `onGamepadButtonUp` while
+`ignoreEventsHandledByUI` is on, and neither does `onGamepadAxisMove` while the left stick
+moves the focus. When the stick starts moving the focus, `onGamepadAxisMove` gets it back at
+rest, so gameplay doesn't keep the last tilt. `Input.isKeyPressed` and the other polling
+functions still see everything.
+
+!!! warning "Buttons on a HUD"
+    In a game that uses the arrow keys, Space, Enter, or the A button for gameplay, turn
+    off **Focusable** on the HUD buttons, in the Button section of the Properties panel or
+    with `focusable = false` from a script. Otherwise an arrow key can focus a HUD button,
+    and the next Space or A press clicks it instead of reaching your script.
 
 ## 9-patch scaling
 

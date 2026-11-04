@@ -13,6 +13,8 @@ An interactive UI button widget. `Button` extends [Image](image.md) with four vi
 
 Respond to a click with the `onClick` event of its [UIComponent](uicomponent.md), which fires only when the pointer is released over the button. `onPress` / `onRelease` follow the press itself, for actions held while the button is down.
 
+Buttons can also be focused and pressed with the keyboard or a gamepad. See [Keyboard and gamepad navigation](../../manual/user-interface.md#keyboard-and-gamepad-navigation).
+
 ### Properties
 
 | Type | Name | Default | Langs |
@@ -29,6 +31,7 @@ Respond to a click with the `onClick` event of its [UIComponent](uicomponent.md)
 | float | [scalePressed](#transitions) | `1.0` | C++ \| Lua |
 | float | [transitionTime](#transitions) | `0.0` | C++ \| Lua |
 | bool | [disabled](#disabled) | `false` | C++ \| Lua |
+| bool | [focusable](#focusable) | `true` | C++ \| Lua |
 
 ### Methods
 
@@ -40,6 +43,8 @@ Respond to a click with the `onClick` event of its [UIComponent](uicomponent.md)
 | void | [setTextureHovered](#statetextures) | C++ \| Lua |
 | void | [setTexturePressed](#statetextures) | C++ \| Lua |
 | void | [setTextureDisabled](#statetextures) | C++ \| Lua |
+| void | [setFocus](#setfocus) | C++ \| Lua |
+| bool | [isFocused](#isfocused) | C++ \| Lua |
 
 ### Callback events
 
@@ -137,6 +142,15 @@ When `true`, the button ignores pointer events and displays with `colorDisabled`
 
 ---
 
+### focusable
+
+* *Setter*: void **setFocusable**(bool focusable)
+* *Getter*: bool **isFocusable**() const
+
+When `false`, keys and gamepads leave this button alone: the arrow keys, the d-pad, and the left stick skip it, and Enter, Space, or the A button never press it, so it can only be clicked. Turn it off on HUD buttons in games that use those keys or the A button for gameplay. Hidden and disabled buttons are always skipped.
+
+---
+
 ### statetextures
 
 * void **setTextureNormal**(const std::string& path)
@@ -166,6 +180,32 @@ Returns a handle to the child [Text](text.md) entity. Useful for advanced label 
 
 ---
 
+### setFocus
+
+* void **setFocus**()
+
+Moves the keyboard and gamepad focus to this button and shows it, so Enter, Space, or the A button presses it. Call it when a menu opens to start on its main button. A button with [focusable](#focusable) turned off takes the focus but doesn't show it or react to those keys.
+
+=== "C++"
+    ```cpp
+    playButton->setFocus();
+    ```
+
+=== "Lua"
+    ```lua
+    self.playButton:setFocus()
+    ```
+
+---
+
+### isFocused
+
+* bool **isFocused**() const
+
+Returns `true` while this button has the focus, even when the mouse has hidden it.
+
+---
+
 ## Callback event details
 
 ### onPress / onRelease
@@ -173,7 +213,7 @@ Returns a handle to the child [Text](text.md) entity. Useful for advanced label 
 * *Property*: FunctionSubscribe<void()\> **onPress**
 * *Property*: FunctionSubscribe<void()\> **onRelease**
 
-`onPress` fires when the mouse button is pressed over the button element. `onRelease` fires when that press ends, even if the pointer has left the button. For a click, use the `onClick` event of the button's [UIComponent](uicomponent.md).
+`onPress` fires when the mouse button is pressed over the button element, or when Enter, Space, or the gamepad A button is pressed while the button has the focus. `onRelease` fires when that press ends, even if the pointer has left the button. For a click, use the `onClick` event of the button's [UIComponent](uicomponent.md).
 
 === "C++"
     ```cpp

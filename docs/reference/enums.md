@@ -37,6 +37,7 @@ types. C++-only enums are noted below. See [Engine](classes/engine.md) for `Scal
 | `MaterialAlphaMode` | Material alpha handling (`AUTO`, `ALPHA_OPAQUE`, `MASK`, `BLEND`) |
 | `TextureFilter` / `TextureWrap` / `TextureType` | Textures |
 | `CursorType` | Mouse cursor |
+| `NavigationDirection` | Keyboard and gamepad UI focus |
 | `ResourceLoadState` | Async loading |
 | `AdMobFormat` / `AdMobBannerSize` / `AdMobBannerPosition` | AdMob ad formats and banner layout |
 | `AdMobRating` / `AdMobAgeRestriction` / `AdMobPersonalization` | AdMob request settings |

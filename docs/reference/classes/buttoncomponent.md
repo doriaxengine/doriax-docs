@@ -31,4 +31,5 @@ description: ButtonComponent API reference (C++ and Lua).
 | `pressed` | C++ \| Lua (read-only) |
 | `hovered` | C++ \| Lua (read-only) |
 | `disabled` | C++ \| Lua |
+| `focusable` | C++ \| Lua |
 | `needUpdateButton` | C++ \| Lua |

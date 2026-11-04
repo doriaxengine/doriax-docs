@@ -475,20 +475,25 @@ and mobile.
 
 ## UI input
 
-UI widgets consume pointer and touch events automatically. To prevent UI clicks from
-also triggering gameplay input handlers (for example, shooting when the player taps a
-button), call:
+UI widgets consume pointer and touch events automatically, and buttons also take the
+arrow keys, Enter, Space, the d-pad, the left stick, and the gamepad A button, so menus
+work with a keyboard or a controller. See
+[Keyboard and gamepad navigation](user-interface.md#keyboard-and-gamepad-navigation).
+
+The events a UI widget uses don't reach the gameplay input handlers (so the player doesn't
+shoot when tapping a button), because `ignoreEventsHandledByUI` is on by default. Turn it
+off to let the handlers see them too:
 
 === "Lua"
 
     ```lua
-    Engine.ignoreEventsHandledByUI = true
+    Engine.ignoreEventsHandledByUI = false
     ```
 
 === "C++"
 
     ```cpp
-    Engine::setIgnoreEventsHandledByUI(true);
+    Engine::setIgnoreEventsHandledByUI(false);
     ```
 
 ## Virtual keyboard (mobile / web)
