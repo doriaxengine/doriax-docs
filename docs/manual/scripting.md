@@ -81,6 +81,10 @@ Each project has entry points for both languages:
 
     See [Export Window](../editor/export.md) for full details.
 
+If the main Lua script fails, the error is logged and the game keeps running with
+whatever the script set up before the error. The editor's Play mode does not run
+`main.lua`, so check it in an exported build.
+
 For editor-authored projects, the start scene and exported scene factories are usually
 more important than hand-written startup code. Use entry points for engine-level setup,
 not for recreating an entire editor-authored scene by hand.
@@ -111,6 +115,26 @@ Doriax uses LuaBridge to expose the engine API to Lua. The binding layer registe
 
 Most C++ enums are mirrored into Lua namespaces, such as `Scaling.FITWIDTH`,
 `BodyType.DYNAMIC`, and `GraphicBackend.METAL`.
+
+When a function has several overloads, the argument types pick the one to call, and a
+value of the wrong type raises an error instead of being converted. For example,
+`mesh:setFaceCulling(nil)` fails, so pass `false`.
+
+## Lua version
+
+Doriax embeds Lua 5.5. A few behaviors differ from older Lua versions and from most
+tutorials:
+
+- **Floats print every digit needed to read them back.** `0.1 + 0.2` turns into
+  `0.30000000000000004` in a string, so use `string.format("%.2f", value)` for anything
+  players see.
+- **The `for` loop variable is read-only.** Assigning to it is a compile error. Declare
+  a local copy inside the loop instead.
+- **`#` is only reliable on lists without holes.** After `t[3] = nil` on a five-item
+  list, `#t` can be `2`. Use `table.remove(t, 3)` to delete from a list, and `pairs` to
+  walk a table with gaps.
+- **`collectgarbage("setpause")` and `"setstepmul"` are gone.** Use
+  `collectgarbage("param", "pause", 200)` instead.
 
 ## Script components
 

@@ -41,7 +41,8 @@ Loads data from a raw byte pointer, a file path, or a [File](file.md) object. Th
 overload transparently reads packed `asset://`, `lua://`, and asset-relative paths in a
 native export. When `aCopy` is `true`, the data is duplicated into an internal buffer;
 when `aTakeOwnership` is `true`, the `Data` object takes ownership of the provided
-pointer.
+pointer. The `File` overload reads from the file's current position, and returns
+`FileErrors::INVALID_PARAMETER` when the file is not open.
 
 ---
 
@@ -74,7 +75,9 @@ Returns the total size of the buffer in bytes.
 
 * void **seek**(int aOffset)
 
-Moves the read/write cursor to `aOffset` bytes from the beginning.
+Moves the read/write cursor to `aOffset` bytes from the beginning. A negative offset
+counts back from the end, and the cursor always stays between the start and the end of
+the data.
 
 ---
 

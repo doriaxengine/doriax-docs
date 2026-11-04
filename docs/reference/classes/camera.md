@@ -190,7 +190,7 @@ Look-at point in local space. When set, the camera orientation is computed each 
 !!! warning "In Lua, `setTarget` only takes three numbers"
     Lua binds the `Vector3` form as the **`target` property** and `setTarget` as the
     three-float overload only. Passing a `Vector3` to `setTarget` fails with
-    *"Error decoding argument #3: The lua object can't be cast to desired type"*.
+    *"Error decoding argument #1: The lua object can't be cast to desired type"*.
 
     ```lua
     cam.target = Vector3(0, 3, 0)   -- Vector3 form

@@ -214,6 +214,9 @@ DoorTrigger::~DoorTrigger() {
 If `tag` is omitted, Doriax builds:
 `ClassName_instancePointer_methodName`
 
+Lua callbacks always run on the main Lua thread, even when they are subscribed or fired
+inside a coroutine, so they can't yield.
+
 ### Engine event (Lua)
 
 ```lua

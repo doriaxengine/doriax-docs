@@ -588,6 +588,8 @@ Image preview(&uiScene);
 preview.setTexture(minimapCam.getFramebuffer());
 ```
 
+Pass `nil` (`nullptr` in C++) to these overloads to clear the texture.
+
 In the editor, any **Texture** field can use a camera as its source instead of an image
 file: click the camera button on the field (or drag a camera entity from the Structure
 panel onto it). The chosen camera is switched to render-to-texture and its output feeds

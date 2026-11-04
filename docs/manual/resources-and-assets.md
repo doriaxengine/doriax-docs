@@ -255,6 +255,10 @@ therefore cannot open packed assets or Lua files. Editor Play mode never opens a
     file.close();
     ```
 
+A `File` that can't be opened logs an error and then acts like an empty file, so check
+what `open` returns when a missing file matters. See
+[File — Failed opens](../reference/classes/file.md#failed-opens).
+
 File paths follow the same roots as the rest of the engine: a relative path resolves
 against the assets directory, and absolute paths are used as given. On mobile and web,
 write-accessible directories are separate from read-only resource paths — use
