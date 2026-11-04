@@ -35,6 +35,9 @@ The build produces `build/Doriax.app`. The executable inside it is
 `Doriax.app/Contents/MacOS/Doriax`, the engine runtime sits beside it as
 `libdoriax.dylib`, and the engine SDK is copied to `Contents/Resources/engine-sdk`.
 
+The editor targets macOS 12.0. To change that, pass
+`-DCMAKE_OSX_DEPLOYMENT_TARGET=<version>` when configuring.
+
 !!! note "Why the SDK is in `Contents/Resources`"
     `codesign` treats everything under `Contents/MacOS` as code and refuses to sign a
     bundle that has plain files there. The editor resolves the SDK through
