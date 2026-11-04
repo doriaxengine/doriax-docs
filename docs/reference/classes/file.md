@@ -23,7 +23,7 @@ loader for packed read-only resources.
 
 `open` returns a `FileErrors` value, and the `File(path, write)` constructor logs an
 error when the file can't be opened. A `File` without an open file acts like an empty
-one: reads and writes return `0` or an empty string, and `eof` returns `1`. To tell a
+one: reads and writes return `0` or an empty string, and `eof` is true. To tell a
 missing file from an empty one, check what `open` returns:
 
 === "Lua"

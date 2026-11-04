@@ -50,7 +50,7 @@ pointer. The `File` overload reads from the file's current position, and returns
 
 * int **eof**()
 
-Returns non-zero if the read cursor is at or past the end of the buffer.
+Returns non-zero (`true` in Lua) if the read cursor is at or past the end of the buffer.
 
 ---
 
