@@ -269,8 +269,8 @@ right away:
     ```
 
 When more than one UI scene is shown, the topmost scene with a focusable button gets the
-keys, so a pause menu over the HUD takes them first. A focused TextEdit keeps the arrow
-keys and Enter for its own text. The keys and buttons that the UI uses don't reach
+keys, so a pause menu over the HUD takes them first. A TextEdit being typed in keeps the
+arrow keys and Enter for its own text, even when another scene has buttons. The keys and buttons that the UI uses don't reach
 `onKeyDown`, `onKeyUp`, `onGamepadButtonDown`, and `onGamepadButtonUp` while
 `ignoreEventsHandledByUI` is on, and neither does `onGamepadAxisMove` while the left stick
 moves the focus. When the stick starts moving the focus, `onGamepadAxisMove` gets it back at

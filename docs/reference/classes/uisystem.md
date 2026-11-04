@@ -20,6 +20,7 @@ UI layout, focus, and pointer routing.
 | `parentToLayoutSpace` | C++ \| Lua |
 | `layoutToParentSpace` | C++ \| Lua |
 | `isTextEditFocused` | C++ \| Lua |
+| `isTextEditTyping` | C++ \| Lua |
 | `hasPendingImages` | C++ \| Lua |
 | `resetButtonStates` | C++ \| Lua |
 | `setFocus` | C++ \| Lua |
@@ -42,6 +43,9 @@ geometry. `resetButtonStates()` puts every pressed button back to its normal loo
 calling `onRelease`, and keeps the keyboard and gamepad focus. The engine calls it when it
 removes a scene and when it adds one, so a button focused before the scene runs stays
 focused.
+
+`isTextEditTyping()` is true while a focused text edit is also visible and enabled. While
+one is, in any scene, the engine leaves the arrows and the submit keys to it.
 
 `setFocus(entity)` gives an entity the keyboard and gamepad focus and shows it, and
 `NULL_ENTITY` clears it. The engine calls `eventOnNavigate` with a
