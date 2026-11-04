@@ -276,8 +276,8 @@ arrow keys and Enter for its own text, even when another scene has buttons. The 
 `onKeyDown`, `onKeyUp`, `onGamepadButtonDown`, and `onGamepadButtonUp` while
 `ignoreEventsHandledByUI` is on, and neither does `onGamepadAxisMove` while the left stick
 moves the focus. When the stick starts moving the focus, `onGamepadAxisMove` gets it back at
-rest, so gameplay doesn't keep the last tilt. `Input.isKeyPressed` and the other polling
-functions still see everything.
+rest, so gameplay doesn't keep the last tilt, and once no menu takes it anymore, gameplay gets
+it back as it is. `Input.isKeyPressed` and the other polling functions still see everything.
 
 !!! warning "Buttons on a HUD"
     In a game that uses the arrow keys, Space, Enter, or the A button for gameplay, turn
