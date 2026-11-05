@@ -93,7 +93,8 @@ system — see [2D Graphics — 2D lighting](../manual/2d-graphics.md#2d-lightin
 Sphere, Cylinder, Capsule, and Torus. A **Plane** lies flat (normal points up, `+Y`); a
 **Wall** stands upright facing the camera (normal points `+Z`) — handy for walls,
 backdrops, and mirror surfaces. You can change a mesh's geometry later from the
-**Create Shape** dropdown in [Properties](properties.md).
+**Create Shape** dropdown in [Properties](properties.md), unless the mesh comes from a
+model file.
 
 ### Mirror
 

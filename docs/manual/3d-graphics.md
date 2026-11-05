@@ -268,6 +268,10 @@ That applies to the whole **Submesh** section — material values and textures, 
 `.material` files, **Face Culling**, **Texture Shadow**, and **Primitive Type** — on the
 Model entity itself and on the child mesh entities a multi-node GLTF creates.
 
+Geometry can't be overridden. Each primitive in the file is one submesh, so these meshes
+have no **Create Shape** and submeshes can't be added or removed. Change the geometry in
+the model file instead.
+
 Because only the edited fields are pinned, re-exporting the model from your DCC still
 propagates everything else. Change a texture in Blender and re-export: meshes where you
 only tweaked base colour pick up the new texture and keep your colour.

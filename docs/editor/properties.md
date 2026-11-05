@@ -217,7 +217,9 @@ reflections before entering play mode.
 
 On a mesh that came from a model file, every field you change in the Submesh section is
 kept as an override on the model and re-applied whenever the file reloads, while the
-fields you leave alone keep following the file. See
+fields you leave alone keep following the file. Geometry and submeshes always come from
+the file, so these meshes show **From model file** instead of **Create Shape**, and
+submeshes can't be added or removed. See
 [3D Graphics — Editing an imported model's submeshes](../manual/3d-graphics.md#editing-an-imported-models-submeshes).
 
 Expand the Material row to edit **Alpha Mode** and **Alpha Cutoff** alongside the base
