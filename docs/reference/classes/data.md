@@ -44,6 +44,10 @@ when `aTakeOwnership` is `true`, the `Data` object takes ownership of the provid
 pointer. The `File` overload reads from the file's current position, and returns
 `FileErrors::INVALID_PARAMETER` when the file is not open.
 
+The `Data(path)` constructor, which `FileData.newFile(path)` also uses, logs an error
+when the file can't be opened and leaves the data empty. `open` doesn't log, so check
+what it returns to tell a missing file from an empty one.
+
 ---
 
 ### eof
