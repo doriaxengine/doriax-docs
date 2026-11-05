@@ -4,7 +4,8 @@ description: TextureData API reference (C++ and Lua).
 
 # TextureData
 
-CPU pixel buffer for textures.
+CPU pixel buffer for textures. Copying one with `dataOwned` set duplicates its pixels, so
+the copy outlives the original. Any other copy points at the same pixels.
 
 ## Properties
 
