@@ -16,7 +16,8 @@ you own the returned pointer and must `delete` it.
 
 `seek` and `eof` work the same on both types: a negative offset counts back from the
 end, and `eof` is true right after the last byte. Only a `File` can move past the end,
-to write after a gap.
+to write after a gap. On a pipe or FIFO, `eof` never waits for data, so it only turns
+true after a read has hit the end.
 
 ## Methods
 
