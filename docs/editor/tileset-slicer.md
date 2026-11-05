@@ -69,11 +69,37 @@ When arranging placed tiles in the [Scene View](scene-view.md), enable **Snap ti
 in the viewport gear menu so drops and gizmo moves snap to each tile's width and
 height — useful for packing tiles flush without tuning the global grid.
 
-## Collision tiles
+## Adding collision
 
-Tiles carry no collision data. Give the level's solid areas their own entity with a
-**2D Physics Body** — for example **Chain** or **Polygon** shapes that follow the
-ground — and keep the tilemap purely visual. See [Physics](../manual/physics.md).
+Tiles are only drawn, so collision comes from a **2D Physics Body** on the Tilemap
+entity:
+
+1. Select the Tilemap entity and add a **2D Physics Body**. Leave its type on **Static**.
+2. Add a **Polygon** shape and set its **Source** to **Entity Tilemap**.
+
+The shape now covers the tiles with boxes. Tiles that touch are joined, first into rows
+and then into blocks of rows with the same width, so a flat floor is a single box and
+characters don't catch on the seams between tiles. The boxes are drawn in the viewport
+while the body is selected, and the shape's **Boxes** row counts them.
+
+To leave out tiles that shouldn't block anything, like grass, clouds, or background
+props, click the weight button on their rect's row in the **Tile Rects** list. It dims
+when Collision is off, and every tile placed from that rect is then skipped.
+
+Every tile becomes a full square, so a ramp tile blocks like a wall. For slopes, and for
+one-way platforms that need their own filter or events, turn Collision off on those rects
+and add a **Polygon** or **Chain** shape that follows them.
+
+The boxes are built from the tiles each time the body loads, so tiles you paint in the
+editor are included the next time you play. If a script adds or removes tiles during the
+game, set `needUpdateShapes` on the body's component afterwards. See
+[createTilemapShape](../reference/classes/body2d.md#createtilemapshape).
+
+If you want to change single boxes, for example to give a wall less friction or turn a
+ledge into a sensor, click **Fit to Tiles** in the body's **Shapes** section instead. It
+replaces the body's shapes with plain Polygon boxes over the same tiles, which you can
+then edit like any other shape. They don't follow later tile changes, so click **Fit to
+Tiles** again after painting. See [Physics](../manual/physics.md#tilemap-collision).
 
 ## Tips
 

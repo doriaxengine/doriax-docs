@@ -107,7 +107,8 @@ To make the sprite collide with walls:
 3. Set the **Body Type** to **Kinematic** (for a player controlled by script) or
    **Dynamic** (for full physics simulation).
 4. Leave the shape type on **Polygon** and click **Add Shape**. The polygon starts as a
-   box the size of the sprite; edit its vertices if the sprite needs a tighter outline.
+   box the size of the sprite. If the sprite needs a tighter outline, edit its vertices in
+   the shape's properties or drag their handles in the scene view.
 
 ![The Player's Body2D with a polygon shape the size of the sprite](../assets/screenshots/tutorial-2d-body2d.png)
 

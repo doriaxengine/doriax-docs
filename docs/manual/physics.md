@@ -113,6 +113,33 @@ An open chain doesn't collide on its first and last edges, so add one extra vert
 end. Chains have no mass, so use them on static or kinematic bodies. See
 [Body2D — createChainShape](../reference/classes/body2d.md#createchainshape) for code.
 
+### Tilemap collision
+
+A Polygon shape can take its geometry from the [Tilemap](../reference/classes/tilemap.md)
+on the same entity. In the editor, set the shape's **Source** to **Entity Tilemap**; in
+code, call `createTilemapShape()`. Tiles that touch are joined into boxes, and tiles
+whose rect has **Collision** turned off are left out. However many boxes it makes, it
+counts as one shape toward `MAX_SHAPES_2D`.
+
+The tiles are read when the body loads. After a script changes tiles, set
+`needUpdateShapes` on the Body2DComponent to rebuild the boxes.
+
+=== "C++"
+
+    ```cpp
+    Body2D body = level.getBody2D(); // level is a Tilemap with its tiles placed
+    body.createTilemapShape();
+    ```
+
+=== "Lua"
+
+    ```lua
+    local body = level:getBody2D() -- level is a Tilemap with its tiles placed
+    body:createTilemapShape()
+    ```
+
+See [Tileset Slicer](../editor/tileset-slicer.md#adding-collision) for the editor steps.
+
 ## 3D physics
 
 3D physics uses Jolt Physics. Bodies can use primitives, compound shapes, mesh shapes,

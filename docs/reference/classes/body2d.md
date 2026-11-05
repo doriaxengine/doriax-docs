@@ -70,6 +70,7 @@ description: Body2D API reference — 2D physics body powered by Box2D, shapes, 
 | int | [createCapsuleShape](#createcapsuleshape) | C++ \| Lua |
 | int | [createSegmentShape](#createsegmentshape) | C++ \| Lua |
 | int | [createChainShape](#createchainshape) | C++ \| Lua |
+| int | [createTilemapShape](#createtilemapshape) | C++ \| Lua |
 | void | [removeAllShapes](#removeallshapes) | C++ \| Lua |
 | size_t | getNumShapes | C++ \| Lua |
 | [Shape2DType](#shape2dtype) | getShapeType | C++ \| Lua |
@@ -357,6 +358,44 @@ A chain needs at least 4 vertices, and an open chain doesn't collide on its firs
 
 ---
 
+### createTilemapShape
+
+* `int createTilemapShape()`
+
+Creates a polygon shape built from the tiles of the [Tilemap](tilemap.md) on the same entity. Tiles that touch are merged, first into rows and then into blocks of rows with the same width, and each block becomes one box. Tiles whose rect has [`collision`](tilerectdata.md) set to `false` are left out.
+
+The tiles are read when the body loads. After adding or removing tiles from a script, set `needUpdateShapes` on the [Body2DComponent](body2dcomponent.md) to rebuild the boxes. The shape setters, like `setShapeFriction` or `setBitsFilter`, apply to every box, and [getShapeContacts](#getbodycontacts-getshapecontacts) returns the contacts of all of them. Removing the Tilemap removes the boxes.
+
+The shape's own vertices aren't used, so don't read them to find where a body touched it. Use the point and normal of a contact or a [Ray](ray.md) hit instead. In C++, `PhysicsSystem::getTilemapCollisionRects` returns the boxes in the tilemap's local space.
+
+=== "C++"
+
+    ```cpp
+    Tilemap level(&scene);
+    level.addRect(0, 0, 32, 32);
+    for (int i = 0; i < 10; i++){
+        level.addTile(0, Vector2(i * 32, 0), 32, 32);
+    }
+
+    Body2D body = level.getBody2D();
+    body.createTilemapShape(); // one 320x32 box
+    ```
+
+=== "Lua"
+
+    ```lua
+    local level = Tilemap(scene)
+    level:addRect(0, 0, 32, 32)
+    for i = 0, 9 do
+        level:addTile(0, Vector2(i * 32, 0), 32, 32)
+    end
+
+    local body = level:getBody2D()
+    body:createTilemapShape() -- one 320x32 box
+    ```
+
+---
+
 ### removeAllShapes
 
 * `void removeAllShapes()`
@@ -498,7 +537,7 @@ Instantaneous angular velocity change.
 * `std::vector<Contact2D> getBodyContacts()`
 * `std::vector<Contact2D> getShapeContacts(size_t index)`
 
-Returns currently active contact manifolds for the entire body or for a specific shape. Useful for manual overlap queries without subscribing to per-frame events.
+Returns currently active contact manifolds for the entire body or for a specific shape. Useful for manual overlap queries without subscribing to per-frame events. `getShapeContacts` doesn't work on chain shapes; use `getBodyContacts` for those.
 
 ---
 

@@ -200,6 +200,20 @@ occluders, each point gets a small handle:
 Standalone occluder entities (no sprite) are selected by clicking anywhere inside the
 polygon's bounds. See [2D Graphics — 2D shadows](../manual/2d-graphics.md#2d-shadows).
 
+### 2D physics shapes
+
+Selecting an entity with a **2D Physics Body** draws its shapes. Polygon and Chain shapes
+get a handle at each vertex, and they work like occluder points: click a handle to select
+the vertex, then drag the move cross to move it. The drag is a single undo step and
+respects snap-to-grid. Click elsewhere on the entity to go back to entity selection.
+
+On a tilemap, a vertex handle takes the click before the tile under it. Shapes with the
+**Entity Tilemap** source have no handles, because their boxes come from the tiles. See
+[Tileset Slicer](tileset-slicer.md#adding-collision).
+
+The **Box** and **Centered Box** buttons under a polygon's **Reset shape** size the box
+to the entity's sprite, UI layout, or tilemap.
+
 ## 3D scene editing
 
 3D scenes use perspective projection and full 3D gizmos. Switch between the editor
