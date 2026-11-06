@@ -147,7 +147,7 @@ When `true`, the button ignores pointer events and displays with `colorDisabled`
 * *Setter*: void **setFocusable**(bool focusable)
 * *Getter*: bool **isFocusable**() const
 
-When `false`, keys and gamepads leave this button alone: the arrow keys, the d-pad, and the left stick skip it, and Enter, Space, or the A button never press it, so it can only be clicked. Turn it off on HUD buttons in games that use those keys or the A button for gameplay. Hidden and disabled buttons are always skipped.
+When `false`, keys and gamepads leave this button alone: the arrow keys, the d-pad, and the left stick skip it, and Enter, Space, or the A button never press it, so it can only be clicked. Turn it off on a button the focus shouldn't reach, like a HUD button in the same scene as a menu. Hidden and disabled buttons are always skipped.
 
 ---
 
@@ -184,7 +184,7 @@ Returns a handle to the child [Text](text.md) entity. Useful for advanced label 
 
 * void **setFocus**()
 
-Moves the keyboard and gamepad focus to this button and shows it, so Enter, Space, or the A button presses it. Call it when a menu opens to start on its main button. A button with [focusable](#focusable) turned off takes the focus but doesn't show it or react to those keys.
+Moves the keyboard and gamepad focus to this button and shows it, so Enter, Space, or the A button presses it. Call it when a menu opens to start on its main button: keys and gamepads stay with gameplay until a button has the focus. A button with [focusable](#focusable) turned off takes the focus but doesn't show it or react to those keys.
 
 === "C++"
     ```cpp

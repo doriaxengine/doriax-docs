@@ -475,9 +475,9 @@ and mobile.
 
 ## UI input
 
-UI widgets consume pointer and touch events automatically, and buttons also take the
-arrow keys, Enter, Space, the d-pad, the left stick, and the gamepad A button, so menus
-work with a keyboard or a controller. See
+UI widgets consume pointer and touch events automatically. Once a script focuses a button,
+the UI also takes the arrow keys, Tab, Enter, Space, the d-pad, the left stick, and the gamepad
+A button, so menus work with a keyboard or a controller. See
 [Keyboard and gamepad navigation](user-interface.md#keyboard-and-gamepad-navigation).
 
 The events a UI widget uses don't reach the gameplay input handlers (so the player doesn't

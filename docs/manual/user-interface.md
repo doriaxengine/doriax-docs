@@ -240,23 +240,8 @@ gameplay handlers see those events too:
 
 ## Keyboard and gamepad navigation
 
-Menus also work without a mouse. The arrow keys, the d-pad, and the left stick move a
-focus between the visible buttons, and Enter, Space, or the gamepad A button presses the
-focused one. Tab and Shift+Tab go through the buttons in reading order. Hidden and
-disabled buttons are skipped, and so are buttons clipped out of view by a parent image or
-panel. A held d-pad or stick repeats after a short delay, like a held key.
-
-The first press only shows where the focus is, and the next ones move it to the nearest
-button in that direction. A focused button looks hovered, with its hovered colour,
-texture, and scale, so a menu that already has a hover effect needs nothing else.
-Pressing it fires `onPress`, and letting go fires `onRelease` and the `onClick` of its
-UIComponent, the same as a mouse click. Moving or clicking the mouse hides the focus
-until the next key or gamepad press.
-
-A menu scene that is removed and added back, like a pause menu, shows no focus until the
-next key or gamepad press, so a press right after it opens doesn't click the button left
-focused last time. To open a menu with a button already selected, focus it from a script.
-The focus shows right away:
+Menus can work without a mouse once a script focuses one of their buttons, usually when the
+menu opens. The focus shows right away:
 
 === "Lua"
 
@@ -270,21 +255,40 @@ The focus shows right away:
     playButton->setFocus();
     ```
 
+Until then the arrow keys, Tab, Enter, Space, the d-pad, the left stick, and the gamepad A
+button stay with gameplay, so buttons on a HUD don't take them, even after a mouse click.
+
+With a button focused, the arrow keys, the d-pad, and the left stick move the focus to the
+nearest visible button in that direction, and Enter, Space, or the gamepad A button presses
+it. Tab and Shift+Tab go through the buttons in reading order. Hidden and disabled buttons are
+skipped, and so are buttons clipped out of view by a parent image or panel. A held d-pad or
+stick repeats after a short delay, like a held key.
+
+A focused button looks hovered, with its hovered colour, texture, and scale, so a menu that
+already has a hover effect needs nothing else. Pressing it fires `onPress`, and letting go
+fires `onRelease` and the `onClick` of its UIComponent, the same as a mouse click. Moving or
+clicking the mouse hides the focus until the next key or gamepad press, which only shows it
+again.
+
+While the focused button is hidden, keys and gamepads go back to gameplay, so closing a menu
+gives the input back. When the menu shows again, or a menu scene that was removed is added
+back, the focus stays hidden until the next key or gamepad press, so a press right after it
+opens doesn't click the button left focused last time. Focus a button when the menu opens to
+show it right away. If the focused button is disabled or clipped out of view while the menu
+stays open, the next press moves the focus to the first button. To let go of the focus, call
+`setFocus(NULL_ENTITY)` on the [UISystem](../reference/classes/uisystem.md).
+
 When more than one UI scene is shown, the topmost scene with a focusable button gets the
-keys, so a pause menu over the HUD takes them first. A TextEdit being typed in keeps the
+keys, so a pause menu over the HUD takes them first. Without a focused button there, they go
+to gameplay and not to a menu under it. Turn off **Focusable** on a button the focus shouldn't
+reach or that shouldn't cover a menu, like a HUD button in the same scene as a menu or in a
+scene over it. A TextEdit being typed in keeps the
 arrow keys and Enter for its own text, even when another scene has buttons. The keys and buttons that the UI uses don't reach
 `onKeyDown`, `onKeyUp`, `onGamepadButtonDown`, and `onGamepadButtonUp` while
 `ignoreEventsHandledByUI` is on, and neither does `onGamepadAxisMove` while the left stick
 moves the focus. When the stick starts moving the focus, `onGamepadAxisMove` gets it back at
 rest, so gameplay doesn't keep the last tilt, and once no menu takes it anymore, gameplay gets
 it back as it is. `Input.isKeyPressed` and the other polling functions still see everything.
-
-!!! warning "Buttons on a HUD"
-    In a game that uses the arrow keys, Space, Enter, the d-pad, the left stick, or the A
-    button for gameplay, turn off **Focusable** on the HUD buttons, in the Button section of
-    the Properties panel or with `focusable = false` from a script. Otherwise those inputs
-    move and press the HUD buttons instead of reaching your script, so an arrow key can focus
-    one and the next Space or A press clicks it.
 
 ## 9-patch scaling
 
