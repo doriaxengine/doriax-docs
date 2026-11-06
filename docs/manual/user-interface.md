@@ -268,8 +268,8 @@ A focused button looks hovered, with its hovered colour, texture, and scale, so 
 already has a hover effect needs nothing else. Pressing it fires `onPress`, and letting go
 fires `onRelease` and the `onClick` of its UIComponent, the same as a mouse click. Moving or
 clicking the mouse hides the focus until the next key or gamepad press, which only shows it
-again. That press continues from a button clicked in the meantime, or from the first button
-after a click on anything else.
+again. That press continues from a button clicked in the meantime, or from the same button after a
+click on anything else.
 
 While the focused button is hidden, keys and gamepads go back to gameplay, so closing a menu
 gives the input back. When the menu shows again, or a menu scene that was removed is added
@@ -283,7 +283,8 @@ When more than one UI scene is shown, the topmost scene with a focusable button 
 keys, so a pause menu over the HUD takes them first. Without a focused button there, they go
 to gameplay and not to a menu under it. Turn off **Focusable** on a button the focus shouldn't
 reach or that shouldn't cover a menu, like a HUD button in the same scene as a menu or in a
-scene over it. A TextEdit being typed in keeps the
+scene over it. Otherwise clicking it while the menu has the focus moves the focus there, and
+it keeps the keys after the menu closes. A TextEdit being typed in keeps the
 arrow keys and Enter for its own text, even when another scene has buttons. The keys and buttons that the UI uses don't reach
 `onKeyDown`, `onKeyUp`, `onGamepadButtonDown`, and `onGamepadButtonUp` while
 `ignoreEventsHandledByUI` is on, and neither does `onGamepadAxisMove` while the left stick
