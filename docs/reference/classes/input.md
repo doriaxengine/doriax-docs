@@ -46,13 +46,13 @@ description: Input API reference — keyboard, mouse, touch, and gamepad polling
 | static Vector2 | [getMousePosition](#getmouseposition) | C++ \| Lua |
 | static Vector2 | [getMouseScroll](#getmousescroll) | C++ \| Lua |
 | static Vector2 | [getTouchPosition](#gettouchposition) | C++ \| Lua |
-| static std::vector\<Touch\> | [getTouches](#gettouches) | C++ \| Lua |
+| static std::vector&lt;Touch&gt; | [getTouches](#gettouches) | C++ \| Lua |
 | static size_t | [numTouches](#numtouches) | C++ \| Lua |
 | static bool | [isGamepadConnected](#isgamepadconnected) | C++ \| Lua |
 | static std::string | [getGamepadName](#getgamepadname) | C++ \| Lua |
 | static bool | [isGamepadButtonPressed](#isgamepadbuttonpressed) | C++ \| Lua |
 | static float | [getGamepadAxis](#getgamepadaxis) | C++ \| Lua |
-| static std::vector\<Gamepad\> | [getGamepads](#getgamepads) | C++ |
+| static std::vector&lt;Gamepad&gt; | [getGamepads](#getgamepads) | C++ |
 | static size_t | [numGamepads](#numgamepads) | C++ \| Lua |
 | static int | [getGamepadId](#getgamepadid) | C++ \| Lua |
 | static int | [getModifiers](#getmodifiers) | C++ \| Lua |

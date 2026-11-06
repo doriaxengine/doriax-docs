@@ -45,7 +45,7 @@ Two operations change what is on screen:
 | static bool | [removeChildScene](#addchildscene-removechildscene) | C++ \| Lua |
 | static uint32_t | [getSceneId](#getsceneid-getscenename) | C++ \| Lua |
 | static std::string | [getSceneName](#getsceneid-getscenename) | C++ \| Lua |
-| static std::vector\<std::string\> | [getSceneNames](#getscenenames-getscenecount) | C++ \| Lua |
+| static std::vector&lt;std::string&gt; | [getSceneNames](#getscenenames-getscenecount) | C++ \| Lua |
 | static int | [getSceneCount](#getscenenames-getscenecount) | C++ \| Lua (`sceneCount`) |
 | static uint32_t | [getCurrentSceneId](#getcurrentsceneid-getcurrentscenename) | C++ \| Lua (`currentSceneId`) |
 | static std::string | [getCurrentSceneName](#getcurrentsceneid-getcurrentscenename) | C++ \| Lua (`currentSceneName`) |
@@ -58,10 +58,10 @@ Two operations change what is on screen:
 
 ### registerScene
 
-* static void **registerScene**(uint32_t id, const std::string& name, std::function<void()> loadFactory)
-* static void **registerScene**(uint32_t id, const std::string& name, std::function<void()> loadFactory, const std::vector<uint32_t>& sceneIds)
-* static void **registerScene**(uint32_t id, const std::string& name, std::function<void()> loadFactory, std::function<void()> addFactory)
-* static void **registerScene**(uint32_t id, const std::string& name, std::function<void()> loadFactory, std::function<void()> addFactory, const std::vector<uint32_t>& sceneIds, std::function\<SceneResources()\> resources = nullptr)
+* static void **registerScene**(uint32_t id, const std::string& name, std::function&lt;void()&gt; loadFactory)
+* static void **registerScene**(uint32_t id, const std::string& name, std::function&lt;void()&gt; loadFactory, const std::vector&lt;uint32_t&gt;& sceneIds)
+* static void **registerScene**(uint32_t id, const std::string& name, std::function&lt;void()&gt; loadFactory, std::function&lt;void()&gt; addFactory)
+* static void **registerScene**(uint32_t id, const std::string& name, std::function&lt;void()&gt; loadFactory, std::function&lt;void()&gt; addFactory, const std::vector&lt;uint32_t&gt;& sceneIds, std::function&lt;SceneResources()&gt; resources = nullptr)
 
 Registers a named scene stack with the functions that build it. A stack has two of them because coming up *as the world* and coming up *on top of the world* are different jobs.
 
@@ -216,7 +216,7 @@ Look up a scene's numeric ID by name, or its name by ID. Returns `0` / `""` if n
 
 ### getSceneNames / getSceneCount
 
-* static std::vector\<std::string\> **getSceneNames**()
+* static std::vector&lt;std::string&gt; **getSceneNames**()
 * static int **getSceneCount**()
 
 Returns all registered scene names, or the total number of registered scenes.

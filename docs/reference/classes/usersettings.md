@@ -36,8 +36,8 @@ Supported value types: `bool`, `int`, `long`, `float`, `double`, `std::string`, 
 
 ### get methods
 
-* static T **get\<Type\>ForKey**(const char* key)
-* static T **get\<Type\>ForKey**(const char* key, T defaultValue)
+* static T **get&lt;Type&gt;ForKey**(const char* key)
+* static T **get&lt;Type&gt;ForKey**(const char* key, T defaultValue)
 
 Retrieve a stored value by key. If the key does not exist and no `defaultValue` is given, the zero/empty value for the type is returned.
 
@@ -59,7 +59,7 @@ Retrieve a stored value by key. If the key does not exist and no `defaultValue` 
 
 ### set methods
 
-* static void **set\<Type\>ForKey**(const char* key, T value)
+* static void **set&lt;Type&gt;ForKey**(const char* key, T value)
 
 Store a value. Creates the key if it does not exist, or overwrites the previous value.
 

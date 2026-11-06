@@ -54,7 +54,7 @@ for the setup and the full flow.
 | static void | [setPersonalization](#request-settings) | C++ \| Lua |
 | static [AdMobPersonalization](#admobpersonalization) | [getPersonalization](#request-settings) | C++ \| Lua |
 | static void | [setTestDeviceIds](#settestdeviceids-gettestdeviceids) | C++ \| Lua |
-| static std::vector\<std::string\> | [getTestDeviceIds](#settestdeviceids-gettestdeviceids) | C++ \| Lua |
+| static std::vector&lt;std::string&gt; | [getTestDeviceIds](#settestdeviceids-gettestdeviceids) | C++ \| Lua |
 | static void | [requestConsent](#requestconsent) | C++ \| Lua |
 | static void | [setConsentDebugGeography](#setconsentdebuggeography-getconsentdebuggeography) | C++ \| Lua |
 | static [AdMobDebugGeography](#admobdebuggeography) | [getConsentDebugGeography](#setconsentdebuggeography-getconsentdebuggeography) | C++ \| Lua |
@@ -161,8 +161,8 @@ first requests too. All default to `UNSPECIFIED` or `DEFAULT`.
 
 ### setTestDeviceIds / getTestDeviceIds {#settestdeviceids-gettestdeviceids}
 
-* static void **setTestDeviceIds**(const std::vector\<std::string\>& ids)
-* static std::vector\<std::string\> **getTestDeviceIds**()
+* static void **setTestDeviceIds**(const std::vector&lt;std::string&gt;& ids)
+* static std::vector&lt;std::string&gt; **getTestDeviceIds**()
 
 Devices that get test ads, by the hashed ID Google Mobile Ads prints to the device log
 (Logcat or the Xcode console). The consent debug settings also apply only to these
