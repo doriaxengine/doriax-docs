@@ -4,7 +4,7 @@
 The docs are rendered by MkDocs itself from `git archive <ref>`, so the working
 tree is neither read nor changed. The pages are then merged into a single HTML
 book, which WeasyPrint lays out using print.css. WeasyPrint needs Pango and the
-fonts print.css names: .github/workflows/pdf.yml lists the packages.
+fonts print.css names: .github/workflows/docs.yml lists the packages.
 
 Usage:
     pip install -r requirements-pdf.txt
@@ -22,6 +22,7 @@ import html as htmllib
 import io
 import logging
 import math
+import os
 import posixpath
 import re
 import subprocess
@@ -757,6 +758,8 @@ def main():
     print(f"\nWrote {out}: {pages} pages, {out.stat().st_size / 1e6:.1f} MB")
     report.show()
     defects = [kind for kind in DEFECTS if kind in report.items]
+    if defects and "GITHUB_ACTIONS" in os.environ:
+        print(f"::warning::PDF of {args.ref}: {', '.join(defects)}")
     if args.strict and defects:
         sys.exit(f"Failing because of: {', '.join(defects)}")
 

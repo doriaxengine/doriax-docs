@@ -29,6 +29,8 @@ extra:
   # Archived and unstable builds are kept out of search engines so the
   # canonical stable docs at the site root are the ones that get indexed.
   version_noindex: false
+  # Whether this build has a doriax-docs.pdf to link to. See scripts/build-versions.sh.
+  version_pdf: false
 
   social:
     - name: GitHub

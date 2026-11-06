@@ -15,6 +15,10 @@
 # versions on the next build; only docs/ and mkdocs.yml come from the tag
 # itself. Set DOCS_SHARED_THEME=0 to build each version with its own theme.
 #
+# Set DOCS_PDF=1 to also give each of those directories a doriax-docs.pdf, which
+# turns on the download link in the theme. That takes requirements-pdf.txt and the
+# Pango and font packages .github/workflows/docs.yml installs.
+#
 # Usage: scripts/build-versions.sh [output-dir]
 set -euo pipefail
 
@@ -25,6 +29,7 @@ OUT="$(realpath -m "${1:-site}")"
 SITE_URL="${DOCS_SITE_URL_BASE:-https://docs.doriax.org}"
 SITE_URL="${SITE_URL%/}"
 SHARED_THEME="${DOCS_SHARED_THEME:-1}"
+BUILD_PDF="$([ "${DOCS_PDF:-0}" = 1 ] && echo true || echo false)"
 
 WORKTREES=()
 cleanup() {
@@ -76,6 +81,7 @@ extra:
   version: '$id'
   version_root: '$root'
   version_noindex: $noindex
+  version_pdf: $BUILD_PDF
 YAML
 
   echo "==> building '$id' -> ${sub:-<root>}"
@@ -126,6 +132,37 @@ for minor in "${SERIES[@]:-}"; do
 done
 
 build "$REPO_ROOT" unstable unstable true
+
+# After the sites, since mkdocs wipes its site_dir. The PDFs build side by side,
+# with their output held back so that the logs do not interleave.
+if [ "$BUILD_PDF" = true ]; then
+  PDF_LOGS="$(mktemp -d)"
+  declare -A PDF_JOBS=()
+
+  # pdf <version-id> <ref>
+  pdf() {
+    "$REPO_ROOT/scripts/build-pdf.py" --ref "$2" --out "$OUT/$1/doriax-docs.pdf" > "$PDF_LOGS/$1.log" 2>&1 &
+    PDF_JOBS[$1]=$!
+  }
+
+  for minor in "${SERIES[@]:-}"; do
+    [ -n "$minor" ] || continue
+    pdf "$minor" "${SERIES_REF[$minor]#refs/tags/}"
+  done
+  pdf unstable main
+
+  PDF_FAILED=0
+  for id in "${!PDF_JOBS[@]}"; do
+    wait "${PDF_JOBS[$id]}" || PDF_FAILED=1
+    echo "==> PDF of '$id'"
+    cat "$PDF_LOGS/$id.log"
+  done
+  rm -rf "$PDF_LOGS"
+  [ "$PDF_FAILED" = 0 ] || exit 1
+
+  # The root mirrors the newest version, its PDF included.
+  cp "$OUT/${LATEST:-unstable}/doriax-docs.pdf" "$OUT/doriax-docs.pdf"
+fi
 
 SERIES_TITLES="{"
 for minor in "${SERIES[@]:-}"; do

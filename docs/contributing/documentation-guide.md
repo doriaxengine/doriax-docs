@@ -126,6 +126,19 @@ git commit -am "Fix physics layer description"   # on main
 git tag -f v0.7.1 && git push -f origin v0.7.1
 ```
 
+When `main` already holds docs for unreleased features, moving the tag there would
+publish them too. Apply just the fix on a branch from the tag instead:
+
+```bash
+git switch -c release/0.8.4-fix v0.8.4
+git cherry-pick <fix>
+git tag -f v0.8.4
+git push origin release/0.8.4-fix && git push -f origin v0.8.4
+```
+
+A tag push runs the workflow stored in the tagged commit. If that one predates the
+PDFs, the deployment drops them until the next push to `main`.
+
 The `github-pages` environment must allow tags to deploy, or the tag run builds
 the site and then fails at the deploy step: under **Settings → Environments →
 github-pages → Deployment branches and tags**, `v*` needs a tag rule alongside
@@ -133,26 +146,35 @@ the `main` branch rule.
 
 ### Printable PDF
 
-`scripts/build-pdf.py` turns one tag or branch into a single A4 PDF, with a table
-of contents, page numbers on cross-references, and every language tab printed in
-full. It renders that ref's own `docs/` with MkDocs, so uncommitted changes do not
-reach it, and lays the pages out with WeasyPrint:
+Every published version carries a PDF of itself, linked as **Download PDF** at the
+bottom of the sidebar:
+
+| URL | Contents |
+| --- | --- |
+| `docs.doriax.org/doriax-docs.pdf` | Latest release, at a link that never changes |
+| `docs.doriax.org/0.7/doriax-docs.pdf` | The 0.7 release series |
+| `docs.doriax.org/unstable/doriax-docs.pdf` | Current `main` branch |
+
+The deployment builds them with `scripts/build-pdf.py`, which turns one tag or branch
+into a single A4 PDF, with a table of contents, page numbers on cross-references, and
+every language tab printed in full. It renders that ref's own `docs/` with MkDocs, so
+uncommitted changes do not reach it, and lays the pages out with WeasyPrint. To build
+one yourself:
 
 ```bash
 pip install -r requirements-pdf.txt
-scripts/build-pdf.py --ref v0.8.4
+scripts/build-pdf.py --ref v0.8.4 --strict
 ```
 
 WeasyPrint also needs Pango and the Noto and DejaVu fonts, listed in
-`.github/workflows/pdf.yml`. The Reference part follows the
+`.github/workflows/docs.yml`. `DOCS_PDF=1 scripts/build-versions.sh site` previews
+the whole site with its PDFs.
+
+A link that does not resolve, a missing image, or content running off the page is an
+error with `--strict`. In the deployment it is a warning on the workflow run, so that
+it never holds back the site. The Reference part follows the
 [API Index](../reference/index.md) rather than the sidebar, so list every new class
 page there.
-
-The **Build documentation PDF** workflow runs this on every release tag and whenever
-the generator changes on `main`. It fails if a link does not resolve, an image is
-missing, or content runs off the page. The PDF is in the **Artifacts** section of the
-run, where it stays for 90 days. For an older tag, or to get a fresh copy, open the
-workflow under **Actions**, choose **Run workflow**, and enter the tag.
 
 ### Layout and theme changes
 
