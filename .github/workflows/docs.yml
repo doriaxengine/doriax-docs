@@ -34,13 +34,23 @@ jobs:
         with:
           python-version: "3.x"
           cache: pip
-          cache-dependency-path: requirements.txt
+          cache-dependency-path: requirements*.txt
+
+      - name: Install Pango and fonts for the PDFs
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            libpango-1.0-0 libpangoft2-1.0-0 libharfbuzz-subset0 \
+            fonts-noto-core fonts-noto-mono fonts-noto-cjk \
+            fonts-dejavu-core fonts-dejavu-mono
 
       - name: Install dependencies
-        run: pip install -r requirements.txt
+        run: pip install -r requirements-pdf.txt
 
       - name: Build all documentation versions
         run: scripts/build-versions.sh site
+        env:
+          DOCS_PDF: 1
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
