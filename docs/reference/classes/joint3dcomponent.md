@@ -49,4 +49,4 @@ The data a [Joint3D](joint3d.md) is built from. In Lua, get it with `joint:getJo
 | `autoAnchors` | C++ \| Lua |
 | `needUpdateJoint` | C++ \| Lua |
 
-The [Joint3D](joint3d.md) setters fill these fields and build the joint. Set `needUpdateJoint` to rebuild it from these fields. `pathPoints` comes to Lua as a table copy.
+The [Joint3D](joint3d.md) setters fill these fields and build the joint. A joint whose bodies aren't ready, or a gear or rack whose hinge or slider isn't, is built by a later update. Set `needUpdateJoint` to rebuild it from these fields. `pathPoints` comes to Lua as a table copy.

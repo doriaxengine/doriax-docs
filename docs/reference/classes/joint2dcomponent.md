@@ -25,4 +25,4 @@ The data a [Joint2D](joint2d.md) is built from. In Lua, get it with `joint:getJo
 | `rope` | C++ \| Lua |
 | `needUpdateJoint` | C++ \| Lua |
 
-The [Joint2D](joint2d.md) setters fill these fields and build the joint. Set `needUpdateJoint` to rebuild it from these fields.
+The [Joint2D](joint2d.md) setters fill these fields and build the joint. A joint set during a physics step is built by the next update. Set `needUpdateJoint` to rebuild it from these fields.

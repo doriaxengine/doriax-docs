@@ -171,7 +171,7 @@ Like [svgScale](#svgscale), the fix is part of the texture's identity: the same 
 * *Setter*: void **setReleaseDataAfterLoad**(bool release)
 * *Getter*: bool **isReleaseDataAfterLoad**() const
 
-Frees the CPU-side pixel data as soon as the texture reaches the GPU. `true` by default, but textures built from a [TextureData](texturedata.md) keep their pixels: the `Texture(id, data)` constructor, [setData](#setdata) and [setCubeDatas](#setcubedatas) all clear the flag, as does [setFramebuffer](#setframebuffer). See [releaseData](#releasedata) to free the pixels on demand.
+Frees the CPU-side pixel data as soon as the texture reaches the GPU. `true` by default, but textures built from a [TextureData](texturedata.md) keep their pixels: the `Texture(id, data)` constructor, [setData](#setdata) and [setCubeDatas](#setcubedatas) all clear the flag, as does [setFramebuffer](#setframebuffer). Setting it back on hands those pixels to the texture, so don't free them yourself. See [releaseData](#releasedata) to free the pixels on demand.
 
 ---
 
