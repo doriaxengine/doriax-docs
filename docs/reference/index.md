@@ -75,6 +75,7 @@ See also [Enumerations](enums.md) and [Build Options](build-options.md).
 - [SkyComponent](classes/skycomponent.md)
 - [SoundComponent](classes/soundcomponent.md)
 - [SpriteAnimationComponent](classes/spriteanimationcomponent.md)
+- [SpriteComponent](classes/spritecomponent.md)
 - [TerrainComponent](classes/terraincomponent.md)
 - [TextComponent](classes/textcomponent.md)
 - [TextEditComponent](classes/texteditcomponent.md)
