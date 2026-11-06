@@ -1,6 +1,9 @@
 # MkDocs build output
 /site/
 
+# scripts/build-pdf.py output
+/doriax-docs-*.pdf
+
 # Python
 .venv/
 __pycache__/

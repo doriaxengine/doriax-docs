@@ -36,6 +36,14 @@ Produce a static site in the `site/` directory:
 mkdocs build --strict
 ```
 
+To build a printable PDF of a release, see the
+[documentation guide](docs/contributing/documentation-guide.md#printable-pdf):
+
+```bash
+pip install -r requirements-pdf.txt
+scripts/build-pdf.py --ref v0.8.4
+```
+
 ## License
 
 Documentation content is licensed under

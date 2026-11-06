@@ -1,0 +1,453 @@
+/* Print stylesheet for the Doriax documentation PDF (rendered by WeasyPrint).
+   The website theme is dark and screen-only, so nothing is inherited from it
+   except the accent colour. */
+
+:root {
+  --ink: #1c2430;
+  --muted: #5b6675;
+  --hair: #cfd5de;
+  --accent: #3d6fad;
+  --code-bg: #f5f6f8;
+  --inline-bg: #eceff4;
+}
+
+/* ---------- Pages ---------- */
+
+@page {
+  size: A4;
+  @footnote {
+    border-top: 0.4pt solid var(--hair);
+    padding-top: 1mm;
+    margin-top: 3mm;
+  }
+}
+
+@page :right {
+  margin: 22mm 16mm 19mm 22mm;
+  @top-left {
+    content: string(part, start);
+    width: 50%;
+    font: 7.5pt "Noto Sans";
+    color: var(--muted);
+    border-bottom: 0.4pt solid var(--hair);
+    padding-bottom: 1.5mm;
+    margin-bottom: 5mm;
+  }
+  @top-right {
+    content: string(chapter, start);
+    width: 50%;
+    text-align: right;
+    font: bold 8pt "Noto Sans";
+    color: var(--ink);
+    border-bottom: 0.4pt solid var(--hair);
+    padding-bottom: 1.5mm;
+    margin-bottom: 5mm;
+  }
+  @bottom-left {
+    content: string(book);
+    font: 7.5pt "Noto Sans";
+    color: var(--muted);
+  }
+  @bottom-right {
+    content: counter(page);
+    font: bold 9pt "Noto Sans";
+    color: var(--ink);
+  }
+}
+
+@page :left {
+  margin: 22mm 22mm 19mm 16mm;
+  @top-left {
+    content: string(chapter, start);
+    width: 50%;
+    font: bold 8pt "Noto Sans";
+    color: var(--ink);
+    border-bottom: 0.4pt solid var(--hair);
+    padding-bottom: 1.5mm;
+    margin-bottom: 5mm;
+  }
+  @top-right {
+    content: string(part, start);
+    width: 50%;
+    text-align: right;
+    font: 7.5pt "Noto Sans";
+    color: var(--muted);
+    border-bottom: 0.4pt solid var(--hair);
+    padding-bottom: 1.5mm;
+    margin-bottom: 5mm;
+  }
+  @bottom-left {
+    content: counter(page);
+    font: bold 9pt "Noto Sans";
+    color: var(--ink);
+  }
+  @bottom-right {
+    content: string(book);
+    font: 7.5pt "Noto Sans";
+    color: var(--muted);
+  }
+}
+
+@page bare {
+  @top-left { content: none; border: 0; }
+  @top-right { content: none; border: 0; }
+  @bottom-left { content: none; }
+  @bottom-right { content: none; }
+}
+
+@page :blank {
+  @top-left { content: none; border: 0; }
+  @top-right { content: none; border: 0; }
+  @bottom-left { content: none; }
+  @bottom-right { content: none; }
+}
+
+/* ---------- Base ---------- */
+
+html {
+  font-family: "Noto Sans", "DejaVu Sans", "Noto Sans CJK SC", "Noto Serif CJK SC", "Noto Sans Arabic", sans-serif;
+  font-size: 9.5pt;
+  line-height: 1.45;
+  color: var(--ink);
+  string-set: book attr(data-book);
+}
+
+body { margin: 0; }
+
+h1, h2, h3, h4, h5, h6 { bookmark-level: none; }
+.bl1 { bookmark-level: 1; bookmark-state: closed; }
+.bl2 { bookmark-level: 2; bookmark-state: closed; }
+.bl3 { bookmark-level: 3; bookmark-state: closed; }
+.bl4 { bookmark-level: 4; bookmark-state: closed; }
+.bl5 { bookmark-level: 5; bookmark-state: closed; }
+
+h1, h2, h3, h4 {
+  line-height: 1.2;
+  break-after: avoid;
+  break-inside: avoid;
+}
+h1 { font-size: 21pt; margin: 0 0 4mm; color: var(--ink); }
+h2 {
+  font-size: 13.5pt;
+  margin: 6.5mm 0 2mm;
+  padding-bottom: 0.8mm;
+  border-bottom: 0.5pt solid var(--hair);
+}
+h3 { font-size: 10.8pt; margin: 4.5mm 0 1.5mm; }
+h4 { font-size: 9.5pt; margin: 3.5mm 0 1mm; }
+
+p { margin: 0 0 2mm; orphans: 2; widows: 2; }
+ul, ol { margin: 0 0 2mm; padding-left: 5mm; }
+li { margin: 0 0 0.6mm; orphans: 2; widows: 2; }
+li:last-child { break-before: avoid; }  /* no lone last bullet on a page of its own */
+li > p { margin-bottom: 1mm; }
+li > ul, li > ol { margin: 0.6mm 0 0.8mm; }
+
+hr {
+  border: 0;
+  border-top: 0.4pt solid var(--hair);
+  margin: 3.5mm 0;
+}
+
+blockquote {
+  margin: 2.5mm 0;
+  padding-left: 3mm;
+  border-left: 0.8mm solid var(--hair);
+  color: var(--muted);
+}
+
+a { color: #27548a; text-decoration: none; }
+
+/* Page numbers on links leaving the current chapter. */
+a.xref::after {
+  content: "\00a0(p.\00a0" target-counter(attr(href), page) ")";
+  font-size: 0.86em;
+  font-weight: normal;
+  font-style: normal;
+  color: var(--muted);
+}
+
+/* External addresses become footnotes, since paper has no hyperlinks. */
+.ext-url {
+  float: footnote;
+  font-size: 7.5pt;
+  line-height: 1.3;
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}
+::footnote-call { font-size: 0.72em; vertical-align: super; line-height: 0; color: var(--muted); }
+::footnote-marker { font-size: 7.5pt; color: var(--muted); margin-right: 1mm; }
+
+/* ---------- Code ---------- */
+
+code, pre, kbd {
+  font-family: "Noto Sans Mono", "DejaVu Sans Mono", "Noto Sans CJK SC", "Noto Serif CJK SC", "Noto Sans Arabic", monospace;
+}
+
+code {
+  font-size: 0.88em;
+  background: var(--inline-bg);
+  padding: 0 0.5mm;
+  border-radius: 0.5mm;
+  box-decoration-break: clone;
+  overflow-wrap: anywhere;
+}
+
+pre {
+  margin: 0 0 2.5mm;
+  padding: 1.8mm 2.5mm;
+  font-size: 7.7pt;
+  line-height: 1.36;
+  background: var(--code-bg);
+  border: 0.4pt solid var(--hair);
+  border-radius: 0.8mm;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  orphans: 3;
+  widows: 3;
+}
+pre code {
+  font-size: inherit;
+  background: none;
+  padding: 0;
+  border-radius: 0;
+}
+pre.keep { break-inside: avoid; }
+
+.highlight { color: var(--ink); }
+.highlight .c, .highlight .ch, .highlight .cm, .highlight .c1, .highlight .cs { color: #5f6b7a; font-style: italic; }
+.highlight .cp, .highlight .cpf { color: #7b4bb0; }
+.highlight .k, .highlight .kc, .highlight .kd, .highlight .kn, .highlight .kp, .highlight .kr { color: #2b5d9b; }
+.highlight .kt { color: #1a6f7f; }
+.highlight .na, .highlight .nb, .highlight .bp, .highlight .nl { color: #1a6f7f; }
+.highlight .nc, .highlight .nn { color: #8a5a00; }
+.highlight .no, .highlight .m, .highlight .mb, .highlight .mf, .highlight .mh, .highlight .mi, .highlight .mo, .highlight .il { color: #a8501a; }
+.highlight .nd, .highlight .nf, .highlight .fm, .highlight .nt { color: #2b5d9b; }
+.highlight .s, .highlight .sa, .highlight .sb, .highlight .sc, .highlight .sd, .highlight .s2, .highlight .se,
+.highlight .sh, .highlight .si, .highlight .sx, .highlight .sr, .highlight .s1, .highlight .ss, .highlight .dl { color: #2c7a3f; }
+.highlight .gd { color: #b3261e; }
+.highlight .gi { color: #2c7a3f; }
+.highlight .ge { font-style: italic; }
+.highlight .gs { font-weight: bold; }
+
+/* ---------- Tabs, printed one after another ---------- */
+
+.tabs { margin: 2.5mm 0; }
+.tab { margin-bottom: 1.6mm; }
+.tab.keep { break-inside: avoid; }
+.tab-head { break-after: avoid; line-height: 1; }
+.tab-label {
+  display: inline-block;
+  font-size: 6.8pt;
+  font-weight: bold;
+  line-height: 1;
+  color: #fff;
+  background: #55657a;
+  padding: 0.7mm 2mm;
+  border-radius: 0.8mm 0.8mm 0 0;
+}
+.tab-label.lang-cpp { background: var(--accent); }
+.tab pre { margin-bottom: 0; border-top-left-radius: 0; }
+.tab-body > :last-child { margin-bottom: 0; }
+.tab-body.text {
+  border: 0.4pt solid var(--hair);
+  border-radius: 0 0.8mm 0.8mm 0.8mm;
+  padding: 2mm 2.5mm;
+}
+
+/* ---------- Tables ---------- */
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0 0 3mm;
+  font-size: 8.3pt;
+  line-height: 1.32;
+}
+thead { display: table-header-group; }
+th {
+  text-align: left;
+  font-weight: bold;
+  background: #e9edf3;
+  border-bottom: 0.7pt solid #a9b3c1;
+  padding: 0.9mm 1.5mm;
+}
+td {
+  padding: 0.8mm 1.5mm;
+  border-bottom: 0.3pt solid var(--hair);
+  vertical-align: top;
+  overflow-wrap: break-word;
+}
+tr { break-inside: avoid; }
+table.wide { font-size: 7.3pt; }
+td code { overflow-wrap: break-word; }
+table.wide td, table.wide td code { overflow-wrap: anywhere; }
+
+/* ---------- Admonitions ---------- */
+
+.admonition {
+  --tone: var(--accent);
+  --tint: #f1f5fa;
+  margin: 3mm 0;
+  padding: 1.8mm 3mm;
+  font-size: 9pt;
+  background: var(--tint);
+  border-left: 1mm solid var(--tone);
+  border-radius: 0.6mm;
+  break-inside: avoid;
+}
+.admonition > :last-child { margin-bottom: 0; }
+.admonition-title { font-weight: bold; color: var(--tone); margin: 0 0 0.8mm; break-after: avoid; }
+.admonition.tip { --tone: #2f7d4f; --tint: #f0f7f2; }
+.admonition.warning { --tone: #a86a12; --tint: #fbf5ea; }
+.admonition.danger { --tone: #b3261e; --tint: #fbefee; }
+
+/* ---------- Images ---------- */
+
+img { box-sizing: border-box; max-width: 100%; max-height: 195mm; }
+p.figure {
+  text-align: center;
+  margin: 3mm 0;
+  break-inside: avoid;
+}
+p.figure img { border: 0.4pt solid var(--hair); }
+p.figure img + img { margin-left: 2mm; }
+
+/* ---------- Task lists ---------- */
+
+ul.task-list { list-style: none; padding-left: 0; }
+.check { font-size: 1.1em; margin-right: 1mm; }
+
+/* ---------- Cover and front matter ---------- */
+
+.cover {
+  page: bare;
+  text-align: center;
+  padding-top: 46mm;
+}
+.cover img { width: 86mm; }
+.cover-title {
+  margin: 17mm 0 0;
+  font-size: 27pt;
+  font-weight: bold;
+  line-height: 1.1;
+}
+.cover-version { margin: 4mm 0 0; font-size: 15pt; color: var(--accent); font-weight: bold; }
+.cover-date { margin: 2mm 0 0; font-size: 10pt; color: var(--muted); }
+
+.edition {
+  page: bare;
+  break-before: page;
+  padding-top: 142mm;
+  font-size: 8.8pt;
+}
+.edition h2 {
+  font-size: 10pt;
+  border: 0;
+  margin: 4mm 0 1mm;
+  padding: 0;
+}
+.edition p, .edition li { margin-bottom: 1.2mm; }
+
+.toc { break-before: right; }
+.toc > h1 { font-size: 21pt; margin-bottom: 3mm; column-span: all; }
+.toc-body { columns: 2; column-gap: 7mm; font-size: 8.3pt; line-height: 1.34; }
+.toc-part {
+  margin: 3.5mm 0 0.7mm;
+  font-size: 9.6pt;
+  font-weight: bold;
+  color: var(--accent);
+  break-after: avoid;
+  border-bottom: 0.4pt solid var(--hair);
+  padding-bottom: 0.4mm;
+}
+.toc-body > .toc-part:first-child { margin-top: 0; }
+.toc-group { margin: 1.8mm 0 0.3mm; font-weight: bold; break-after: avoid; }
+.toc-subgroup { margin: 1mm 0 0.2mm; padding-left: 2.5mm; font-weight: bold; font-style: italic; break-after: avoid; }
+.toc ul, .part-page ul { list-style: none; margin: 0; padding: 0; }
+.toc li, .part-page li { margin: 0; }
+.toc ul.sub li { padding-left: 2.5mm; }
+.toc a, .part-page a { color: inherit; }
+.toc a::after, .part-page a::after {
+  content: leader(dotted) "\00a0" target-counter(attr(href), page);
+  color: var(--muted);
+}
+.toc-dup { padding-left: 2.5mm; font-style: italic; }
+
+/* ---------- Parts and chapters ---------- */
+
+.part-page {
+  page: bare;
+  break-before: right;
+  padding-top: 62mm;
+}
+.part-number {
+  margin: 0;
+  font-size: 11pt;
+  font-weight: bold;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.part-page h1 {
+  font-size: 34pt;
+  margin: 2mm 0 7mm;
+  padding-bottom: 4mm;
+  border-bottom: 1pt solid var(--accent);
+}
+.part-page ul { font-size: 9.5pt; line-height: 1.6; columns: 2; column-gap: 8mm; }
+
+.chapter { break-before: page; }
+.chapter-mark { string-set: chapter attr(data-title), part attr(data-part); height: 0; }
+
+/* Short class pages share sheets instead of each using up a whole one. */
+.chapter.compact {
+  break-before: auto;
+  break-inside: avoid;
+  margin-top: 8mm;
+  padding-top: 3.5mm;
+  border-top: 1pt solid var(--accent);
+}
+.chapter.compact h1 { font-size: 15pt; margin-bottom: 2mm; }
+.chapter.compact h2 { font-size: 11pt; margin-top: 3.5mm; }
+.chapter.compact h3 { font-size: 9.8pt; margin-top: 3mm; }
+
+.group-band {
+  bookmark-label: content(text);
+  margin: 0 0 6mm;
+  padding: 1.6mm 3mm;
+  font-size: 11pt;
+  font-weight: bold;
+  line-height: 1.2;
+  color: #fff;
+  background: var(--accent);
+  border-radius: 0.8mm;
+  break-after: avoid;
+}
+.group-band.sub { background: #55657a; font-size: 10pt; }
+.chapter.compact .group-band { margin-top: -3.5mm; }
+.chapter.compact:has(.group-band) { border-top: 0; padding-top: 3.5mm; }
+
+/* ---------- API Index, Welcome page ---------- */
+
+.api-index ul { columns: 3; column-gap: 5mm; font-size: 8.3pt; padding-left: 3.5mm; }
+.api-index li { margin: 0; break-inside: avoid; }
+
+.dx-hero-badge { font-weight: bold; color: var(--accent); }
+.dx-hero-title { font-size: 24pt; margin: 2mm 0 4mm; }
+.dx-hero-actions p { margin: 0 0 3mm; }
+.dx-btn { font-weight: bold; }
+.dx-btn-outline { margin-left: 6mm; }
+.dx-cards { columns: 2; column-gap: 5mm; margin-bottom: 3mm; }
+.dx-card {
+  break-inside: avoid;
+  border: 0.4pt solid var(--hair);
+  border-radius: 0.8mm;
+  padding: 1.8mm 2.5mm;
+  margin-bottom: 2.5mm;
+}
+.dx-card-title { font-weight: bold; margin: 0 0 0.6mm; }
+.dx-card-desc { margin: 0; font-size: 8.7pt; color: var(--muted); }
+.dx-feature-grid { columns: 2; column-gap: 6mm; }
+.dx-feature { break-inside: avoid; margin-bottom: 3mm; }
+.dx-feature h3 { margin-top: 0; }

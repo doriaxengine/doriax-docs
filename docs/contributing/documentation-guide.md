@@ -131,6 +131,29 @@ the site and then fails at the deploy step: under **Settings → Environments �
 github-pages → Deployment branches and tags**, `v*` needs a tag rule alongside
 the `main` branch rule.
 
+### Printable PDF
+
+`scripts/build-pdf.py` turns one tag or branch into a single A4 PDF, with a table
+of contents, page numbers on cross-references, and every language tab printed in
+full. It renders that ref's own `docs/` with MkDocs, so uncommitted changes do not
+reach it, and lays the pages out with WeasyPrint:
+
+```bash
+pip install -r requirements-pdf.txt
+scripts/build-pdf.py --ref v0.8.4
+```
+
+WeasyPrint also needs Pango and the Noto and DejaVu fonts, listed in
+`.github/workflows/pdf.yml`. The Reference part follows the
+[API Index](../reference/index.md) rather than the sidebar, so list every new class
+page there.
+
+The **Build documentation PDF** workflow runs this on every release tag and whenever
+the generator changes on `main`. It fails if a link does not resolve, an image is
+missing, or content runs off the page. The PDF is in the **Artifacts** section of the
+run, where it stays for 90 days. For an older tag, or to get a fresh copy, open the
+workflow under **Actions**, choose **Run workflow**, and enter the tag.
+
 ### Layout and theme changes
 
 Only `docs/` and `mkdocs.yml` come from a release tag. Every version is built
