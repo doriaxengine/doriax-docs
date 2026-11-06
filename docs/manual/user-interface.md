@@ -276,8 +276,9 @@ gives the input back. When the menu shows again, or a menu scene that was remove
 back, the focus stays hidden until the next key or gamepad press, so a press right after it
 opens doesn't click the button left focused last time. Focus a button when the menu opens to
 show it right away. If the focused button is disabled or clipped out of view while the menu
-stays open, the next press moves the focus to the first button. To let go of the focus, call
-`setFocus(NULL_ENTITY)` on the [UISystem](../reference/classes/uisystem.md).
+stays open, the next press moves the focus to the first button. A destroyed button takes the
+focus with it, so focus another one after rebuilding a menu's buttons. To let go of the focus,
+call `setFocus(NULL_ENTITY)` on the [UISystem](../reference/classes/uisystem.md).
 
 When more than one UI scene is shown, the topmost scene with a focusable button gets the
 keys, so a pause menu over the HUD takes them first. Without a focused button there, they go
@@ -285,7 +286,8 @@ to gameplay and not to a menu under it. Turn off **Focusable** on a button the f
 reach or that shouldn't cover a menu, like a HUD button in the same scene as a menu or in a
 scene over it. Otherwise clicking it while the menu has the focus moves the focus there, and
 it keeps the keys after the menu closes. A TextEdit being typed in keeps the
-arrow keys and Enter for its own text, even when another scene has buttons. The keys and buttons that the UI uses don't reach
+arrow keys and Enter for its own text, even when another scene has buttons, and they come back
+to the focused button once it's done. The keys and buttons that the UI uses don't reach
 `onKeyDown`, `onKeyUp`, `onGamepadButtonDown`, and `onGamepadButtonUp` while
 `ignoreEventsHandledByUI` is on, and neither does `onGamepadAxisMove` while the left stick
 moves the focus. When the stick starts moving the focus, `onGamepadAxisMove` gets it back at
