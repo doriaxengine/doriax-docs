@@ -268,7 +268,8 @@ A focused button looks hovered, with its hovered colour, texture, and scale, so 
 already has a hover effect needs nothing else. Pressing it fires `onPress`, and letting go
 fires `onRelease` and the `onClick` of its UIComponent, the same as a mouse click. Moving or
 clicking the mouse hides the focus until the next key or gamepad press, which only shows it
-again.
+again. That press continues from a button clicked in the meantime, or from the first button
+after a click on anything else.
 
 While the focused button is hidden, keys and gamepads go back to gameplay, so closing a menu
 gives the input back. When the menu shows again, or a menu scene that was removed is added

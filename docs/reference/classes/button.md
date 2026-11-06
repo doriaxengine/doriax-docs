@@ -202,7 +202,7 @@ Moves the keyboard and gamepad focus to this button and shows it, so Enter, Spac
 
 * bool **isFocused**() const
 
-Returns `true` while this button has the focus, even when the mouse has hidden it.
+Returns `true` while this button has the focus, even when the mouse has hidden it. A click also gives a button the focus, but keys and gamepads only use it once a script has called [setFocus](#setfocus).
 
 ---
 
