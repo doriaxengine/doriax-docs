@@ -249,7 +249,7 @@ Adds a position offset over the particle's normalised lifetime (0 = birth, 1 = d
 
 * void **addBurst**(float time, int count)
 * void **addBurst**(float time, int minCount, int maxCount)
-* void **setBursts**(std::vector\<ParticleBurst\> bursts)
+* void **setBursts**(std::vector&lt;ParticleBurst&gt; bursts)
 * void **clearBursts**()
 
 Bursts spawn a fixed number of particles at a specific time (in seconds) during the emitter's cycle, independent of [rate](#rate). Useful for explosions.
@@ -331,7 +331,7 @@ Lerps colour over the particle's normalised lifetime. Times are in `[0, 1]`.
 ### addColorGradientStop / setColorGradient / clearColorGradient / setColorGradientUseSRGB
 
 * void **addColorGradientStop**(float time, Vector3 color)
-* void **setColorGradient**(std::vector\<ParticleColorGradientStop\> stops)
+* void **setColorGradient**(std::vector&lt;ParticleColorGradientStop&gt; stops)
 * void **clearColorGradient**()
 * void **setColorGradientUseSRGB**(bool useSRGB)
 
@@ -391,7 +391,7 @@ Animates particle size over its normalised lifetime.
 
 ### setSpriteInitializer
 
-* void **setSpriteIntializer**(std::vector\<int\> frames)
+* void **setSpriteIntializer**(std::vector&lt;int&gt; frames)
 * void **setSpriteIntializer**(int minFrame, int maxFrame)
 
 Sets which sprite atlas frame each particle shows at birth. The vector form provides an explicit list to pick from randomly; the two-integer form picks a random frame in the range.
@@ -402,8 +402,8 @@ Requires the emitter mesh to have an atlas configured (see [Sprite](sprite.md) f
 
 ### setSpriteModifier
 
-* void **setSpriteModifier**(float fromTime, float toTime, std::vector\<int\> frames)
-* void **setSpriteModifier**(float fromTime, float toTime, std::vector\<int\> frames, EaseType functionType)
+* void **setSpriteModifier**(float fromTime, float toTime, std::vector&lt;int&gt; frames)
+* void **setSpriteModifier**(float fromTime, float toTime, std::vector&lt;int&gt; frames, EaseType functionType)
 
 Plays `frames` in order between `fromTime` and `toTime` of each particle's life, in seconds,
 ending on the last frame. With the default linear easing each frame gets an equal share of

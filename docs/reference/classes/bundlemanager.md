@@ -65,7 +65,7 @@ drops, UI cards, and any pooled hierarchy.
 | static bool | [destroyBundle](#destroybundle) | C++ \| Lua |
 | static uint32_t | [getBundleId](#getbundleid-getbundlename) | C++ \| Lua |
 | static std::string | [getBundleName](#getbundleid-getbundlename) | C++ \| Lua |
-| static std::vector\<std::string\> | [getBundleNames](#getbundlenames) | C++ \| Lua |
+| static std::vector&lt;std::string&gt; | [getBundleNames](#getbundlenames) | C++ \| Lua |
 | static void | [destroyAllInstances](#destroyallinstances) | C++ |
 | static void | [clearAll](#clearall) | C++ \| Lua |
 | static void | [setScriptCallbacks](#setscriptcallbacks) | C++ |
@@ -81,7 +81,7 @@ drops, UI cards, and any pooled hierarchy.
 
 ### registerBundle
 
-* static void **registerBundle**(uint32_t id, const std::string& name, std::function<bool(Scene*, Entity)> factory, std::function<bool(Scene*, Entity)> destroyer = nullptr)
+* static void **registerBundle**(uint32_t id, const std::string& name, std::function&lt;bool(Scene\*, Entity)&gt; factory, std::function&lt;bool(Scene\*, Entity)&gt; destroyer = nullptr)
 
 Registers a named bundle factory. The `factory` receives the target `Scene*` and a root
 `Entity`, and must return `true` on success. On failure (or if the factory throws),
@@ -225,7 +225,7 @@ Look up a bundle's numeric ID by name, or its name by ID. Returns `0` / `""` if 
 
 ### getBundleNames
 
-* static std::vector\<std::string\> **getBundleNames**()
+* static std::vector&lt;std::string&gt; **getBundleNames**()
 
 Returns all registered bundle names, in registration order. Use the `bundleCount`
 property (Lua) or `getBundleCount()` (C++) for the count.
@@ -253,7 +253,7 @@ resetting state.
 
 ### setScriptCallbacks
 
-* static void **setScriptCallbacks**(std::function<void(Scene*)> start, std::function<void(Scene*, Entity)> stop)
+* static void **setScriptCallbacks**(std::function&lt;void(Scene\*)&gt; start, std::function&lt;void(Scene\*, Entity)&gt; stop)
 
 Sets how spawned instances start and stop their scripts: `start` runs every script of the
 scene that has not started yet, and `stop` the scripts of one entity. By default only Lua

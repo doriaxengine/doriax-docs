@@ -56,14 +56,14 @@ setup, a complete store script, and the
 | static void | [queryProducts](#queryproducts) | C++ \| Lua |
 | static bool | [hasProduct](#hasproduct-getproduct-getproducts) | C++ \| Lua |
 | static [ProductDetails](#productdetails) | [getProduct](#hasproduct-getproduct-getproducts) | C++ \| Lua |
-| static std::vector\<[ProductDetails](#productdetails)\> | [getProducts](#hasproduct-getproduct-getproducts) | C++ \| Lua |
+| static std::vector&lt;[ProductDetails](#productdetails)&gt; | [getProducts](#hasproduct-getproduct-getproducts) | C++ \| Lua |
 | static void | [purchase](#purchase) | C++ \| Lua |
 | static void | [changeSubscription](#changesubscription) | C++ \| Lua |
 | static void | [acknowledgePurchase](#acknowledgepurchase-consumepurchase) | C++ \| Lua |
 | static void | [consumePurchase](#acknowledgepurchase-consumepurchase) | C++ \| Lua |
 | static void | [queryPurchases](#querypurchases) | C++ \| Lua |
 | static void | [restorePurchases](#restorepurchases) | C++ \| Lua |
-| static std::vector\<[PurchaseDetails](#purchasedetails)\> | [getPurchases](#getpurchases-ispurchased) | C++ \| Lua |
+| static std::vector&lt;[PurchaseDetails](#purchasedetails)&gt; | [getPurchases](#getpurchases-ispurchased) | C++ \| Lua |
 | static bool | [isPurchased](#getpurchases-ispurchased) | C++ \| Lua |
 | static void | [setObfuscatedAccountId](#setobfuscatedaccountid-setobfuscatedprofileid) | C++ \| Lua |
 | static void | [setObfuscatedProfileId](#setobfuscatedaccountid-setobfuscatedprofileid) | C++ \| Lua |
@@ -103,7 +103,7 @@ which delivers the ones left unsettled in earlier launches through `onPurchaseUp
 
 ### queryProducts
 
-* static void **queryProducts**(const std::vector\<std::string\>& productIds, [ProductType](#producttype) type)
+* static void **queryProducts**(const std::vector&lt;std::string&gt;& productIds, [ProductType](#producttype) type)
 
 Fetches the details of these products, which must all be of `type`: their localized
 names, descriptions, prices and, for subscriptions, plans and offers.
@@ -132,7 +132,7 @@ pass a table of strings.
 
 * static bool **hasProduct**(const std::string& productId)
 * static [ProductDetails](#productdetails) **getProduct**(const std::string& productId)
-* static std::vector\<[ProductDetails](#productdetails)\> **getProducts**()
+* static std::vector&lt;[ProductDetails](#productdetails)&gt; **getProducts**()
 
 The products queried so far. `getProduct()` returns an empty `ProductDetails` for a
 product that was not queried, so check `hasProduct()` first.
@@ -240,7 +240,7 @@ restore purchases that can be restored.
 
 ### getPurchases / isPurchased {#getpurchases-ispurchased}
 
-* static std::vector\<[PurchaseDetails](#purchasedetails)\> **getPurchases**()
+* static std::vector&lt;[PurchaseDetails](#purchasedetails)&gt; **getPurchases**()
 * static bool **isPurchased**(const std::string& productId)
 
 The purchases known in this session, from purchase screens and
@@ -319,7 +319,7 @@ A product as the store describes it, from [`queryProducts`](#queryproducts).
 | `price` | std::string | Formatted price with its currency symbol. For a subscription, the recurring price of the plan `purchase()` buys without an offer token |
 | `priceMicros` | long long | The price in millionths of the currency |
 | `currencyCode` | std::string | ISO 4217 currency code |
-| `offers` | std::vector\<[ProductOffer](#productoffer)\> | Subscription plans and offers, or the purchase options of a one-time product. On iOS, one entry with no token, holding the pricing phases |
+| `offers` | std::vector&lt;[ProductOffer](#productoffer)&gt; | Subscription plans and offers, or the purchase options of a one-time product. On iOS, one entry with no token, holding the pricing phases |
 
 ---
 
@@ -332,8 +332,8 @@ A subscription's base plan or offer, or a one-time product's purchase option.
 | `offerToken` | std::string | What [`purchase()`](#purchase) takes to buy this plan or offer |
 | `offerId` | std::string | The offer's id; empty for a base plan |
 | `basePlanId` | std::string | The base plan's id, or the purchase option's id of a one-time product |
-| `tags` | std::vector\<std::string\> | Tags set in the Play Console |
-| `pricingPhases` | std::vector\<[PricingPhase](#pricingphase)\> | The phases a buyer goes through, like a free trial and then the regular price |
+| `tags` | std::vector&lt;std::string&gt; | Tags set in the Play Console |
+| `pricingPhases` | std::vector&lt;[PricingPhase](#pricingphase)&gt; | The phases a buyer goes through, like a free trial and then the regular price |
 
 ---
 
@@ -356,7 +356,7 @@ A subscription's base plan or offer, or a one-time product's purchase option.
 | --- | --- | --- |
 | `orderId` | std::string | Google Play's order id. On iOS, the transaction id |
 | `productId` | std::string | The first product of the purchase |
-| `productIds` | std::vector\<std::string\> | Every product of the purchase |
+| `productIds` | std::vector&lt;std::string&gt; | Every product of the purchase |
 | `productType` | [ProductType](#producttype) | `INAPP` or `SUBS` |
 | `purchaseToken` | std::string | Identifies the purchase; what acknowledging, consuming and server checks take. On iOS, the original transaction id, which renewals keep. Empty for a purchase waiting for Ask to Buy |
 | `purchaseTime` | long long | When it was bought, in milliseconds since the epoch |

@@ -66,15 +66,15 @@ Multiple overloads for different collision targets:
 * [RayReturn](rayreturn.md) **intersects**(Scene* scene, [RayFilter](#rayfilter) raytest, uint16_t categoryBits, uint16_t maskBits) const
 * [RayReturn](rayreturn.md) **intersects**(Scene* scene, [RayFilter](#rayfilter) raytest, bool onlyStatic, uint16_t categoryBits, uint16_t maskBits) const
 * [RayReturn](rayreturn.md) **intersects**(Scene* scene, [RayFilter](#rayfilter) raytest, Entity ignoreEntity) const
-* [RayReturn](rayreturn.md) **intersects**(Scene* scene, [RayFilter](#rayfilter) raytest, const std::vector\<Entity\>& ignoreEntities) const
+* [RayReturn](rayreturn.md) **intersects**(Scene* scene, [RayFilter](#rayfilter) raytest, const std::vector&lt;Entity&gt;& ignoreEntities) const
 * [RayReturn](rayreturn.md) **intersects**(Scene* scene, [RayFilter](#rayfilter) raytest, bool onlyStatic, uint16_t categoryBits, uint16_t maskBits, Entity ignoreEntity) const
-* [RayReturn](rayreturn.md) **intersects**(Scene* scene, [RayFilter](#rayfilter) raytest, bool onlyStatic, uint16_t categoryBits, uint16_t maskBits, const std::vector\<Entity\>& ignoreEntities) const
+* [RayReturn](rayreturn.md) **intersects**(Scene* scene, [RayFilter](#rayfilter) raytest, bool onlyStatic, uint16_t categoryBits, uint16_t maskBits, const std::vector&lt;Entity&gt;& ignoreEntities) const
 * [RayReturn](rayreturn.md) **intersects**(Scene* scene, uint8_t broadPhaseLayer3D) const
 * [RayReturn](rayreturn.md) **intersects**(Scene* scene, uint8_t broadPhaseLayer3D, uint16_t categoryBits, uint16_t maskBits) const
 * [RayReturn](rayreturn.md) **intersects**(Scene* scene, uint8_t broadPhaseLayer3D, Entity ignoreEntity) const
-* [RayReturn](rayreturn.md) **intersects**(Scene* scene, uint8_t broadPhaseLayer3D, const std::vector\<Entity\>& ignoreEntities) const
+* [RayReturn](rayreturn.md) **intersects**(Scene* scene, uint8_t broadPhaseLayer3D, const std::vector&lt;Entity&gt;& ignoreEntities) const
 * [RayReturn](rayreturn.md) **intersects**(Scene* scene, uint8_t broadPhaseLayer3D, uint16_t categoryBits, uint16_t maskBits, Entity ignoreEntity) const
-* [RayReturn](rayreturn.md) **intersects**(Scene* scene, uint8_t broadPhaseLayer3D, uint16_t categoryBits, uint16_t maskBits, const std::vector\<Entity\>& ignoreEntities) const
+* [RayReturn](rayreturn.md) **intersects**(Scene* scene, uint8_t broadPhaseLayer3D, uint16_t categoryBits, uint16_t maskBits, const std::vector&lt;Entity&gt;& ignoreEntities) const
 
 Returns a [RayReturn](rayreturn.md) struct. Test the result with `if (result)` or `result.hit`.
 

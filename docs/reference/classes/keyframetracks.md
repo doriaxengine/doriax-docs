@@ -61,7 +61,7 @@ with anchors moves by its layout offset. Morph tracks ignore it. See
 
 ### setTimes
 
-* void **setTimes**(std::vector<float> times)
+* void **setTimes**(std::vector&lt;float&gt; times)
 
 Sets the key times in seconds, in ascending order. Trims the easing list when the key
 count shrinks.
@@ -70,7 +70,7 @@ count shrinks.
 
 ### setEasings / setEasing
 
-* void **setEasings**(std::vector<EaseType> easings)
+* void **setEasings**(std::vector&lt;EaseType&gt; easings)
 * void **setEasing**(unsigned int segment, EaseType ease)
 
 `setEasing(segment, ease)` sets the easing of a single segment (key `segment` to key
