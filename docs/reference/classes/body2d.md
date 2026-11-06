@@ -94,8 +94,8 @@ description: Body2D API reference — 2D physics body powered by Box2D, shapes, 
 | void | [applyLinearImpulse](#applylinearimpulse-applylinearimpulsetocenter) | C++ \| Lua |
 | void | [applyLinearImpulseToCenter](#applylinearimpulse-applylinearimpulsetocenter) | C++ \| Lua |
 | void | [applyAngularImpulse](#applyangularimpulse) | C++ \| Lua |
-| std::vector\<Contact2D\> | [getBodyContacts](#getbodycontacts-getshapecontacts) | C++ \| Lua |
-| std::vector\<Contact2D\> | [getShapeContacts](#getbodycontacts-getshapecontacts) | C++ \| Lua |
+| std::vector&lt;Contact2D&gt; | [getBodyContacts](#getbodycontacts-getshapecontacts) | C++ \| Lua |
+| std::vector&lt;Contact2D&gt; | [getShapeContacts](#getbodycontacts-getshapecontacts) | C++ \| Lua |
 | Object | [getAttachedObject](#getattachedobject) | C++ \| Lua |
 | float | [getPointsToMeterScale](#getpointstometerscale) | C++ \| Lua |
 

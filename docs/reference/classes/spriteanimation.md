@@ -42,7 +42,7 @@ Structure panel. There is no separate name stored in
 
 ### setAnimation
 
-* void **setAnimation**(std::vector\<int\> frames, std::vector\<int\> framesTime, bool loop)
+* void **setAnimation**(std::vector&lt;int&gt; frames, std::vector&lt;int&gt; framesTime, bool loop)
 * void **setAnimation**(int startFrame, int endFrame, int interval, bool loop)
 
 Configure the frame sequence.

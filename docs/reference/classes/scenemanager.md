@@ -30,7 +30,7 @@ Two operations change what is on screen:
 | static bool | [removeChildScene](#addchildscene-removechildscene) | C++ \| Lua |
 | static uint32_t | [getSceneId](#getsceneid-getscenename) | C++ \| Lua |
 | static std::string | [getSceneName](#getsceneid-getscenename) | C++ \| Lua |
-| static std::vector\<std::string\> | [getSceneNames](#getscenenames-getscenecount) | C++ \| Lua |
+| static std::vector&lt;std::string&gt; | [getSceneNames](#getscenenames-getscenecount) | C++ \| Lua |
 | static int | [getSceneCount](#getscenenames-getscenecount) | C++ \| Lua |
 | static uint32_t | [getCurrentSceneId](#getcurrentsceneid-getcurrentscenename) | C++ \| Lua |
 | static std::string | [getCurrentSceneName](#getcurrentsceneid-getcurrentscenename) | C++ \| Lua |
@@ -43,8 +43,8 @@ Two operations change what is on screen:
 
 ### registerScene
 
-* static void **registerScene**(uint32_t id, const std::string& name, std::function<void()> factory)
-* static void **registerScene**(uint32_t id, const std::string& name, std::function<void()> factory, const std::vector<uint32_t>& sceneIds)
+* static void **registerScene**(uint32_t id, const std::string& name, std::function&lt;void()&gt; factory)
+* static void **registerScene**(uint32_t id, const std::string& name, std::function&lt;void()&gt; factory, const std::vector&lt;uint32_t&gt;& sceneIds)
 
 Registers a named scene stack. The `factory` function is invoked when the scene is loaded — it should call `Engine::setScene()` and optionally `Engine::addSceneLayer()` to build the scene hierarchy.
 
@@ -136,7 +136,7 @@ Look up a scene's numeric ID by name, or its name by ID. Returns `0` / `""` if n
 
 ### getSceneNames / getSceneCount
 
-* static std::vector\<std::string\> **getSceneNames**()
+* static std::vector&lt;std::string&gt; **getSceneNames**()
 * static int **getSceneCount**()
 
 Returns all registered scene names, or the total number of registered scenes.
