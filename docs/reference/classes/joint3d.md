@@ -69,8 +69,8 @@ values are kept but do nothing.
 * `motorMaxForce` `0` means no limit. With a limit, a heavy door or lift may stop short of
   its target or move slower than asked, which is often what a mechanism should do.
 
-The setters change the live joint at once and wake its bodies; one called from a 3D contact
-callback, while the world steps, takes effect before the next step. The values are also
+The setters change the live joint at once and wake its bodies; one called from a 3D
+callback takes effect before the next step. The values are also
 stored on the [Joint3DComponent](joint3dcomponent.md), so they survive the joint being rebuilt
 and are saved with the scene. In the editor they are the **Motor** section of a hinge or
 prismatic joint, and changing them during Play moves the running joint without rebuilding it.

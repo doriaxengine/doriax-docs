@@ -450,6 +450,11 @@ from a callback: the call is refused and logged, and the next update retries it.
 is queued instead of refused, so removing a `Body3DComponent` from a callback still
 destroys its body, just after the step finishes.
 
+`onBodyActivated3D` and `onBodyDeactivated3D` also run when a call outside the step wakes a
+body: `activate()`, a velocity or impulse on a sleeping body, or a joint motor. Jolt holds
+the body there too, so the callback can read and move bodies but must not wake a sleeping
+one.
+
 `preSolve2D` and `shouldCollide2D` run mid-step with the Box2D world locked, so a 2D body
 can only be read there. Moving it, changing its settings, applying a force, casting a 2D
 ray or reading its contacts is refused and logged. A new body or joint is retried on the
