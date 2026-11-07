@@ -36,7 +36,8 @@ Jolt 3D joint constraint.
 
 ### Joint3DMotorState
 
-* **OFF** — No motor (default). The joint moves freely within its limits.
+* **OFF** — No motor (default). The joint moves freely within its limits. Turning a motor off
+  wakes its bodies, so what it held falls or swings free.
 * **VELOCITY** — Drives the joint at `motorTargetVelocity`, as hard as `motorMaxForce` allows.
 * **POSITION** — Springs the joint to `motorTargetPosition`, with the spring set by
   `motorFrequency` and `motorDamping`.
@@ -60,7 +61,8 @@ values are kept but do nothing.
 | `motorMaxForce` | `0` | torque limit, N·m | force limit, N |
 
 * Angles are in degrees, or radians when `Engine::useDegrees` is `false`. A hinge's angle
-  `0` is the pose its bodies have when the joint is made.
+  `0` is the pose its bodies have when the joint is made, and a body reload during play keeps
+  it.
 * A prismatic position is measured in the same frame as its `limitsMin` and `limitsMax`, and
   Jolt keeps the target inside them.
 * `motorFrequency` is how fast a position motor springs back, and `motorDamping` how much it
