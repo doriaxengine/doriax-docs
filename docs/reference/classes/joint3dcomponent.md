@@ -43,10 +43,17 @@ The data a [Joint3D](joint3d.md) is built from. In Lua, get it with `joint:getJo
 | `numTeethRack` | C++ \| Lua |
 | `numTeethGear` | C++ \| Lua |
 | `rackLength` | C++ \| Lua |
+| `motorState` | C++ \| Lua |
+| `motorTargetVelocity` | C++ \| Lua |
+| `motorTargetPosition` | C++ \| Lua |
+| `motorFrequency` | C++ \| Lua |
+| `motorDamping` | C++ \| Lua |
+| `motorMaxForce` | C++ \| Lua |
 | `pathPoints` | C++ \| Lua |
 | `pathPosition` | C++ \| Lua |
 | `isLooping` | C++ \| Lua |
 | `autoAnchors` | C++ \| Lua |
 | `needUpdateJoint` | C++ \| Lua |
+| `needUpdateMotor` | C++ \| Lua |
 
-The [Joint3D](joint3d.md) setters fill these fields and build the joint. A joint whose bodies aren't ready, or a gear or rack whose hinge or slider isn't, is built by a later update. Removing or rebuilding a body takes its joints down, along with any gear or rack using them, until the body is back. Set `needUpdateJoint` to rebuild it from these fields. `pathPoints` comes to Lua as a table copy.
+The [Joint3D](joint3d.md) setters fill these fields and build the joint. A joint whose bodies aren't ready, or a gear or rack whose hinge or slider isn't, is built by a later update. Removing or rebuilding a body takes its joints down, along with any gear or rack using them, until the body is back. Set `needUpdateJoint` to rebuild it from these fields. `pathPoints` comes to Lua as a table copy. The `motor…` fields are described in [Joint3D — Motors](joint3d.md#motors); after writing them, set `needUpdateMotor` to apply them to the built joint. `needUpdateJoint` would rebuild it instead, making its current pose the hinge's angle `0`.

@@ -526,6 +526,11 @@ enabled, a distance joint lets the bodies move closer but never farther apart th
 it was created. In 3D, use constraints and allowed degrees of freedom to lock or limit
 movement.
 
+A 3D **hinge** or **prismatic** joint can also drive its bodies with a motor: at a speed,
+to a target angle or position, or both, with an optional force limit. Use it for doors,
+lifts, cranks, and wheels. In the editor it is the **Motor** section of the joint; from code
+see [Joint3D — Motors](../reference/classes/joint3d.md#motors).
+
 Both bodies of a joint must be in the joint's own scene.
 
 ## Physics across scenes
