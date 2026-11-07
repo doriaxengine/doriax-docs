@@ -289,6 +289,11 @@ affected. Neither are bodies inside a
 boat; the boat, which owns the volume, still floats. For an object without physics, read the surface with
 [Water.getHeight](../reference/classes/water.md#getheight-getnormal) instead.
 
+To react to the water, such as a splash when a body enters it or a state when it sinks, ask
+how much of it is under with
+[Body3D.getSubmergedVolume](../reference/classes/body3d.md#getsubmergedvolume). It takes a
+surface point and normal, so it also serves a body floated by your own forces.
+
 The Water component has a **Buoyancy** section too:
 
 | Field | Default | Purpose |

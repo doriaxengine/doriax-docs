@@ -100,6 +100,7 @@ description: Body3D API reference — 3D physics body powered by Jolt Physics, s
 | void | [applyImpulse](#applyimpulse) | C++ \| Lua |
 | void | [applyAngularImpulse](#applyangularimpulse) | C++ \| Lua |
 | bool | [applyBuoyancyImpulse](#applybuoyancyimpulse) | C++ \| Lua |
+| [SubmergedVolume3D](#submergedvolume3d) | [getSubmergedVolume](#getsubmergedvolume) | C++ \| Lua |
 | Vector3 | [getCenterOfMassPosition](#getcenterofmassposition) | C++ \| Lua |
 | Object | [getAttachedObject](#getattachedobject) | C++ \| Lua |
 | [Body3DComponent](body3dcomponent.md) | `getBody3DComponent` | Lua |
@@ -136,6 +137,18 @@ How a [mesh shape](#createmeshshape) builds its collision tree. See
   faster (default).
 * **FAVOR_BUILD_SPEED** — Builds faster, so the mesh loads sooner, but each query costs more.
 
+## Structures
+
+### SubmergedVolume3D
+
+What [getSubmergedVolume](#getsubmergedvolume) returns.
+
+| Type | Name | Description |
+| --- | --- | --- |
+| float | `totalVolume` | Volume of the body's shapes, in m³ |
+| float | `submergedVolume` | Volume below the surface, in m³ |
+| float | `fraction` | `submergedVolume / totalVolume`: `0` out of the fluid, `1` all under |
+| Vector3 | `centerOfBuoyancy` | World-space centre of the part under the surface; the centre of mass when nothing is under |
 
 ## Property details
 
@@ -610,6 +623,48 @@ Instantaneous angular velocity change. Useful for spinning objects on impact.
 * `bool applyBuoyancyImpulse(Vector3 surfacePosition, Vector3 surfaceNormal, float buoyancy, float linearDrag, float angularDrag, Vector3 fluidVelocity, Vector3 gravity, float deltaTime)`
 
 Simulates buoyancy for a body partially submerged in a fluid. Returns `true` if the body intersects the water plane. Call once per physics step with the water plane data. A body in a [Water](water.md) gets this every fixed step from its [buoyancy](#buoyancy) settings, so call it yourself only for fluids that are not a Water component.
+
+---
+
+### getSubmergedVolume
+
+* `SubmergedVolume3D getSubmergedVolume(const Vector3& surfacePosition, const Vector3& surfaceNormal) const`
+
+How much of the body lies below a fluid surface, given as a plane through `surfacePosition`
+whose `surfaceNormal` points up, out of the fluid. Returns a
+[SubmergedVolume3D](#submergedvolume3d) with the volumes, the submerged `fraction` and the
+centre of buoyancy. It only reads the body, so it applies no force: use it for gameplay, such
+as a splash when `fraction` first rises above `0`, or a sinking state once it nears `1`. It
+works for any body type, but not for a body with a mesh or height-field shape, which has no
+volume: that call logs an error and returns zeros.
+
+For a [Water](water.md), take the surface from
+[Water.getHeight and getNormal](water.md#getheight-getnormal) at the body's
+[centre of mass](#getcenterofmassposition), the point the built-in [buoyancy](#buoyancy) uses.
+
+=== "C++"
+
+    ```cpp
+    Vector3 center = body.getCenterOfMassPosition();
+    Vector3 surface(center.x, sea.getHeight(center.x, center.z), center.z);
+    SubmergedVolume3D under = body.getSubmergedVolume(surface, sea.getNormal(center.x, center.z));
+    if (under.fraction > 0.0f && !wasInWater){
+        // splash
+    }
+    wasInWater = under.fraction > 0.0f;
+    ```
+
+=== "Lua"
+
+    ```lua
+    local center = body:getCenterOfMassPosition()
+    local surface = Vector3(center.x, sea:getHeight(center.x, center.z), center.z)
+    local under = body:getSubmergedVolume(surface, sea:getNormal(center.x, center.z))
+    if under.fraction > 0 and not self.wasInWater then
+        -- splash
+    end
+    self.wasInWater = under.fraction > 0
+    ```
 
 ---
 
