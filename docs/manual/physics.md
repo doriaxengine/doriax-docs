@@ -431,8 +431,9 @@ groups interact.
 3D contact events run *while Jolt is stepping*, unlike the 2D begin/end/sensor/hit events,
 which Box2D queues and the engine dispatches once the step is over (`preSolve2D` and
 `shouldCollide2D` are the 2D exceptions: they are filter hooks called mid-step).
-Reading and moving bodies is fine there — velocities, positions, ray casts
-— but the broad phase is locked for the duration, so a body or joint cannot be **created**
+They run on Jolt's worker threads, but only one callback runs at a time, so callbacks can
+share script state without locks. Reading and moving bodies is fine there — velocities,
+positions, ray casts — but the broad phase is locked for the duration, so a body or joint cannot be **created**
 from a callback: the call is refused and logged, and the next update retries it. Teardown
 is queued instead of refused, so removing a `Body3DComponent` from a callback still
 destroys its body, just after the step finishes.
