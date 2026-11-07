@@ -22,6 +22,7 @@ types. C++-only enums are noted below. See [Engine](classes/engine.md) for `Scal
 | `Occluder2DShape` | 2D shadow occluder outline (`AUTO_QUAD`, `POLYGON`) |
 | `ShadowQuality` | Shadow PCF filter, 3D and 2D (`NONE`, `LOW`, `MEDIUM`, `HIGH`) |
 | `Shape2DType` / `Shape3DType` | Physics shapes |
+| `Shape3DBuildQuality` | Mesh shape collision tree (`FAVOR_RUNTIME_PERFORMANCE`, `FAVOR_BUILD_SPEED`) |
 | `Joint2DType` / `Joint3DType` | Constraints |
 | `AnchorPreset` / `PivotPreset` | UI layout |
 | `EaseType` | Animation easing |

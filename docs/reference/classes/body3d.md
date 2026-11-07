@@ -75,6 +75,10 @@ description: Body3D API reference — 3D physics body powered by Jolt Physics, s
 | [Shape3DType](#shape3dtype) | getShapeType | C++ \| Lua |
 | void | [setShapeDensity](#setshapedensity) | C++ \| Lua |
 | float | [getShapeDensity](#setshapedensity) | C++ \| Lua |
+| void | [setShapeBitsPerSample](#setshapebitspersample) | C++ \| Lua |
+| unsigned int | [getShapeBitsPerSample](#setshapebitspersample) | C++ \| Lua |
+| void | [setShapeBuildQuality](#setshapebuildquality) | C++ \| Lua |
+| [Shape3DBuildQuality](#shape3dbuildquality) | [getShapeBuildQuality](#setshapebuildquality) | C++ \| Lua |
 | void | [activate](#activate-deactivate) | C++ \| Lua |
 | void | [deactivate](#activate-deactivate) | C++ \| Lua |
 | bool | canBeKinematicOrDynamic | C++ \| Lua |
@@ -119,7 +123,19 @@ description: Body3D API reference — 3D physics body powered by Jolt Physics, s
 
 ### Shape3DType
 
-`BOX`, `SPHERE`, `CAPSULE`, `TAPERED_CAPSULE`, `CYLINDER`, `CONVEX_HULL`, `MESH`, `HEIGHT_FIELD`
+`BOX`, `SPHERE`, `CAPSULE`, `TAPERED_CAPSULE`, `CYLINDER`, `CONVEX_HULL`, `MESH`, `HEIGHTFIELD`
+
+---
+
+### Shape3DBuildQuality
+
+How a [mesh shape](#createmeshshape) builds its collision tree. See
+[setShapeBuildQuality](#setshapebuildquality).
+
+* **FAVOR_RUNTIME_PERFORMANCE** — Builds a better tree that answers collisions and ray casts
+  faster (default).
+* **FAVOR_BUILD_SPEED** — Builds faster, so the mesh loads sooner, but each query costs more.
+
 
 ## Property details
 
@@ -429,6 +445,8 @@ Creates a convex hull from the mesh vertices (no-argument form) or from explicit
 * `int createMeshShape(Vector3 position, Quaternion rotation, std::vector<Vector3> vertices, std::vector<uint16_t> indices)`
 
 Creates a static triangle-mesh collider. **Mesh shapes can only be STATIC.** Use convex hull for dynamic objects.
+For a large mesh, [setShapeBuildQuality](#setshapebuildquality) trades query speed for a
+faster build.
 
 ---
 
@@ -438,6 +456,7 @@ Creates a static triangle-mesh collider. **Mesh shapes can only be STATIC.** Use
 * `int createHeightFieldShape(unsigned int samplesSize)`
 
 Creates a height-field collider sized to the terrain mesh in the entity. Used with the [Terrain](terrain.md) class. `samplesSize` controls the resolution grid.
+[setShapeBitsPerSample](#setshapebitspersample) sets how precisely each height is stored.
 
 ---
 
@@ -487,10 +506,54 @@ scene and applied in exported projects.
 
 ### setShapeDensity
 
-* `void setShapeDensity(float density)` *(all shapes)*
+* `void setShapeDensity(float density)` *(first shape)*
 * `void setShapeDensity(size_t index, float density)` *(specific shape)*
 
 Sets the density (kg/m³) used to compute mass. Call after adding shapes and before [load](#load), or call [load](#load) again after runtime changes.
+
+---
+
+### setShapeBitsPerSample
+
+* `void setShapeBitsPerSample(size_t index, unsigned int bitsPerSample)`
+* `unsigned int getShapeBitsPerSample(size_t index) const`
+
+How many bits a [height-field shape](#createheightfieldshape) stores for each height, from
+`1` to `16` (default `8`). The heights are kept in blocks of samples, and the bits divide
+each block's own height range, so 8 bits already give small steps on gentle ground. More
+bits make collision follow steep terrain closer and take more memory. The shape is rebuilt on
+the next update. In the editor it is **Bits Per Sample** on a heightfield shape.
+
+---
+
+### setShapeBuildQuality
+
+* `void setShapeBuildQuality(size_t index, Shape3DBuildQuality buildQuality)`
+* `Shape3DBuildQuality getShapeBuildQuality(size_t index) const`
+
+How a [mesh shape](#createmeshshape) builds its collision tree: see
+[Shape3DBuildQuality](#shape3dbuildquality). The default favors runtime performance, which
+suits level geometry built once. `FAVOR_BUILD_SPEED` makes a large mesh load sooner, for
+example on the web, at a cost on every collision and ray cast against it. The shape is
+rebuilt on the next update. In the editor it is **Build Quality** on a mesh shape.
+
+=== "C++"
+
+    ```cpp
+    Body3D body = house.getBody3D();
+    int shape = body.createMeshShape();
+    body.setShapeBuildQuality(shape, Shape3DBuildQuality::FAVOR_BUILD_SPEED);
+    body.load();
+    ```
+
+=== "Lua"
+
+    ```lua
+    local body = house:getBody3D()
+    local shape = body:createMeshShape()
+    body:setShapeBuildQuality(shape, Shape3DBuildQuality.FAVOR_BUILD_SPEED)
+    body:load()
+    ```
 
 ---
 

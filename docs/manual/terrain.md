@@ -242,6 +242,11 @@ For physics, add a `Body3D` with a **height field shape** to the terrain entity 
 [Physics](physics.md). Keep the visual resolution and collision resolution consistent so
 objects rest on the visible surface.
 
+**Samples Size** sets how many heights the collision takes across the terrain, and
+**Bits Per Sample** how precisely it stores each one (8 by default, up to 16). Each block of
+samples keeps its own height range, so 8 bits are fine on gentle ground; raise the bits for
+steep or detailed terrain, at some memory cost.
+
 ## See also
 
 - [Terrain Editor](../editor/terrain-editor.md) — sculpting, painting, foliage and object placement

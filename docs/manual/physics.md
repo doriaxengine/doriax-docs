@@ -153,6 +153,13 @@ reserve mesh shapes for static world geometry.
 | Mesh | Static level collision |
 | Height field | Terrain collision |
 
+A mesh shape's **Build Quality** favors faster collision queries by default; **Favor Build
+Speed** makes a large mesh load sooner, at a cost on every query against it. A height field's
+**Bits Per Sample** (8 by default, up to 16) sets how precisely it stores each height: more
+bits follow steep terrain closer and use more memory. See
+[Body3D — setShapeBuildQuality](../reference/classes/body3d.md#setshapebuildquality) and
+[setShapeBitsPerSample](../reference/classes/body3d.md#setshapebitspersample).
+
 ```cpp
 Body3D body = object.getBody3D();
 body.createCapsuleShape(0.8f, 0.25f);
