@@ -622,7 +622,7 @@ Instantaneous angular velocity change. Useful for spinning objects on impact.
 
 * `bool applyBuoyancyImpulse(Vector3 surfacePosition, Vector3 surfaceNormal, float buoyancy, float linearDrag, float angularDrag, Vector3 fluidVelocity, Vector3 gravity, float deltaTime)`
 
-Simulates buoyancy for a body partially submerged in a fluid. Returns `true` if the body intersects the water plane. Call once per physics step with the water plane data. A body in a [Water](water.md) gets this every fixed step from its [buoyancy](#buoyancy) settings, so call it yourself only for fluids that are not a Water component.
+Simulates buoyancy for a body partially submerged in a fluid. Returns `true` if the body intersects the water plane. Only a dynamic body is pushed, and a sleeping one wakes up. Call once per physics step with the water plane data. A body in a [Water](water.md) gets this every fixed step from its [buoyancy](#buoyancy) settings, so call it yourself only for fluids that are not a Water component.
 
 ---
 
