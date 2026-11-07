@@ -146,7 +146,12 @@ Collision detection mode. See [Body3DMotionQuality](#body3dmotionquality).
 * *Setter:* `void setMass(float mass)`
 * *Getter:* `float getMass() const`
 
-Manual mass override in kilograms. Applies to dynamic bodies. Set the mass after calling [load](#load), or use [setOverrideMassAndInertia](#setmass-setoverridemassandinertia) for combined mass + inertia control.
+The body's mass in kilograms. The setter scales the inertia by the same factor, so a body
+made heavier also gets harder to spin. Set it after calling [load](#load); see
+[setMass](#setmass-setoverridemassandinertia). The getter returns the mass the body has now,
+including a change from `setMass` or
+[setOverrideMassAndInertia](#setmass-setoverridemassandinertia); for a static body it returns
+the mass its shapes would give.
 
 ---
 
@@ -462,8 +467,15 @@ every axis locked is invalid in Jolt — use a static body to freeze one complet
 
 ### setMass / setOverrideMassAndInertia
 
-* `void setMass(float mass)` — Overrides the auto-computed mass.
+* `void setMass(float mass)` — Sets the mass in kilograms and scales the inertia by the
+  same factor, so the body keeps how its mass is spread: twice as heavy also takes twice the
+  torque to spin. The mass must be above `0`, and the body must be loaded and not static,
+  with at least one translation axis free.
 * `void setOverrideMassAndInertia(Vector3 solidBoxSize, float solidBoxDensity)` — Computes mass and inertia for a solid box of the given size and density (kg/m³), then applies those values.
+
+`setMass` changes only the live body: a body reload computes the mass from the shapes
+again. To keep a mass, set it through the [shape density](#setshapedensity) or the
+solid-box override.
 
 The solid-box override is stored on the body component, so it can be set **before**
 [load](#load) and survives a body reload; on a loaded dynamic body it takes effect at once.
