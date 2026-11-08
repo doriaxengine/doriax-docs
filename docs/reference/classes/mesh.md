@@ -291,10 +291,10 @@ keeps the old contents until it captures again.
 * *Setter:* `void setSeeThrough(bool seeThrough)`
 * *Getter:* `bool isSeeThrough() const`
 
-Thins the mesh out where it stands between the main camera and the scene's
-[see-through target](scene.md#seethroughtarget-seethroughradius-seethroughopacity), with
-a dither pattern, so the target shows through it. Shadows stay whole. Changing it reloads
-the mesh with the `Stt` shader variant. See [See-through](../../manual/rendering-pipeline.md#see-through).
+Dithers the mesh away where it stands between the main camera and the scene's
+[see-through target](scene.md#seethroughtarget-seethroughradius-seethroughopacity-seethroughmargin),
+so the target shows through it. Shadows stay whole. Changing it reloads the mesh with the
+`Stt` shader variant. See [See-through](../../manual/rendering-pipeline.md#see-through).
 
 === "C++"
 

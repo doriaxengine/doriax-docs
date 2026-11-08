@@ -49,10 +49,10 @@ A `Scene` is the root container for all objects, systems, and resources in a pro
 | Vector2 | [gravity2D](#gravity2d) | `(0,-9.81)` | C++ \| Lua |
 | Vector3 | [gravity3D](#gravity3d) | `(0,-9.81,0)` | C++ \| Lua |
 | Vector3 | [wind](#wind) | `(0,0,0)` | C++ \| Lua |
-| Vector3 | [seeThroughTarget](#seethroughtarget-seethroughradius-seethroughopacity) | `(0,0,0)` | C++ \| Lua |
-| float | [seeThroughRadius](#seethroughtarget-seethroughradius-seethroughopacity) | `0` | C++ \| Lua |
-| float | [seeThroughOpacity](#seethroughtarget-seethroughradius-seethroughopacity) | `0.3` | C++ \| Lua |
-| float | [seeThroughMargin](#seethroughtarget-seethroughradius-seethroughopacity) | `0.5` | C++ \| Lua |
+| Vector3 | [seeThroughTarget](#seethroughtarget-seethroughradius-seethroughopacity-seethroughmargin) | `(0,0,0)` | C++ \| Lua |
+| float | [seeThroughRadius](#seethroughtarget-seethroughradius-seethroughopacity-seethroughmargin) | `0` | C++ \| Lua |
+| float | [seeThroughOpacity](#seethroughtarget-seethroughradius-seethroughopacity-seethroughmargin) | `0.3` | C++ \| Lua |
+| float | [seeThroughMargin](#seethroughtarget-seethroughradius-seethroughopacity-seethroughmargin) | `0.5` | C++ \| Lua |
 | bool | [ssaoEnabled](#ssaoenabled) | `false` | C++ \| Lua |
 | float | [ssaoRadius](#ssaoradius) | `0.5` | C++ \| Lua |
 | float | [ssaoIntensity](#ssaointensity) | `1.0` | C++ \| Lua |
@@ -118,14 +118,14 @@ A `Scene` is the root container for all objects, systems, and resources in a pro
 | Vector3 | [getGravity3D](#gravity3d) | C++ \| Lua |
 | void | [setWind](#wind) | C++ \| Lua |
 | Vector3 | [getWind](#wind) | C++ \| Lua |
-| void | [setSeeThroughTarget](#seethroughtarget-seethroughradius-seethroughopacity) | C++ \| Lua |
-| Vector3 | [getSeeThroughTarget](#seethroughtarget-seethroughradius-seethroughopacity) | C++ \| Lua |
-| void | [setSeeThroughRadius](#seethroughtarget-seethroughradius-seethroughopacity) | C++ \| Lua |
-| float | [getSeeThroughRadius](#seethroughtarget-seethroughradius-seethroughopacity) | C++ \| Lua |
-| void | [setSeeThroughOpacity](#seethroughtarget-seethroughradius-seethroughopacity) | C++ \| Lua |
-| float | [getSeeThroughOpacity](#seethroughtarget-seethroughradius-seethroughopacity) | C++ \| Lua |
-| void | [setSeeThroughMargin](#seethroughtarget-seethroughradius-seethroughopacity) | C++ \| Lua |
-| float | [getSeeThroughMargin](#seethroughtarget-seethroughradius-seethroughopacity) | C++ \| Lua |
+| void | [setSeeThroughTarget](#seethroughtarget-seethroughradius-seethroughopacity-seethroughmargin) | C++ \| Lua |
+| Vector3 | [getSeeThroughTarget](#seethroughtarget-seethroughradius-seethroughopacity-seethroughmargin) | C++ \| Lua |
+| void | [setSeeThroughRadius](#seethroughtarget-seethroughradius-seethroughopacity-seethroughmargin) | C++ \| Lua |
+| float | [getSeeThroughRadius](#seethroughtarget-seethroughradius-seethroughopacity-seethroughmargin) | C++ \| Lua |
+| void | [setSeeThroughOpacity](#seethroughtarget-seethroughradius-seethroughopacity-seethroughmargin) | C++ \| Lua |
+| float | [getSeeThroughOpacity](#seethroughtarget-seethroughradius-seethroughopacity-seethroughmargin) | C++ \| Lua |
+| void | [setSeeThroughMargin](#seethroughtarget-seethroughradius-seethroughopacity-seethroughmargin) | C++ \| Lua |
+| float | [getSeeThroughMargin](#seethroughtarget-seethroughradius-seethroughopacity-seethroughmargin) | C++ \| Lua |
 | void | [setSSAOEnabled](#ssaoenabled) | C++ \| Lua |
 | bool | [isSSAOEnabled](#ssaoenabled) | C++ \| Lua |
 | void | [setSSAORadius](#ssaoradius) | C++ \| Lua |
@@ -428,17 +428,17 @@ Air velocity in meters per second. [Vertex offsets](mesh.md#vertexoffsetshader-v
 
 ---
 
-### seeThroughTarget, seeThroughRadius, seeThroughOpacity
+### seeThroughTarget, seeThroughRadius, seeThroughOpacity, seeThroughMargin
 
 * *Setters:* `void setSeeThroughTarget(Vector3 target)`, `void setSeeThroughTarget(float x, float y, float z)`, `void setSeeThroughRadius(float radius)`, `void setSeeThroughOpacity(float opacity)`, `void setSeeThroughMargin(float margin)`
 * *Getters:* `Vector3 getSeeThroughTarget() const`, `float getSeeThroughRadius() const`, `float getSeeThroughOpacity() const`, `float getSeeThroughMargin() const`
 
-What [see-through meshes](mesh.md#seethrough) keep in view from the main camera: a sphere of
-`radius` world units round the target, the meshes in front of it thinned down to `opacity`
-at its centre (0 = gone, 1 = whole). A mesh starts to thin `margin` world units before the
-target and is fully thinned at twice that. A radius of 0, the default, turns it off. These are
-runtime values, not saved with the scene: a script sets them, usually each frame from the
-player. See [See-through](../../manual/rendering-pipeline.md#see-through).
+What [see-through meshes](mesh.md#seethrough) keep in view from the main camera: a sphere
+of `radius` world units round the target. A mesh in front of it thins down to `opacity` at
+the centre (0 = gone, 1 = whole), starting `margin` world units before the target and full at
+twice that. A radius of 0, the default, turns it off. These values are not saved with the
+scene: a script sets them, usually each frame from the player. See
+[See-through](../../manual/rendering-pipeline.md#see-through).
 
 === "C++"
 

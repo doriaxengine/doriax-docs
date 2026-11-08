@@ -122,7 +122,7 @@ spot light at runtime.
 | 6 | `Ist` | Instancing |
 | 7 | `Ams` | Alpha mask |
 | 8 | `Ifd` | Instance distance fade |
-| 9 | `Stt` | See-through (the depth pre-pass; shadow maps send no target) |
+| 9 | `Stt` | [See-through](rendering-pipeline.md#see-through) |
 
 ### `ui`, `points`, `lines`
 

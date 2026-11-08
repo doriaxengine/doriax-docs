@@ -1023,37 +1023,35 @@ it holds while the scene is stopped or paused, like the water.
 ## See-through
 
 A mesh with **See Through** on ([seeThrough](../reference/classes/mesh.md#seethrough))
-thins out where it stands between the main camera and the scene's see-through target, so a
-character behind a tree or a roof stays in view. The scene describes the target: a point
-([seeThroughTarget](../reference/classes/scene.md#seethroughtarget-seethroughradius-seethroughopacity)),
-a radius round it, what stays of a hiding mesh at the centre (`seeThroughOpacity`, 0.3 by
-default), and how far before the target a mesh starts to thin (`seeThroughMargin`, 0.5 by
-default). A script usually moves the target with the player each frame; a radius of 0, the
-default, turns it off.
+dithers away where it stands between the main camera and the scene's see-through target, so
+a character behind a tree or a roof stays in view. A script sets the
+[target](../reference/classes/scene.md#seethroughtarget-seethroughradius-seethroughopacity-seethroughmargin),
+usually each frame from the player; a radius of 0, the default, turns it off.
 
-The test is a cone from the camera to a sphere of that radius round the target, so the
-clear circle stays one size on screen; its inner half is fully thinned and the outer half
-fades out. Only what lies in front of the target thins out: from the margin before it, fully
-at twice the margin. The margin is separate from the radius, so a wide circle still clears a
-tree right in front of a character, while the ground under it, seen from above, stays whole.
+The clear area is a cone from the camera to a sphere of `seeThroughRadius` round the target,
+so it keeps one size on screen: full in its inner half, fading out in the outer half.
+`seeThroughOpacity` (0.3 by default) is what stays of a mesh at the centre. Only what lies in
+front of the target thins out, starting `seeThroughMargin` (0.5 by default) before it and full
+at twice that, so a wide circle still clears a tree right in front of a character while the
+ground under it stays whole.
 
-The mesh stays opaque: a steady 4×4 dither pattern drops pixels, so there is no sorting and
-no blending. The depth pre-pass (SSAO, water depth, the Z pre-pass) and the SSR G-buffer drop
-the same pixels, so ambient occlusion and reflections agree with what shows. Shadow maps
-keep the whole mesh, and so do other cameras, mirrors and reflection probe captures.
+The mesh stays opaque: a steady 4×4 dither pattern drops pixels, with no sorting or
+blending. The depth pre-pass and the SSR G-buffer drop the same pixels, so SSAO and
+reflections match what shows. Shadow maps keep the whole mesh, and so do other cameras,
+mirrors and reflection probe captures.
 
 ```cpp
 house.setSeeThrough(true);
 tree.setSeeThrough(true);
 
 // each frame, round the player's chest
-scene->setSeeThroughTarget(player.getWorldPosition() + Vector3(0, 0.9f, 0));
-scene->setSeeThroughRadius(2.5f);
-scene->setSeeThroughMargin(0.3f); // a person's depth in front of the chest
+scene.setSeeThroughTarget(player.getWorldPosition() + Vector3(0, 0.9f, 0));
+scene.setSeeThroughRadius(2.5f);
+scene.setSeeThroughMargin(0.3f);
 ```
 
-**See Through** builds its own shader variant (`Stt`), so turn it on for the meshes that
-can hide the target rather than for everything. Terrain never thins out.
+**See Through** builds its own shader variant (`Stt`), so turn it on only for meshes that
+can hide the target. Terrain never thins out.
 
 ## Mesh detail (LOD)
 
