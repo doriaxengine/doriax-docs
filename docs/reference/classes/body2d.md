@@ -51,6 +51,8 @@ description: Body2D API reference — 2D physics body powered by Box2D, shapes, 
 | bool | enableSleep | `true` | C++ \| Lua |
 | bool | awake | `true` | C++ \| Lua |
 | bool | [fixedRotation](#fixedrotation) | `false` | C++ \| Lua |
+| bool | [linearXLocked](#setmotionlocks) | `false` | C++ \| Lua *(read-only)* |
+| bool | [linearYLocked](#setmotionlocks) | `false` | C++ \| Lua *(read-only)* |
 | bool | [bullet](#bullet) | `false` | C++ \| Lua |
 | bool | enabled | `true` | C++ \| Lua |
 | float | [gravityScale](#gravityscale) | `1.0` | C++ \| Lua |
@@ -94,6 +96,7 @@ description: Body2D API reference — 2D physics body powered by Box2D, shapes, 
 | void | [setCategoryBitsFilter](#setbitsfilter) | C++ \| Lua |
 | void | [setMaskBitsFilter](#setbitsfilter) | C++ \| Lua |
 | void | [setGroupIndexFilter](#setbitsfilter) | C++ \| Lua |
+| void | [setMotionLocks](#setmotionlocks) | C++ \| Lua |
 | void | [applyMassFromShapes](#applymassfromshapes) | C++ \| Lua |
 | void | [applyForce](#applyforce) | C++ \| Lua |
 | void | [applyForceToCenter](#applyforcetocenter) | C++ \| Lua |
@@ -217,7 +220,7 @@ Drag coefficients that slow down translation and rotation over time. Values in `
 * *Setter:* `void setFixedRotation(bool fixedRotation)`
 * *Getter:* `bool isFixedRotation() const`
 
-When `true`, the body cannot rotate. Useful for top-down characters that should always stay upright.
+When `true`, the body cannot rotate. Useful for top-down characters that should always stay upright. It is the rotation lock of [setMotionLocks](#setmotionlocks).
 
 ---
 
@@ -502,6 +505,27 @@ Configures collision filtering using bitmasks. A body collides with another only
     playerBody.setBitsFilter(LAYER_PLAYER, LAYER_ENEMY | LAYER_WALL);
     // Enemy collides with player and walls
     enemyBody.setBitsFilter(LAYER_ENEMY, LAYER_PLAYER | LAYER_WALL);
+    ```
+
+---
+
+### setMotionLocks
+
+* `void setMotionLocks(bool linearX, bool linearY, bool angularZ)`
+* `bool isLinearXLocked() const`
+* `bool isLinearYLocked() const`
+
+Stops the body moving along world X, along world Y, or rotating. A locked axis ignores
+gravity, forces and contacts; the others move as usual. A character that only falls, or a
+piston that only slides sideways, is one lock away. The rotation lock is
+[fixedRotation](#fixedrotation). The locks live on the loaded body, so set them after
+[load](#load).
+
+=== "Lua"
+
+    ```lua
+    body:load()
+    body:setMotionLocks(true, false, true) -- falls straight down without spinning
     ```
 
 ---
