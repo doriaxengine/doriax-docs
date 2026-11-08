@@ -80,6 +80,10 @@ description: Body2D API reference — 2D physics body powered by Box2D, shapes, 
 | float | [getShapeFriction](#setshapedensity-setshapefriction-setshaperestitution) | C++ \| Lua |
 | void | [setShapeRestitution](#setshapedensity-setshapefriction-setshaperestitution) | C++ \| Lua |
 | float | [getShapeRestitution](#setshapedensity-setshapefriction-setshaperestitution) | C++ \| Lua |
+| void | [setShapeRollingResistance](#setshaperollingresistance-setshapetangentspeed) | C++ \| Lua |
+| float | [getShapeRollingResistance](#setshaperollingresistance-setshapetangentspeed) | C++ \| Lua |
+| void | [setShapeTangentSpeed](#setshaperollingresistance-setshapetangentspeed) | C++ \| Lua |
+| float | [getShapeTangentSpeed](#setshaperollingresistance-setshapetangentspeed) | C++ \| Lua |
 | void | [setShapeSensor](#setshapesensor) | C++ \| Lua |
 | bool | [isShapeSensor](#setshapesensor) | C++ \| Lua |
 | void | [setShapeEnableHitEvents](#setshapeenablehitevents-setshapecontactevents-setshapepresolveevents-setshapesensorevents) | C++ \| Lua |
@@ -406,13 +410,29 @@ Removes all shapes from the body. Call [load](#load) again after adding new shap
 
 ### setShapeDensity / setShapeFriction / setShapeRestitution
 
-Per-shape or all-shapes material properties:
+Per-shape material properties:
 
 * **density** — Mass per unit area (affects computed mass).
 * **friction** — Coulomb friction coefficient `[0, ∞)`. `0` = frictionless, `1` = high friction.
 * **restitution** — Bounciness `[0, 1]`. `0` = no bounce, `1` = perfectly elastic.
 
-All three come in two overloads: `setXxx(value)` applies to all shapes; `setXxx(index, value)` applies to a single shape.
+All three come in two overloads: `setXxx(value)` applies to the first shape; `setXxx(index, value)` applies to the shape at `index`.
+
+---
+
+### setShapeRollingResistance / setShapeTangentSpeed
+
+* **rollingResistance** — Slows circles and capsules rolling on the shape, `[0, ∞)`. `0` (the default) lets them roll freely.
+* **tangentSpeed** — Moves bodies along the shape's surface, in points per second, like a conveyor belt. Positive carries them clockwise around the shape: to the right on top of a box. `0` by default.
+
+Both have the same two overloads as friction, and are fields of each shape in the editor (**Rolling Resistance**, **Tangent Speed**). A chain takes them on every edge.
+
+=== "Lua"
+
+    ```lua
+    local belt = beltObject:getBody2D()
+    belt:setShapeTangentSpeed(120)
+    ```
 
 ---
 
