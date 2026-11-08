@@ -54,4 +54,5 @@ Keeps two bodies at the distance their anchors have when the joint is created. T
 Grabs the dynamic `bodyA` at `target`, in world space, and holds that point there with a soft
 spring, so the body hangs from it and swings to rest. The target stays fixed in the world:
 `bodyB` must be another body but takes no force and doesn't carry the target, and `bodyA`
-still collides with it.
+still collides with it. Removing `bodyB` releases `bodyA`, and the joint comes back when
+`bodyB` does.
