@@ -80,7 +80,9 @@ Returns a [RayReturn](rayreturn.md) struct. Test the result with `if (result)` o
 
 The `Body2D` overload returns the closest hit among the body's shapes. Both `Body2D`
 overloads return no hit for a body that is not in the physics world yet, and the shape
-overload also for an index past the body's shapes.
+overload also for an index past the body's shapes. A ray that starts inside a 2D shape
+doesn't hit that shape, in these overloads and in `BODY_2D` scene queries, so a ray cast
+from inside a shooter reaches what is in front of it.
 
 Scene queries return the closest hit. [RayFilter](#rayfilter) only selects what is tested — 2D bodies, 3D bodies or mesh bounds — it does not skip a specific entity. Checking `hit.body == entity` after the fact also fails, because that body is already the closest hit and the ray never continues past it. Pass the entity (or a list of entities) to `intersects` so those bodies are ignored and the next hit is returned. This works with every filter.
 
