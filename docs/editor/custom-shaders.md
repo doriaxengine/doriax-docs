@@ -163,6 +163,10 @@ The engine's `offsets/wind.glsl` sways the mesh in the scene
 uniforms. A project offset can sway as well: `#include "includes/wind.glsl"` and add
 `getWindSway(localPosition, worldPosition, sway, swayHeight)` to its result.
 
+An offset file finds its [includes](#includes) like a fork, starting in its own folder.
+Those files stay its own: a fork on the same mesh with a file of the same name does not
+replace them.
+
 **Max Offset**, shown once a file is assigned, is the longest offset in world units.
 Longer ones are clamped to it, and culling widens the mesh bounds and each instance's
 sphere by it, so geometry that moves into view is not cut off at the screen edge or out

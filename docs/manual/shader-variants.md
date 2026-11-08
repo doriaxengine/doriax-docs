@@ -104,8 +104,9 @@ Bit 5 is reserved: it used to select the PCF shadow filter, which is uniform-dri
 (Scene shadow quality).
 
 A scene whose lights are all directional draws built-in lit meshes with `Dlo`, which leaves
-out the point and spot light code. An export ships every built-in lit mesh variant both
-with and without it, so a script can still add a point or spot light at runtime.
+out the point and spot light code, also when the mesh only adds a vertex offset. An export
+ships every such variant both with and without it, so a script can still add a point or
+spot light at runtime.
 
 ### `depth`
 
