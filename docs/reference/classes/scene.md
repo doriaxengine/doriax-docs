@@ -48,6 +48,7 @@ A `Scene` is the root container for all objects, systems, and resources in a pro
 | [ShadowQuality](#shadowquality) | [shadow2DQuality](#shadow2dquality) | `LOW` | C++ \| Lua |
 | Vector2 | [gravity2D](#gravity2d) | `(0,-9.81)` | C++ \| Lua |
 | Vector3 | [gravity3D](#gravity3d) | `(0,-9.81,0)` | C++ \| Lua |
+| Vector3 | [wind](#wind) | `(0,0,0)` | C++ \| Lua |
 | bool | [ssaoEnabled](#ssaoenabled) | `false` | C++ \| Lua |
 | float | [ssaoRadius](#ssaoradius) | `0.5` | C++ \| Lua |
 | float | [ssaoIntensity](#ssaointensity) | `1.0` | C++ \| Lua |
@@ -111,6 +112,8 @@ A `Scene` is the root container for all objects, systems, and resources in a pro
 | Vector2 | [getGravity2D](#gravity2d) | C++ \| Lua |
 | void | [setGravity3D](#gravity3d) | C++ \| Lua |
 | Vector3 | [getGravity3D](#gravity3d) | C++ \| Lua |
+| void | [setWind](#wind) | C++ \| Lua |
+| Vector3 | [getWind](#wind) | C++ \| Lua |
 | void | [setSSAOEnabled](#ssaoenabled) | C++ \| Lua |
 | bool | [isSSAOEnabled](#ssaoenabled) | C++ \| Lua |
 | void | [setSSAORadius](#ssaoradius) | C++ \| Lua |
@@ -388,6 +391,27 @@ Gravity of the **3D physics world** (Jolt), in meters per second squared. Affect
 
     ```lua
     scene.gravity3D = Vector3(0, -3.7, 0) -- Mars
+    ```
+
+---
+
+### wind
+
+* *Setters:* `void setWind(Vector3 wind)`, `void setWind(float x, float y, float z)`
+* *Getter:* `Vector3 getWind() const`
+
+Air velocity in meters per second. It bends meshes with [windSway](mesh.md#windsway-windswayheight) and terrain foliage layers with [windSway](terrainfoliagelayer.md), with gusts that roll downwind across the ground. It moves no physics body. Default `(0, 0, 0)`: nothing sways. See [Wind](../../manual/rendering-pipeline.md#wind).
+
+=== "C++"
+
+    ```cpp
+    scene.setWind(Vector3(4.0f, 0, -3.0f)); // 5 m/s
+    ```
+
+=== "Lua"
+
+    ```lua
+    scene.wind = Vector3(4, 0, -3)
     ```
 
 ---

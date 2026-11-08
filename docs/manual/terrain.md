@@ -93,7 +93,8 @@ own draw distance, with instances scaling in over the last quarter of it instead
 popping. A **min draw distance** skips the instances nearer than it, so a copy of a layer
 with a simpler mesh can take over where the detailed one ends. **Cast shadows** (default on) puts those instances into the shadow cascades;
 turn it off on grass-scale scatter so the foliage still draws in the colour pass but
-skips the extra shadow geometry.
+skips the extra shadow geometry. **Wind sway** bends the instances toward the scene
+[wind](rendering-pipeline.md#wind), the tips by that much in 10 m/s, the base still.
 
 Foliage entities belong to the engine, not to the authored scene: they are not listed in
 the editor's Structure panel and clicking one selects its terrain.

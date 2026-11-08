@@ -59,6 +59,8 @@ See [EntityHandle ownership](entityhandle.md#ownership-and-lifetime).
 | bool | [receiveShadows](#castshadows-receiveshadows) | `true` | C++ \| Lua |
 | bool | [lodEnabled](#lodenabled-lodbias) | `true` | C++ \| Lua |
 | float | [lodBias](#lodenabled-lodbias) | `1.0` | C++ \| Lua |
+| float | [windSway](#windsway-windswayheight) | `0` | C++ \| Lua |
+| float | [windSwayHeight](#windsway-windswayheight) | `0` | C++ \| Lua |
 | bool | shadowsBillboard | `true` | C++ \| Lua |
 | bool | [renderInReflectionProbes](#renderinreflectionprobes) | `true` | C++ \| Lua |
 | bool | castShadowsWithTexture | `false` | C++ \| Lua |
@@ -239,6 +241,31 @@ Enables or disables back-face culling globally for this mesh. Disable for double
 * *Getter:* `bool isCastShadows() const` / `bool isReceiveShadows() const`
 
 Shadow participation flags. Enabling both adds depth-map cost; disable on distant or small objects for performance.
+
+---
+
+### windSway / windSwayHeight
+
+* *windSway Setter:* `void setWindSway(float windSway)`
+* *windSway Getter:* `float getWindSway() const`
+* *windSwayHeight Setter:* `void setWindSwayHeight(float windSwayHeight)`
+* *windSwayHeight Getter:* `float getWindSwayHeight() const`
+
+Bends the mesh toward the scene [wind](scene.md#wind). `windSway` is how far it bends in 10 m/s of wind, in model units, and the bend grows with the speed; gusts and a small flutter move it on top. `windSwayHeight` is the model height where the bend is full: below it the bend fades to nothing at `y = 0`, so a plant whose origin is at its base keeps its foot still. `0` moves the whole mesh evenly, for tree crowns cut from their trunks. Every pass bends it the same way, so shadows and reflections follow. Turning sway on or off reloads the mesh; changing the amount does not. Terrain ignores it. See [Wind](../../manual/rendering-pipeline.md#wind).
+
+=== "C++"
+
+    ```cpp
+    reeds.setWindSway(0.3f);
+    reeds.setWindSwayHeight(1.2f);
+    ```
+
+=== "Lua"
+
+    ```lua
+    reeds.windSway = 0.3
+    reeds.windSwayHeight = 1.2
+    ```
 
 ---
 

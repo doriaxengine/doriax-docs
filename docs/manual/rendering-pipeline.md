@@ -983,6 +983,32 @@ they disappear, and it works with custom shaders and the SSR G-buffer. Hide the 
 [fog](#fog) or a distant representation. It follows **Cull Instances**, so turning that
 off disables the distance too.
 
+## Wind
+
+The scene's [wind](../reference/classes/scene.md#wind) is an air velocity in meters per
+second. Meshes with [windSway](../reference/classes/mesh.md#windsway-windswayheight) and
+terrain foliage layers with a wind sway bend toward it in the vertex shader: a steady lean
+that grows with the speed, gusts that roll downwind across the ground at the wind's speed,
+a slow wobble and a small flutter. The depth and G-buffer shaders bend them the same way, so
+shadows, SSAO and SSR follow. Nothing moves physics bodies.
+
+```cpp
+scene.setWind(Vector3(5.0f, 0, -2.0f));
+tree.setWindSway(0.1f);           // crown cut from its trunk: the whole mesh moves
+grass.setWindSway(0.3f);
+grass.setWindSwayHeight(0.5f);    // tips bend, the base at y = 0 stays put
+```
+
+`windSway` is the bend in 10 m/s of wind, in model units. With `windSwayHeight` above 0 the
+bend grows as the square of the height up to that value, so a plant modelled with its
+origin at the base keeps its foot still; at 0 every vertex moves alike, which suits crowns
+or leaf clusters separate from their trunks. A foliage layer uses its mesh's own height.
+
+Sway is a shader variant (`Wnd`): meshes without it pay nothing, and turning it on or off
+reloads the mesh. Changing the wind or the amount does not. The sway runs on the scene's
+update time, so it stops when the game pauses; in the editor it holds while the scene is
+stopped or paused, like the water.
+
 ## Mesh detail (LOD)
 
 Meshes can drop geometric detail as they recede, so a distant prop costs fewer triangles
