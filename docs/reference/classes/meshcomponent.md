@@ -29,6 +29,7 @@ The data behind a [Mesh](mesh.md) and the objects built on it, such as [Sprite](
 | `receiveShadows` | C++ \| Lua |
 | `shadowsBillboard` | C++ \| Lua |
 | `renderInReflectionProbes` | C++ \| Lua |
+| `seeThrough` | C++ \| Lua |
 | `transparent` | C++ \| Lua |
 | `autoTransparency` | C++ \| Lua |
 | `lodEnabled` | C++ \| Lua |

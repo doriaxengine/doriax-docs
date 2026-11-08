@@ -210,6 +210,7 @@ The **Mesh** component exposes rendering flags beyond per-submesh material slots
 | **Detail Levels** | Let this mesh use [simplified meshes](../manual/rendering-pipeline.md#mesh-detail-lod) while the scene's Mesh Detail is on. Turn off to always keep it at full detail. |
 | **Detail Bias** | Scales how far detail is kept: above 1 keeps it longer, below 1 drops it sooner. Shown only while the scene's Mesh Detail is on. |
 | **Render in Probes** | Whether the mesh appears in [Reflection Probe](../reference/classes/reflectionprobe.md) captures. Turn it off so an object wrapped around a probe is not seen in its own reflection. |
+| **See Through** | Thin the mesh out where it hides the scene's [see-through target](../manual/rendering-pipeline.md#see-through) from the camera. A script sets the target. |
 
 Each **Submesh** section contains a **Material** row with a shaded preview sphere. The
 preview reflects the current **Receive IBL** setting so you can see environment

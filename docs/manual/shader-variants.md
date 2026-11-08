@@ -99,6 +99,7 @@ the numeric form is what a scene file's `shaderKeys` entries hold.
 | 26 | `Ifd` | Instance distance fade |
 | 27 | `Tpb` | Terrain PBR layers |
 | 28 | `Dlo` | Directional lights only |
+| 29 | `Stt` | [See-through](rendering-pipeline.md#see-through) |
 
 Bit 5 is reserved: it used to select the PCF shadow filter, which is uniform-driven now
 (Scene shadow quality).
@@ -121,6 +122,7 @@ spot light at runtime.
 | 6 | `Ist` | Instancing |
 | 7 | `Ams` | Alpha mask |
 | 8 | `Ifd` | Instance distance fade |
+| 9 | `Stt` | See-through (the depth pre-pass; shadow maps send no target) |
 
 ### `ui`, `points`, `lines`
 
@@ -166,7 +168,7 @@ variant list assembled by hand tends to be short by a factor of two or four:
 
 An exported game loads each variant from its precompiled set. When one is absent, it
 draws with the nearest variant that leaves out some optional features, such as fog,
-shadows, or a texture, and logs a warning:
+see-through, shadows, or a texture, and logs a warning:
 
 ```
 Shader mesh_Uv1Uv2PucShwNorTanFogSkiSaoAop is missing, using mesh_PucShwNorTanFogSkiSaoAop

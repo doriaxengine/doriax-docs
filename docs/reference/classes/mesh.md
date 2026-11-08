@@ -61,6 +61,7 @@ See [EntityHandle ownership](entityhandle.md#ownership-and-lifetime).
 | float | [lodBias](#lodenabled-lodbias) | `1.0` | C++ \| Lua |
 | bool | shadowsBillboard | `true` | C++ \| Lua |
 | bool | [renderInReflectionProbes](#renderinreflectionprobes) | `true` | C++ \| Lua |
+| bool | [seeThrough](#seethrough) | `false` | C++ \| Lua |
 | bool | castShadowsWithTexture | `false` | C++ \| Lua |
 | bool | [transparent](#transparent-autotransparency) | `false` | C++ \| Lua |
 | bool | [autoTransparency](#transparent-autotransparency) | `true` | C++ \| Lua |
@@ -282,6 +283,30 @@ reflection. Normal rendering is unaffected — this only controls the capture pa
 
 Changing it re-captures every probe in the scene: a probe that already baked its cubemap
 keeps the old contents until it captures again.
+
+---
+
+### seeThrough
+
+* *Setter:* `void setSeeThrough(bool seeThrough)`
+* *Getter:* `bool isSeeThrough() const`
+
+Thins the mesh out where it stands between the main camera and the scene's
+[see-through target](scene.md#seethroughtarget-seethroughradius-seethroughopacity), with
+a dither pattern, so the target shows through it. Shadows stay whole. Changing it reloads
+the mesh with the `Stt` shader variant. See [See-through](../../manual/rendering-pipeline.md#see-through).
+
+=== "C++"
+
+    ```cpp
+    tree.setSeeThrough(true);
+    ```
+
+=== "Lua"
+
+    ```lua
+    tree.seeThrough = true
+    ```
 
 ---
 
