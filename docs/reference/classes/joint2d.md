@@ -13,7 +13,7 @@ Box2D joint constraint.
 | [`setDistanceJoint`](#setdistancejoint) | C++ \| Lua |
 | `setRevoluteJoint` | C++ \| Lua |
 | `setPrismaticJoint` | C++ \| Lua |
-| `setMouseJoint` | C++ \| Lua |
+| [`setMouseJoint`](#setmousejoint) | C++ \| Lua |
 | `setWheelJoint` | C++ \| Lua |
 | `setWeldJoint` | C++ \| Lua |
 | `setMotorJoint` | C++ \| Lua |
@@ -44,3 +44,14 @@ Keeps two bodies at the distance their anchors have when the joint is created. T
     local rope = Joint2D(scene)
     rope:setDistanceJoint(hook.entity, weight.entity, Vector2(0, 200), Vector2(0, 50), true)
     ```
+
+---
+
+### setMouseJoint
+
+* `void setMouseJoint(Entity bodyA, Entity bodyB, Vector2 target)`
+
+Grabs the dynamic `bodyA` at `target`, in world space, and holds that point there with a soft
+spring, so the body hangs from it and swings to rest. The target stays fixed in the world:
+`bodyB` must be another body but takes no force and doesn't carry the target, and `bodyA`
+still collides with it.
