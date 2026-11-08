@@ -52,6 +52,7 @@ A `Scene` is the root container for all objects, systems, and resources in a pro
 | Vector3 | [seeThroughTarget](#seethroughtarget-seethroughradius-seethroughopacity) | `(0,0,0)` | C++ \| Lua |
 | float | [seeThroughRadius](#seethroughtarget-seethroughradius-seethroughopacity) | `0` | C++ \| Lua |
 | float | [seeThroughOpacity](#seethroughtarget-seethroughradius-seethroughopacity) | `0.3` | C++ \| Lua |
+| float | [seeThroughMargin](#seethroughtarget-seethroughradius-seethroughopacity) | `0.5` | C++ \| Lua |
 | bool | [ssaoEnabled](#ssaoenabled) | `false` | C++ \| Lua |
 | float | [ssaoRadius](#ssaoradius) | `0.5` | C++ \| Lua |
 | float | [ssaoIntensity](#ssaointensity) | `1.0` | C++ \| Lua |
@@ -123,6 +124,8 @@ A `Scene` is the root container for all objects, systems, and resources in a pro
 | float | [getSeeThroughRadius](#seethroughtarget-seethroughradius-seethroughopacity) | C++ \| Lua |
 | void | [setSeeThroughOpacity](#seethroughtarget-seethroughradius-seethroughopacity) | C++ \| Lua |
 | float | [getSeeThroughOpacity](#seethroughtarget-seethroughradius-seethroughopacity) | C++ \| Lua |
+| void | [setSeeThroughMargin](#seethroughtarget-seethroughradius-seethroughopacity) | C++ \| Lua |
+| float | [getSeeThroughMargin](#seethroughtarget-seethroughradius-seethroughopacity) | C++ \| Lua |
 | void | [setSSAOEnabled](#ssaoenabled) | C++ \| Lua |
 | bool | [isSSAOEnabled](#ssaoenabled) | C++ \| Lua |
 | void | [setSSAORadius](#ssaoradius) | C++ \| Lua |
@@ -427,12 +430,13 @@ Air velocity in meters per second. [Vertex offsets](mesh.md#vertexoffsetshader-v
 
 ### seeThroughTarget, seeThroughRadius, seeThroughOpacity
 
-* *Setters:* `void setSeeThroughTarget(Vector3 target)`, `void setSeeThroughTarget(float x, float y, float z)`, `void setSeeThroughRadius(float radius)`, `void setSeeThroughOpacity(float opacity)`
-* *Getters:* `Vector3 getSeeThroughTarget() const`, `float getSeeThroughRadius() const`, `float getSeeThroughOpacity() const`
+* *Setters:* `void setSeeThroughTarget(Vector3 target)`, `void setSeeThroughTarget(float x, float y, float z)`, `void setSeeThroughRadius(float radius)`, `void setSeeThroughOpacity(float opacity)`, `void setSeeThroughMargin(float margin)`
+* *Getters:* `Vector3 getSeeThroughTarget() const`, `float getSeeThroughRadius() const`, `float getSeeThroughOpacity() const`, `float getSeeThroughMargin() const`
 
 What [see-through meshes](mesh.md#seethrough) keep in view from the main camera: a sphere of
 `radius` world units round the target, the meshes in front of it thinned down to `opacity`
-at its centre (0 = gone, 1 = whole). A radius of 0, the default, turns it off. These are
+at its centre (0 = gone, 1 = whole). A mesh starts to thin `margin` world units before the
+target and is fully thinned at twice that. A radius of 0, the default, turns it off. These are
 runtime values, not saved with the scene: a script sets them, usually each frame from the
 player. See [See-through](../../manual/rendering-pipeline.md#see-through).
 
@@ -440,14 +444,16 @@ player. See [See-through](../../manual/rendering-pipeline.md#see-through).
 
     ```cpp
     scene.setSeeThroughTarget(player.getWorldPosition() + Vector3(0, 0.9f, 0));
-    scene.setSeeThroughRadius(1.1f);
+    scene.setSeeThroughRadius(2.5f);
+    scene.setSeeThroughMargin(0.3f);
     ```
 
 === "Lua"
 
     ```lua
     scene:setSeeThroughTarget(player:getWorldPosition() + Vector3(0, 0.9, 0))
-    scene.seeThroughRadius = 1.1
+    scene.seeThroughRadius = 2.5
+    scene.seeThroughMargin = 0.3
     ```
 
 ---

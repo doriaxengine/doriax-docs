@@ -1026,14 +1026,16 @@ A mesh with **See Through** on ([seeThrough](../reference/classes/mesh.md#seethr
 thins out where it stands between the main camera and the scene's see-through target, so a
 character behind a tree or a roof stays in view. The scene describes the target: a point
 ([seeThroughTarget](../reference/classes/scene.md#seethroughtarget-seethroughradius-seethroughopacity)),
-a radius round it, and what stays of a hiding mesh at the centre (`seeThroughOpacity`,
-0.3 by default). A script usually moves the target with the player each frame; a radius of
-0, the default, turns it off.
+a radius round it, what stays of a hiding mesh at the centre (`seeThroughOpacity`, 0.3 by
+default), and how far before the target a mesh starts to thin (`seeThroughMargin`, 0.5 by
+default). A script usually moves the target with the player each frame; a radius of 0, the
+default, turns it off.
 
 The test is a cone from the camera to a sphere of that radius round the target, so the
-clear circle stays one size on screen. Only what lies in front of the target thins out,
-fading over the half radius before it, so the ground under a character, seen from above,
-stays whole. The edge of the circle is soft.
+clear circle stays one size on screen; its inner half is fully thinned and the outer half
+fades out. Only what lies in front of the target thins out: from the margin before it, fully
+at twice the margin. The margin is separate from the radius, so a wide circle still clears a
+tree right in front of a character, while the ground under it, seen from above, stays whole.
 
 The mesh stays opaque: a steady 4×4 dither pattern drops pixels, so there is no sorting and
 no blending. The depth pre-pass (SSAO, water depth, the Z pre-pass) and the SSR G-buffer drop
@@ -1046,7 +1048,8 @@ tree.setSeeThrough(true);
 
 // each frame, round the player's chest
 scene->setSeeThroughTarget(player.getWorldPosition() + Vector3(0, 0.9f, 0));
-scene->setSeeThroughRadius(1.1f);
+scene->setSeeThroughRadius(2.5f);
+scene->setSeeThroughMargin(0.3f); // a person's depth in front of the chest
 ```
 
 **See Through** builds its own shader variant (`Stt`), so turn it on for the meshes that
