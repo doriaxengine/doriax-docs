@@ -59,8 +59,6 @@ See [EntityHandle ownership](entityhandle.md#ownership-and-lifetime).
 | bool | [receiveShadows](#castshadows-receiveshadows) | `true` | C++ \| Lua |
 | bool | [lodEnabled](#lodenabled-lodbias) | `true` | C++ \| Lua |
 | float | [lodBias](#lodenabled-lodbias) | `1.0` | C++ \| Lua |
-| float | [windSway](#windsway-windswayheight) | `0` | C++ \| Lua |
-| float | [windSwayHeight](#windsway-windswayheight) | `0` | C++ \| Lua |
 | bool | shadowsBillboard | `true` | C++ \| Lua |
 | bool | [renderInReflectionProbes](#renderinreflectionprobes) | `true` | C++ \| Lua |
 | bool | castShadowsWithTexture | `false` | C++ \| Lua |
@@ -246,31 +244,6 @@ Shadow participation flags. Enabling both adds depth-map cost; disable on distan
 
 ---
 
-### windSway / windSwayHeight
-
-* *windSway Setter:* `void setWindSway(float windSway)`
-* *windSway Getter:* `float getWindSway() const`
-* *windSwayHeight Setter:* `void setWindSwayHeight(float windSwayHeight)`
-* *windSwayHeight Getter:* `float getWindSwayHeight() const`
-
-Bends the mesh toward the scene [wind](scene.md#wind). `windSway` is how far it bends in 10 m/s of wind, in model units, and the bend grows with the speed; gusts and a small flutter move it on top. `windSwayHeight` is the model height where the bend is full: below it the bend fades to nothing at `y = 0`, so a plant whose origin is at its base keeps its foot still. `0` moves the whole mesh evenly, for tree crowns cut from their trunks. Every pass bends it the same way, so shadows and reflections follow. Turning sway on or off reloads the mesh; changing the amount does not. Terrain ignores it. See [Wind](../../manual/rendering-pipeline.md#wind).
-
-=== "C++"
-
-    ```cpp
-    reeds.setWindSway(0.3f);
-    reeds.setWindSwayHeight(1.2f);
-    ```
-
-=== "Lua"
-
-    ```lua
-    reeds.windSway = 0.3
-    reeds.windSwayHeight = 1.2
-    ```
-
----
-
 ### lodEnabled / lodBias
 
 * *lodEnabled Setter:* `void setLodEnabled(bool lodEnabled)`
@@ -398,7 +371,7 @@ Project-relative base path of a forked **depth** shader — the one the mesh is 
 * *vertexOffsetMax Setter:* `void setVertexOffsetMax(float vertexOffsetMax)`
 * *vertexOffsetMax Getter:* `float getVertexOffsetMax() const`
 
-`vertexOffsetShader` is a project-relative `.glsl` file defining `vec3 getVertexOffset(vec3 localPosition, vec3 worldPosition)`, which returns how far each vertex moves in world units. The colour, depth and G-buffer passes all apply it, so shadows and reflections follow, and it reads the same [shader uniforms](#setshaderuniform) through `u_vs_customParams`. Empty (default) moves nothing. Changing it reloads the mesh. `vertexOffsetMax` is the longest offset: longer ones are clamped, and culling widens the bounds by it; `0` means no limit. Terrain ignores both. See [Custom Shaders — The Vertex Offset row](../../editor/custom-shaders.md#the-vertex-offset-row).
+`vertexOffsetShader` is a project-relative `.glsl` file defining `vec3 getVertexOffset(vec3 localPosition, vec3 worldPosition)`, which returns how far each vertex moves in world units. The colour, depth and G-buffer passes all apply it, so shadows and reflections follow, and it reads the same [shader uniforms](#setshaderuniform) through `u_vs_offsetParams`. The engine's `offsets/wind.glsl` sways the mesh in the scene [wind](scene.md#wind). Empty (default) moves nothing. Changing it reloads the mesh. `vertexOffsetMax` is the longest offset: longer ones are clamped, and culling widens the bounds by it; `0` means no limit. Terrain ignores both. See [Custom Shaders — The Vertex Offset row](../../editor/custom-shaders.md#the-vertex-offset-row).
 
 === "C++"
 

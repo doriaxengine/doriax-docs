@@ -33,8 +33,6 @@ The data behind a [Mesh](mesh.md) and the objects built on it, such as [Sprite](
 | `autoTransparency` | C++ \| Lua |
 | `lodEnabled` | C++ \| Lua |
 | `lodBias` | C++ \| Lua |
-| `windSway` | C++ \| Lua |
-| `windSwayHeight` | C++ \| Lua |
 | `cullingMode` | C++ \| Lua |
 | `windingOrder` | C++ \| Lua |
 | `needUpdateAABB` | C++ \| Lua |

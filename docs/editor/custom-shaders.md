@@ -130,6 +130,7 @@ the built-in shading. It also works under a colour or depth fork whose `.vert` k
 | --- | --- |
 | **None** label | Shown while the mesh has no vertex offset. |
 | **New** | Writes a starting file (a wave) to `shaders/<entity>_offset.glsl`, assigns it, and opens it in the Code Editor. |
+| **Engine offsets** | Assigns one of the engine's own, such as `offsets/wind.glsl`, shown as *built-in*. |
 | **Pick** | Assigns an existing `.glsl` from the project. |
 | **Open** | Re-opens the assigned file. |
 | **Remove** | Clears the vertex offset. |
@@ -142,11 +143,12 @@ The function can read two engine values:
 | `vertexOffset.params.x` | Scene time in seconds. Like the water, it holds while the editor scene is stopped or paused, and it stops when the game pauses. |
 | `vertexOffset.wind` | The scene [wind](../manual/rendering-pipeline.md#wind) in m/s in `xyz`, and in `w` the meters of air blown past, which move gusts at the wind's speed without jumping when it changes. |
 
-Values of your own go in a `u_vs_customParams` block, filled from the
-[shader uniforms](#shader-uniforms) rows like a fork's:
+Values of your own go in a `u_vs_offsetParams` block, filled from the
+[shader uniforms](#shader-uniforms) rows like a fork's; it is a block of its own, so a fork
+on the same mesh keeps its `u_vs_customParams`:
 
 ```glsl
-uniform u_vs_customParams {
+uniform u_vs_offsetParams {
     float waveHeight;
 } offsetParams;
 
@@ -156,8 +158,10 @@ vec3 getVertexOffset(vec3 localPosition, vec3 worldPosition){
 }
 ```
 
-A fork on the same mesh that declares its own `u_vs_customParams` cannot be combined with
-an offset file that declares one too; keep the block in one of them.
+The engine's `offsets/wind.glsl` sways the mesh in the scene
+[wind](../manual/rendering-pipeline.md#wind), with `windSway` and `windSwayHeight` as its
+uniforms. A project offset can sway as well: `#include "includes/wind.glsl"` and add
+`getWindSway(localPosition, worldPosition, sway, swayHeight)` to its result.
 
 **Max Offset**, shown once a file is assigned, is the longest offset in world units.
 Longer ones are clamped to it, and culling widens the mesh bounds and each instance's

@@ -99,7 +99,6 @@ the numeric form is what a scene file's `shaderKeys` entries hold.
 | 26 | `Ifd` | Instance distance fade |
 | 27 | `Tpb` | Terrain PBR layers |
 | 28 | `Dlo` | Directional lights only |
-| 29 | `Wnd` | Wind sway |
 
 Bit 5 is reserved: it used to select the PCF shadow filter, which is uniform-driven now
 (Scene shadow quality).
@@ -121,7 +120,6 @@ with and without it, so a script can still add a point or spot light at runtime.
 | 6 | `Ist` | Instancing |
 | 7 | `Ams` | Alpha mask |
 | 8 | `Ifd` | Instance distance fade |
-| 9 | `Wnd` | Wind sway |
 
 ### `ui`, `points`, `lines`
 

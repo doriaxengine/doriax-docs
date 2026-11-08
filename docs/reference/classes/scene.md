@@ -400,7 +400,7 @@ Gravity of the **3D physics world** (Jolt), in meters per second squared. Affect
 * *Setters:* `void setWind(Vector3 wind)`, `void setWind(float x, float y, float z)`
 * *Getter:* `Vector3 getWind() const`
 
-Air velocity in meters per second. It bends meshes with [windSway](mesh.md#windsway-windswayheight) and terrain foliage layers with [windSway](terrainfoliagelayer.md), with gusts that roll downwind across the ground. It moves no physics body. Default `(0, 0, 0)`: nothing sways. See [Wind](../../manual/rendering-pipeline.md#wind).
+Air velocity in meters per second. [Vertex offsets](mesh.md#vertexoffsetshader-vertexoffsetmax) read it — the engine's `offsets/wind.glsl` sways a mesh in it, with gusts that roll downwind across the ground — and so do terrain foliage layers with [windSway](terrainfoliagelayer.md). It moves no physics body. Default `(0, 0, 0)`: nothing sways. See [Wind](../../manual/rendering-pipeline.md#wind).
 
 === "C++"
 
