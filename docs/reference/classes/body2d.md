@@ -482,7 +482,7 @@ Enable specific collision event callbacks for a shape. See [PhysicsSystem events
 
 * **HitEvents** — Fired when two shapes collide (one-shot, not sustained), as `hitContact2D`.
 * **ContactEvents** — Fired when shapes start and stop touching, as `beginContact2D` and `endContact2D`.
-* **PreSolveEvents** — Fired before the physics impulse is resolved, as `preSolve2D`; allows modifying or cancelling the collision.
+* **PreSolveEvents** — Fired before the physics impulse is resolved, as `preSolve2D`; allows modifying or cancelling the collision. It runs every step for an awake body, even one resting still, so a filter that changes its answer (drop through a platform while holding down) takes effect at once. Box2D skips it for contacts it reuses, so a body with pre-solve events on any shape doesn't reuse its contacts, and changing the flag rebuilds the body's shapes on the next physics step.
 * **SensorEvents** — Lets the shape be reported when it overlaps a sensor shape. It does *not* turn the shape itself into a sensor, and it does not change the collision response. A [sensor](#setshapesensor) always has them on: `isShapeSensorEvents` returns `true` for it and the editor hides the box.
 
 Hit, contact and pre-solve events are off by default, both in code and in the shape's **Enable Hit Events**, **Contact Events** and **PreSolve Events** boxes in the editor. Box2D reports one for a pair of shapes only when at least one of the two has it on, so subscribing to `beginContact2D` alone reports nothing until a shape turns **ContactEvents** on.
