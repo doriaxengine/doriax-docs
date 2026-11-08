@@ -68,6 +68,8 @@ See [EntityHandle ownership](entityhandle.md#ownership-and-lifetime).
 | bool | [autoTransparency](#transparent-autotransparency) | `true` | C++ \| Lua |
 | string | [customShader](#customshader) | `""` | C++ \| Lua |
 | string | [customDepthShader](#customdepthshader) | `""` | C++ \| Lua |
+| string | [vertexOffsetShader](#vertexoffsetshader-vertexoffsetmax) | `""` | C++ \| Lua |
+| float | [vertexOffsetMax](#vertexoffsetshader-vertexoffsetmax) | `0` | C++ \| Lua |
 | unsigned int | [maxInstances](#maxinstances) | `100` | C++ \| Lua |
 | bool | [instancedBillboard](#instancedbillboard-instancedcylindricalbillboard) | `false` | C++ \| Lua |
 | bool | [instancedCylindricalBillboard](#instancedbillboard-instancedcylindricalbillboard) | `false` | C++ \| Lua |
@@ -385,6 +387,33 @@ Project-relative base path of a forked **depth** shader — the one the mesh is 
     ```lua
     mesh.customShader = "shaders/wave"
     mesh.customDepthShader = "shaders/wave_depth"
+    ```
+
+---
+
+### vertexOffsetShader / vertexOffsetMax
+
+* *vertexOffsetShader Setter:* `void setVertexOffsetShader(const std::string& path)`
+* *vertexOffsetShader Getter:* `std::string getVertexOffsetShader() const`
+* *vertexOffsetMax Setter:* `void setVertexOffsetMax(float vertexOffsetMax)`
+* *vertexOffsetMax Getter:* `float getVertexOffsetMax() const`
+
+`vertexOffsetShader` is a project-relative `.glsl` file defining `vec3 getVertexOffset(vec3 localPosition, vec3 worldPosition)`, which returns how far each vertex moves in world units. The colour, depth and G-buffer passes all apply it, so shadows and reflections follow, and it reads the same [shader uniforms](#setshaderuniform) through `u_vs_customParams`. Empty (default) moves nothing. Changing it reloads the mesh. `vertexOffsetMax` is the longest offset: longer ones are clamped, and culling widens the bounds by it; `0` means no limit. Terrain ignores both. See [Custom Shaders — The Vertex Offset row](../../editor/custom-shaders.md#the-vertex-offset-row).
+
+=== "C++"
+
+    ```cpp
+    flag.setVertexOffsetShader("shaders/flag_offset.glsl");
+    flag.setVertexOffsetMax(0.5f);
+    flag.setShaderUniform("waveHeight", 0.2f);
+    ```
+
+=== "Lua"
+
+    ```lua
+    flag.vertexOffsetShader = "shaders/flag_offset.glsl"
+    flag.vertexOffsetMax = 0.5
+    flag:setShaderUniform("waveHeight", 0.2)
     ```
 
 ### maxInstances

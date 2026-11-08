@@ -31,6 +31,8 @@ project; you edit the shading code while the rest of the rendering contract stay
   casting and screen-space effects continue to work. A Mesh can fork its **depth shader**
   as well — the one behind its shadow maps and the depth pre-pass — for a colour fork
   that moves vertices or discards fragments (see [The Depth Shader row](#the-depth-shader-row)).
+  To only move vertices, a [vertex offset](#the-vertex-offset-row) is simpler: one function
+  that every pass applies.
 - `#include` directives still resolve against the engine's shader library, so you only
   need the top-level `.vert`/`.frag` — not the whole include tree. If you want to edit the
   includes as well, the fork dialog can copy them for you (see [Includes](#includes)).
@@ -106,6 +108,66 @@ A mesh whose **colour** shader is forked — or covered by a scene default mesh 
 without a depth fork is left out of the prepass and drawn once in the colour pass, since
 the built-in depth shader cannot know where the fork moves its vertices. Add a depth fork
 with the same displacement to bring it back in.
+
+## The Vertex Offset row
+
+A Mesh component also has a **Vertex Offset** row, for meshes that only need their
+vertices moved — waves, flags, wobbling props — without forking any shader. It takes one
+`.glsl` file that defines a single function:
+
+```glsl
+vec3 getVertexOffset(vec3 localPosition, vec3 worldPosition);
+```
+
+It returns how far the vertex moves, in world units. `localPosition` is the vertex in the
+mesh's own space, after skinning and morph targets, and `worldPosition` is where it lands
+before the move. The engine calls it in the colour, depth and G-buffer passes, so the
+shadow, SSAO and screen-space reflections follow without a depth fork, and the mesh keeps
+the built-in shading. It also works under a colour or depth fork whose `.vert` keeps the
+`USE_VERTEX_OFFSET` lines of the built-in one.
+
+| Control | Action |
+| --- | --- |
+| **None** label | Shown while the mesh has no vertex offset. |
+| **New** | Writes a starting file (a wave) to `shaders/<entity>_offset.glsl`, assigns it, and opens it in the Code Editor. |
+| **Pick** | Assigns an existing `.glsl` from the project. |
+| **Open** | Re-opens the assigned file. |
+| **Remove** | Clears the vertex offset. |
+| Drag-and-drop | Drop a `.glsl` from the [Resources Browser](resources.md) onto the row. |
+
+The function can read two engine values:
+
+| Value | Meaning |
+| --- | --- |
+| `vertexOffset.params.x` | Scene time in seconds. Like the water, it holds while the editor scene is stopped or paused, and it stops when the game pauses. |
+| `vertexOffset.wind` | The scene [wind](../manual/rendering-pipeline.md#wind) in m/s in `xyz`, and in `w` the meters of air blown past, which move gusts at the wind's speed without jumping when it changes. |
+
+Values of your own go in a `u_vs_customParams` block, filled from the
+[shader uniforms](#shader-uniforms) rows like a fork's:
+
+```glsl
+uniform u_vs_customParams {
+    float waveHeight;
+} offsetParams;
+
+vec3 getVertexOffset(vec3 localPosition, vec3 worldPosition){
+    float time = vertexOffset.params.x;
+    return vec3(0.0, sin(time * 2.0 + worldPosition.x) * offsetParams.waveHeight, 0.0);
+}
+```
+
+A fork on the same mesh that declares its own `u_vs_customParams` cannot be combined with
+an offset file that declares one too; keep the block in one of them.
+
+**Max Offset**, shown once a file is assigned, is the longest offset in world units.
+Longer ones are clamped to it, and culling widens the mesh bounds and each instance's
+sphere by it, so geometry that moves into view is not cut off at the screen edge or out
+of a shadow cascade. At 0 nothing is clamped and the bounds stay those of the mesh data.
+
+The lighting keeps the normals of the unmoved surface. Each offset file builds its own
+shaders, compiled and exported with the project like a fork; meshes without one draw as
+before. Terrain ignores it. Scripts set it through `vertexOffsetShader` and
+`vertexOffsetMax` (see [Setting values from scripts](#setting-values-from-scripts)).
 
 ## Water shaders
 
@@ -229,6 +291,7 @@ pos.y += sin(customParams.time * 3.0 + pos.x * 4.0) * customParams.amplitude;
     shadow stays where the mesh data is. Fork the [depth shader](#the-depth-shader-row)
     as well and displace there too, and the shadow (and SSAO, while SSR is off) follows.
     Screen-space reflections read the built-in G-buffer and keep the undisplaced surface.
+    A [vertex offset](#the-vertex-offset-row) moves every pass at once.
 
 ```glsl
 // wave.frag
@@ -305,6 +368,8 @@ expose:
 | `removeShaderUniform(name)` | Drops the value; the member reads zero again. |
 | `customShader` | The fork base path, so a script can assign or reset the fork too. |
 | `customDepthShader` | A Mesh's [depth fork](#the-depth-shader-row) base path; it reads the same values. |
+| `vertexOffsetShader` | A Mesh's [vertex offset](#the-vertex-offset-row) file; it reads the same values. |
+| `vertexOffsetMax` | The longest offset in world units, which also widens the culling bounds; 0 = no limit. |
 | `customUnderwaterShader` | A Water's [underwater fork](#water-shaders) base path; it reads the same values. |
 
 Setting a value only rewrites the block bytes — no shader reload — so calling it every

@@ -19,6 +19,8 @@ The data behind a [Mesh](mesh.md) and the objects built on it, such as [Sprite](
 | `numSubmeshes` | C++ \| Lua (read-only) |
 | `customShader` | C++ \| Lua |
 | `customDepthShader` | C++ \| Lua |
+| `vertexOffsetShader` | C++ \| Lua |
+| `vertexOffsetMax` | C++ \| Lua |
 | `aabb` | C++ \| Lua (read-only) |
 | `worldAABB` | C++ \| Lua (read-only) |
 | `receiveLights` | C++ \| Lua |
