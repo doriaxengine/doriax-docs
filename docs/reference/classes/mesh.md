@@ -371,7 +371,7 @@ Project-relative base path of a forked **depth** shader — the one the mesh is 
 * *vertexOffsetMax Setter:* `void setVertexOffsetMax(float vertexOffsetMax)`
 * *vertexOffsetMax Getter:* `float getVertexOffsetMax() const`
 
-`vertexOffsetShader` is a project-relative `.glsl` file defining `vec3 getVertexOffset(vec3 localPosition, vec3 worldPosition)`, which returns how far each vertex moves in world units. The colour, depth and G-buffer passes all apply it, so shadows and reflections follow, and it reads the same [shader uniforms](#setshaderuniform) through `u_vs_offsetParams`. The engine's `offsets/wind.glsl` sways the mesh in the scene [wind](scene.md#wind). Empty (default) moves nothing. Changing it reloads the mesh. `vertexOffsetMax` is the longest offset: longer ones are clamped, and culling widens the bounds by it; `0` means no limit. Terrain ignores both. See [Custom Shaders — The Vertex Offset row](../../editor/custom-shaders.md#the-vertex-offset-row).
+`vertexOffsetShader` is a `.glsl` file, from the project or the engine, defining `vec3 getVertexOffset(vec3 localPosition, vec3 worldPosition)`, which returns how far each vertex moves in world units. The colour, depth and G-buffer passes all apply it, so shadows and reflections follow, and it reads the same [shader uniforms](#setshaderuniform) through `u_vs_offsetParams`. The engine's `offsets/wind.glsl` sways the mesh in the scene [wind](scene.md#wind). Empty (default) moves nothing. Changing it reloads the mesh. `vertexOffsetMax` is the longest offset: longer ones are clamped, and culling widens the bounds by it; `0` means no limit. Terrain ignores both. See [Custom Shaders — The Vertex Offset row](../../editor/custom-shaders.md#the-vertex-offset-row).
 
 === "C++"
 
