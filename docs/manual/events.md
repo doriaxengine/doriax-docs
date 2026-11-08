@@ -320,6 +320,9 @@ one of the shapes has **Contact Events**, **Enable Hit Events** or **PreSolve Ev
 and each is off by default — see
 [Body2D events](../reference/classes/body2d.md#setshapeenablehitevents-setshapecontactevents-setshapepresolveevents-setshapesensorevents).
 
+`hitContact2D` passes the contact point in world points, the unit normal, and the approach
+speed in points per second, the units of [Body2D](../reference/classes/body2d.md#linearvelocity).
+
 ### 3D events
 
 | Event | Meaning |
