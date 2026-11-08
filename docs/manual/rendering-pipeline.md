@@ -1051,7 +1051,8 @@ scene.setSeeThroughMargin(0.3f);
 ```
 
 **See Through** builds its own shader variant (`Stt`), so turn it on only for meshes that
-can hide the target. Terrain never thins out.
+can hide the target. Terrain never thins out, and a colour or depth fork thins out only if
+it keeps the `USE_SEE_THROUGH` lines of the built-in one.
 
 ## Mesh detail (LOD)
 
