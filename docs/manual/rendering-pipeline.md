@@ -990,7 +990,8 @@ second. Meshes with [windSway](../reference/classes/mesh.md#windsway-windswayhei
 terrain foliage layers with a wind sway bend toward it in the vertex shader: a steady lean
 that grows with the speed, gusts that roll downwind across the ground at the wind's speed,
 a slow wobble and a small flutter. The depth and G-buffer shaders bend them the same way, so
-shadows, SSAO and SSR follow. Nothing moves physics bodies.
+shadows, SSAO and SSR follow. Nothing moves physics bodies. In the editor it is the
+**Wind** section of the scene properties.
 
 ```cpp
 scene.setWind(Vector3(5.0f, 0, -2.0f));
