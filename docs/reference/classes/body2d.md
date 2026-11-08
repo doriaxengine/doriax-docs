@@ -421,6 +421,8 @@ Per-shape material properties:
 
 All three come in two overloads: `setXxx(value)` applies to the first shape; `setXxx(index, value)` applies to the shape at `index`.
 
+A friction or restitution change during play reaches bodies already resting on the shape: they wake up and their contacts take the new value on the next step. Rolling resistance and tangent speed work the same way, so a conveyor switched on under a sleeping crate starts carrying it.
+
 ---
 
 ### setShapeRollingResistance / setShapeTangentSpeed
