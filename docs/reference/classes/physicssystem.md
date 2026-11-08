@@ -45,6 +45,33 @@ step. See [Smooth motion between steps](../../manual/physics.md#smooth-motion-be
 `shouldCollide2D` run. `steppingWorld3D` is true while the 3D world simulates, which is
 exactly when the 3D callbacks below run.
 
+## Methods
+
+| Returns | Name | Languages |
+| --- | --- | --- |
+| void | [explode2D](#explode2d) | C++ \| Lua |
+
+### explode2D
+
+* `void explode2D(Vector2 position, float radius, float falloff, float impulsePerLength)`
+* `void explode2D(Vector2 position, float radius, float falloff, float impulsePerLength, uint16_t maskBits)`
+
+Pushes the 2D dynamic bodies around `position` away from it. Shapes within `radius` take the
+full impulse, which fades to zero over `falloff` beyond it; both are in points. Each shape is
+pushed by `impulsePerLength` for every metre of its outline facing the explosion, so big
+crates fly less than small debris. A negative value pulls them in. `maskBits` picks the shape
+categories it reaches, all by default. Circles, capsules and polygons are pushed; segments and
+chains are not. It is refused while the world is stepping.
+
+=== "Lua"
+
+    ```lua
+    function Bomb:explode()
+        local position = Object(self.scene, self.entity).position
+        self.scene:getPhysicsSystem():explode2D(Vector2(position.x, position.y), 120, 80, 2)
+    end
+    ```
+
 ## Events
 
 **2D:** `beginContact2D`, `endContact2D`, `hitContact2D`, sensor contacts, `preSolve2D`, `shouldCollide2D`
