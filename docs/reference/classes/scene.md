@@ -52,6 +52,7 @@ A `Scene` is the root container for all objects, systems, and resources in a pro
 | float | [ssaoRadius](#ssaoradius) | `0.5` | C++ \| Lua |
 | float | [ssaoIntensity](#ssaointensity) | `1.0` | C++ \| Lua |
 | float | [ssaoBias](#ssaobias) | `0.025` | C++ \| Lua |
+| bool | [ssaoHalfResolution](#ssaohalfresolution) | `false` | C++ \| Lua |
 | bool | [ssaoDebug](#ssaodebug) | `false` | C++ \| Lua |
 | bool | [ssrEnabled](#ssrenabled) | `false` | C++ \| Lua |
 | float | [ssrMaxDistance](#ssrmaxdistance) | `8.0` | C++ \| Lua |
@@ -118,6 +119,8 @@ A `Scene` is the root container for all objects, systems, and resources in a pro
 | float | [getSSAOIntensity](#ssaointensity) | C++ \| Lua |
 | void | [setSSAOBias](#ssaobias) | C++ \| Lua |
 | float | [getSSAOBias](#ssaobias) | C++ \| Lua |
+| void | [setSSAOHalfResolution](#ssaohalfresolution) | C++ \| Lua |
+| bool | [isSSAOHalfResolution](#ssaohalfresolution) | C++ \| Lua |
 | void | [setSSAODebug](#ssaodebug) | C++ \| Lua |
 | bool | [isSSAODebug](#ssaodebug) | C++ \| Lua |
 | void | [setSSREnabled](#ssrenabled) | C++ \| Lua |
@@ -422,6 +425,15 @@ Strength of the effect, applied as an exponent on the occlusion factor — highe
 * *Getter:* `float getSSAOBias() const`
 
 View-space depth bias that prevents self-occlusion artifacts (acne) on flat surfaces. Increase slightly if flat areas appear dirty; keep small to preserve fine contact detail.
+
+---
+
+### ssaoHalfResolution
+
+* *Setter:* `void setSSAOHalfResolution(bool halfResolution)`
+* *Getter:* `bool isSSAOHalfResolution() const`
+
+Computes and blurs the occlusion at half the width and height, for about a quarter of the cost, and lit meshes upsample it. The depth pre-pass stays at full size. AO comes out a little softer. Default `false`.
 
 ---
 

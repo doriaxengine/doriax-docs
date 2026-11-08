@@ -422,7 +422,8 @@ second shadow.
 
 Each frame the render system runs a small depth pre-pass for the main camera, derives
 occlusion from a rotated hemisphere kernel, blurs it, and the lit mesh shader multiplies
-the result into its ambient term.
+the result into its ambient term. The blur leaves out samples across a depth edge, so
+occlusion stays on its own surface instead of haloing around silhouettes.
 
 SSAO is a scene setting:
 
@@ -431,6 +432,7 @@ scene.setSSAOEnabled(true);
 scene.setSSAORadius(0.5f);     // view-space sampling radius (world units)
 scene.setSSAOIntensity(1.0f);  // strength (exponent on the occlusion factor)
 scene.setSSAOBias(0.025f);     // depth bias to avoid self-occlusion acne
+scene.setSSAOHalfResolution(true); // a quarter of the pixels, a little softer
 ```
 
 ```lua
@@ -438,6 +440,7 @@ scene.ssaoEnabled = true
 scene.ssaoRadius = 0.5
 scene.ssaoIntensity = 1.0
 scene.ssaoBias = 0.025
+scene.ssaoHalfResolution = true
 ```
 
 In the editor, the same controls live under **Scene → Ambient Occlusion (SSAO)** in the
@@ -449,6 +452,7 @@ can tune radius/intensity/bias directly.
 | **Radius** | How far samples reach in view space — larger is broader/softer, smaller stays in tight creases |
 | **Intensity** | Darkening strength; raise to make occlusion more pronounced |
 | **Bias** | Pushes samples off the surface to stop flat areas self-occluding (acne) |
+| **Half Resolution** | Computes and blurs the occlusion at half width and height, for about a quarter of the cost, and lit meshes upsample it. The depth pre-pass stays full size |
 
 Because the effect only touches ambient light, it is most visible with a strong ambient
 source — raise **Global Illumination Intensity** or use IBL if SSAO looks too subtle in a
