@@ -1029,7 +1029,8 @@ a character behind a tree or a roof stays in view. A script sets the
 usually each frame from the player; a radius of 0, the default, turns it off.
 
 The clear area is a cone from the camera to a sphere of `seeThroughRadius` round the target,
-so it keeps one size on screen: full in its inner half, fading out in the outer half.
+so it keeps one size on screen, and a cylinder along the view for an orthographic camera:
+full in its inner half, fading out in the outer half.
 `seeThroughOpacity` (0.3 by default) is what stays of a mesh at the centre. Only what lies in
 front of the target thins out, starting `seeThroughMargin` (0.5 by default) before it and full
 at twice that, so a wide circle still clears a tree right in front of a character while the
