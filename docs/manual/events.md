@@ -56,7 +56,10 @@ Defined in `engine/core/util/FunctionSubscribe.h`.
 With `DORIAX_CRASH_GUARD` enabled, failing subscribers are removed automatically and
 optionally reported through a global crash handler. A C++ exception that escapes a
 subscriber counts as a failure too, and the report carries its message. Copies of an
-event share their subscribers, so a failing one stops running in all of them.
+event share their subscribers, so a failing one stops running in all of them. A
+subscriber stays guarded after it calls another event, and a crash outside the
+subscribers goes to the handler that was installed before, such as the editor's
+[crash log](../about/faq.md#where-can-i-find-the-editor-crash-log).
 
 ## Engine events
 
