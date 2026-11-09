@@ -1,5 +1,5 @@
 ---
-description: Fork, edit, and customize the built-in shaders for Mesh (colour and depth), UI, Points, Lines, Sky, and Water (surface and underwater) — per component or as scene-wide defaults — feed them custom uniforms from the editor or from scripts, and add custom post-process passes, directly in the Doriax editor.
+description: Fork, edit, and customize the built-in shaders for Mesh (colour and depth), UI, Points, Lines, Sky, and Water (surface and underwater) — per component or as scene-wide defaults — feed them declared parameters from the editor or from scripts, and add custom post-process passes, directly in the Doriax editor.
 ---
 
 # Custom Shaders
@@ -31,7 +31,7 @@ project; you edit the shading code while the rest of the rendering contract stay
   casting and screen-space effects continue to work. A Mesh can fork its **depth shader**
   as well — the one behind its shadow maps and the depth pre-pass — for a colour fork
   that moves vertices or discards fragments (see [The Depth Shader row](#the-depth-shader-row)).
-  To only move vertices, a [vertex offset](#the-vertex-offset-row) is simpler: one function
+  To only move vertices, a [vertex offset](#the-vertex-offset-and-coverage-rows) is simpler: one function
   that every pass applies.
 - `#include` directives still resolve against the engine's shader library, so you only
   need the top-level `.vert`/`.frag` — not the whole include tree. If you want to edit the
@@ -39,7 +39,7 @@ project; you edit the shading code while the rest of the rendering contract stay
 
 This means you customize the *surface/shading logic* while the engine continues to drive
 lighting, passes, and built-in inputs. Values of your own — a wave speed, a dissolve
-amount, the current time — reach the fork through its [shader uniforms](#shader-uniforms).
+amount, the current time — reach the fork through its [shader parameters](#shader-parameters).
 
 ## The Shader row
 
@@ -78,10 +78,10 @@ the same displacement or `discard` there, and the shadow follows. The variant de
 (skinning, morph targets, terrain, instancing, alpha mask) are the ones `depth.vert` and
 `depth.frag` already handle, so the fork keeps working across those cases.
 
-A depth fork reads the same [shader uniforms](#shader-uniforms) as the colour fork, so
-one value drives both: declare the same member names in its `u_vs_customParams` /
-`u_fs_customParams` blocks. It is compiled as soon as it is set — even in a scene with no
-shadow-casting light — so its members and build errors show up right away; a fork that
+A depth fork reads the same [shader parameters](#shader-parameters) as the colour fork,
+so one value drives both: declare the same `@param` names in it. It is compiled as soon as
+it is set — even in a scene with no shadow-casting light — so build errors show up right
+away; a fork that
 fails to build is reported as **Depth shader failed to build** under the row while the
 built-in depth shader keeps drawing.
 
@@ -91,8 +91,8 @@ with the project, and scriptable through `customDepthShader` (see
 [Setting values from scripts](#setting-values-from-scripts)).
 
 !!! note "Resolution in a depth fork"
-    `resolution` is the size of the target being written: the shadow slot of a cascade
-    or cube face, or the depth pre-pass target.
+    `Engine.resolution` is the size of the target being written: the shadow slot of a
+    cascade or cube face, or the depth pre-pass target.
 
 ### Depth forks and the depth prepass
 
@@ -109,73 +109,44 @@ without a depth fork is left out of the prepass and drawn once in the colour pas
 the built-in depth shader cannot know where the fork moves its vertices. Add a depth fork
 with the same displacement to bring it back in.
 
-## The Vertex Offset row
+## The Vertex Offset and Coverage rows
 
-A Mesh component also has a **Vertex Offset** row, for meshes that only need their
-vertices moved — waves, flags, wobbling props — without forking any shader. It takes one
-`.glsl` file that defines a single function:
+A Mesh component also has a **Vertex Offset** row and a **Coverage** row, for meshes that
+only need their vertices moved or part of their surface removed, without forking any
+shader. Each takes one `.glsl` file with a single function:
 
 ```glsl
 vec3 getVertexOffset(vec3 localPosition, vec3 worldPosition);
+float getCoverage(CoverageContext context);
 ```
 
-It returns how far the vertex moves, in world units. `localPosition` is the vertex in the
-mesh's own space, after skinning and morph targets, and `worldPosition` is where it lands
-before the move. The engine calls it in the colour, depth and G-buffer passes, so the
-shadow, SSAO and screen-space reflections follow without a depth fork, and the mesh keeps
-the built-in shading. It also works under a colour or depth fork whose `.vert` keeps the
-`USE_VERTEX_OFFSET` lines of the built-in one.
+The engine runs them in the color, depth and G-buffer passes, so shadows, SSAO and
+screen-space reflections follow without a depth fork, and the mesh keeps the built-in
+shading. Their values are declared in comments, such as `// @param float waveHeight = 0.2`,
+and edited in the effect's own **Parameters** section under the table. See
+[Shader Effects](../manual/shader-effects.md) for the functions, the parameters and the
+engine's effects.
 
 | Control | Action |
 | --- | --- |
-| **None** label | Shown while the mesh has no vertex offset. |
-| **New** | Writes a starting file (a wave) to `shaders/<entity>_offset.glsl`, assigns it, and opens it in the Code Editor. |
-| **Engine offsets** | Assigns one of the engine's own, such as `offsets/wind.glsl`, shown as *built-in*. |
+| **None** label | Shown while the mesh has no effect of that kind. |
+| **New** | Writes a starting file to `shaders/<entity>_offset.glsl` or `shaders/<entity>_coverage.glsl`, assigns it, and opens it in the Code Editor. |
+| **Engine effects** | Assigns one of the engine's own, such as `offsets/wind.glsl` or `coverage/see_through.glsl`, shown as *built-in*. |
 | **Pick** | Assigns an existing `.glsl` from the project. |
+| **Copy** | Copies the assigned built-in effect into the project, assigns the copy and opens it, to change it. |
 | **Open** | Re-opens the assigned file. |
-| **Remove** | Clears the vertex offset. |
+| **Remove** | Clears the effect. |
 | Drag-and-drop | Drop a `.glsl` from the [Resources Browser](resources.md) onto the row. |
 
-The function can read two engine values:
+**Max Offset**, shown under a vertex offset, is the longest offset in world units: longer
+ones are clamped, and culling widens the mesh bounds by it. **Cut Shadows**, shown under a
+coverage function, makes the shadow maps follow the coverage too.
 
-| Value | Meaning |
-| --- | --- |
-| `vertexOffset.params.x` | Scene time in seconds. Like the water, it holds while the editor scene is stopped or paused, and it stops when the game pauses. |
-| `vertexOffset.wind` | The scene [wind](../manual/rendering-pipeline.md#wind) in m/s in `xyz`, and in `w` the meters of air blown past, which move gusts at the wind's speed without jumping when it changes. |
-
-Values of your own go in a `u_vs_offsetParams` block, filled from the
-[shader uniforms](#shader-uniforms) rows like a fork's; it is a block of its own, so a fork
-on the same mesh keeps its `u_vs_customParams`:
-
-```glsl
-uniform u_vs_offsetParams {
-    float waveHeight;
-} offsetParams;
-
-vec3 getVertexOffset(vec3 localPosition, vec3 worldPosition){
-    float time = vertexOffset.params.x;
-    return vec3(0.0, sin(time * 2.0 + worldPosition.x) * offsetParams.waveHeight, 0.0);
-}
-```
-
-The engine's `offsets/wind.glsl` sways the mesh in the scene
-[wind](../manual/rendering-pipeline.md#wind), with `windSway` and `windSwayHeight` as its
-uniforms. A project offset can sway as well: `#include "includes/wind.glsl"` and add
-`getWindSway(localPosition, worldPosition, sway, swayHeight)` to its result.
-
-An offset file finds its [includes](#includes) like a fork, starting in its own folder.
+An effect file finds its [includes](#includes) like a fork, starting in its own folder.
 Those files stay its own: a fork on the same mesh with a file of the same name does not
-replace them.
-
-**Max Offset**, shown once a file is assigned, is the longest offset in world units.
-Longer ones are clamped to it, and culling widens the mesh bounds and each instance's
-sphere by it, so geometry that moves into view is not cut off at the screen edge or out
-of a shadow cascade. At 0 nothing is clamped and the bounds stay those of the mesh data.
-
-The lighting keeps the normals of the unmoved surface. Each offset file builds its own
-shaders, compiled and exported with the project like a fork; meshes without one draw as
-before. Terrain ignores it. Scripts set it through `vertexOffsetShader` and
-`vertexOffsetMax` (see [Setting values from scripts](#setting-values-from-scripts)).
+replace them. Each combination of fork and effect files builds its own shaders, compiled
+and exported with the project like a fork. Terrain ignores both rows. Scripts set them
+through `vertexOffsetShader`, `vertexOffsetMax`, `coverageShader` and `coverageShadows`.
 
 ## Water shaders
 
@@ -187,8 +158,7 @@ pre-filled with an `_underwater` suffix, and a fork that fails to build is repor
 **Underwater shader failed to build** under the row while the built-in fade keeps
 drawing.
 
-Both forks read the water's [shader uniforms](#shader-uniforms) — the surface through
-`u_vs_customParams` / `u_fs_customParams`, the fade through `u_fs_customParams` — so one
+Both forks read the water's [shader parameters](#shader-parameters) by name, so one
 value can drive both. The surface shader can also be a
 [scene default](#scene-default-shaders); the underwater shader is per water only.
 
@@ -257,14 +227,13 @@ shader returns it to the scene default (or the built-in if the scene has none). 
 single component on stock shading while a scene default is active, fork the built-in
 shader for that component and leave it unedited.
 
-A default that declares [shader uniforms](#shader-uniforms) lists them under its row, below
-a line named after the fork (for example **toon Uniforms**). Values set there belong to the
-scene, and every component that inherits the shader reads them. A component can still set
-its own value for a member, and that value wins (see [Editing values](#editing-values)).
-The rows appear once a component renders with the fork, and they cover the members of
-every shader variant in use.
+A default that declares [shader parameters](#shader-parameters) lists them under its row,
+in a section named after the fork (for example **toon Parameters**). Values set there
+belong to the scene, and every component that inherits the shader reads them. A component
+can still set its own value for a parameter, and that value wins (see
+[Editing values](#editing-values)).
 
-Scene default shaders and their uniform values are saved with the scene, applied in play
+Scene default shaders and their values are saved with the scene, applied in play
 mode, and exported like any other custom shader — components that inherit them compile and
 ship the right shader variants automatically. They are also scriptable via the `Scene`
 properties `defaultMeshShader`, `defaultUIShader`, `defaultSkyShader`, `defaultPointsShader`,
@@ -273,68 +242,81 @@ properties `defaultMeshShader`, `defaultUIShader`, `defaultSkyShader`, `defaultP
 [`setDefaultShaderUniform`](../reference/classes/scene.md#setdefaultshaderuniform), which
 takes the shader type (`ShaderType.MESH`, `ShaderType.UI`, and so on).
 
-## Shader uniforms
+## Shader parameters
 
-A fork can declare a uniform block of its own and have the engine fill it: from rows in
-the Properties window, from a script every frame, or with the current time. This is how
-a water, wave, fire, or dissolve effect gets its parameters.
+A fork declares its own values in comments, and the engine fills them from fields in the
+Properties window, from scripts, and from values the scene and its cameras share. This is
+how a water, wave, fire, or dissolve effect gets its parameters.
 
-Declare `u_vs_customParams` in the vertex shader, `u_fs_customParams` in the fragment
-shader, or both. Members are matched **by name**, so a name that appears in both blocks
-receives the same value in both stages:
+Write one `// @param` line per value, in the vertex file, the fragment file, or an include,
+and read it as `params.name`. Every built-in shader calls `loadShaderParameters()` at the
+top of `main()`, which fills `params`, so a fork can read them anywhere after that:
 
 ```glsl
 // wave.vert
-uniform u_vs_customParams {
-    float time;
-    float amplitude;
-} customParams;
+// @param float amplitude = 0.2 [0, 1] "Height of the waves"
+// @param float speed = 3 [0, 10]
 
 // ... in main():
-pos.y += sin(customParams.time * 3.0 + pos.x * 4.0) * customParams.amplitude;
+pos.y += sin(Engine.time * params.speed + pos.x * 4.0) * params.amplitude;
 ```
+
+Keep that call in a fork: without it the values read zero, and the build warns about it.
 
 !!! warning "Vertex displacement is colour-pass only"
     A fork only replaces the colour pass, so a vertex moved like this swims while its
     shadow stays where the mesh data is. Fork the [depth shader](#the-depth-shader-row)
     as well and displace there too, and the shadow (and SSAO, while SSR is off) follows.
     Screen-space reflections read the built-in G-buffer and keep the undisplaced surface.
-    A [vertex offset](#the-vertex-offset-row) moves every pass at once.
+    A [vertex offset](#the-vertex-offset-and-coverage-rows) moves every pass at once.
 
 ```glsl
 // wave.frag
-uniform u_fs_customParams {
-    float time;
-    vec4 tint;
-} customParams;
+// @param vec4 tint = 0.2, 0.5, 1, 1 color
 
 // ... at the end of main():
-g_finalColor.rgb = mix(g_finalColor.rgb, customParams.tint.rgb, 0.5 + 0.5 * sin(customParams.time));
+g_finalColor.rgb = mix(g_finalColor.rgb, params.tint.rgb, 0.5 + 0.5 * sin(Engine.time));
 ```
 
-The built-in Mesh, UI, Points, Lines, Sky, Water, underwater, and depth sources all carry a
-comment showing the declaration, so a fresh fork has it at hand. Nothing else is needed:
-the block is picked up from the compiled shader by name, and a fork that declares none
-behaves exactly as before.
+A name declared in both files is one value. The types are `float`, `vec2`, `vec3`, `vec4`,
+`int`, and `ivec2` to `ivec4`, and a declaration can give a default, a range, a color picker,
+and a tooltip. `@scene` and `@view` lines read values that the whole scene or one camera
+shares, and `Engine.time` and `Engine.resolution` need no declaration. The syntax and where
+each value comes from are in
+[Shader Effects — Declaring parameters](../manual/shader-effects.md#declaring-parameters).
+
+Every shader type takes them: Mesh, depth, UI, Points, Lines, Sky, Water, underwater, and
+post-process forks. The shader builder packs the values of each stage into one uniform
+block, so a fork declares no uniform block of its own, and changing a value never rebuilds
+the shader.
+
+!!! warning "Forks from v0.8.4 and earlier"
+    Older forks declared `u_vs_customParams`, `u_fs_customParams`, or `u_fs_postParams`
+    blocks. The engine no longer fills them, and a fork that still reads one fails to build
+    with an error naming the block. Replace each member with a `// @param` line and read it as
+    `params.name`. The values saved by name on the component or the pass are kept. `time`
+    becomes `Engine.time`, which follows the scene's clock, and `resolution` becomes
+    `Engine.resolution`.
 
 ### Editing values
 
-Every member becomes a row in the Properties window, below the component's **Shader** row
-and under a line named after the fork (for example **wave Uniforms**). Save the file and
-the rows appear. Values are stored **on the component**, by name:
+Each shader file of the component gets a **Parameters** section below the Shaders table,
+named after the file (for example **wave Parameters**), with one field per `@param`. Saving
+the file updates the fields. Values are stored **on the component**, by name:
 
-- A Mesh keeps one set of values for all of its submeshes.
+- A Mesh keeps one set of values for all of its submeshes, and its depth fork and effect
+  files read the same values.
 - A component that inherits a [scene default shader](#scene-default-shaders) shows the
-  scene's value for any member it has not set. Editing the row gives the component its
+  scene's value for any parameter it has not set. Editing the field gives the component its
   own value, which wins, so two meshes on the same default shader can still be tinted
-  differently. A row with its own value has a reset arrow that goes back to the scene's.
-- Reordering members keeps their values; renaming or deleting one drops its value. A
-  member with no value reads zero — GLSL uniform blocks have no initializers.
+  differently. A field with its own value has a reset arrow that goes back to the scene's.
+- A parameter nobody set reads its declared default. Renaming or deleting a parameter
+  leaves its old value unused.
 
-The rows are drag fields (`float`, `vec2`, `vec3`, `vec4` and their `int` forms), every
-edit is undoable, and the values are saved with the scene and exported with it. Matrix and
-array members take no value and stay zero; they show as *Not editable* — declare one
-scalar or vector member per value instead.
+The fields follow the declaration: a range limits the drag, `color` shows a color picker,
+`int` types take whole numbers, and the description is the tooltip. Every edit is undoable,
+and the values are saved with the scene and exported with it. The section also lists the
+scene and view parameters the file reads, which are edited on the scene and on each camera.
 
 !!! note "glTF models"
     A multi-node glTF `Model` renders through its part entities (one Mesh component
@@ -342,46 +324,31 @@ scalar or vector member per value instead.
     and edit the shader, and set the values, on the parts — like colour and material —
     not on the Model root.
 
-Two names are **reserved** and written by the engine every frame instead of being edited;
-they head the list, dimmed, as *Set by the engine*:
-
-| Name | Contents |
-| --- | --- |
-| `time` | Seconds elapsed since startup — wall-clock time, so it keeps running in the editor viewport and while the game is paused. For gameplay-driven time, set a member of your own from a script. |
-| `resolution` | `xy` = width and height of the render target the component is drawn into — the camera's framebuffer, the fixed-resolution target, the view, or a reflection probe face — `zw` = `1 / width` and `1 / height`. |
-
-`resolution` is what screen-space effects need (scanlines, pixel snapping, dithering
-against `gl_FragCoord`), and it follows the target: the same fork drawn by a
-render-to-texture camera sees that camera's size. Rename a member if you want to drive
-a value with one of these names yourself.
-
-!!! warning "Do not mix int and float members"
-    The OpenGL backends flatten a uniform block into a single upload typed after its
-    first member, so a block holding both `int` and `float` members uploads incorrectly
-    there. Keep one block to one scalar kind. A warning under the **Shader** row flags a
-    block that mixes them, and a name declared with different types in the vertex and
-    fragment blocks (one value feeds both).
+`Engine.resolution` is what screen-space effects need (scanlines, pixel snapping,
+dithering against `gl_FragCoord`), and it follows the target: the same fork drawn by a
+render-to-texture camera sees that camera's size. See
+[Engine values](../manual/shader-effects.md#engine-values) for both engine values.
 
 ### Setting values from scripts
 
-The same values are scriptable, so a uniform can follow gameplay or animate every frame.
+The same values are scriptable, so a parameter can follow gameplay or animate every frame.
 `Mesh` (and everything derived from it — `Shape`, `Model`, `Sprite`, `Terrain`,
 `Tilemap`), `Image`, `Text`, `Polygon`, `Points`, `Lines`, `SkyBox`, and `Water` all
 expose:
 
 | Method | Meaning |
 | --- | --- |
-| `setShaderUniform(name, value)` | Sets a member. `value` is a `float`, `Vector2`, `Vector3`, or `Vector4`; the components a narrower value leaves out read zero. |
-| `getShaderUniform(name)` | The stored value as a `Vector4` (zero when unset). It reads the value list, not the block — `time` and `resolution` are not there; scripts read the same clock as `Engine.systemTime`. Values inherited from a [scene default](#scene-default-shaders) are not there either. |
-| `removeShaderUniform(name)` | Drops the value; the member reads zero again. |
+| `setShaderUniform(name, value)` | Sets the value of a parameter. `value` is a `float`, `Vector2`, `Vector3`, or `Vector4`; the components a narrower value leaves out read zero. |
+| `getShaderUniform(name)` | The component's own value as a `Vector4`, zero when unset. Declared defaults and values inherited from a [scene default](#scene-default-shaders) are not there. |
+| `removeShaderUniform(name)` | Drops the value, so the parameter reads the inherited or declared default again. |
 | `customShader` | The fork base path, so a script can assign or reset the fork too. |
 | `customDepthShader` | A Mesh's [depth fork](#the-depth-shader-row) base path; it reads the same values. |
-| `vertexOffsetShader` | A Mesh's [vertex offset](#the-vertex-offset-row) file; it reads the same values. |
+| `vertexOffsetShader` | A Mesh's [vertex offset](#the-vertex-offset-and-coverage-rows) file; it reads the same values. |
 | `vertexOffsetMax` | The longest offset in world units, which also widens the culling bounds; 0 = no limit. |
 | `customUnderwaterShader` | A Water's [underwater fork](#water-shaders) base path; it reads the same values. |
 
-Setting a value only rewrites the block bytes — no shader reload — so calling it every
-frame is fine:
+Setting a value only rewrites the uploaded block, with no shader reload, so calling it
+every frame is fine:
 
 === "C++"
 
@@ -406,22 +373,21 @@ frame is fine:
     end
 
     function WaveScript:onUpdate()
-        -- "time" and "resolution" need no call: the engine writes them. Gameplay-driven
-        -- values go through the same method every frame.
+        -- Engine.time needs no call: the engine writes it. Gameplay-driven values
+        -- go through the same method every frame.
         self.water:setShaderUniform("amplitude", 0.3 * self.stormLevel)
     end
     ```
 
-Setting a reserved name (`time`, `resolution`) logs an error and is ignored. For a glTF
-model, call these on the part entities (`Mesh(scene, scene:findEntity("Body"))`), as the
+For a glTF model, call these on the part entities (`Mesh(scene, scene:findEntity("Body"))`), as the
 note above explains. See the [Mesh reference](../reference/classes/mesh.md#setshaderuniform)
 for the full signatures.
 
-!!! note "Colour and depth forks only"
-    Custom blocks reach the fork's colour pass and, for a Mesh, its
-    [depth fork](#the-depth-shader-row), which reads the same values. The G-buffer pass
-    keeps the built-in shader, so a uniform-driven displacement never moves the object's
-    screen-space reflection.
+!!! note "The G-buffer pass"
+    A Mesh's values reach its colour fork, its [depth fork](#the-depth-shader-row), and its
+    effect files. The SSR G-buffer pass keeps the built-in shader and runs only the effect
+    files, so a displacement written in a fork never moves the object's screen-space
+    reflection, while a [vertex offset](#the-vertex-offset-and-coverage-rows) does.
 
 ## Post-process passes
 
@@ -445,7 +411,7 @@ section of the scene settings in the Properties window.
 
 Every change is undoable, and the chain is saved with the scene.
 
-![A post-process pass: its header, the Shader row, and the NewScenePost1 Uniforms section](../assets/screenshots/properties-postprocess.png)
+![A post-process pass: its header, the Shader row, and the NewScenePost1 Parameters section](../assets/screenshots/properties-postprocess.png)
 
 The chain runs on the scene's **active camera**, after the opaque, transparent, UI, and
 SSR passes, and before the fixed-resolution upscale. Secondary cameras — minimaps,
@@ -474,47 +440,28 @@ bound:
     `v_texcoord.y` when sampling them on the OpenGL backends. The built-in `ssr.frag` shows
     the pattern.
 
-### Pass uniforms
+### Pass parameters
 
-Declaring a `u_fs_postParams` block makes every member an editable row of its pass, under
-a line named after the fork. No extra declaration file or editor change is needed:
+A pass declares its values like any fork, with `// @param` lines, and each one becomes a
+field of the pass in a section named after the fork:
 
 ```glsl
-uniform u_fs_postParams {
-    vec4 resolution;
-    float amount;
-    float threshold;
-    vec4 tintColor;
-} postParams;
+// @param float amount = 0.5 [0, 1]
+// @param float threshold = 0.8 [0, 1]
+// @param vec4 tintColor = 1, 0.9, 0.8, 1 color
+
+// ... in main(), one texel of the pass target:
+vec2 texel = Engine.resolution.zw;
 ```
 
-Add a member, save the file, and a row appears for it. Values are stored **by name**, so
-reordering members keeps them, and renaming or deleting one simply drops its saved value.
-A member with no saved value is zero — GLSL uniform blocks have no initializers, so there
-is no shader-side default to read.
-
-Two names are **reserved** and written by the engine every frame instead of being edited.
-They head the list, dimmed, as *Set by the engine*:
-
-| Name | Contents |
-| --- | --- |
-| `resolution` | `xy` = width and height of the pass target, `zw` = `1 / width` and `1 / height`. |
-| `time` | Seconds elapsed since startup. |
-
-Use `resolution` for anything that depends on target size — a texel offset written as a
-literal breaks the moment the window resizes. Rename the uniform if you want to drive that
-value yourself.
-
-!!! warning "Do not mix int and float members"
-    The OpenGL backends flatten a uniform block into a single upload typed after its first
-    member, so a block holding both `int` and `float` members uploads incorrectly there.
-    Keep one block to one scalar kind.
-
-Members are edited as drag fields; matrix and array members take no value and show as
-*Not editable*.
+The values are stored by name on the pass. `Engine.resolution` holds the size of the pass
+target and its inverse: use it for anything that depends on target size, since a texel
+offset written as a literal breaks the moment the window resizes. `@scene` and `@view`
+values work in a pass too, so it can follow the same `Weather.wetness` as the scene's
+materials, and the pass's fullscreen vertex shader can declare parameters as well.
 
 The values are scriptable as well. `scene:setPostProcessUniform(index, name, value)`
-rewrites one member of the pass at `index` (top of the list is 0, also from Lua) without
+rewrites one value of the pass at `index` (top of the list is 0, also from Lua) without
 rebuilding the chain, so it can run every frame; `scene:getPostProcessUniform(index, name)`
 reads it back, `scene:removePostProcessUniform(index, name)` drops it, and
 `scene:setPostProcessPassEnabled(index, enabled)` toggles a pass. The
@@ -550,7 +497,7 @@ Forked shaders open in the [Code Editor](code-editor.md) with GLSL syntax highli
 recompiles the affected forked shaders and refreshes the viewport — no rebuild or replay
 needed.
 
-![A post-process fragment shader open in the Code Editor next to its uniform rows](../assets/screenshots/editor-shader-code.png)
+![A post-process fragment shader open in the Code Editor next to its parameter fields](../assets/screenshots/editor-shader-code.png)
 
 Only shaders that actually reach the edited file through `#include` are rebuilt: the
 editor tracks each fork's real dependency graph rather than assuming everything in a

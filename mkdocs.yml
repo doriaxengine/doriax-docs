@@ -117,6 +117,7 @@ nav:
       - 3D Graphics: 'manual/3d-graphics.md'
       - Rendering Pipeline: 'manual/rendering-pipeline.md'
       - Shader Variants: 'manual/shader-variants.md'
+      - Shader Effects: 'manual/shader-effects.md'
       - Multiple Resolutions: 'manual/multiple-resolutions.md'
       - User Interface: 'manual/user-interface.md'
       - Animation: 'manual/animation.md'

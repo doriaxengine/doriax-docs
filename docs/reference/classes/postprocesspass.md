@@ -9,7 +9,7 @@ description: PostProcessPass API reference — one fullscreen pass of a scene's 
 ## Description
 
 One entry of a scene's post-process chain: the forked fullscreen shader to run, whether
-it runs, and the values of its `u_fs_postParams` members. Passes are plain values —
+it runs, and the values of the parameters it declares. Passes are plain values —
 build them, then hand the whole chain to
 [Scene.postProcessPasses](scene.md#postprocesspasses). To change a value on a chain that
 is already running, use [Scene.setPostProcessUniform](scene.md#setpostprocessuniform),
@@ -66,11 +66,9 @@ so it can be turned back on at runtime with
 * `Vector4 getUniform(const std::string& name) const`
 * `bool removeUniform(const std::string& name)`
 
-Values for the members of the shader's `u_fs_postParams` block, keyed by member name and
-stored in `uniforms`. A name the shader does not declare is stored but unused, a member
-with no value reads zero, matrix and array members take no value, and `time` and
-`resolution` are written by the engine every frame — setting either logs an error and is
-ignored. A narrower value leaves the remaining components at zero. These edit the pass
+Values of the parameters the shader declares with `// @param`, keyed by name and stored
+in `uniforms`. A name the shader does not declare is stored but unused, and a parameter
+with no value reads its declared default. A narrower value leaves the remaining components at zero. These edit the pass
 value only; the scene picks the change up when the chain is set again (a value-only change
 keeps the compiled chain).
 

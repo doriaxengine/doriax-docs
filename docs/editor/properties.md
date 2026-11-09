@@ -95,6 +95,10 @@ section for setting the framebuffer **Width**, **Height**, and sampling **Filter
 (Nearest or Linear). These control the resolution and look of the output texture, are
 saved with the scene, and are applied in exported projects.
 
+A camera's properties also list the view [shader parameters](../manual/shader-effects.md#in-the-editor)
+the scene's shaders declare, such as the opening of the engine's see-through, under
+**Shader Parameters**.
+
 When the field holds an image texture (not a camera link or an empty slot), a sliders
 button next to the camera button opens the **Texture Settings** popup:
 
@@ -210,7 +214,9 @@ The **Mesh** component exposes rendering flags beyond per-submesh material slots
 | **Detail Levels** | Let this mesh use [simplified meshes](../manual/rendering-pipeline.md#mesh-detail-lod) while the scene's Mesh Detail is on. Turn off to always keep it at full detail. |
 | **Detail Bias** | Scales how far detail is kept: above 1 keeps it longer, below 1 drops it sooner. Shown only while the scene's Mesh Detail is on. |
 | **Render in Probes** | Whether the mesh appears in [Reflection Probe](../reference/classes/reflectionprobe.md) captures. Turn it off so an object wrapped around a probe is not seen in its own reflection. |
-| **See Through** | Dither the mesh away where it hides the scene's [see-through target](../manual/rendering-pipeline.md#see-through), which a script sets. Shadows stay whole. |
+
+Effects such as wind, see-through or a dissolve are set in the mesh's **Shaders** section, as a
+[vertex offset or a coverage function](custom-shaders.md#the-vertex-offset-and-coverage-rows).
 
 Each **Submesh** section contains a **Material** row with a shaded preview sphere. The
 preview reflects the current **Receive IBL** setting so you can see environment
@@ -289,23 +295,22 @@ discard fragments, so the shadow follows — see
 has an **Underwater Shader** row instead, for the fade seen from below the surface — see
 [Custom Shaders — Water shaders](custom-shaders.md#water-shaders).
 
-A fork that declares a `u_vs_customParams` or `u_fs_customParams` block gets one editable
-row per member below the Shader row, under a line named after the fork (`time` and
-`resolution` come first, written by the engine); the values are saved on the component,
-shared with the depth fork, and also scriptable through `setShaderUniform` — see
-[Custom Shaders — Shader uniforms](custom-shaders.md#shader-uniforms).
+Each fork, and each effect file of a Mesh, gets a **Parameters** section with one field
+per `// @param` line it declares. The values are saved on the component, shared by all of
+its shaders, and scriptable through `setShaderUniform`. See
+[Custom Shaders — Shader parameters](custom-shaders.md#shader-parameters).
 
 A scene can also define a **default custom shader per type** (in the scene settings'
 **Default Shaders** section). Components with no shader of their own inherit it, and their
 Shader row shows its name followed by *(scene default)*. A shader assigned on the component
-always takes priority over the scene default. When the default declares uniforms, the
-section has rows for them too: those values belong to the scene, and an inheriting
-component reads them for every member it does not set itself.
+always takes priority over the scene default. When the default declares parameters, the
+section has fields for them too: those values belong to the scene, and an inheriting
+component reads them for every parameter it does not set itself.
 
 The scene settings also have a **Post-processing** section: an ordered list of fullscreen
 passes, each one a forked shader under a collapsible header with reorder and remove
-buttons, and an enable checkbox in its Shader row. Any value the pass declares in its
-`u_fs_postParams` block becomes an editable row here.
+buttons, and an enable checkbox in its Shader row. Each `// @param` the pass declares
+becomes a field here.
 
 See [Custom Shaders](custom-shaders.md) for the full workflow, scene defaults, post-process
 passes, includes, and project settings.
@@ -447,7 +452,9 @@ on the water while it moves. It is made only during Play, from how the entity mo
 
 With no entity selected, Properties edits the scene. Lighting, shadows, SSAO, SSR,
 fixed resolution, default shaders, and post-processing live here — see
-[Rendering Pipeline](../manual/rendering-pipeline.md) for those.
+[Rendering Pipeline](../manual/rendering-pipeline.md) for those. The scene values of
+[shader parameters](../manual/shader-effects.md#in-the-editor), such as the wind, are under
+**Shader Parameters**.
 
 ![Scene settings with SSAO and SSR enabled](../assets/screenshots/properties-scene-settings.png)
 

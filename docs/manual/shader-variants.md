@@ -99,13 +99,12 @@ the numeric form is what a scene file's `shaderKeys` entries hold.
 | 26 | `Ifd` | Instance distance fade |
 | 27 | `Tpb` | Terrain PBR layers |
 | 28 | `Dlo` | Directional lights only |
-| 29 | `Stt` | [See-through](rendering-pipeline.md#see-through) |
 
 Bit 5 is reserved: it used to select the PCF shadow filter, which is uniform-driven now
 (Scene shadow quality).
 
 A scene whose lights are all directional draws built-in lit meshes with `Dlo`, which leaves
-out the point and spot light code, also when the mesh only adds a vertex offset. An export
+out the point and spot light code, also when the mesh only adds effect functions. An export
 ships every such variant both with and without it, so a script can still add a point or
 spot light at runtime.
 
@@ -122,7 +121,14 @@ spot light at runtime.
 | 6 | `Ist` | Instancing |
 | 7 | `Ams` | Alpha mask |
 | 8 | `Ifd` | Instance distance fade |
-| 9 | `Stt` | [See-through](rendering-pipeline.md#see-through) |
+| 9 | `Uv1` | Primary UV set for a [coverage function](shader-effects.md#coverage) |
+
+The `gbuffer` type takes `Uv1` at bit 12 for the same reason.
+
+[Shader effects](shader-effects.md) need no bit of their own: the vertex offset and the
+coverage function are part of the custom shader name that follows `@` in a spec, as
+`fork#vertexOffset#coverage`, for example `mesh:Uv1,Puc,Nor@#offsets/wind.glsl` or
+`depth:Uv1@##coverage/dissolve.glsl`.
 
 ### `ui`, `points`, `lines`
 
@@ -162,13 +168,14 @@ variant list assembled by hand tends to be short by a factor of two or four:
 - **`Vc4`** turns on for any model whose glTF carries `COLOR_0`, which many scanned
   assets do without it being obvious.
 - **`Uv1`** needs a texture, not just UVs: a generated mesh with texture coordinates but
-  an untextured material does not set it.
+  an untextured material does not set it, unless the mesh has a coverage function, which
+  reads the UV set in every pass.
 
 ## When a build is missing one
 
 An exported game loads each variant from its precompiled set. When one is absent, it
 draws with the nearest variant that leaves out some optional features, such as fog,
-see-through, shadows, or a texture, and logs a warning:
+shadows, or a texture, and logs a warning:
 
 ```
 Shader mesh_Uv1Uv2PucShwNorTanFogSkiSaoAop is missing, using mesh_PucShwNorTanFogSkiSaoAop

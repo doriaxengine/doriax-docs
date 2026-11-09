@@ -47,5 +47,6 @@ The data behind a [Camera](camera.md). In Lua, get it with `camera:getCameraComp
 | `customViewMatrix` | C++ \| Lua |
 | `invertCulling` | C++ \| Lua |
 | `needUpdate` | C++ \| Lua |
+| `shaderParameters` | C++ |
 
-Set `needUpdate` after changing the projection, clip, or target fields. `framebuffer` is the render target used when `renderToTexture` is on.
+Set `needUpdate` after changing the projection, clip, or target fields. `framebuffer` is the render target used when `renderToTexture` is on. `shaderParameters` holds the camera's saved view [shader parameters](camera.md#shader-parameters) by `Collection.name`.

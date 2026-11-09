@@ -61,7 +61,6 @@ See [EntityHandle ownership](entityhandle.md#ownership-and-lifetime).
 | float | [lodBias](#lodenabled-lodbias) | `1.0` | C++ \| Lua |
 | bool | shadowsBillboard | `true` | C++ \| Lua |
 | bool | [renderInReflectionProbes](#renderinreflectionprobes) | `true` | C++ \| Lua |
-| bool | [seeThrough](#seethrough) | `false` | C++ \| Lua |
 | bool | castShadowsWithTexture | `false` | C++ \| Lua |
 | bool | [transparent](#transparent-autotransparency) | `false` | C++ \| Lua |
 | bool | [autoTransparency](#transparent-autotransparency) | `true` | C++ \| Lua |
@@ -69,6 +68,8 @@ See [EntityHandle ownership](entityhandle.md#ownership-and-lifetime).
 | string | [customDepthShader](#customdepthshader) | `""` | C++ \| Lua |
 | string | [vertexOffsetShader](#vertexoffsetshader-vertexoffsetmax) | `""` | C++ \| Lua |
 | float | [vertexOffsetMax](#vertexoffsetshader-vertexoffsetmax) | `0` | C++ \| Lua |
+| string | [coverageShader](#coverageshader-coverageshadows) | `""` | C++ \| Lua |
+| bool | [coverageShadows](#coverageshader-coverageshadows) | `false` | C++ \| Lua |
 | unsigned int | [maxInstances](#maxinstances) | `100` | C++ \| Lua |
 | bool | [instancedBillboard](#instancedbillboard-instancedcylindricalbillboard) | `false` | C++ \| Lua |
 | bool | [instancedCylindricalBillboard](#instancedbillboard-instancedcylindricalbillboard) | `false` | C++ \| Lua |
@@ -286,30 +287,6 @@ keeps the old contents until it captures again.
 
 ---
 
-### seeThrough
-
-* *Setter:* `void setSeeThrough(bool seeThrough)`
-* *Getter:* `bool isSeeThrough() const`
-
-Dithers the mesh away where it stands between the main camera and the scene's
-[see-through target](scene.md#seethroughtarget-seethroughradius-seethroughopacity-seethroughmargin),
-so the target shows through it. Shadows stay whole. Changing it reloads the mesh with the
-`Stt` shader variant. See [See-through](../../manual/rendering-pipeline.md#see-through).
-
-=== "C++"
-
-    ```cpp
-    tree.setSeeThrough(true);
-    ```
-
-=== "Lua"
-
-    ```lua
-    tree.seeThrough = true
-    ```
-
----
-
 ### receiveIBL
 
 * *Setter:* `void setReceiveIBL(bool receiveIBL)`
@@ -396,7 +373,7 @@ Project-relative base path of a forked **depth** shader — the one the mesh is 
 * *vertexOffsetMax Setter:* `void setVertexOffsetMax(float vertexOffsetMax)`
 * *vertexOffsetMax Getter:* `float getVertexOffsetMax() const`
 
-`vertexOffsetShader` is a `.glsl` file, from the project or the engine, defining `vec3 getVertexOffset(vec3 localPosition, vec3 worldPosition)`, which returns how far each vertex moves in world units. The colour, depth and G-buffer passes all apply it, so shadows and reflections follow, and it reads the same [shader uniforms](#setshaderuniform) through `u_vs_offsetParams`. The engine's `offsets/wind.glsl` sways the mesh in the scene [wind](scene.md#wind). Empty (default) moves nothing. Changing it reloads the mesh. `vertexOffsetMax` is the longest offset: longer ones are clamped, and culling widens the bounds by it; `0` means no limit. Terrain ignores both. See [Custom Shaders — The Vertex Offset row](../../editor/custom-shaders.md#the-vertex-offset-row).
+`vertexOffsetShader` is a `.glsl` file, from the project or the engine, defining `vec3 getVertexOffset(vec3 localPosition, vec3 worldPosition)`, which returns how far each vertex moves in world units. The color, depth and G-buffer passes all apply it, so shadows and reflections follow, and its `@param` values are the mesh's [shader uniforms](#setshaderuniform). The engine's `offsets/wind.glsl` sways the mesh in the scene's `Wind.velocity`. Empty (default) moves nothing. Changing it reloads the mesh. `vertexOffsetMax` is the longest offset: longer ones are clamped, and culling widens the bounds by it; `0` means no limit. Terrain ignores both. See [Shader Effects](../../manual/shader-effects.md#vertex-offsets).
 
 === "C++"
 
@@ -412,6 +389,33 @@ Project-relative base path of a forked **depth** shader — the one the mesh is 
     flag.vertexOffsetShader = "shaders/flag_offset.glsl"
     flag.vertexOffsetMax = 0.5
     flag:setShaderUniform("waveHeight", 0.2)
+    ```
+
+---
+
+### coverageShader / coverageShadows
+
+* *coverageShader Setter:* `void setCoverageShader(const std::string& path)`
+* *coverageShader Getter:* `std::string getCoverageShader() const`
+* *coverageShadows Setter:* `void setCoverageShadows(bool coverageShadows)`
+* *coverageShadows Getter:* `bool isCoverageShadows() const`
+
+`coverageShader` is a `.glsl` file, from the project or the engine, defining `float getCoverage(CoverageContext context)`, which returns how much of each fragment stays: 1 keeps it, 0 removes it, and opaque surfaces keep a dithered share in between while blended ones fade. The color, depth and G-buffer passes all apply it, so SSAO and reflections match, and its `@param` values are the mesh's [shader uniforms](#setshaderuniform). The engine ships `coverage/see_through.glsl`, `coverage/dissolve.glsl` and `coverage/height_clip.glsl`. Empty (default) keeps everything. Changing it reloads the mesh. With `coverageShadows` on, the shadow maps follow the coverage too; off (default) they keep the whole silhouette, though the material's alpha mask still applies. Terrain ignores both. See [Shader Effects](../../manual/shader-effects.md#coverage).
+
+=== "C++"
+
+    ```cpp
+    crate.setCoverageShader("coverage/dissolve.glsl");
+    crate.setCoverageShadows(true);
+    crate.setShaderUniform("dissolve", 0.5f);
+    ```
+
+=== "Lua"
+
+    ```lua
+    crate.coverageShader = "coverage/dissolve.glsl"
+    crate.coverageShadows = true
+    crate:setShaderUniform("dissolve", 0.5)
     ```
 
 ### maxInstances
@@ -591,26 +595,21 @@ property.
 * `Vector4 getShaderUniform(const std::string& name) const`
 * `bool removeShaderUniform(const std::string& name)`
 
-Values for the members of the custom shader's `u_vs_customParams` / `u_fs_customParams`
-blocks, keyed by member name (see [Custom Shaders — Shader uniforms](../../editor/custom-shaders.md#shader-uniforms)).
-A value is stored on the mesh and applied to every submesh — of the colour fork and of the
-[depth fork](#customdepthshader) alike; a narrower value leaves the
-remaining components at zero, and an `int` member takes the truncated value. Setting a
-value only rewrites the uploaded block, so it can be called every frame. Names the shader
-does not declare are kept but unused, and a member with no value reads zero, or the
-scene's value while the mesh inherits a [scene default shader](scene.md#setdefaultshaderuniform).
+Values of the parameters the mesh's shaders declare with `// @param`, by name (see
+[Custom Shaders — Shader parameters](../../editor/custom-shaders.md#shader-parameters)).
+A value is stored on the mesh and applied to every submesh, in the colour fork, the
+[depth fork](#customdepthshader), and the effect files alike; a narrower value leaves the
+remaining components at zero, and an `int` parameter takes the truncated value. Setting a
+value only rewrites the uploaded block, so it can be called every frame. Names no shader
+declares are kept but unused, and a parameter with no value reads the scene's value while
+the mesh inherits a [scene default shader](scene.md#setdefaultshaderuniform), else its
+declared default.
 
-`getShaderUniform` returns the stored value (zero when unset) — the mesh's own value list, not the
-uploaded block or the scene's values, so an `int` member set to `3.7` reads back `3.7` while the shader sees `3`,
-and the engine-written names are not in it. `removeShaderUniform` drops a value and returns
-whether it existed; the member reads zero again. Matrix and array members take no value.
-
-Two names are reserved and written by the engine every frame — `time` (wall-clock seconds
-since startup, the same clock as [Engine.systemTime](engine.md#systemtime); it does not
-stop for a pause) and `resolution`
-(`xy` = size of the render target the mesh is drawn into, `zw` = `1 / size`); setting
-either logs an error. For a glTF model, call this on the part entities (see
-[customShader](#customshader)).
+`getShaderUniform` returns the stored value, zero when unset. It reads the mesh's own value
+list, not the uploaded block or the scene's values, so an `int` parameter set to `3.7` reads
+back `3.7` while the shader sees `3`. `removeShaderUniform` drops a value and returns
+whether it existed; the parameter reads its inherited or declared default again. For a glTF
+model, call these on the part entities (see [customShader](#customshader)).
 
 === "C++"
 

@@ -562,12 +562,11 @@ A pass reads the previous pass's output (`u_sceneColorTexture`) and may also sam
 (`u_ssaoTexture`). When a pass samples depth while SSR and SSAO are both off, the engine
 runs the depth pre-pass for it, so depth-driven effects work on their own.
 
-Values declared in the pass's `u_fs_postParams` block become editable rows in the scene
-settings, and the engine writes `resolution` and `time` into that block every frame.
-Scripts set them with `Scene.setPostProcessUniform`, which rewrites the value without
-rebuilding the chain. Component shaders have the same mechanism, reserved names
-included, through their `u_vs_customParams` / `u_fs_customParams` blocks — see
-[Custom Shaders — Shader uniforms](../editor/custom-shaders.md#shader-uniforms).
+Values the pass declares with `// @param` lines become fields in the scene settings, and
+a pass that reads `Engine.resolution` or `Engine.time` gets them from the engine. Scripts
+set the values with `Scene.setPostProcessUniform`, which rewrites them without rebuilding
+the chain. Component shaders declare their values the same way; see
+[Custom Shaders — Shader parameters](../editor/custom-shaders.md#shader-parameters).
 
 !!! note "Scope"
     The chain runs for the scene's active camera only — secondary cameras such as mirrors
@@ -985,23 +984,16 @@ off disables the distance too.
 
 ## Wind
 
-The scene's [wind](../reference/classes/scene.md#wind) is an air velocity in meters per
-second, set in the **Wind** section of the scene properties. Meshes sway in it through a
-[vertex offset](../editor/custom-shaders.md#the-vertex-offset-row): the engine ships
-`offsets/wind.glsl`, a lean that grows with the speed, gusts that roll downwind across the
-ground at the wind's speed, a slow wobble and a small flutter. Like any vertex offset it
-moves the colour, depth and G-buffer passes alike, so shadows, SSAO and SSR follow, and
-nothing moves physics bodies.
-
-The wind offset takes two shader uniforms. `windSway` is the bend in 10 m/s of wind, in
-world units. With `windSwayHeight` above 0 the bend grows as the square of the model height
-up to that value, so a plant modelled with its origin at the base keeps its foot still; at 0
-every vertex moves alike, which suits crowns or leaf clusters separate from their trunks.
-Set the mesh's `vertexOffsetMax` to the longest sway — about `windSway × 0.135 × the
-strongest wind` — so culling does not cut swayed geometry at the screen edge.
+Wind is a [shader effect](shader-effects.md#wind). The scene parameter `Wind.velocity` is
+an air velocity in meters per second, set under **Shader Parameters** in the scene
+properties once a mesh sways, or from scripts. Meshes sway in it through the engine's
+`offsets/wind.glsl` [vertex offset](shader-effects.md#vertex-offsets): a lean that grows
+with the speed, gusts that roll downwind at the wind's speed, a slow wobble and a small
+flutter. It moves the color, depth and G-buffer passes alike, so shadows, SSAO and SSR
+follow, and it moves no physics body.
 
 ```cpp
-scene.setWind(Vector3(5.0f, 0, -2.0f));
+scene->setShaderParameter("Wind", "velocity", Vector3(5.0f, 0.0f, -2.0f));
 
 grass.setVertexOffsetShader("offsets/wind.glsl");
 grass.setShaderUniform("windSway", 0.3f);
@@ -1009,51 +1001,27 @@ grass.setShaderUniform("windSwayHeight", 0.5f); // tips bend, the base at y = 0 
 grass.setVertexOffsetMax(0.6f);                  // 0.3 bend in 15 m/s of wind
 ```
 
-A project offset can sway too and add its own motion: `#include "includes/wind.glsl"` and
-add `getWindSway(localPosition, worldPosition, sway, swayHeight)` to what
-`getVertexOffset` returns.
-
 Terrain [foliage layers](terrain.md) have a **Wind sway** of their own: it runs the same
 offset on the layer's instances, bending them up to their tips, with the culling reach set
-for winds up to 20 m/s.
-
-The sway runs on the scene's update time, so it stops when the game pauses; in the editor
-it holds while the scene is stopped or paused, like the water.
+for winds up to 20 m/s. The sway runs on the scene's update time, so it stops when the game
+pauses, and in the editor it holds while the scene is stopped or paused.
 
 ## See-through
 
-A mesh with **See Through** on ([seeThrough](../reference/classes/mesh.md#seethrough))
-dithers away where it stands between the main camera and the scene's see-through target, so
-a character behind a tree or a roof stays in view. A script sets the
-[target](../reference/classes/scene.md#seethroughtarget-seethroughradius-seethroughopacity-seethroughmargin),
-usually each frame from the player; a radius of 0, the default, turns it off.
-
-The clear area is a cone from the camera to a sphere of `seeThroughRadius` round the target,
-so it keeps one size on screen, and a cylinder along the view for an orthographic camera:
-full in its inner half, fading out in the outer half.
-`seeThroughOpacity` (0.3 by default) is what stays of a mesh at the centre. Only what lies in
-front of the target thins out, starting `seeThroughMargin` (0.5 by default) before it and full
-at twice that, so a wide circle still clears a tree right in front of a character while the
-ground under it stays whole.
-
-The mesh stays opaque: a steady 4×4 dither pattern drops pixels, with no sorting or
-blending. The depth pre-pass and the SSR G-buffer drop the same pixels, so SSAO and
-reflections match what shows. Shadow maps keep the whole mesh, and so do other cameras,
-mirrors and reflection probe captures.
+See-through is a [shader effect](shader-effects.md#see-through): a mesh whose coverage is
+`coverage/see_through.glsl` dithers away where it stands between a camera and a target, so a
+character behind a tree or a roof stays in view. A script writes the target into the
+camera's `SeeThrough` view parameters, usually each frame from the player. The depth
+pre-pass and the SSR G-buffer drop the same pixels as the color pass, and shadow maps keep
+the whole mesh.
 
 ```cpp
-house.setSeeThrough(true);
-tree.setSeeThrough(true);
+house.setCoverageShader("coverage/see_through.glsl");
 
-// each frame, round the player's chest
-scene.setSeeThroughTarget(player.getWorldPosition() + Vector3(0, 0.9f, 0));
-scene.setSeeThroughRadius(2.5f);
-scene.setSeeThroughMargin(0.3f);
+// each frame, round the player's chest, for whichever camera renders the scene
+scene->setMainViewShaderParameter("SeeThrough", "target", player.getWorldPosition() + Vector3(0, 0.9f, 0));
+scene->setMainViewShaderParameter("SeeThrough", "radius", 2.5f);
 ```
-
-**See Through** builds its own shader variant (`Stt`), so turn it on only for meshes that
-can hide the target. Terrain never thins out, and a colour or depth fork thins out only if
-it keeps the `USE_SEE_THROUGH` lines of the built-in one.
 
 ## Mesh detail (LOD)
 

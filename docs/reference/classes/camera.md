@@ -116,6 +116,9 @@ description: Camera API reference — orthographic and perspective projection, t
 | Ray | [screenToRay](#screentoray) | C++ \| Lua |
 | float | [getDistanceFromTarget](#getdistancefromtarget) | C++ \| Lua |
 | void | [updateCamera](#updatecamera) | C++ \| Lua |
+| void | [setShaderParameter](#shader-parameters) | C++ \| Lua |
+| Vector4 | [getShaderParameter](#shader-parameters) | C++ \| Lua |
+| bool | [clearShaderParameter](#shader-parameters) | C++ \| Lua |
 | [CameraComponent](cameracomponent.md) | `getCameraComponent` | Lua |
 
 ## Enumerations
@@ -449,3 +452,41 @@ The size and filter are also editable in the editor's **Render Target** section 
 * `void updateCamera()`
 
 Forces an immediate recalculation of view and projection matrices. Called automatically each frame; call manually only when you need a fresh matrix outside the normal update cycle.
+
+---
+
+### Shader parameters
+
+* `void setShaderParameter(const std::string& collection, const std::string& name, const Vector4& value)`
+* `Vector4 getShaderParameter(const std::string& collection, const std::string& name) const`
+* `bool clearShaderParameter(const std::string& collection, const std::string& name)`
+
+The setter also takes a `Vector3`, a `Vector2` or a `float`.
+
+Values for the view parameters (`// @view`) of [shader effects](../../manual/shader-effects.md)
+while this camera renders. `setShaderParameter` is a runtime value: it is not saved and
+is dropped when the scene reloads. The value saved with the camera is the one the editor
+shows in the camera's **Shader Parameters** section.
+`getShaderParameter` returns the value this camera renders with, or zero when nothing
+sets it; the shader then uses the default from the annotation.
+
+These calls are shortcuts for the same functions on [Scene](scene.md#view-shader-parameters).
+Use `Scene::setMainViewShaderParameter` for values that should follow whichever camera
+is the main one.
+
+=== "C++"
+
+    ```cpp
+    // each player camera keeps its own see-through opening
+    leftCamera.setShaderParameter("SeeThrough", "target", playerOne.getWorldPosition());
+    rightCamera.setShaderParameter("SeeThrough", "target", playerTwo.getWorldPosition());
+    leftCamera.setShaderParameter("SeeThrough", "radius", 1.5f);
+    rightCamera.setShaderParameter("SeeThrough", "radius", 1.5f);
+    ```
+
+=== "Lua"
+
+    ```lua
+    leftCamera:setShaderParameter("SeeThrough", "target", playerOne:getWorldPosition())
+    leftCamera:setShaderParameter("SeeThrough", "radius", 1.5)
+    ```

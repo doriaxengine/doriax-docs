@@ -233,10 +233,10 @@ doriax-editor export -p ./MyGame -o ./build --backend "vulkan,opengl,opengles"
 ## Shader specs
 
 A `--shader` value is a **shader type** with optional **properties**, separated by a
-colon:
+colon, and, for `export`, an optional **custom shader** after `@`:
 
 ```
-<type>[:<properties>]
+<type>[:<properties>][@<custom shader>]
 ```
 
 - **Type** (case-insensitive): `points`, `lines`, `mesh`, `sky` (or `skybox`), `depth`,
@@ -248,6 +248,13 @@ colon:
 Property names come from the engine's shader system for that shader type; an unknown
 property or type is reported as an error. Omit the properties to generate the base
 variant of a type (e.g. `--shader depth`).
+
+The custom shader is a fork's project-relative base path, followed by a
+[vertex offset and a coverage function](../manual/shader-effects.md#export) after `#`, as
+`fork#vertexOffset#coverage`. Leave the fork out for the built-in shader:
+`mesh:Uv1,Nor@#offsets/wind.glsl`, `depth:Uv1@##coverage/dissolve.glsl`,
+`mesh:Uv1@shaders/myMesh`. It needs the project's files, so the `shaders` command, which
+loads no project, builds built-in shaders only.
 
 ```bash
 # Base mesh shader plus a UV+normal variant, for WebGL 2 and Direct3D 11

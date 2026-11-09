@@ -48,11 +48,6 @@ A `Scene` is the root container for all objects, systems, and resources in a pro
 | [ShadowQuality](#shadowquality) | [shadow2DQuality](#shadow2dquality) | `LOW` | C++ \| Lua |
 | Vector2 | [gravity2D](#gravity2d) | `(0,-9.81)` | C++ \| Lua |
 | Vector3 | [gravity3D](#gravity3d) | `(0,-9.81,0)` | C++ \| Lua |
-| Vector3 | [wind](#wind) | `(0,0,0)` | C++ \| Lua |
-| Vector3 | [seeThroughTarget](#seethroughtarget-seethroughradius-seethroughopacity-seethroughmargin) | `(0,0,0)` | C++ \| Lua |
-| float | [seeThroughRadius](#seethroughtarget-seethroughradius-seethroughopacity-seethroughmargin) | `0` | C++ \| Lua |
-| float | [seeThroughOpacity](#seethroughtarget-seethroughradius-seethroughopacity-seethroughmargin) | `0.3` | C++ \| Lua |
-| float | [seeThroughMargin](#seethroughtarget-seethroughradius-seethroughopacity-seethroughmargin) | `0.5` | C++ \| Lua |
 | bool | [ssaoEnabled](#ssaoenabled) | `false` | C++ \| Lua |
 | float | [ssaoRadius](#ssaoradius) | `0.5` | C++ \| Lua |
 | float | [ssaoIntensity](#ssaointensity) | `1.0` | C++ \| Lua |
@@ -116,16 +111,17 @@ A `Scene` is the root container for all objects, systems, and resources in a pro
 | Vector2 | [getGravity2D](#gravity2d) | C++ \| Lua |
 | void | [setGravity3D](#gravity3d) | C++ \| Lua |
 | Vector3 | [getGravity3D](#gravity3d) | C++ \| Lua |
-| void | [setWind](#wind) | C++ \| Lua |
-| Vector3 | [getWind](#wind) | C++ \| Lua |
-| void | [setSeeThroughTarget](#seethroughtarget-seethroughradius-seethroughopacity-seethroughmargin) | C++ \| Lua |
-| Vector3 | [getSeeThroughTarget](#seethroughtarget-seethroughradius-seethroughopacity-seethroughmargin) | C++ \| Lua |
-| void | [setSeeThroughRadius](#seethroughtarget-seethroughradius-seethroughopacity-seethroughmargin) | C++ \| Lua |
-| float | [getSeeThroughRadius](#seethroughtarget-seethroughradius-seethroughopacity-seethroughmargin) | C++ \| Lua |
-| void | [setSeeThroughOpacity](#seethroughtarget-seethroughradius-seethroughopacity-seethroughmargin) | C++ \| Lua |
-| float | [getSeeThroughOpacity](#seethroughtarget-seethroughradius-seethroughopacity-seethroughmargin) | C++ \| Lua |
-| void | [setSeeThroughMargin](#seethroughtarget-seethroughradius-seethroughopacity-seethroughmargin) | C++ \| Lua |
-| float | [getSeeThroughMargin](#seethroughtarget-seethroughradius-seethroughopacity-seethroughmargin) | C++ \| Lua |
+| void | [setShaderParameter](#shader-parameters) | C++ \| Lua |
+| Vector4 | [getShaderParameter](#shader-parameters) | C++ \| Lua |
+| bool | [clearShaderParameter](#shader-parameters) | C++ \| Lua |
+| void | [setShaderParameterDefaults](#shader-parameters) | C++ |
+| const ShaderUniformValues& | [getShaderParameterDefaults](#shader-parameters) | C++ |
+| void | [setViewShaderParameter](#view-shader-parameters) | C++ \| Lua |
+| Vector4 | [getViewShaderParameter](#view-shader-parameters) | C++ \| Lua |
+| bool | [clearViewShaderParameter](#view-shader-parameters) | C++ \| Lua |
+| void | [setMainViewShaderParameter](#view-shader-parameters) | C++ \| Lua |
+| Vector4 | [getMainViewShaderParameter](#view-shader-parameters) | C++ \| Lua |
+| bool | [clearMainViewShaderParameter](#view-shader-parameters) | C++ \| Lua |
 | void | [setSSAOEnabled](#ssaoenabled) | C++ \| Lua |
 | bool | [isSSAOEnabled](#ssaoenabled) | C++ \| Lua |
 | void | [setSSAORadius](#ssaoradius) | C++ \| Lua |
@@ -407,53 +403,65 @@ Gravity of the **3D physics world** (Jolt), in meters per second squared. Affect
 
 ---
 
-### wind
+### Shader parameters
 
-* *Setters:* `void setWind(Vector3 wind)`, `void setWind(float x, float y, float z)`
-* *Getter:* `Vector3 getWind() const`
+* `void setShaderParameter(const std::string& collection, const std::string& name, value)`, where value is a `float`, `Vector2`, `Vector3` or `Vector4`
+* `Vector4 getShaderParameter(const std::string& collection, const std::string& name) const`
+* `bool clearShaderParameter(const std::string& collection, const std::string& name)`
+* `void setShaderParameterDefaults(const ShaderUniformValues& values)` (C++ only)
+* `const ShaderUniformValues& getShaderParameterDefaults() const` (C++ only)
 
-Air velocity in meters per second. [Vertex offsets](mesh.md#vertexoffsetshader-vertexoffsetmax) read it — the engine's `offsets/wind.glsl` sways a mesh in it, with gusts that roll downwind across the ground — and so do terrain foliage layers with [windSway](terrainfoliagelayer.md). It moves no physics body. Default `(0, 0, 0)`: nothing sways. See [Wind](../../manual/rendering-pipeline.md#wind).
+Scene values that every shader declaring `// @scene <type> Collection.name` reads, such as
+the `Wind.velocity` of `offsets/wind.glsl`. `setShaderParameter` sets a runtime value: it
+overrides the one saved with the scene and is never saved, and clearing it brings the saved
+one back. The saved values are edited in the scene's **Shader Parameters**; the editor and
+exported scenes write the whole list, keyed by `Collection.name`, with
+`setShaderParameterDefaults`. `getShaderParameter` returns the
+runtime value, else the default, else zero, while a shader then reads its declared default.
+Changing a value rebuilds no shader. Collection and name take letters, digits and
+underscores. See [Shader Effects](../../manual/shader-effects.md#declaring-parameters).
 
 === "C++"
 
     ```cpp
-    scene.setWind(Vector3(4.0f, 0, -3.0f)); // 5 m/s
+    scene.setShaderParameter("Wind", "velocity", Vector3(4.0f, 0, -3.0f)); // 5 m/s
+    scene.setShaderParameter("Clip", "height", 2.5f);
     ```
 
 === "Lua"
 
     ```lua
-    scene.wind = Vector3(4, 0, -3)
+    scene:setShaderParameter("Wind", "velocity", Vector3(12, 0, 0))
+    scene:clearShaderParameter("Wind", "velocity")
     ```
 
 ---
 
-### seeThroughTarget, seeThroughRadius, seeThroughOpacity, seeThroughMargin
+### View shader parameters
 
-* *Setters:* `void setSeeThroughTarget(Vector3 target)`, `void setSeeThroughTarget(float x, float y, float z)`, `void setSeeThroughRadius(float radius)`, `void setSeeThroughOpacity(float opacity)`, `void setSeeThroughMargin(float margin)`
-* *Getters:* `Vector3 getSeeThroughTarget() const`, `float getSeeThroughRadius() const`, `float getSeeThroughOpacity() const`, `float getSeeThroughMargin() const`
+* *Setters:* `void setViewShaderParameter(Entity camera, collection, name, value)`, `void setMainViewShaderParameter(collection, name, value)`
+* *Getters:* `Vector4 getViewShaderParameter(Entity camera, collection, name) const`, `Vector4 getMainViewShaderParameter(collection, name) const`
+* *Removers:* `bool clearViewShaderParameter(Entity camera, collection, name)`, `bool clearMainViewShaderParameter(collection, name)`
 
-What [see-through meshes](mesh.md#seethrough) keep in view from the main camera: a sphere
-of `radius` world units round the target. A mesh in front of it thins down to `opacity` at
-the centre (0 = gone, 1 = whole), starting `margin` world units before the target and full at
-twice that. A radius of 0, the default, turns it off. These values are not saved with the
-scene: a script sets them, usually each frame from the player. See
-[See-through](../../manual/rendering-pipeline.md#see-through).
+Runtime values of `// @view <type> Collection.name` parameters, which belong to one camera,
+such as the target of `coverage/see_through.glsl`. The main view values go to whichever
+camera renders the scene. A camera reads its own runtime value, then the main view's while
+it renders the scene, then the value saved on its
+[CameraComponent](cameracomponent.md). See
+[Shader Effects](../../manual/shader-effects.md#where-values-come-from).
 
 === "C++"
 
     ```cpp
-    scene.setSeeThroughTarget(player.getWorldPosition() + Vector3(0, 0.9f, 0));
-    scene.setSeeThroughRadius(2.5f);
-    scene.setSeeThroughMargin(0.3f);
+    scene.setMainViewShaderParameter("SeeThrough", "target", player.getWorldPosition() + Vector3(0, 0.9f, 0));
+    scene.setMainViewShaderParameter("SeeThrough", "radius", 2.5f);
     ```
 
 === "Lua"
 
     ```lua
-    scene:setSeeThroughTarget(player:getWorldPosition() + Vector3(0, 0.9, 0))
-    scene.seeThroughRadius = 2.5
-    scene.seeThroughMargin = 0.3
+    scene:setMainViewShaderParameter("SeeThrough", "target", player:getWorldPosition() + Vector3(0, 0.9, 0))
+    scene:setViewShaderParameter(minimapCamera.entity, "SeeThrough", "radius", 0)
     ```
 
 ---
@@ -689,7 +697,7 @@ Scene-wide custom shader for [Water](water.md) components. Same semantics as [de
 * *Setter:* `void setPostProcessPasses(const std::vector<PostProcessPass>& passes)`
 * *Getter:* `const std::vector<PostProcessPass>& getPostProcessPasses() const`
 
-Ordered chain of fullscreen post-process passes run over the scene's finished image, on the main camera only. Each entry is a [PostProcessPass](postprocesspass.md) with the fork to run, an enable flag, and the values of its `u_fs_postParams` members. In Lua the property is a 1-based sequence of `PostProcessPass` values (a copy — assign it back to apply changes); build the chain as a sequence (a `{...}` literal or `table.insert`), whose array order is the pass order, and note that `pass_index` arguments such as [setPostProcessUniform](#setpostprocessuniform) count from 0.
+Ordered chain of fullscreen post-process passes run over the scene's finished image, on the main camera only. Each entry is a [PostProcessPass](postprocesspass.md) with the fork to run, an enable flag, and the values of the parameters it declares. In Lua the property is a 1-based sequence of `PostProcessPass` values (a copy — assign it back to apply changes); build the chain as a sequence (a `{...}` literal or `table.insert`), whose array order is the pass order, and note that `pass_index` arguments such as [setPostProcessUniform](#setpostprocessuniform) count from 0.
 
 Setting the chain rebuilds the passes on the next frame, unless only uniform values changed (same shaders and enable flags), in which case the compiled chain is kept and just the values are rewritten. For a single value or pass on a live chain, [setPostProcessUniform](#setpostprocessuniform) and [setPostProcessPassEnabled](#setpostprocesspassenabled) are the direct route. See [Custom Shaders — Post-process passes](../../editor/custom-shaders.md#post-process-passes).
 
@@ -931,7 +939,7 @@ Recalculates the active camera's projection to match the current canvas size. Ca
 * `void setDefaultShaderUniforms(ShaderType type, const ShaderUniformValues& values)` (C++ only)
 * `const ShaderUniformValues& getDefaultShaderUniforms(ShaderType type) const` (C++ only)
 
-Scene values for the custom blocks (`u_vs_customParams` / `u_fs_customParams`) of the scene default shader of `type` (see [ShaderType](#shadertype)), by member name. Every component that inherits that default reads them for the members it does not set itself; a value set on the component with [setShaderUniform](mesh.md#setshaderuniform) wins. Setting a value only rewrites the uploaded blocks, so it can run every frame. A narrower value leaves the remaining components at zero, and a member with no value on either side reads zero. A type without a scene default is ignored, and a reserved name (`time`, `resolution`) logs an error. `getDefaultShaderUniform` returns the scene's stored value, zero when unset; `removeDefaultShaderUniform` drops it and returns whether it existed. The values stay when the default shader changes, so a fork with the same member names picks them up. See [Custom Shaders — Scene default shaders](../../editor/custom-shaders.md#scene-default-shaders).
+Scene values for the parameters the scene default shader of `type` declares (see [ShaderType](#shadertype)), by name. Every component that inherits that default reads them for the parameters it does not set itself; a value set on the component with [setShaderUniform](mesh.md#setshaderuniform) wins. Setting a value only rewrites the uploaded blocks, so it can run every frame. A narrower value leaves the remaining components at zero, and a parameter with no value on either side reads its declared default. A type without a scene default is ignored. `getDefaultShaderUniform` returns the scene's stored value, zero when unset; `removeDefaultShaderUniform` drops it and returns whether it existed. The values stay when the default shader changes, so a fork with the same parameter names picks them up. See [Custom Shaders — Scene default shaders](../../editor/custom-shaders.md#scene-default-shaders).
 
 === "C++"
 
@@ -958,7 +966,7 @@ Scene values for the custom blocks (`u_vs_customParams` / `u_fs_customParams`) o
 * `Vector4 getPostProcessUniform(unsigned int index, const std::string& name) const`
 * `bool removePostProcessUniform(unsigned int index, const std::string& name)`
 
-Sets one member of the `u_fs_postParams` block of the pass at `index` (0 = first pass of [postProcessPasses](#postprocesspasses)), by member name. Only the uploaded block is rewritten — the chain is not rebuilt — so it can run every frame. A narrower value leaves the remaining components at zero; a member with no value reads zero. An index past the chain, or a reserved name (`time`, `resolution`, written by the engine every frame), logs an error and is ignored. `getPostProcessUniform` returns the stored value, zero when unset; `removePostProcessUniform` drops it (the member reads zero again) and returns whether it existed.
+Sets one parameter of the pass at `index` (0 = first pass of [postProcessPasses](#postprocesspasses)), by the name its shader declares with `// @param`. Only the uploaded block is rewritten, and the chain is not rebuilt, so it can run every frame. A narrower value leaves the remaining components at zero; a parameter with no value reads its declared default. An index past the chain logs an error and is ignored. `getPostProcessUniform` returns the stored value, zero when unset; `removePostProcessUniform` drops it (the parameter reads its declared default again) and returns whether it existed.
 
 === "C++"
 

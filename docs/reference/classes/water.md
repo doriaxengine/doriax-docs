@@ -394,11 +394,10 @@ normal use: the render system loads a water the first time it updates.
 * `Vector4 getShaderUniform(const std::string& name) const`
 * `bool removeShaderUniform(const std::string& name)`
 
-Values for the members of the forks' `u_vs_customParams` / `u_fs_customParams` blocks, by
-member name. The water fork and the underwater fork read the same values. Setting a value
-only rewrites the uploaded block, so it can run every frame; `time` and `resolution` are
-reserved for the engine. Same semantics as [Mesh.setShaderUniform](mesh.md#setshaderuniform);
-see [Custom Shaders — Shader uniforms](../../editor/custom-shaders.md#shader-uniforms).
+Values of the parameters the forks declare with `// @param`, by name. The water fork and
+the underwater fork read the same values. Setting a value only rewrites the uploaded block,
+so it can run every frame. Same semantics as [Mesh.setShaderUniform](mesh.md#setshaderuniform);
+see [Custom Shaders — Shader parameters](../../editor/custom-shaders.md#shader-parameters).
 
 ---
 
