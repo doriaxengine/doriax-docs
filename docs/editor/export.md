@@ -144,7 +144,8 @@ Additions and exclusions are saved in `project.yaml` under `export`, and they ar
 excluded from the Source Code export too. A [command-line export](command-line.md#project-settings-the-command-line-uses)
 applies them as well, unless `--shader` lists the shaders itself, and AI agents edit them
 with the `set_export_shaders` tool. Forked shaders are stored by their project-relative
-path rather than by a session id, so the list survives reopening the project.
+path rather than by a session id, so the list survives reopening the project. A vertex
+offset follows `#`: `mesh:8@#offsets/wind.glsl` is the built-in mesh with the engine's wind.
 
 ## Source Code mode
 
