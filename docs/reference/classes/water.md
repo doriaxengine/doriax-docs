@@ -353,8 +353,10 @@ has the scene depth.
 * *Getters*: **getShoreFoam**(), **getCrestFoam**()
 
 `foamColor` is in sRGB. `shoreFoam` is the water depth the shore foam covers (needs
-[depthEffects](#deptheffects)); `crestFoam` (`0`–`1`) is the share of the highest crests
-that turn to foam.
+[depthEffects](#deptheffects)); `crestFoam` (`0`–`1`) is how much of the surface breaks
+into whitecaps, `0` for none. See
+[Rendering Pipeline — Foam](../../manual/rendering-pipeline.md#foam) for how the foam is
+drawn.
 
 ---
 

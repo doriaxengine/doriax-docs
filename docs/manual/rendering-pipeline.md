@@ -765,6 +765,23 @@ depth comes from the [SSR](#screen-space-reflections-ssr) G-buffer or the
 ran; otherwise the engine adds a depth pre-pass for the water. Only the main camera has
 the scene depth, so other cameras draw the water without these effects.
 
+### Foam
+
+Foam comes from the shore, where the water is shallower than **Shore Foam** (with Depth
+Effects), from the [wake](../reference/classes/waterexclusion.md#wakefoam-wakewaves) of a
+moving Water Exclusion, and from whitecaps, set by **Crest Foam**. Dense foam covers the
+surface; as it thins it opens into cells, leaving a web along their edges that breaks into
+flecks. The cells are about a third of a meter across and blend into an even cover where
+they would be smaller than a pixel.
+
+Whitecaps are short streaks along the crests. They run with the longest wave, come and go,
+leave thinner foam behind them, and gather where rougher patches drift through. Their size
+follows **Length**, and higher water breaks a little sooner. A Crest Foam of `0.05` to
+`0.15` gives a breezy sea; towards `1` most of the surface is white.
+
+A [fork](../editor/custom-shaders.md) of the water shader keeps the foam it was forked
+with.
+
 ### Refraction
 
 With **Refraction** on, the scene behind the water shows through it, bent by the ripples

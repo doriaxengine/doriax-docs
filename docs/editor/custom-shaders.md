@@ -415,6 +415,11 @@ section of the scene settings in the Properties window.
 
 Every change is undoable, and the chain is saved with the scene.
 
+An agent connected through the [MCP server](mcp-server.md), or the AI Chat, edits the same
+chain: `list_post_process_passes` reads it, `set_post_process_pass` adds, removes, moves,
+enables, or repoints a pass, and `fork_shader` with `shader_type` set to `postprocess` adds
+a pass with a new fork of the passthrough.
+
 ![A post-process pass: its header, the Shader row, and the NewScenePost1 Parameters section](../assets/screenshots/properties-postprocess.png)
 
 The chain runs on the scene's **active camera**, after the opaque, transparent, UI, and

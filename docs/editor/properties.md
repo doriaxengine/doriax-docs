@@ -410,7 +410,7 @@ Under the **Shader** and **Underwater Shader** rows, the fields are grouped into
 | **Foam** | **Depth Effects** | Shore foam, soft edges, and depth tint from the scene depth. Adds a depth pass when SSAO and SSR are off. |
 | | **Foam Color** | Colour of the foam. |
 | | **Shore Foam** | Water depth the shore foam covers. Needs Depth Effects. |
-| | **Crest Foam** | Share of the highest crests that turn to foam. |
+| | **Crest Foam** | How much of the surface breaks into whitecaps, `0` for none. |
 | **Buoyancy** | **Buoyancy** | Floats the dynamic bodies that have Body3D buoyancy. |
 | | **Depth** | *(Buoyancy)* How far below the surface bodies still float, `0` has no bottom. Where waters overlap, the one with the highest bottom is used. |
 | **Wake** | **Area** | World size of the square around the camera that keeps the wakes of moving Water Exclusions. Larger reaches farther with less detail. |
