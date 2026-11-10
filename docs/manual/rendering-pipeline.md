@@ -776,8 +776,9 @@ they would be smaller than a pixel.
 
 Whitecaps are short streaks along the crests. They run with the longest wave, come and go,
 leave thinner foam behind them, and gather where rougher patches drift through. Their size
-follows **Length**, and higher water breaks a little sooner. A Crest Foam of `0.05` to
-`0.15` gives a breezy sea; towards `1` most of the surface is white.
+follows **Length**, and higher water breaks a little sooner. Far away, where the streaks
+would be smaller than a pixel, they blend into the even cover they would leave. A Crest
+Foam of `0.05` to `0.15` gives a breezy sea; towards `1` most of the surface is white.
 
 A [fork](../editor/custom-shaders.md) of the water shader keeps the foam it was forked
 with.
