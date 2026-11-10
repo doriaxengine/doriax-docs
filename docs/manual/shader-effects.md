@@ -171,8 +171,8 @@ editor sets **Cut Shadows** from it when the file is picked.
 bend grows as the square of the model height up to that value, so a plant modelled with its
 origin at its base keeps its foot still. The engine adds the meters of air blown past to
 `Wind.travel` each update, which moves the gusts at the wind's speed without a jump when it
-changes. Set the mesh's Max Offset to about
-`windSway × 0.135 × the strongest wind`.
+changes. Set the mesh's Max Offset to about `windSway × 2.5` for winds up to 15 m/s, or
+`windSway × 4` up to 20 m/s.
 
 Terrain [foliage layers](terrain.md) keep their **Wind Sway** control: it runs this offset
 on the layer's instances, bending them up to their tips.
@@ -183,7 +183,7 @@ scene->setShaderParameter("Wind", "velocity", Vector3(5.0f, 0.0f, -2.0f));
 grass.setVertexOffsetShader("offsets/wind.glsl");
 grass.setShaderUniform("windSway", 0.3f);
 grass.setShaderUniform("windSwayHeight", 0.5f);
-grass.setVertexOffsetMax(0.6f);
+grass.setVertexOffsetMax(0.8f);
 ```
 
 ```lua

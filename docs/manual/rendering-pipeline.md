@@ -1004,10 +1004,12 @@ off disables the distance too.
 Wind is a [shader effect](shader-effects.md#wind). The scene parameter `Wind.velocity` is
 an air velocity in meters per second, set under **Shader Parameters** in the scene
 properties once a mesh sways, or from scripts. Meshes sway in it through the engine's
-`offsets/wind.glsl` [vertex offset](shader-effects.md#vertex-offsets): a lean that grows
-with the speed, gusts that roll downwind at the wind's speed, a slow wobble and a small
-flutter. It moves the color, depth and G-buffer passes alike, so shadows, SSAO and SSR
-follow, and it moves no physics body.
+`offsets/wind.glsl` [vertex offset](shader-effects.md#vertex-offsets). The lean grows
+faster than the wind: against 10 m/s it is about a sixth at 3 m/s and nearly twice at
+15 m/s, so light air barely stirs a plant and a gale lays it over. Gusts roll downwind at
+the wind's speed, in fronts broken across it. The plant springs and shivers at a pace set
+by the air going past, and stays still in calm air. It moves the color, depth and G-buffer
+passes alike, so shadows, SSAO and SSR follow, and it moves no physics body.
 
 ```cpp
 scene->setShaderParameter("Wind", "velocity", Vector3(5.0f, 0.0f, -2.0f));
@@ -1015,7 +1017,7 @@ scene->setShaderParameter("Wind", "velocity", Vector3(5.0f, 0.0f, -2.0f));
 grass.setVertexOffsetShader("offsets/wind.glsl");
 grass.setShaderUniform("windSway", 0.3f);
 grass.setShaderUniform("windSwayHeight", 0.5f); // tips bend, the base at y = 0 stays put
-grass.setVertexOffsetMax(0.6f);                  // 0.3 bend in 15 m/s of wind
+grass.setVertexOffsetMax(0.8f);                  // its reach in 15 m/s of wind
 ```
 
 Terrain [foliage layers](terrain.md) have a **Wind sway** of their own: it runs the same
