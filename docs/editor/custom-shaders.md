@@ -293,10 +293,14 @@ the shader.
 !!! warning "Forks from v0.8.4 and earlier"
     Older forks declared `u_vs_customParams`, `u_fs_customParams`, or `u_fs_postParams`
     blocks. The engine no longer fills them, and a fork that still reads one fails to build
-    with an error naming the block. Replace each member with a `// @param` line and read it as
-    `params.name`. The values saved by name on the component or the pass are kept. `time`
-    becomes `Engine.time`, which follows the scene's clock, and `resolution` becomes
-    `Engine.resolution`.
+    with an error naming the block. Those forks also lack the parameter includes and the
+    `loadShaderParameters()` call, so replacing the block alone does not compile.
+
+    To port one, reset the shader, fork the current built-in again, and copy your changes
+    into the new files. Turn each block member into a `// @param` line read as
+    `params.name`, `time` into `Engine.time` (it now follows the scene's clock), and
+    `resolution` into `Engine.resolution`. The values saved by name on the component or
+    the pass are kept.
 
 ### Editing values
 
