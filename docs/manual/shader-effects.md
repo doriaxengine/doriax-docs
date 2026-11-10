@@ -55,9 +55,11 @@ The code reads each parameter by the name it was declared with:
 
 The collection keeps unrelated values apart: `Wind.speed` and `Water.speed` are two
 parameters. A collection is either a scene or a view one. The build stops with an error that
-names the file and line when two files give a parameter different types, or use a
-collection in both scopes. Collection and parameter names take letters, digits and
-underscores, and `params` and `Engine` are not collection names.
+names the file and line when two declarations give a parameter different types, or use a
+collection in both scopes, even when one is in the vertex file and the other in the
+fragment file. The shader's **Parameters** section shows the same error before any build.
+Collection and parameter names take letters, digits and underscores, and `params` and
+`Engine` are not collection names.
 
 Annotations are read from the shader file and every file it includes, whatever `#if`
 surrounds them. The shader builder packs the declarations of each stage into one uniform

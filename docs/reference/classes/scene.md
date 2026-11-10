@@ -416,9 +416,9 @@ the `Wind.velocity` of `offsets/wind.glsl`. `setShaderParameter` sets a runtime 
 overrides the one saved with the scene and is never saved, and clearing it brings the saved
 one back. The saved values are edited in the scene's **Shader Parameters**; the editor and
 exported scenes write the whole list, keyed by `Collection.name`, with
-`setShaderParameterDefaults`. `getShaderParameter` returns the
-runtime value, else the default, else zero, while a shader then reads its declared default.
-Changing a value rebuilds no shader. Collection and name take letters, digits and
+`setShaderParameterDefaults`. `getShaderParameter` returns the runtime value, else the
+saved one, else zero, in which case a shader reads its declared default. Changing a value
+rebuilds no shader. Collection and name take letters, digits and
 underscores. See [Shader Effects](../../manual/shader-effects.md#declaring-parameters).
 
 === "C++"

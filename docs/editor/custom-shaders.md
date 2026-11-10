@@ -287,8 +287,8 @@ each value comes from are in
 
 Every shader type takes them: Mesh, depth, UI, Points, Lines, Sky, Water, underwater, and
 post-process forks. The shader builder packs the values of each stage into one uniform
-block, so a fork declares no uniform block of its own, and changing a value never rebuilds
-the shader.
+block, so a fork declares no uniform block of its own: the engine never fills a block it
+does not know. Changing a value never rebuilds the shader.
 
 !!! warning "Forks from v0.8.4 and earlier"
     Older forks declared `u_vs_customParams`, `u_fs_customParams`, or `u_fs_postParams`
