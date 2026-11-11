@@ -396,7 +396,7 @@ normal use: the render system loads a water the first time it updates.
 * `Vector4 getShaderUniform(const std::string& name) const`
 * `bool removeShaderUniform(const std::string& name)`
 
-Values of the parameters the forks declare with `// @param`, by name. The water fork and
+Values of the parameters the forks declare with `#pragma param`, by name. The water fork and
 the underwater fork read the same values. Setting a value only rewrites the uploaded block,
 so it can run every frame. Same semantics as [Mesh.setShaderUniform](mesh.md#setshaderuniform);
 see [Custom Shaders — Shader parameters](../../editor/custom-shaders.md#shader-parameters).

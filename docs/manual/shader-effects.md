@@ -17,9 +17,9 @@ ships: a dissolve, a height cut, and grass pushed aside by a character.
 | --- | --- | --- |
 | Vertex offset | One `.glsl` with `vec3 getVertexOffset(vec3 localPosition, vec3 worldPosition)` | Mesh `vertexOffsetShader` |
 | Coverage | One `.glsl` with `float getCoverage(CoverageContext context)` | Mesh `coverageShader` |
-| Object parameters | Values of one component, declared with `@param` | The component's shader uniforms |
-| Scene parameters | `Collection.name` values the whole scene shares, declared with `@scene` | Scene properties, `Scene::setShaderParameter` |
-| View parameters | `Collection.name` values of one camera, declared with `@view` | Camera properties, `Camera::setShaderParameter` |
+| Object parameters | Values of one component, declared with `#pragma param` | The component's shader uniforms |
+| Scene parameters | `Collection.name` values the whole scene shares, declared with `#pragma scene` | Scene properties, `Scene::setShaderParameter` |
+| View parameters | `Collection.name` values of one camera, declared with `#pragma view` | Camera properties, `Camera::setShaderParameter` |
 
 A mesh takes one vertex offset and one coverage function. To combine several effects of
 the same kind, write one function that calls the helpers of each (see
@@ -30,13 +30,14 @@ test.
 
 ## Declaring parameters
 
-Parameters are declared in comments, so an effect file stays plain GLSL:
+Parameters are declared with `#pragma` lines. The GLSL compiler skips a pragma it does not
+know, so an effect file stays plain GLSL:
 
 ```glsl
-// @param float strength = 0.5 [0, 2] "How far the top moves, in world units"
-// @param vec4 tint = 1, 0.8, 0.6, 1 color
-// @scene vec3 Wind.velocity "Air velocity in m/s"
-// @view float SeeThrough.radius = 0 [0, 20]
+#pragma param float strength = 0.5 [0, 2] "How far the top moves, in world units"
+#pragma param vec4 tint = 1, 0.8, 0.6, 1 color
+#pragma scene vec3 Wind.velocity "Air velocity in m/s"
+#pragma view float SeeThrough.radius = 0 [0, 20]
 ```
 
 The type is `float`, `vec2`, `vec3`, `vec4`, `int`, `ivec2`, `ivec3` or `ivec4`. The
@@ -49,9 +50,9 @@ The code reads each parameter by the name it was declared with:
 
 | Declared as | Read in GLSL as |
 | --- | --- |
-| `// @param float strength` | `params.strength` |
-| `// @scene vec3 Wind.velocity` | `Wind.velocity` |
-| `// @view float SeeThrough.radius` | `SeeThrough.radius` |
+| `#pragma param float strength` | `params.strength` |
+| `#pragma scene vec3 Wind.velocity` | `Wind.velocity` |
+| `#pragma view float SeeThrough.radius` | `SeeThrough.radius` |
 
 The collection keeps unrelated values apart: `Wind.speed` and `Water.speed` are two
 parameters. A collection is either a scene or a view one. The build stops with an error that
@@ -61,12 +62,13 @@ fragment file. The shader's **Parameters** section shows the same error before a
 Collection and parameter names take letters, digits and underscores, and `params` and
 `Engine` are not collection names.
 
-Annotations are read from the shader file and every file it includes, whatever `#if`
-surrounds them. The shader builder packs the declarations of each stage into one uniform
-block, `u_vs_params` or `u_fs_params`, with the engine values the code reads. The mesh color
-pass appends them to its material block instead, so effects and collections take no extra
-uniform block slots there. Changing a value rewrites that block at the next draw. It never
-rebuilds a shader or reloads a component.
+Declarations are read from the shader file and every file it includes, whatever `#if`
+surrounds them. A comment may follow one on its line. The shader builder packs the
+declarations of each stage into one uniform block, `u_vs_params` or `u_fs_params`, with the
+engine values the code reads. The mesh color pass appends them to its material block
+instead, so effects and collections take no extra uniform block slots there. Changing a
+value rewrites that block at the next draw. It never rebuilds a shader or reloads a
+component.
 
 ### Engine values
 
@@ -152,7 +154,7 @@ coverage file sees:
 | `coverageNoise(position)` | A smooth value noise in [0, 1]. |
 | `coverageViewOpening(worldPosition, eye, forward, perspective, target, radius, opacity, margin)` | The see-through opening: a cone from a perspective eye, a cylinder along an orthographic view. |
 
-A file can suggest the shadow policy with `// @coverage_shadows apply` or `keep`. The
+A file can suggest the shadow policy with `#pragma coverage_shadows apply` or `keep`. The
 editor sets **Cut Shadows** from it when the file is picked.
 
 ## The engine's effects
@@ -252,8 +254,8 @@ the water and sways its sail, reading a scene parameter of its own and the engin
 
 ```glsl
 // Bobs the mesh on the water, with the wind on top
-// @param float bob = 0.05 [0, 1] "Height of the bobbing, in world units"
-// @scene float Water.level "World height of the water surface"
+#pragma param float bob = 0.05 [0, 1] "Height of the bobbing, in world units"
+#pragma scene float Water.level "World height of the water surface"
 #include "includes/wind.glsl"
 
 vec3 getVertexOffset(vec3 localPosition, vec3 worldPosition){
@@ -267,9 +269,9 @@ A coverage function the same way:
 
 ```glsl
 // Keeps only what is above the water
-// @param float edge = 0.1 [0, 1] "Height of the dithered edge"
-// @scene float Water.level
-// @coverage_shadows apply
+#pragma param float edge = 0.1 [0, 1] "Height of the dithered edge"
+#pragma scene float Water.level
+#pragma coverage_shadows apply
 
 float getCoverage(CoverageContext context){
     return smoothstep(Water.level - params.edge, Water.level, context.worldPosition.y);
@@ -290,8 +292,8 @@ A fork can declare and read parameters in its own code too, after that call, and
 fork of any other shader type:
 
 ```glsl
-// @scene float Weather.wetness = 0 [0, 1] "How wet surfaces look"
-// @param vec4 wetTint = 0.6, 0.65, 0.7, 1 color
+#pragma scene float Weather.wetness = 0 [0, 1] "How wet surfaces look"
+#pragma param vec4 wetTint = 0.6, 0.65, 0.7, 1 color
 ...
 color.rgb = mix(color.rgb, color.rgb * params.wetTint.rgb, Weather.wetness);
 ```
@@ -308,7 +310,7 @@ open the file, or remove it. A `.glsl` can also be dropped on the row. **Max Off
 under a vertex offset and **Cut Shadows** under a coverage function.
 
 Below the table, each fork and effect file of the component has its own **Parameters**
-section with the fields its `@param` lines declare, with their ranges, colors and tooltips. A
+section with the fields its `#pragma param` lines declare, with their ranges, colors and tooltips. A
 field nobody set shows the value inherited from the scene's default shader, else the declared
 default, and the arrow next to a set field drops it. The section also lists the scene and view
 parameters the file reads. Saving the file updates the fields. A forked default shader shows

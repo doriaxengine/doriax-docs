@@ -296,7 +296,7 @@ has an **Underwater Shader** row instead, for the fade seen from below the surfa
 [Custom Shaders — Water shaders](custom-shaders.md#water-shaders).
 
 Each fork, and each effect file of a Mesh, gets a **Parameters** section with one field
-per `// @param` line it declares. The values are saved on the component, shared by all of
+per `#pragma param` line it declares. The values are saved on the component, shared by all of
 its shaders, and scriptable through `setShaderUniform`. See
 [Custom Shaders — Shader parameters](custom-shaders.md#shader-parameters).
 
@@ -309,7 +309,7 @@ component reads them for every parameter it does not set itself.
 
 The scene settings also have a **Post-processing** section: an ordered list of fullscreen
 passes, each one a forked shader under a collapsible header with reorder and remove
-buttons, and an enable checkbox in its Shader row. Each `// @param` the pass declares
+buttons, and an enable checkbox in its Shader row. Each `#pragma param` the pass declares
 becomes a field here.
 
 See [Custom Shaders](custom-shaders.md) for the full workflow, scene defaults, post-process

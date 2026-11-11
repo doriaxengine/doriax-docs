@@ -567,7 +567,7 @@ A pass reads the previous pass's output (`u_sceneColorTexture`) and may also sam
 (`u_ssaoTexture`). When a pass samples depth while SSR and SSAO are both off, the engine
 runs the depth pre-pass for it, so depth-driven effects work on their own.
 
-Values the pass declares with `// @param` lines become fields in the scene settings, and
+Values the pass declares with `#pragma param` lines become fields in the scene settings, and
 a pass that reads `Engine.resolution` or `Engine.time` gets them from the engine. Scripts
 set the values with `Scene.setPostProcessUniform`, which rewrites them without rebuilding
 the chain. Component shaders declare their values the same way; see

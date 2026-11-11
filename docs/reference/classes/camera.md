@@ -463,13 +463,13 @@ Forces an immediate recalculation of view and projection matrices. Called automa
 
 The setter also takes a `Vector3`, a `Vector2` or a `float`.
 
-Values for the view parameters (`// @view`) of [shader effects](../../manual/shader-effects.md)
+Values for the view parameters (`#pragma view`) of [shader effects](../../manual/shader-effects.md)
 while this camera renders. `setShaderParameter` is a runtime value: it is not saved and
 is dropped when the scene reloads. The value saved with the camera is the one the editor
 shows in the camera's **Shader Parameters** section; C++ code sets saved values in
 [CameraComponent](cameracomponent.md)`::shaderParameters`.
 `getShaderParameter` returns the value this camera renders with, or zero when nothing
-sets it; the shader then uses the default from the annotation.
+sets it; the shader then uses the default from the declaration.
 
 These calls are shortcuts for the same functions on [Scene](scene.md#view-shader-parameters).
 Use `Scene::setMainViewShaderParameter` for values that should follow whichever camera

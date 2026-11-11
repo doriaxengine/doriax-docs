@@ -411,7 +411,7 @@ Gravity of the **3D physics world** (Jolt), in meters per second squared. Affect
 * `void setShaderParameterDefaults(const ShaderUniformValues& values)` (C++ only)
 * `const ShaderUniformValues& getShaderParameterDefaults() const` (C++ only)
 
-Scene values that every shader declaring `// @scene <type> Collection.name` reads, such as
+Scene values that every shader declaring `#pragma scene <type> Collection.name` reads, such as
 the `Wind.velocity` of `offsets/wind.glsl`. `setShaderParameter` sets a runtime value: it
 overrides the one saved with the scene and is never saved, and clearing it brings the saved
 one back. The saved values are edited in the scene's **Shader Parameters**; the editor and
@@ -443,7 +443,7 @@ underscores. See [Shader Effects](../../manual/shader-effects.md#declaring-param
 * *Getters:* `Vector4 getViewShaderParameter(Entity camera, collection, name) const`, `Vector4 getMainViewShaderParameter(collection, name) const`
 * *Removers:* `bool clearViewShaderParameter(Entity camera, collection, name)`, `bool clearMainViewShaderParameter(collection, name)`
 
-Runtime values of `// @view <type> Collection.name` parameters, which belong to one camera,
+Runtime values of `#pragma view <type> Collection.name` parameters, which belong to one camera,
 such as the target of `coverage/see_through.glsl`. The main view values go to whichever
 camera renders the scene. A camera reads its own runtime value, then the main view's while
 it renders the scene, then the value saved on its
@@ -966,7 +966,7 @@ Scene values for the parameters the scene default shader of `type` declares (see
 * `Vector4 getPostProcessUniform(unsigned int index, const std::string& name) const`
 * `bool removePostProcessUniform(unsigned int index, const std::string& name)`
 
-Sets one parameter of the pass at `index` (0 = first pass of [postProcessPasses](#postprocesspasses)), by the name its shader declares with `// @param`. Only the uploaded block is rewritten, and the chain is not rebuilt, so it can run every frame. A narrower value leaves the remaining components at zero; a parameter with no value reads its declared default. An index past the chain logs an error and is ignored. `getPostProcessUniform` returns the stored value, zero when unset; `removePostProcessUniform` drops it (the parameter reads its declared default again) and returns whether it existed.
+Sets one parameter of the pass at `index` (0 = first pass of [postProcessPasses](#postprocesspasses)), by the name its shader declares with `#pragma param`. Only the uploaded block is rewritten, and the chain is not rebuilt, so it can run every frame. A narrower value leaves the remaining components at zero; a parameter with no value reads its declared default. An index past the chain logs an error and is ignored. `getPostProcessUniform` returns the stored value, zero when unset; `removePostProcessUniform` drops it (the parameter reads its declared default again) and returns whether it existed.
 
 === "C++"
 

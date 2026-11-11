@@ -373,7 +373,7 @@ Project-relative base path of a forked **depth** shader — the one the mesh is 
 * *vertexOffsetMax Setter:* `void setVertexOffsetMax(float vertexOffsetMax)`
 * *vertexOffsetMax Getter:* `float getVertexOffsetMax() const`
 
-`vertexOffsetShader` is a `.glsl` file, from the project or the engine, defining `vec3 getVertexOffset(vec3 localPosition, vec3 worldPosition)`, which returns how far each vertex moves in world units. The color, depth and G-buffer passes all apply it, so shadows and reflections follow, and its `@param` values are the mesh's [shader uniforms](#setshaderuniform). The engine's `offsets/wind.glsl` sways the mesh in the scene's `Wind.velocity`. Empty (default) moves nothing. Changing it reloads the mesh. `vertexOffsetMax` is the longest offset: longer ones are clamped, and culling widens the bounds by it; `0` means no limit. Terrain ignores both. See [Shader Effects](../../manual/shader-effects.md#vertex-offsets).
+`vertexOffsetShader` is a `.glsl` file, from the project or the engine, defining `vec3 getVertexOffset(vec3 localPosition, vec3 worldPosition)`, which returns how far each vertex moves in world units. The color, depth and G-buffer passes all apply it, so shadows and reflections follow, and its `#pragma param` values are the mesh's [shader uniforms](#setshaderuniform). The engine's `offsets/wind.glsl` sways the mesh in the scene's `Wind.velocity`. Empty (default) moves nothing. Changing it reloads the mesh. `vertexOffsetMax` is the longest offset: longer ones are clamped, and culling widens the bounds by it; `0` means no limit. Terrain ignores both. See [Shader Effects](../../manual/shader-effects.md#vertex-offsets).
 
 === "C++"
 
@@ -400,7 +400,7 @@ Project-relative base path of a forked **depth** shader — the one the mesh is 
 * *coverageShadows Setter:* `void setCoverageShadows(bool coverageShadows)`
 * *coverageShadows Getter:* `bool isCoverageShadows() const`
 
-`coverageShader` is a `.glsl` file, from the project or the engine, defining `float getCoverage(CoverageContext context)`, which returns how much of each fragment stays: 1 keeps it, 0 removes it, and opaque surfaces keep a dithered share in between while blended ones fade. The color, depth and G-buffer passes all apply it, so SSAO and reflections match, and its `@param` values are the mesh's [shader uniforms](#setshaderuniform). The engine ships `coverage/see_through.glsl`, `coverage/dissolve.glsl` and `coverage/height_clip.glsl`. Empty (default) keeps everything. Changing it reloads the mesh. With `coverageShadows` on, the shadow maps follow the coverage too; off (default) they keep the whole silhouette, though the material's alpha mask still applies. Terrain ignores both. See [Shader Effects](../../manual/shader-effects.md#coverage).
+`coverageShader` is a `.glsl` file, from the project or the engine, defining `float getCoverage(CoverageContext context)`, which returns how much of each fragment stays: 1 keeps it, 0 removes it, and opaque surfaces keep a dithered share in between while blended ones fade. The color, depth and G-buffer passes all apply it, so SSAO and reflections match, and its `#pragma param` values are the mesh's [shader uniforms](#setshaderuniform). The engine ships `coverage/see_through.glsl`, `coverage/dissolve.glsl` and `coverage/height_clip.glsl`. Empty (default) keeps everything. Changing it reloads the mesh. With `coverageShadows` on, the shadow maps follow the coverage too; off (default) they keep the whole silhouette, though the material's alpha mask still applies. Terrain ignores both. See [Shader Effects](../../manual/shader-effects.md#coverage).
 
 === "C++"
 
@@ -595,7 +595,7 @@ property.
 * `Vector4 getShaderUniform(const std::string& name) const`
 * `bool removeShaderUniform(const std::string& name)`
 
-Values of the parameters the mesh's shaders declare with `// @param`, by name (see
+Values of the parameters the mesh's shaders declare with `#pragma param`, by name (see
 [Custom Shaders — Shader parameters](../../editor/custom-shaders.md#shader-parameters)).
 A value is stored on the mesh and applied to every submesh, in the colour fork, the
 [depth fork](#customdepthshader), and the effect files alike; a narrower value leaves the

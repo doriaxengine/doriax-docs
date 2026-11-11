@@ -79,7 +79,7 @@ the same displacement or `discard` there, and the shadow follows. The variant de
 `depth.frag` already handle, so the fork keeps working across those cases.
 
 A depth fork reads the same [shader parameters](#shader-parameters) as the colour fork,
-so one value drives both: declare the same `@param` names in it. It is compiled as soon as
+so one value drives both: declare the same `#pragma param` names in it. It is compiled as soon as
 it is set — even in a scene with no shadow-casting light — so build errors show up right
 away; a fork that
 fails to build is reported as **Depth shader failed to build** under the row while the
@@ -122,8 +122,9 @@ float getCoverage(CoverageContext context);
 
 The engine runs them in the color, depth and G-buffer passes, so shadows, SSAO and
 screen-space reflections follow without a depth fork, and the mesh keeps the built-in
-shading. Their values are declared in comments, such as `// @param float waveHeight = 0.2`,
-and edited in the effect's own **Parameters** section under the table. See
+shading. Their values are declared with `#pragma` lines, such as
+`#pragma param float waveHeight = 0.2`, and edited in the effect's own **Parameters**
+section under the table. See
 [Shader Effects](../manual/shader-effects.md) for the functions, the parameters and the
 engine's effects.
 
@@ -244,18 +245,18 @@ takes the shader type (`ShaderType.MESH`, `ShaderType.UI`, and so on).
 
 ## Shader parameters
 
-A fork declares its own values in comments, and the engine fills them from fields in the
+A fork declares its own values with `#pragma` lines, and the engine fills them from fields in the
 Properties window, from scripts, and from values the scene and its cameras share. This is
 how a water, wave, fire, or dissolve effect gets its parameters.
 
-Write one `// @param` line per value, in the vertex file, the fragment file, or an include,
+Write one `#pragma param` line per value, in the vertex file, the fragment file, or an include,
 and read it as `params.name`. Every built-in shader calls `loadShaderParameters()` at the
 top of `main()`, which fills `params`, so a fork can read them anywhere after that:
 
 ```glsl
 // wave.vert
-// @param float amplitude = 0.2 [0, 1] "Height of the waves"
-// @param float speed = 3 [0, 10]
+#pragma param float amplitude = 0.2 [0, 1] "Height of the waves"
+#pragma param float speed = 3 [0, 10]
 
 // ... in main():
 pos.y += sin(Engine.time * params.speed + pos.x * 4.0) * params.amplitude;
@@ -272,7 +273,7 @@ Keep that call in a fork: without it the values read zero, and the build warns a
 
 ```glsl
 // wave.frag
-// @param vec4 tint = 0.2, 0.5, 1, 1 color
+#pragma param vec4 tint = 0.2, 0.5, 1, 1 color
 
 // ... at the end of main():
 g_finalColor.rgb = mix(g_finalColor.rgb, params.tint.rgb, 0.5 + 0.5 * sin(Engine.time));
@@ -280,7 +281,7 @@ g_finalColor.rgb = mix(g_finalColor.rgb, params.tint.rgb, 0.5 + 0.5 * sin(Engine
 
 A name declared in both files is one value. The types are `float`, `vec2`, `vec3`, `vec4`,
 `int`, and `ivec2` to `ivec4`, and a declaration can give a default, a range, a color picker,
-and a tooltip. `@scene` and `@view` lines read values that the whole scene or one camera
+and a tooltip. `#pragma scene` and `#pragma view` lines read values that the whole scene or one camera
 shares, and `Engine.time` and `Engine.resolution` need no declaration. The syntax and where
 each value comes from are in
 [Shader Effects — Declaring parameters](../manual/shader-effects.md#declaring-parameters).
@@ -292,20 +293,29 @@ does not know. Changing a value never rebuilds the shader.
 
 !!! warning "Forks from v0.8.4 and earlier"
     Older forks declared `u_vs_customParams`, `u_fs_customParams`, or `u_fs_postParams`
-    blocks. The engine no longer fills them, and a fork that still reads one fails to build
-    with an error naming the block. Those forks also lack the parameter includes and the
-    `loadShaderParameters()` call, so replacing the block alone does not compile.
+    blocks. The engine no longer fills them, and a fork that still declares one fails to
+    build with an error naming the block.
 
-    To port one, reset the shader, fork the current built-in again, and copy your changes
-    into the new files. Turn each block member into a `// @param` line read as
-    `params.name`, `time` into `Engine.time` (it now follows the scene's clock), and
-    `resolution` into `Engine.resolution`. The values saved by name on the component or
-    the pass are kept.
+    When a project with such files opens, the editor lists them and asks whether to
+    rewrite them; answering No leaves them alone, and it asks again the next time. AI
+    agents have `port_shader_fork` for one fork. The command line never rewrites them. The
+    port changes each file in place: every block member becomes a `#pragma param` line
+    read as `params.name`, with the comment after the member as its tooltip, `time`
+    becomes `Engine.time` (it now follows the scene's clock), `resolution` becomes
+    `Engine.resolution`, and the parameter include and the `loadShaderParameters()` call
+    are added. The values saved by name on the component or the pass are kept. A file
+    whose block has a member that is not a `float`, a `vec2` to `vec4`, an `int` or an
+    `ivec2` to `ivec4` is left as it was, with the reason in the Output window.
+
+    The port keeps the rest of the fork as it was, so a ported Mesh fork still lacks the
+    hooks of [vertex offsets and coverage](#the-vertex-offset-and-coverage-rows). To get
+    them, fork the current built-in again and copy your changes over. The port will be
+    removed in a later version, so port old forks while it is there.
 
 ### Editing values
 
 Each shader file of the component gets a **Parameters** section below the Shaders table,
-named after the file (for example **wave Parameters**), with one field per `@param`. Saving
+named after the file (for example **wave Parameters**), with one field per `#pragma param`. Saving
 the file updates the fields. Values are stored **on the component**, by name:
 
 - A Mesh keeps one set of values for all of its submeshes, and its depth fork and effect
@@ -451,13 +461,13 @@ bound:
 
 ### Pass parameters
 
-A pass declares its values like any fork, with `// @param` lines, and each one becomes a
+A pass declares its values like any fork, with `#pragma param` lines, and each one becomes a
 field of the pass in a section named after the fork:
 
 ```glsl
-// @param float amount = 0.5 [0, 1]
-// @param float threshold = 0.8 [0, 1]
-// @param vec4 tintColor = 1, 0.9, 0.8, 1 color
+#pragma param float amount = 0.5 [0, 1]
+#pragma param float threshold = 0.8 [0, 1]
+#pragma param vec4 tintColor = 1, 0.9, 0.8, 1 color
 
 // ... in main(), one texel of the pass target:
 vec2 texel = Engine.resolution.zw;
@@ -465,7 +475,7 @@ vec2 texel = Engine.resolution.zw;
 
 The values are stored by name on the pass. `Engine.resolution` holds the size of the pass
 target and its inverse: use it for anything that depends on target size, since a texel
-offset written as a literal breaks the moment the window resizes. `@scene` and `@view`
+offset written as a literal breaks the moment the window resizes. `#pragma scene` and `#pragma view`
 values work in a pass too, so it can follow the same `Weather.wetness` as the scene's
 materials, and the pass's fullscreen vertex shader can declare parameters as well.
 

@@ -66,7 +66,7 @@ so it can be turned back on at runtime with
 * `Vector4 getUniform(const std::string& name) const`
 * `bool removeUniform(const std::string& name)`
 
-Values of the parameters the shader declares with `// @param`, keyed by name and stored
+Values of the parameters the shader declares with `#pragma param`, keyed by name and stored
 in `uniforms`. A name the shader does not declare is stored but unused, and a parameter
 with no value reads its declared default. A narrower value leaves the remaining components at zero. These edit the pass
 value only; the scene picks the change up when the chain is set again (a value-only change
