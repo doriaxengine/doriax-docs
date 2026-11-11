@@ -82,7 +82,7 @@ A `Scene` is the root container for all objects, systems, and resources in a pro
 | void | [destroy](#destroy) | C++ \| Lua |
 | void | [draw](#draw) | C++ \| Lua |
 | void | [update](#update) | C++ \| Lua |
-| void | [fixedUpdate](#fixedupdate) | C++ \| Lua |
+| void | [fixedUpdate](#fixedupdate) | C++ |
 | void | [setCamera](#setcamera) | C++ \| Lua |
 | Entity | [getCamera](#getcamera) | C++ |
 | void | [setViewCamera](#setviewcamera) | C++ |
@@ -169,11 +169,11 @@ A `Scene` is the root container for all objects, systems, and resources in a pro
 | bool | [removePostProcessUniform](#setpostprocessuniform) | C++ \| Lua |
 | void | [setPostProcessPassEnabled](#setpostprocesspassenabled) | C++ \| Lua |
 | bool | [isPostProcessPassEnabled](#setpostprocesspassenabled) | C++ \| Lua |
-| void | [enableUIEvents](#enableuievents_1) | C++ \| Lua |
+| void | [enableUIEvents](#enableuievents_1) | C++ |
 | bool | [isEnableUIEvents](#isenableuievents) | C++ |
 | bool | [canReceiveUIEvents](#canreceiveuievents) | C++ \| Lua |
 | void | [updateCameraSize](#updatecamerasize) | C++ \| Lua |
-| void | [removeSubscriptionsByTag](#removesubscriptionsbytag) | C++ \| Lua |
+| void | [removeSubscriptionsByTag](#removesubscriptionsbytag) | C++ |
 
 Entity and hierarchy methods — `createEntity`, `destroyEntity`, `setEntityName` /
 `getEntityName`, [`findEntity`](entityregistry.md#findentity), `addEntityChild`,

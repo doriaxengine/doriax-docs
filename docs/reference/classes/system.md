@@ -37,7 +37,7 @@ Each target platform provides its own concrete `System` subclass; the engine inj
 | --- | --- | --- |
 | int | [getScreenWidth](#getscreenwidth-getscreenheight) | C++ \| Lua |
 | int | [getScreenHeight](#getscreenwidth-getscreenheight) | C++ \| Lua |
-| int | [getSampleCount](#getsamplecount) | C++ \| Lua |
+| int | [getSampleCount](#getsamplecount) | C++ |
 | bool | [isTouchDevice](#istouchdevice) | C++ \| Lua |
 | void | [showVirtualKeyboard](#showvirtualkeyboard) | C++ \| Lua |
 | void | [hideVirtualKeyboard](#showvirtualkeyboard) | C++ \| Lua |
@@ -58,19 +58,19 @@ Each target platform provides its own concrete `System` subclass; the engine inj
 | std::string | [getLuaPath](#getluapath) | C++ \| Lua |
 | std::string | [getShaderPath](#getshaderpath) | C++ \| Lua |
 | std::string | [getImportPath](#getimportpath) | C++ |
-| bool | [getBoolForKey](#persistent-keyvalue-storage) | C++ \| Lua |
-| int | [getIntegerForKey](#persistent-keyvalue-storage) | C++ \| Lua |
-| long | [getLongForKey](#persistent-keyvalue-storage) | C++ \| Lua |
-| float | [getFloatForKey](#persistent-keyvalue-storage) | C++ \| Lua |
-| double | [getDoubleForKey](#persistent-keyvalue-storage) | C++ \| Lua |
-| std::string | [getStringForKey](#persistent-keyvalue-storage) | C++ \| Lua |
-| void | [setBoolForKey](#persistent-keyvalue-storage) | C++ \| Lua |
-| void | [setIntegerForKey](#persistent-keyvalue-storage) | C++ \| Lua |
-| void | [setLongForKey](#persistent-keyvalue-storage) | C++ \| Lua |
-| void | [setFloatForKey](#persistent-keyvalue-storage) | C++ \| Lua |
-| void | [setDoubleForKey](#persistent-keyvalue-storage) | C++ \| Lua |
-| void | [setStringForKey](#persistent-keyvalue-storage) | C++ \| Lua |
-| void | [removeKey](#persistent-keyvalue-storage) | C++ \| Lua |
+| bool | [getBoolForKey](#persistent-keyvalue-storage) | C++ \| Lua ([UserSettings](usersettings.md)) |
+| int | [getIntegerForKey](#persistent-keyvalue-storage) | C++ \| Lua ([UserSettings](usersettings.md)) |
+| long | [getLongForKey](#persistent-keyvalue-storage) | C++ \| Lua ([UserSettings](usersettings.md)) |
+| float | [getFloatForKey](#persistent-keyvalue-storage) | C++ \| Lua ([UserSettings](usersettings.md)) |
+| double | [getDoubleForKey](#persistent-keyvalue-storage) | C++ \| Lua ([UserSettings](usersettings.md)) |
+| std::string | [getStringForKey](#persistent-keyvalue-storage) | C++ \| Lua ([UserSettings](usersettings.md)) |
+| void | [setBoolForKey](#persistent-keyvalue-storage) | C++ \| Lua ([UserSettings](usersettings.md)) |
+| void | [setIntegerForKey](#persistent-keyvalue-storage) | C++ \| Lua ([UserSettings](usersettings.md)) |
+| void | [setLongForKey](#persistent-keyvalue-storage) | C++ \| Lua ([UserSettings](usersettings.md)) |
+| void | [setFloatForKey](#persistent-keyvalue-storage) | C++ \| Lua ([UserSettings](usersettings.md)) |
+| void | [setDoubleForKey](#persistent-keyvalue-storage) | C++ \| Lua ([UserSettings](usersettings.md)) |
+| void | [setStringForKey](#persistent-keyvalue-storage) | C++ \| Lua ([UserSettings](usersettings.md)) |
+| void | [removeKey](#persistent-keyvalue-storage) | C++ \| Lua ([UserSettings](usersettings.md)) |
 | AdMobBackend* | [getAdMobBackend](#service-backends) | C++ |
 | InAppPurchaseBackend* | [getInAppPurchaseBackend](#service-backends) | C++ |
 | WebPortalBackend* | [getWebPortalBackend](#service-backends) | C++ |

@@ -83,7 +83,7 @@ See [EntityHandle ownership](entityhandle.md#ownership-and-lifetime).
 
 | Returns | Name | Languages |
 | --- | --- | --- |
-| bool | [load](#load) | C++ \| Lua |
+| bool | [load](#load) | C++ |
 | void | [setTexture](#settexture) | C++ \| Lua |
 | void | [setColor](#color) | C++ \| Lua |
 | Vector4 | [getColor](#color) | C++ |

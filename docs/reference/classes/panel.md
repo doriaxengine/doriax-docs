@@ -38,7 +38,7 @@ All child UI elements placed inside the panel are automatically clipped to the p
 
 | Type | Name | Langs |
 | --- | --- | --- |
-| bool | [hasHeader](#hasheader) | C++ \| Lua |
+| bool | [hasHeader](#hasheader) | C++ |
 | [Image](image.md) | [getHeaderImageObject](#header) | C++ \| Lua |
 | [Container](container.md) | [getHeaderContainerObject](#header) | C++ \| Lua |
 | [Text](text.md) | [getHeaderTextObject](#header) | C++ \| Lua |

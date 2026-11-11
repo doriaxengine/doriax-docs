@@ -55,7 +55,7 @@ In Doriax, all [Object](object.md) rotations are stored as quaternions. Euler an
 | static Quaternion | [nlerp](#nlerp) | C++ \| Lua |
 | static Quaternion | [squad](#squad) | C++ \| Lua |
 | static Quaternion | [lookRotation](#lookrotation) | C++ \| Lua |
-| std::string | [toString](#tostring) | C++ \| Lua |
+| std::string | [toString](#tostring) | C++ \| Lua (`tostring`) |
 
 ## Enumerations
 

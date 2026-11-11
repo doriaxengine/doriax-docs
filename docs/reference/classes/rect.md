@@ -34,7 +34,7 @@ An axis-aligned rectangle defined by an origin `(x, y)` and size `(width, height
 | bool | [contains](#contains) | C++ \| Lua |
 | bool | [isNormalized](#isnormalized) | C++ \| Lua |
 | bool | [isZero](#iszero) | C++ \| Lua |
-| std::string | [toString](#tostring) | C++ \| Lua |
+| std::string | [toString](#tostring) | C++ \| Lua (`tostring`) |
 
 ## Property details
 

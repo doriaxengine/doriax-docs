@@ -33,9 +33,9 @@ A `Texture` object is a lightweight handle; the actual GPU resource is managed i
 | void | [setPath](#setpath) | C++ \| Lua |
 | void | [setData](#setdata) | C++ \| Lua |
 | void | [setId](#setid) | C++ \| Lua |
-| void | [setCubeMap](#setcubemap) | C++ \| Lua |
+| void | [setCubeMap](#setcubemap) | C++ |
 | void | [setCubePaths](#setcubepaths) | C++ \| Lua |
-| void | [setCubeDatas](#setcubedatas) | C++ \| Lua |
+| void | [setCubeDatas](#setcubedatas) | C++ |
 | void | [setFramebuffer](#setframebuffer) | C++ \| Lua |
 | [TextureLoadResult](textureloadresult.md) | [load](#load) | C++ \| Lua |
 | void | [destroy](#destroy) | C++ \| Lua |

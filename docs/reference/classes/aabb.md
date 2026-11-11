@@ -42,7 +42,7 @@ For rotated bounding volumes use [OBB](obb.md).
 | float | [squaredDistance](#distance-squareddistance) | C++ \| Lua |
 | float | [volume](#volume) | C++ \| Lua |
 | void | [scale](#scale) | C++ \| Lua |
-| [OBB](obb.md) | [getOBB](#getobb) | C++ \| Lua |
+| [OBB](obb.md) | [getOBB](#getobb) | C++ |
 | Vector3 | [getCorner](#getcorner-getcorners) | C++ \| Lua |
 | const Vector3* | [getCorners](#getcorner-getcorners) | C++ \| Lua |
 | void | [setNull / setInfinite / setFinite](#null-infinite-finite) | C++ \| Lua |

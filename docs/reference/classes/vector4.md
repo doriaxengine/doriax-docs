@@ -46,7 +46,7 @@ A 4D vector with `float` components `x`, `y`, `z`, and `w`. Used for RGBA colour
 | Vector4 | [lerp](#lerp) | C++ \| Lua |
 | bool | [isNaN](#isnan) | C++ \| Lua |
 | bool | [isValid](#isvalid) | C++ \| Lua |
-| std::string | [toString](#tostring) | C++ \| Lua |
+| std::string | [toString](#tostring) | C++ \| Lua (`tostring`) |
 
 ## Method details
 

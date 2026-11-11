@@ -58,7 +58,7 @@ A 3D vector with `float` components `x`, `y`, and `z`. The primary type for 3D p
 | void | [makeFloor](#makefloor-makeceil) | C++ \| Lua |
 | void | [makeCeil](#makefloor-makeceil) | C++ \| Lua |
 | bool | [isValid](#isvalid) | C++ \| Lua |
-| std::string | [toString](#tostring) | C++ \| Lua |
+| std::string | [toString](#tostring) | C++ \| Lua (`tostring`) |
 
 ## Method details
 

@@ -56,7 +56,7 @@ All arithmetic operators (`+`, `-`, `*`, `/`) are available for both component-w
 | void | [makeFloor](#makefloor-makeceil) | C++ \| Lua |
 | void | [makeCeil](#makefloor-makeceil) | C++ \| Lua |
 | bool | [isValid](#isvalid) | C++ \| Lua |
-| std::string | [toString](#tostring) | C++ \| Lua |
+| std::string | [toString](#tostring) | C++ \| Lua (`tostring`) |
 
 ## Method details
 

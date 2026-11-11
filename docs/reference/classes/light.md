@@ -28,12 +28,12 @@ Up to `MAX_LIGHTS` (6) lights are used at once. A scene with more uses its direc
 | float | [outerConeAngle](#innerconeangle-outerconeangle) | `45°` | C++ \| Lua |
 | [Texture](texture.md) | [spotMask](#spotmask) | empty | C++ \| Lua (read-only) |
 | bool | [shadows](#shadows) | `false` | C++ \| Lua |
-| float | [bias](#bias) | `0.005` | C++ \| Lua |
-| unsigned int | [shadowMapSize](#shadowmapsize) | `1024` | C++ \| Lua |
+| float | [bias](#bias) | `0.002` | C++ \| Lua |
+| unsigned int | [shadowMapSize](#shadowmapsize) | `2048` | C++ \| Lua |
 | float | [cameraNear](#cameranear-camerafar) | `0.1` | C++ \| Lua |
 | float | [cameraFar](#cameranear-camerafar) | `100.0` | C++ \| Lua |
 | bool | [automaticShadowCamera](#automaticshadowcamera) | `true` | C++ \| Lua |
-| unsigned int | [numCascades](#numcascades) | `1` | C++ \| Lua |
+| unsigned int | [numCascades](#numcascades) | `3` | C++ \| Lua |
 | bool | [cascadeBlend](#cascadeblend) | `false` | C++ \| Lua |
 
 ### Methods
@@ -61,9 +61,9 @@ Up to `MAX_LIGHTS` (6) lights are used at once. A scene with more uses its direc
 | void | [setShadows](#shadows) | C++ \| Lua |
 | bool | [isShadows](#shadows) | C++ |
 | void | [setBias](#bias) | C++ \| Lua |
-| float | [getBias](#bias) | C++ \| Lua |
+| float | [getBias](#bias) | C++ |
 | void | [setShadowMapSize](#shadowmapsize) | C++ \| Lua |
-| unsigned int | [getShadowMapSize](#shadowmapsize) | C++ \| Lua |
+| unsigned int | [getShadowMapSize](#shadowmapsize) | C++ |
 | void | [setShadowCameraNearFar](#cameranear-camerafar) | C++ \| Lua |
 | void | [setCameraNear](#cameranear-camerafar) | C++ \| Lua |
 | float | [getCameraNear](#cameranear-camerafar) | C++ |
