@@ -11,8 +11,9 @@ Abstract streaming interface shared by [File](file.md) and [Data](data.md).
 resource packing enabled, a packed path still returns `Data` even when a handle was
 requested, because a packed entry has no filesystem file to open.
 
-In Lua, the object is released when it is collected, which also closes a file. In C++
-you own the returned pointer and must `delete` it.
+In Lua, the object is released when it is collected, which also closes a file, and it
+comes back as a `FileData`: the methods of this page work on it, the ones only `File` or
+`Data` have don't. In C++ you own the returned pointer and must `delete` it.
 
 `seek` and `eof` work the same on both types: a negative offset counts back from the
 end, and `eof` is true right after the last byte. Only a `File` can move past the end,

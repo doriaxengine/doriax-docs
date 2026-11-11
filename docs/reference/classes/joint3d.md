@@ -69,7 +69,8 @@ values are kept but do nothing.
   resists overshooting: `1` stops at the target without bouncing, less bounces. A frequency of
   `0` makes the spring as stiff as the solver allows.
 * `motorMaxForce` `0` means no limit. With a limit, a heavy door or lift may stop short of
-  its target or move slower than asked, which is often what a mechanism should do.
+  its target or move slower than asked, which is often what a mechanism should do. A limited
+  position motor can also swing past its target before it settles, whatever its damping.
 
 The setters change the live joint at once and wake its bodies; one called from a 3D
 callback takes effect before the next step. The values are also

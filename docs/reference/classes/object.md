@@ -163,7 +163,7 @@ Local scale relative to the parent.
 * *Setter:* `void setVisible(bool visible)`
 * *Getter:* `bool isVisible() const`
 
-Hides or shows the object. Its children are hidden with it but keep their own flag, so showing the object again shows only the children that are visible themselves.
+Hides or shows the object. Its children are hidden with it but keep their own flag, so showing the object again shows only the children that are visible themselves. `setVisibleOnly` is gone for the same reason: `setVisible` no longer touches the children's flags, so call it instead.
 
 Scenes saved by earlier editors, where showing a parent made all its children visible, are converted when opened: the children of a hidden entity are made visible, so showing it brings them back as before.
 
