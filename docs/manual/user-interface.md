@@ -267,16 +267,17 @@ stick repeats after a short delay, like a held key.
 A focused button looks hovered, with its hovered colour, texture, and scale, so a menu that
 already has a hover effect needs nothing else. Pressing it fires `onPress`, and letting go
 fires `onRelease` and the `onClick` of its UIComponent, the same as a mouse click. Moving or
-clicking the mouse hides the focus until the next key or gamepad press, which only shows it
-again. That press continues from a button clicked in the meantime, or from the same button after a
-click on anything else.
+clicking the mouse hides the focus until the next arrow key, Tab, d-pad, or stick press, which
+only shows it again. That press continues from a button clicked in the meantime, or from the
+same button after a click on anything else. Enter, Space, and the A button go to gameplay
+while the focus is hidden.
 
 While the focused button is hidden, keys and gamepads go back to gameplay, so closing a menu
 gives the input back. When the menu shows again, or a menu scene that was removed is added
-back, the focus stays hidden until the next key or gamepad press, so a press right after it
+back, the focus stays hidden until the next of those presses, so a press right after it
 opens doesn't click the button left focused last time. Focus a button when the menu opens to
 show it right away. If the focused button is disabled or clipped out of view while the menu
-stays open, the next press moves the focus to the first button. A destroyed button takes the
+stays open, the next of those presses moves the focus to the first button. A destroyed button takes the
 focus with it, so focus another one after rebuilding a menu's buttons. To let go of the focus,
 call `setFocus(NULL_ENTITY)` on the [UISystem](../reference/classes/uisystem.md).
 
