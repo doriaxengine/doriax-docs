@@ -36,7 +36,7 @@ An action operates on a *target* object. When started, the action applies its ef
 | void | [stop](#start-pause-stop) | C++ \| Lua |
 | void | [restart](#restart) | C++ \| Lua |
 | void | [setTarget](#settarget) | C++ \| Lua |
-| Entity | [getTarget](#settarget) | C++ \| Lua |
+| Entity | [getTarget](#settarget) | C++ |
 | bool | [isRunning](#isrunning-ispaused-isstopped) | C++ \| Lua |
 | bool | [isPaused](#isrunning-ispaused-isstopped) | C++ \| Lua |
 | bool | [isStopped](#isrunning-ispaused-isstopped) | C++ \| Lua |

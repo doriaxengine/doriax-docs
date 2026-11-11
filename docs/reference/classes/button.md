@@ -37,7 +37,7 @@ Buttons can also be focused and pressed with the keyboard or a gamepad. See [Key
 
 | Type | Name | Langs |
 | --- | --- | --- |
-| bool | [hasLabel](#haslabel) | C++ \| Lua |
+| bool | [hasLabel](#haslabel) | C++ |
 | [Text](text.md) | [getLabelObject](#getlabelobject) | C++ \| Lua |
 | void | [setTextureNormal](#statetextures) | C++ \| Lua |
 | void | [setTextureHovered](#statetextures) | C++ \| Lua |

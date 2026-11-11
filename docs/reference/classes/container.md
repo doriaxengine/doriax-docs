@@ -27,8 +27,8 @@ A container lays out up to 30 visible children (`MAX_CONTAINER_BOXES`). A child 
 | Type | Name | Langs |
 | --- | --- | --- |
 | void | [resize](#resize) | C++ \| Lua |
-| unsigned int | [getContentWidth](#getcontentwidth-getcontentheight) | C++ \| Lua |
-| unsigned int | [getContentHeight](#getcontentwidth-getcontentheight) | C++ \| Lua |
+| unsigned int | [getContentWidth](#getcontentwidth-getcontentheight) | C++ |
+| unsigned int | [getContentHeight](#getcontentwidth-getcontentheight) | C++ |
 | void | [setBoxExpand](#setboxexpand) | C++ \| Lua |
 | [UIContainerComponent](uicontainercomponent.md) | `getUIContainerComponent` | Lua |
 

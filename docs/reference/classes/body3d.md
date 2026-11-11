@@ -85,12 +85,12 @@ description: Body3D API reference — 3D physics body powered by Jolt Physics, s
 | void | [setAllowedDOFsAll](#setalloweddofsall-setalloweddofs2dplane-setalloweddofs) | C++ \| Lua |
 | void | [setAllowedDOFs2DPlane](#setalloweddofsall-setalloweddofs2dplane-setalloweddofs) | C++ \| Lua |
 | void | [setAllowedDOFs](#setalloweddofsall-setalloweddofs2dplane-setalloweddofs) | C++ \| Lua |
-| void | [setMass](#setmass-setoverridemassandinertia) | C++ \| Lua |
+| void | [setMass](#setmass-setoverridemassandinertia) | C++ |
 | void | [setOverrideMassAndInertia](#setmass-setoverridemassandinertia) | C++ \| Lua |
 | void | [setBitsFilter](#categorybitsfilter-maskbitsfilter) | C++ \| Lua |
-| void | [setLinearVelocity](#linearvelocity-angularvelocity) | C++ \| Lua |
+| void | [setLinearVelocity](#linearvelocity-angularvelocity) | C++ |
 | void | [setLinearVelocityClamped](#setlinearvelocityclamped-setangularvelocityclamped) | C++ \| Lua |
-| void | [setAngularVelocity](#linearvelocity-angularvelocity) | C++ \| Lua |
+| void | [setAngularVelocity](#linearvelocity-angularvelocity) | C++ |
 | void | [setAngularVelocityClamped](#setlinearvelocityclamped-setangularvelocityclamped) | C++ \| Lua |
 | Vector3 | [getPointVelocity](#getpointvelocity) | C++ \| Lua |
 | Vector3 | getAccumulatedForce | C++ \| Lua |

@@ -34,23 +34,23 @@ Shadows are opt-in per light and are cast by [Occluder2D](occluder2d.md) compone
 | Type | Name | Langs |
 | --- | --- | --- |
 | void | [setColor](#color) | C++ \| Lua |
-| Vector3 | [getColor](#color) | C++ \| Lua |
+| Vector3 | [getColor](#color) | C++ |
 | void | [setIntensity](#intensity) | C++ \| Lua |
-| float | [getIntensity](#intensity) | C++ \| Lua |
+| float | [getIntensity](#intensity) | C++ |
 | void | [setRange](#range) | C++ \| Lua |
-| float | [getRange](#range) | C++ \| Lua |
+| float | [getRange](#range) | C++ |
 | void | [setFalloff](#falloff) | C++ \| Lua |
-| float | [getFalloff](#falloff) | C++ \| Lua |
+| float | [getFalloff](#falloff) | C++ |
 | void | [setHeight](#height) | C++ \| Lua |
-| float | [getHeight](#height) | C++ \| Lua |
+| float | [getHeight](#height) | C++ |
 | void | [setShadows](#shadows) | C++ \| Lua |
-| bool | [isShadows](#shadows) | C++ \| Lua |
-| void | [setShadowBias](#shadowbias) | C++ \| Lua |
-| float | [getShadowBias](#shadowbias) | C++ \| Lua |
-| void | [setShadowSoftness](#shadowsoftness) | C++ \| Lua |
-| float | [getShadowSoftness](#shadowsoftness) | C++ \| Lua |
-| void | [setMapResolution](#mapresolution) | C++ \| Lua |
-| unsigned int | [getMapResolution](#mapresolution) | C++ \| Lua |
+| bool | [isShadows](#shadows) | C++ |
+| void | [setShadowBias](#shadowbias) | C++ |
+| float | [getShadowBias](#shadowbias) | C++ |
+| void | [setShadowSoftness](#shadowsoftness) | C++ |
+| float | [getShadowSoftness](#shadowsoftness) | C++ |
+| void | [setMapResolution](#mapresolution) | C++ |
+| unsigned int | [getMapResolution](#mapresolution) | C++ |
 | [Light2DComponent](light2dcomponent.md) | `getLight2DComponent` | Lua |
 
 ---

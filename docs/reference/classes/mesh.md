@@ -86,9 +86,9 @@ See [EntityHandle ownership](entityhandle.md#ownership-and-lifetime).
 | bool | [load](#load) | C++ \| Lua |
 | void | [setTexture](#settexture) | C++ \| Lua |
 | void | [setColor](#color) | C++ \| Lua |
-| Vector4 | [getColor](#color) | C++ \| Lua |
-| void | [setAlpha](#alpha) | C++ \| Lua |
-| float | [getAlpha](#alpha) | C++ \| Lua |
+| Vector4 | [getColor](#color) | C++ |
+| void | [setAlpha](#alpha) | C++ |
+| float | [getAlpha](#alpha) | C++ |
 | void | [setMaterial](#material) | C++ \| Lua |
 | Material | [getMaterial](#material) | C++ \| Lua |
 | void | [setPrimitiveType](#primitivetype_1) | C++ \| Lua |
@@ -105,26 +105,26 @@ See [EntityHandle ownership](entityhandle.md#ownership-and-lifetime).
 | unsigned int | [getNumSubmeshes](#getnumsubmeshes) | C++ \| Lua |
 | void | setReceiveLights | C++ \| Lua |
 | bool | isReceiveLights | C++ \| Lua |
-| void | [setCastShadows](#castshadows-receiveshadows) | C++ \| Lua |
-| bool | [isCastShadows](#castshadows-receiveshadows) | C++ \| Lua |
-| void | [setReceiveShadows](#castshadows-receiveshadows) | C++ \| Lua |
-| bool | [isReceiveShadows](#castshadows-receiveshadows) | C++ \| Lua |
-| void | [setLodEnabled](#lodenabled-lodbias) | C++ \| Lua |
-| bool | [isLodEnabled](#lodenabled-lodbias) | C++ \| Lua |
-| void | [setLodBias](#lodenabled-lodbias) | C++ \| Lua |
-| float | [getLodBias](#lodenabled-lodbias) | C++ \| Lua |
+| void | [setCastShadows](#castshadows-receiveshadows) | C++ |
+| bool | [isCastShadows](#castshadows-receiveshadows) | C++ |
+| void | [setReceiveShadows](#castshadows-receiveshadows) | C++ |
+| bool | [isReceiveShadows](#castshadows-receiveshadows) | C++ |
+| void | [setLodEnabled](#lodenabled-lodbias) | C++ |
+| bool | [isLodEnabled](#lodenabled-lodbias) | C++ |
+| void | [setLodBias](#lodenabled-lodbias) | C++ |
+| float | [getLodBias](#lodenabled-lodbias) | C++ |
 | void | setShadowsBillboard | C++ \| Lua |
 | bool | isShadowsBillboard | C++ \| Lua |
 | void | setCastShadowsWithTexture | C++ \| Lua |
 | bool | isCastShadowsWithTexture | C++ \| Lua |
-| void | [setTransparent](#transparent-autotransparency) | C++ \| Lua |
-| bool | [isTransparent](#transparent-autotransparency) | C++ \| Lua |
-| void | [setAutoTransparency](#transparent-autotransparency) | C++ \| Lua |
-| bool | [isAutoTransparency](#transparent-autotransparency) | C++ \| Lua |
-| void | [setCustomShader](#customshader) | C++ \| Lua |
-| string | [getCustomShader](#customshader) | C++ \| Lua |
-| void | [setCustomDepthShader](#customdepthshader) | C++ \| Lua |
-| string | [getCustomDepthShader](#customdepthshader) | C++ \| Lua |
+| void | [setTransparent](#transparent-autotransparency) | C++ |
+| bool | [isTransparent](#transparent-autotransparency) | C++ |
+| void | [setAutoTransparency](#transparent-autotransparency) | C++ |
+| bool | [isAutoTransparency](#transparent-autotransparency) | C++ |
+| void | [setCustomShader](#customshader) | C++ |
+| string | [getCustomShader](#customshader) | C++ |
+| void | [setCustomDepthShader](#customdepthshader) | C++ |
+| string | [getCustomDepthShader](#customdepthshader) | C++ |
 | void | [setShaderUniform](#setshaderuniform) | C++ \| Lua |
 | Vector4 | [getShaderUniform](#setshaderuniform) | C++ \| Lua |
 | bool | [removeShaderUniform](#setshaderuniform) | C++ \| Lua |
@@ -144,22 +144,22 @@ See [EntityHandle ownership](entityhandle.md#ownership-and-lifetime).
 | size_t | [getNumInstances](#createinstancedmesh) | C++ \| Lua |
 | void | [clearInstances](#clearinstances) | C++ \| Lua |
 | void | [setInstancedBillboard](#createinstancedmesh) | C++ \| Lua |
-| bool | [isInstancedBillboard](#createinstancedmesh) | C++ \| Lua |
-| void | [setInstancedCylindricalBillboard](#createinstancedmesh) | C++ \| Lua |
-| bool | [isInstancedCylindricalBillboard](#createinstancedmesh) | C++ \| Lua |
-| void | [setMaxInstances](#createinstancedmesh) | C++ \| Lua |
-| unsigned int | [getMaxInstances](#createinstancedmesh) | C++ \| Lua |
-| void | [setDistanceFade](#distancefade-fadestart-fadeend) | C++ \| Lua |
-| bool | [isDistanceFade](#distancefade-fadestart-fadeend) | C++ \| Lua |
+| bool | [isInstancedBillboard](#createinstancedmesh) | C++ |
+| void | [setInstancedCylindricalBillboard](#createinstancedmesh) | C++ |
+| bool | [isInstancedCylindricalBillboard](#createinstancedmesh) | C++ |
+| void | [setMaxInstances](#createinstancedmesh) | C++ |
+| unsigned int | [getMaxInstances](#createinstancedmesh) | C++ |
+| void | [setDistanceFade](#distancefade-fadestart-fadeend) | C++ |
+| bool | [isDistanceFade](#distancefade-fadestart-fadeend) | C++ |
 | void | [setFadeRange](#distancefade-fadestart-fadeend) | C++ \| Lua |
-| void | [setFadeStart](#distancefade-fadestart-fadeend) | C++ \| Lua |
-| float | [getFadeStart](#distancefade-fadestart-fadeend) | C++ \| Lua |
-| void | [setFadeEnd](#distancefade-fadestart-fadeend) | C++ \| Lua |
-| float | [getFadeEnd](#distancefade-fadestart-fadeend) | C++ \| Lua |
-| void | [setCullInstances](#cullinstances) | C++ \| Lua |
-| bool | [isCullInstances](#cullinstances) | C++ \| Lua |
-| void | [setCullDistance](#culldistance) | C++ \| Lua |
-| float | [getCullDistance](#culldistance) | C++ \| Lua |
+| void | [setFadeStart](#distancefade-fadestart-fadeend) | C++ |
+| float | [getFadeStart](#distancefade-fadestart-fadeend) | C++ |
+| void | [setFadeEnd](#distancefade-fadestart-fadeend) | C++ |
+| float | [getFadeEnd](#distancefade-fadestart-fadeend) | C++ |
+| void | [setCullInstances](#cullinstances) | C++ |
+| bool | [isCullInstances](#cullinstances) | C++ |
+| void | [setCullDistance](#culldistance) | C++ |
+| float | [getCullDistance](#culldistance) | C++ |
 | [MeshComponent](meshcomponent.md) | `getMeshComponent` | Lua |
 | [InstancedMeshComponent](instancedmeshcomponent.md) | `getInstancedMeshComponent` | Lua |
 

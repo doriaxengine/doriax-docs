@@ -58,29 +58,29 @@ description: Object API reference — transform, hierarchy, visibility, billboar
 | void | [moveDown](#movetotop-moveup-movedown-movetobottom) | C++ \| Lua |
 | void | [moveToBottom](#movetotop-moveup-movedown-movetobottom) | C++ \| Lua |
 | void | [setPosition](#setposition) | C++ \| Lua |
-| Vector3 | [getPosition](#setposition) | C++ \| Lua |
+| Vector3 | [getPosition](#setposition) | C++ |
 | Vector3 | [getWorldPosition](#getworldposition) | C++ \| Lua |
 | void | [setRotation](#setrotation) | C++ \| Lua |
-| Quaternion | [getRotation](#setrotation) | C++ \| Lua |
+| Quaternion | [getRotation](#setrotation) | C++ |
 | Quaternion | [getWorldRotation](#setrotation) | C++ \| Lua |
 | void | [setScale](#setscale) | C++ \| Lua |
-| Vector3 | [getScale](#setscale) | C++ \| Lua |
+| Vector3 | [getScale](#setscale) | C++ |
 | Vector3 | [getWorldScale](#setscale) | C++ \| Lua |
-| void | [setVisible](#setvisible) | C++ \| Lua |
-| bool | [isVisible](#setvisible) | C++ \| Lua |
-| bool | [isVisibleInHierarchy](#visibleinhierarchy) | C++ \| Lua |
+| void | [setVisible](#setvisible) | C++ |
+| bool | [isVisible](#setvisible) | C++ |
+| bool | [isVisibleInHierarchy](#visibleinhierarchy) | C++ |
 | void | [setBillboard](#setbillboard) | C++ \| Lua |
-| bool | [isBillboard](#billboard) | C++ \| Lua |
-| void | [setFakeBillboard](#fakebillboard) | C++ \| Lua |
-| bool | [isFakeBillboard](#fakebillboard) | C++ \| Lua |
-| void | [setCylindricalBillboard](#cylindricalbillboard) | C++ \| Lua |
-| bool | [isCylindricalBillboard](#cylindricalbillboard) | C++ \| Lua |
+| bool | [isBillboard](#billboard) | C++ |
+| void | [setFakeBillboard](#fakebillboard) | C++ |
+| bool | [isFakeBillboard](#fakebillboard) | C++ |
+| void | [setCylindricalBillboard](#cylindricalbillboard) | C++ |
+| bool | [isCylindricalBillboard](#cylindricalbillboard) | C++ |
 | void | [setBillboardRotation](#billboardrotation) | C++ \| Lua |
-| Quaternion | [getBillboardRotation](#billboardrotation) | C++ \| Lua |
-| void | [setLocalMatrix](#localmatrix) | C++ \| Lua |
-| Matrix4 | [getLocalMatrix](#localmatrix) | C++ \| Lua |
-| Matrix4 | [getModelMatrix](#modelmatrix) | C++ \| Lua |
-| Matrix4 | [getNormalMatrix](#normalmatrix) | C++ \| Lua |
+| Quaternion | [getBillboardRotation](#billboardrotation) | C++ |
+| void | [setLocalMatrix](#localmatrix) | C++ |
+| Matrix4 | [getLocalMatrix](#localmatrix) | C++ |
+| Matrix4 | [getModelMatrix](#modelmatrix) | C++ |
+| Matrix4 | [getNormalMatrix](#normalmatrix) | C++ |
 | void | [updateTransform](#updatetransform) | C++ \| Lua |
 | [Body2D](body2d.md) | [getBody2D](#getbody2d) | C++ \| Lua |
 | void | [removeBody2D](#removebody2d) | C++ \| Lua |

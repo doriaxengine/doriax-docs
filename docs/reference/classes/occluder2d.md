@@ -30,15 +30,15 @@ See [2D Graphics — 2D shadows](../../manual/2d-graphics.md#2d-shadows) for the
 
 | Type | Name | Langs |
 | --- | --- | --- |
-| void | [setShape](#shape) | C++ \| Lua |
-| Occluder2DShape | [getShape](#shape) | C++ \| Lua |
+| void | [setShape](#shape) | C++ |
+| Occluder2DShape | [getShape](#shape) | C++ |
 | void | [addVertex](#addvertex) | C++ \| Lua |
 | void | [clearVertices](#addvertex) | C++ \| Lua |
 | unsigned int | [getVertexCount](#addvertex) | C++ \| Lua |
-| void | [setClosed](#closed) | C++ \| Lua |
-| bool | [isClosed](#closed) | C++ \| Lua |
-| void | [setEnabled](#enabled) | C++ \| Lua |
-| bool | [isEnabled](#enabled) | C++ \| Lua |
+| void | [setClosed](#closed) | C++ |
+| bool | [isClosed](#closed) | C++ |
+| void | [setEnabled](#enabled) | C++ |
+| bool | [isEnabled](#enabled) | C++ |
 | [Occluder2DComponent](occluder2dcomponent.md) | `getOccluder2DComponent` | Lua |
 
 ## Enumerations

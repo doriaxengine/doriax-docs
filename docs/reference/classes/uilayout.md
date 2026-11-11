@@ -47,8 +47,8 @@ A UI element's position is its top-left corner, and by default it scales and rot
 | void | [setSize](#width-height) | C++ \| Lua |
 | void | [setAnchorPoints](#anchorpoints) | C++ \| Lua |
 | void | [setAnchorOffsets](#anchoroffsets) | C++ \| Lua |
-| void | [setAnchorPreset](#anchorpreset_1) | C++ \| Lua |
-| void | [setPositionOffset](#positionoffset) | C++ \| Lua |
+| void | [setAnchorPreset](#anchorpreset_1) | C++ |
+| void | [setPositionOffset](#positionoffset) | C++ |
 | void | [setPivot](#pivot) | C++ \| Lua |
 
 ## Enumerations

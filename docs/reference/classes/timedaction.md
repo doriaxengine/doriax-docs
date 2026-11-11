@@ -39,12 +39,12 @@ See [EntityHandle ownership](entityhandle.md#ownership-and-lifetime).
 | void | [setFunctionType](#setfunctiontype) | C++ \| Lua |
 | float | [getValue](#getvalue-gettime) | C++ \| Lua |
 | float | [getTime](#getvalue-gettime) | C++ \| Lua |
-| void | [setDuration](#duration) | C++ \| Lua |
-| float | [getDuration](#duration) | C++ \| Lua |
-| void | [setLoop](#loop) | C++ \| Lua |
-| bool | [isLoop](#loop) | C++ \| Lua |
-| void | [setPingPong](#pingpong) | C++ \| Lua |
-| bool | [isPingPong](#pingpong) | C++ \| Lua |
+| void | [setDuration](#duration) | C++ |
+| float | [getDuration](#duration) | C++ |
+| void | [setLoop](#loop) | C++ |
+| bool | [isLoop](#loop) | C++ |
+| void | [setPingPong](#pingpong) | C++ |
+| bool | [isPingPong](#pingpong) | C++ |
 
 ## Enumerations
 

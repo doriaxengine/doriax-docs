@@ -423,7 +423,7 @@ included. The result matches the surface the next frame draws, so calling it in
 === "Lua"
 
     ```lua
-    local pos = buoy:getPosition()
+    local pos = buoy.position
     pos.y = water:getHeight(pos.x, pos.z)
     buoy:setPosition(pos)
     ```

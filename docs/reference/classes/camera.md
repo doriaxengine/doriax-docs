@@ -60,28 +60,28 @@ description: Camera API reference — orthographic and perspective projection, t
 | void | [activate](#activate) | C++ \| Lua |
 | void | [setOrtho](#setortho) | C++ \| Lua |
 | void | [setPerspective](#setperspective) | C++ \| Lua |
-| void | [setAutoResize](#autoresize) | C++ \| Lua |
-| bool | [isAutoResize](#autoresize) | C++ \| Lua |
-| void | [setNearClip](#nearclip-farclip) | C++ \| Lua |
-| float | [getNearClip](#nearclip-farclip) | C++ \| Lua |
-| void | [setFarClip](#nearclip-farclip) | C++ \| Lua |
-| float | [getFarClip](#nearclip-farclip) | C++ \| Lua |
-| void | [setLeftClip](#leftclip-rightclip-bottomclip-topclip) | C++ \| Lua |
-| float | [getLeftClip](#leftclip-rightclip-bottomclip-topclip) | C++ \| Lua |
-| void | [setRightClip](#leftclip-rightclip-bottomclip-topclip) | C++ \| Lua |
-| float | [getRightClip](#leftclip-rightclip-bottomclip-topclip) | C++ \| Lua |
-| void | [setBottomClip](#leftclip-rightclip-bottomclip-topclip) | C++ \| Lua |
-| float | [getBottomClip](#leftclip-rightclip-bottomclip-topclip) | C++ \| Lua |
-| void | [setTopClip](#leftclip-rightclip-bottomclip-topclip) | C++ \| Lua |
-| float | [getTopClip](#leftclip-rightclip-bottomclip-topclip) | C++ \| Lua |
-| void | [setAspect](#aspect) | C++ \| Lua |
-| float | [getAspect](#aspect) | C++ \| Lua |
-| void | [setYFov](#yfov) | C++ \| Lua |
-| float | [getYFov](#yfov) | C++ \| Lua |
+| void | [setAutoResize](#autoresize) | C++ |
+| bool | [isAutoResize](#autoresize) | C++ |
+| void | [setNearClip](#nearclip-farclip) | C++ |
+| float | [getNearClip](#nearclip-farclip) | C++ |
+| void | [setFarClip](#nearclip-farclip) | C++ |
+| float | [getFarClip](#nearclip-farclip) | C++ |
+| void | [setLeftClip](#leftclip-rightclip-bottomclip-topclip) | C++ |
+| float | [getLeftClip](#leftclip-rightclip-bottomclip-topclip) | C++ |
+| void | [setRightClip](#leftclip-rightclip-bottomclip-topclip) | C++ |
+| float | [getRightClip](#leftclip-rightclip-bottomclip-topclip) | C++ |
+| void | [setBottomClip](#leftclip-rightclip-bottomclip-topclip) | C++ |
+| float | [getBottomClip](#leftclip-rightclip-bottomclip-topclip) | C++ |
+| void | [setTopClip](#leftclip-rightclip-bottomclip-topclip) | C++ |
+| float | [getTopClip](#leftclip-rightclip-bottomclip-topclip) | C++ |
+| void | [setAspect](#aspect) | C++ |
+| float | [getAspect](#aspect) | C++ |
+| void | [setYFov](#yfov) | C++ |
+| float | [getYFov](#yfov) | C++ |
 | void | [setType](#type) | C++ \| Lua |
-| CameraType | [getType](#type) | C++ \| Lua |
+| CameraType | [getType](#type) | C++ |
 | void | [setTarget](#settarget-disabletarget-isusingtarget) | C++ \| Lua |
-| Vector3 | [getTarget](#target) | C++ \| Lua |
+| Vector3 | [getTarget](#target) | C++ |
 | void | [disableTarget](#settarget-disabletarget-isusingtarget) | C++ \| Lua |
 | bool | [isUsingTarget](#settarget-disabletarget-isusingtarget) | C++ \| Lua |
 | void | [setUp](#up) | C++ \| Lua |
@@ -104,15 +104,15 @@ description: Camera API reference — orthographic and perspective projection, t
 | void | [slide](#slide-slideforward-slideup) | C++ \| Lua |
 | void | [slideForward](#slide-slideforward-slideup) | C++ \| Lua |
 | void | [slideUp](#slide-slideforward-slideup) | C++ \| Lua |
-| void | [setRenderToTexture](#setrendertotexture-getframebuffer-setframebuffersize-setframebufferfilter) | C++ \| Lua |
-| bool | [isRenderToTexture](#setrendertotexture-getframebuffer-setframebuffersize-setframebufferfilter) | C++ \| Lua |
+| void | [setRenderToTexture](#setrendertotexture-getframebuffer-setframebuffersize-setframebufferfilter) | C++ |
+| bool | [isRenderToTexture](#setrendertotexture-getframebuffer-setframebuffersize-setframebufferfilter) | C++ |
 | Framebuffer* | [getFramebuffer](#setrendertotexture-getframebuffer-setframebuffersize-setframebufferfilter) | C++ \| Lua |
 | void | [setFramebufferSize](#setrendertotexture-getframebuffer-setframebuffersize-setframebufferfilter) | C++ \| Lua |
 | void | [setFramebufferFilter](#setrendertotexture-getframebuffer-setframebuffersize-setframebufferfilter) | C++ \| Lua |
-| void | [setTransparentSort](#transparentsort) | C++ \| Lua |
-| bool | [isTransparentSort](#transparentsort) | C++ \| Lua |
-| void | [setDepthTest](#depthtest) | C++ \| Lua |
-| bool | [isDepthTest](#depthtest) | C++ \| Lua |
+| void | [setTransparentSort](#transparentsort) | C++ |
+| bool | [isTransparentSort](#transparentsort) | C++ |
+| void | [setDepthTest](#depthtest) | C++ |
+| bool | [isDepthTest](#depthtest) | C++ |
 | Ray | [screenToRay](#screentoray) | C++ \| Lua |
 | float | [getDistanceFromTarget](#getdistancefromtarget) | C++ \| Lua |
 | void | [updateCamera](#updatecamera) | C++ \| Lua |

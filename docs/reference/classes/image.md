@@ -37,7 +37,7 @@ All UI elements also expose a rich set of pointer/focus callback events (inherit
 | void | [setTexture](#settexture) | C++ \| Lua |
 | void | [setPatchMargin](#patchmargin) | C++ \| Lua |
 | void | [setColor](#color) | C++ \| Lua |
-| void | [setAlpha](#color) | C++ \| Lua |
+| void | [setAlpha](#color) | C++ |
 | AABB | [getAABB](#getaabb-getworldaabb) | C++ \| Lua |
 | AABB | [getWorldAABB](#getaabb-getworldaabb) | C++ \| Lua |
 | void | [setShaderUniform](#setshaderuniform) | C++ \| Lua |

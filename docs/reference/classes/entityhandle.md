@@ -23,8 +23,8 @@ Most classes in the Doriax API — [Object](object.md), [Action](action.md), [So
 
 | Type | Name | Langs |
 | --- | --- | --- |
-| Scene* | [getScene](#getscene) | C++ \| Lua |
-| Entity | [getEntity](#getentity) | C++ \| Lua |
+| Scene* | [getScene](#getscene) | C++ |
+| Entity | [getEntity](#getentity) | C++ |
 
 ## Property details
 

@@ -41,38 +41,38 @@ Up to `MAX_LIGHTS` (6) lights are used at once. A scene with more uses its direc
 | Type | Name | Langs |
 | --- | --- | --- |
 | void | [setType](#type) | C++ \| Lua |
-| LightType | [getType](#type) | C++ \| Lua |
+| LightType | [getType](#type) | C++ |
 | void | [setDirection](#direction) | C++ \| Lua |
-| Vector3 | [getDirection](#direction) | C++ \| Lua |
+| Vector3 | [getDirection](#direction) | C++ |
 | void | [setColor](#color) | C++ \| Lua |
-| Vector3 | [getColor](#color) | C++ \| Lua |
+| Vector3 | [getColor](#color) | C++ |
 | void | [setRange](#range) | C++ \| Lua |
-| float | [getRange](#range) | C++ \| Lua |
+| float | [getRange](#range) | C++ |
 | void | [setIntensity](#intensity) | C++ \| Lua |
-| float | [getIntensity](#intensity) | C++ \| Lua |
+| float | [getIntensity](#intensity) | C++ |
 | void | [setConeAngle](#innerconeangle-outerconeangle) | C++ \| Lua |
 | void | [setInnerConeAngle](#innerconeangle-outerconeangle) | C++ \| Lua |
-| float | [getInnerConeAngle](#innerconeangle-outerconeangle) | C++ \| Lua |
+| float | [getInnerConeAngle](#innerconeangle-outerconeangle) | C++ |
 | void | [setOuterConeAngle](#innerconeangle-outerconeangle) | C++ \| Lua |
-| float | [getOuterConeAngle](#innerconeangle-outerconeangle) | C++ \| Lua |
+| float | [getOuterConeAngle](#innerconeangle-outerconeangle) | C++ |
 | void | [setSpotMask](#spotmask) | C++ \| Lua |
 | void | [clearSpotMask](#spotmask) | C++ \| Lua |
-| [Texture](texture.md) | [getSpotMask](#spotmask) | C++ \| Lua |
+| [Texture](texture.md) | [getSpotMask](#spotmask) | C++ |
 | void | [setShadows](#shadows) | C++ \| Lua |
-| bool | [isShadows](#shadows) | C++ \| Lua |
+| bool | [isShadows](#shadows) | C++ |
 | void | [setBias](#bias) | C++ \| Lua |
 | float | [getBias](#bias) | C++ \| Lua |
 | void | [setShadowMapSize](#shadowmapsize) | C++ \| Lua |
 | unsigned int | [getShadowMapSize](#shadowmapsize) | C++ \| Lua |
 | void | [setShadowCameraNearFar](#cameranear-camerafar) | C++ \| Lua |
 | void | [setCameraNear](#cameranear-camerafar) | C++ \| Lua |
-| float | [getCameraNear](#cameranear-camerafar) | C++ \| Lua |
+| float | [getCameraNear](#cameranear-camerafar) | C++ |
 | void | [setCameraFar](#cameranear-camerafar) | C++ \| Lua |
-| float | [getCameraFar](#cameranear-camerafar) | C++ \| Lua |
-| void | [setAutomaticShadowCamera](#automaticshadowcamera) | C++ \| Lua |
-| bool | [isAutomaticShadowCamera](#automaticshadowcamera) | C++ \| Lua |
+| float | [getCameraFar](#cameranear-camerafar) | C++ |
+| void | [setAutomaticShadowCamera](#automaticshadowcamera) | C++ |
+| bool | [isAutomaticShadowCamera](#automaticshadowcamera) | C++ |
 | void | [setNumCascades](#numcascades) | C++ \| Lua |
-| float | [getNumCascades](#numcascades) | C++ \| Lua |
+| float | [getNumCascades](#numcascades) | C++ |
 | void | [setCascadeBlend](#cascadeblend) | C++ |
 | bool | [isCascadeBlend](#cascadeblend) | C++ |
 | [LightComponent](lightcomponent.md) | `getLightComponent` | Lua |

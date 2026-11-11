@@ -131,7 +131,7 @@ Logs a `WARN`-level message. Use for recoverable issues: missing optional resour
 === "Lua"
 
     ```lua
-    if not body:isEnabled() then
+    if not body.enabled then
         Log.warn("Trying to apply force to a disabled body")
     end
     ```

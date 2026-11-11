@@ -80,7 +80,7 @@ Control engine properties and define defaults used across the whole project. `En
 | static Scene* | [getLastScene](#getlastscene) | C++ \| Lua |
 | static void | [pauseGameEvents](#pausegameevents) | C++ \| Lua |
 | static void | [setCanvasSize](#setcanvassize) | C++ \| Lua |
-| static Rect | [getViewRect](#getviewrect) | C++ \| Lua |
+| static Rect | [getViewRect](#getviewrect) | C++ |
 | static void | [setMousePosition](#setmouseposition) | C++ \| Lua |
 | static void | [setUpdateTimeMS](#setupdatetimems) | C++ \| Lua |
 | static bool | [isUIEventReceived](#isuieventreceived) | C++ \| Lua |

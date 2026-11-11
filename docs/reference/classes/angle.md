@@ -61,7 +61,7 @@ Convert from the engine's default unit to radians or degrees.
 
 === "Lua"
     ```lua
-    local deg = Angle.defaultToDeg(obj:getRotation():getYaw())
+    local deg = Angle.defaultToDeg(obj.rotation:getYaw())
     ```
 
 ---

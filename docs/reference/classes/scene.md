@@ -84,33 +84,33 @@ A `Scene` is the root container for all objects, systems, and resources in a pro
 | void | [update](#update) | C++ \| Lua |
 | void | [fixedUpdate](#fixedupdate) | C++ \| Lua |
 | void | [setCamera](#setcamera) | C++ \| Lua |
-| Entity | [getCamera](#getcamera) | C++ \| Lua |
+| Entity | [getCamera](#getcamera) | C++ |
 | void | [setViewCamera](#setviewcamera) | C++ |
 | Entity | [getRenderCamera](#getrendercamera) | C++ |
 | void | [setBackgroundColor](#setbackgroundcolor) | C++ \| Lua |
-| Vector4 | [getBackgroundColor](#setbackgroundcolor) | C++ \| Lua |
+| Vector4 | [getBackgroundColor](#setbackgroundcolor) | C++ |
 | void | [setShadowQuality](#shadowquality_1) | C++ |
 | ShadowQuality | [getShadowQuality](#shadowquality_1) | C++ |
-| void | [setMeshLodEnabled](#meshlodenabled-meshlodthreshold) | C++ \| Lua |
-| bool | [isMeshLodEnabled](#meshlodenabled-meshlodthreshold) | C++ \| Lua |
-| void | [setMeshLodThreshold](#meshlodenabled-meshlodthreshold) | C++ \| Lua |
-| float | [getMeshLodThreshold](#meshlodenabled-meshlodthreshold) | C++ \| Lua |
-| void | [setDepthPrepassEnabled](#depthprepassenabled) | C++ \| Lua |
-| bool | [isDepthPrepassEnabled](#depthprepassenabled) | C++ \| Lua |
-| void | [setLightState](#setlightstate) | C++ \| Lua |
-| LightState | [getLightState](#setlightstate) | C++ \| Lua |
+| void | [setMeshLodEnabled](#meshlodenabled-meshlodthreshold) | C++ |
+| bool | [isMeshLodEnabled](#meshlodenabled-meshlodthreshold) | C++ |
+| void | [setMeshLodThreshold](#meshlodenabled-meshlodthreshold) | C++ |
+| float | [getMeshLodThreshold](#meshlodenabled-meshlodthreshold) | C++ |
+| void | [setDepthPrepassEnabled](#depthprepassenabled) | C++ |
+| bool | [isDepthPrepassEnabled](#depthprepassenabled) | C++ |
+| void | [setLightState](#setlightstate) | C++ |
+| LightState | [getLightState](#setlightstate) | C++ |
 | void | [setGlobalIllumination](#setglobalillumination) | C++ \| Lua |
-| float | [getGlobalIlluminationIntensity](#setglobalillumination) | C++ \| Lua |
-| Vector3 | [getGlobalIlluminationColor](#setglobalillumination) | C++ \| Lua |
+| float | [getGlobalIlluminationIntensity](#setglobalillumination) | C++ |
+| Vector3 | [getGlobalIlluminationColor](#setglobalillumination) | C++ |
 | void | [setAmbientLight2D](#setambientlight2d) | C++ \| Lua |
-| float | [getAmbientLight2DIntensity](#setambientlight2d) | C++ \| Lua |
-| Vector3 | [getAmbientLight2DColor](#setambientlight2d) | C++ \| Lua |
+| float | [getAmbientLight2DIntensity](#setambientlight2d) | C++ |
+| Vector3 | [getAmbientLight2DColor](#setambientlight2d) | C++ |
 | void | [setShadow2DQuality](#shadow2dquality) | C++ |
 | ShadowQuality | [getShadow2DQuality](#shadow2dquality) | C++ |
 | void | [setGravity2D](#gravity2d) | C++ \| Lua |
-| Vector2 | [getGravity2D](#gravity2d) | C++ \| Lua |
+| Vector2 | [getGravity2D](#gravity2d) | C++ |
 | void | [setGravity3D](#gravity3d) | C++ \| Lua |
-| Vector3 | [getGravity3D](#gravity3d) | C++ \| Lua |
+| Vector3 | [getGravity3D](#gravity3d) | C++ |
 | void | [setShaderParameter](#shader-parameters) | C++ \| Lua |
 | Vector4 | [getShaderParameter](#shader-parameters) | C++ \| Lua |
 | bool | [clearShaderParameter](#shader-parameters) | C++ \| Lua |
@@ -122,55 +122,55 @@ A `Scene` is the root container for all objects, systems, and resources in a pro
 | void | [setMainViewShaderParameter](#view-shader-parameters) | C++ \| Lua |
 | Vector4 | [getMainViewShaderParameter](#view-shader-parameters) | C++ \| Lua |
 | bool | [clearMainViewShaderParameter](#view-shader-parameters) | C++ \| Lua |
-| void | [setSSAOEnabled](#ssaoenabled) | C++ \| Lua |
-| bool | [isSSAOEnabled](#ssaoenabled) | C++ \| Lua |
-| void | [setSSAORadius](#ssaoradius) | C++ \| Lua |
-| float | [getSSAORadius](#ssaoradius) | C++ \| Lua |
-| void | [setSSAOIntensity](#ssaointensity) | C++ \| Lua |
-| float | [getSSAOIntensity](#ssaointensity) | C++ \| Lua |
-| void | [setSSAOBias](#ssaobias) | C++ \| Lua |
-| float | [getSSAOBias](#ssaobias) | C++ \| Lua |
-| void | [setSSAOHalfResolution](#ssaohalfresolution) | C++ \| Lua |
-| bool | [isSSAOHalfResolution](#ssaohalfresolution) | C++ \| Lua |
-| void | [setSSAODebug](#ssaodebug) | C++ \| Lua |
-| bool | [isSSAODebug](#ssaodebug) | C++ \| Lua |
-| void | [setSSREnabled](#ssrenabled) | C++ \| Lua |
-| bool | [isSSREnabled](#ssrenabled) | C++ \| Lua |
-| void | [setSSRMaxDistance](#ssrmaxdistance) | C++ \| Lua |
-| float | [getSSRMaxDistance](#ssrmaxdistance) | C++ \| Lua |
-| void | [setSSRThickness](#ssrthickness) | C++ \| Lua |
-| float | [getSSRThickness](#ssrthickness) | C++ \| Lua |
-| void | [setSSRMaxSteps](#ssrmaxsteps) | C++ \| Lua |
-| int | [getSSRMaxSteps](#ssrmaxsteps) | C++ \| Lua |
-| void | [setSSRIntensity](#ssrintensity) | C++ \| Lua |
-| float | [getSSRIntensity](#ssrintensity) | C++ \| Lua |
-| void | [setSSRBlur](#ssrblur) | C++ \| Lua |
-| float | [getSSRBlur](#ssrblur) | C++ \| Lua |
-| void | [setSSRDebugMode](#ssrdebugmode) | C++ \| Lua |
-| int | [getSSRDebugMode](#ssrdebugmode) | C++ \| Lua |
-| void | [setFixedResolutionEnabled](#fixedresolutionenabled) | C++ \| Lua |
-| bool | [isFixedResolutionEnabled](#fixedresolutionenabled) | C++ \| Lua |
-| void | [setFixedResolutionWidth](#fixedresolutionwidth-fixedresolutionheight) | C++ \| Lua |
-| unsigned int | [getFixedResolutionWidth](#fixedresolutionwidth-fixedresolutionheight) | C++ \| Lua |
-| void | [setFixedResolutionHeight](#fixedresolutionwidth-fixedresolutionheight) | C++ \| Lua |
-| unsigned int | [getFixedResolutionHeight](#fixedresolutionwidth-fixedresolutionheight) | C++ \| Lua |
+| void | [setSSAOEnabled](#ssaoenabled) | C++ |
+| bool | [isSSAOEnabled](#ssaoenabled) | C++ |
+| void | [setSSAORadius](#ssaoradius) | C++ |
+| float | [getSSAORadius](#ssaoradius) | C++ |
+| void | [setSSAOIntensity](#ssaointensity) | C++ |
+| float | [getSSAOIntensity](#ssaointensity) | C++ |
+| void | [setSSAOBias](#ssaobias) | C++ |
+| float | [getSSAOBias](#ssaobias) | C++ |
+| void | [setSSAOHalfResolution](#ssaohalfresolution) | C++ |
+| bool | [isSSAOHalfResolution](#ssaohalfresolution) | C++ |
+| void | [setSSAODebug](#ssaodebug) | C++ |
+| bool | [isSSAODebug](#ssaodebug) | C++ |
+| void | [setSSREnabled](#ssrenabled) | C++ |
+| bool | [isSSREnabled](#ssrenabled) | C++ |
+| void | [setSSRMaxDistance](#ssrmaxdistance) | C++ |
+| float | [getSSRMaxDistance](#ssrmaxdistance) | C++ |
+| void | [setSSRThickness](#ssrthickness) | C++ |
+| float | [getSSRThickness](#ssrthickness) | C++ |
+| void | [setSSRMaxSteps](#ssrmaxsteps) | C++ |
+| int | [getSSRMaxSteps](#ssrmaxsteps) | C++ |
+| void | [setSSRIntensity](#ssrintensity) | C++ |
+| float | [getSSRIntensity](#ssrintensity) | C++ |
+| void | [setSSRBlur](#ssrblur) | C++ |
+| float | [getSSRBlur](#ssrblur) | C++ |
+| void | [setSSRDebugMode](#ssrdebugmode) | C++ |
+| int | [getSSRDebugMode](#ssrdebugmode) | C++ |
+| void | [setFixedResolutionEnabled](#fixedresolutionenabled) | C++ |
+| bool | [isFixedResolutionEnabled](#fixedresolutionenabled) | C++ |
+| void | [setFixedResolutionWidth](#fixedresolutionwidth-fixedresolutionheight) | C++ |
+| unsigned int | [getFixedResolutionWidth](#fixedresolutionwidth-fixedresolutionheight) | C++ |
+| void | [setFixedResolutionHeight](#fixedresolutionwidth-fixedresolutionheight) | C++ |
+| unsigned int | [getFixedResolutionHeight](#fixedresolutionwidth-fixedresolutionheight) | C++ |
 | void | [setFixedResolutionSize](#fixedresolutionwidth-fixedresolutionheight) | C++ \| Lua |
-| void | [setFixedResolutionFilter](#fixedresolutionfilter) | C++ \| Lua |
-| TextureFilter | [getFixedResolutionFilter](#fixedresolutionfilter) | C++ \| Lua |
+| void | [setFixedResolutionFilter](#fixedresolutionfilter) | C++ |
+| TextureFilter | [getFixedResolutionFilter](#fixedresolutionfilter) | C++ |
 | void | [setDefaultShaderUniform](#setdefaultshaderuniform) | C++ \| Lua |
 | Vector4 | [getDefaultShaderUniform](#setdefaultshaderuniform) | C++ \| Lua |
 | bool | [removeDefaultShaderUniform](#setdefaultshaderuniform) | C++ \| Lua |
 | void | [setDefaultShaderUniforms](#setdefaultshaderuniform) | C++ |
 | const ShaderUniformValues& | [getDefaultShaderUniforms](#setdefaultshaderuniform) | C++ |
-| void | [setPostProcessPasses](#postprocesspasses) | C++ \| Lua |
-| vector&lt;PostProcessPass&gt; | [getPostProcessPasses](#postprocesspasses) | C++ \| Lua |
+| void | [setPostProcessPasses](#postprocesspasses) | C++ |
+| vector&lt;PostProcessPass&gt; | [getPostProcessPasses](#postprocesspasses) | C++ |
 | void | [setPostProcessUniform](#setpostprocessuniform) | C++ \| Lua |
 | Vector4 | [getPostProcessUniform](#setpostprocessuniform) | C++ \| Lua |
 | bool | [removePostProcessUniform](#setpostprocessuniform) | C++ \| Lua |
 | void | [setPostProcessPassEnabled](#setpostprocesspassenabled) | C++ \| Lua |
 | bool | [isPostProcessPassEnabled](#setpostprocesspassenabled) | C++ \| Lua |
 | void | [enableUIEvents](#enableuievents_1) | C++ \| Lua |
-| bool | [isEnableUIEvents](#isenableuievents) | C++ \| Lua |
+| bool | [isEnableUIEvents](#isenableuievents) | C++ |
 | bool | [canReceiveUIEvents](#canreceiveuievents) | C++ \| Lua |
 | void | [updateCameraSize](#updatecamerasize) | C++ \| Lua |
 | void | [removeSubscriptionsByTag](#removesubscriptionsbytag) | C++ \| Lua |
