@@ -135,6 +135,12 @@ tutorials:
   walk a table with gaps.
 - **`collectgarbage("setpause")` and `"setstepmul"` are gone.** Use
   `collectgarbage("param", "pause", 200)` instead.
+- **`global` declarations are strict.** After `global score` in a file, every other global
+  it uses has to be declared too, so `Log` or `Engine` stop with `variable 'Log' not
+  declared`. Start the file with `global *` to keep them. `global score = 0` fails with
+  `global 'score' already defined` the second time the file runs, and the editor runs a
+  script file when it reads its properties and again on each Play. Declare the name and
+  assign it apart: `global score` then `score = 0`.
 
 ## Script components
 
