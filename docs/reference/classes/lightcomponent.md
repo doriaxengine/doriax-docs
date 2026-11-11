@@ -30,6 +30,7 @@ The data behind a [Light](light.md). In Lua, get it with `light:getLightComponen
 | `mapResolution` | C++ \| Lua |
 | `shadowCameraNearFar` | C++ \| Lua |
 | `numShadowCascades` | C++ \| Lua |
+| `shadowCascadeBlend` | C++ \| Lua |
 | `needUpdateShadowCamera` | C++ \| Lua |
 | `needUpdateShadowMap` | C++ \| Lua |
 

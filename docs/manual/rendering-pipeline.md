@@ -173,9 +173,14 @@ into the shaders it builds, so an exported project can't change them:
 Like Unity, Unreal, and Godot, directional cascades are **stable**: each one covers the
 bounding sphere of its slice of the view and moves in whole texels, so shadow edges keep
 their width when the camera turns and stay put when it moves, at the cost of some
-resolution. Past each split the next cascade fades in over a short band, and only the
-pixels in that band sample two cascades. An orthographic camera uses a single cascade
-fitted to its view.
+resolution. An orthographic camera uses a single cascade fitted to its view.
+
+A cascade ends at its split by default, which can show as a line where the shadow
+resolution changes. Turn on **Cascade Blend** on the light (`Light::setCascadeBlend`) to
+fade each cascade into the next over a short band past the split. It is off by default,
+as in Godot, because it costs frame time: the pixels in the band sample two cascades, and
+the finer cascade also draws the casters of the band. Lost Slime 3D, with four cascades,
+runs about 4% slower with it on.
 
 Shadow edge smoothness is a per-scene setting, `Scene::setShadowQuality`, with
 **Percentage Closer Filtering (PCF)** kernels of `NONE` (1 tap), `LOW`

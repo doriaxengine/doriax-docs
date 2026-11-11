@@ -34,6 +34,7 @@ Up to `MAX_LIGHTS` (6) lights are used at once. A scene with more uses its direc
 | float | [cameraFar](#cameranear-camerafar) | `100.0` | C++ \| Lua |
 | bool | [automaticShadowCamera](#automaticshadowcamera) | `true` | C++ \| Lua |
 | unsigned int | [numCascades](#numcascades) | `1` | C++ \| Lua |
+| bool | [cascadeBlend](#cascadeblend) | `false` | C++ \| Lua |
 
 ### Methods
 
@@ -72,6 +73,8 @@ Up to `MAX_LIGHTS` (6) lights are used at once. A scene with more uses its direc
 | bool | [isAutomaticShadowCamera](#automaticshadowcamera) | C++ \| Lua |
 | void | [setNumCascades](#numcascades) | C++ \| Lua |
 | float | [getNumCascades](#numcascades) | C++ \| Lua |
+| void | [setCascadeBlend](#cascadeblend) | C++ |
+| bool | [isCascadeBlend](#cascadeblend) | C++ |
 | [LightComponent](lightcomponent.md) | `getLightComponent` | Lua |
 
 ## Enumerations
@@ -273,3 +276,12 @@ When `true`, the engine automatically fits the shadow-map camera frustum around 
 * *Getter*: float **getNumCascades**() const
 
 Number of cascades for Cascaded Shadow Maps (CSM). Only relevant for `DIRECTIONAL` lights. More cascades distribute shadow-map resolution more evenly across the view frustum, reducing the "blurry distant shadows" artefact at the cost of additional render passes. Typical values are `1` (off) to `4`.
+
+---
+
+### cascadeBlend
+
+* *Setter*: void **setCascadeBlend**(bool cascadeBlend)
+* *Getter*: bool **isCascadeBlend**() const
+
+Fades each cascade into the next over a short band past its split, which hides the line where the shadow resolution changes. Only relevant for `DIRECTIONAL` lights with more than one cascade. It is off by default because the band samples two cascades and the finer one draws more casters.
