@@ -157,6 +157,8 @@ A `Scene` is the root container for all objects, systems, and resources in a pro
 | void | [setFixedResolutionSize](#fixedresolutionwidth-fixedresolutionheight) | C++ \| Lua |
 | void | [setFixedResolutionFilter](#fixedresolutionfilter) | C++ |
 | TextureFilter | [getFixedResolutionFilter](#fixedresolutionfilter) | C++ |
+| void | [setDefaultCustomShader](#defaultmeshshader) | C++ |
+| const std::string& | [getDefaultCustomShader](#defaultmeshshader) | C++ |
 | void | [setDefaultShaderUniform](#setdefaultshaderuniform) | C++ \| Lua |
 | Vector4 | [getDefaultShaderUniform](#setdefaultshaderuniform) | C++ \| Lua |
 | bool | [removeDefaultShaderUniform](#setdefaultshaderuniform) | C++ \| Lua |
@@ -633,7 +635,7 @@ Sampling filter used when the fixed-resolution image is upscaled to the view rec
 * *Setter:* `void setDefaultMeshShader(const std::string& path)`
 * *Getter:* `const std::string& getDefaultMeshShader() const`
 
-Scene default `mesh` [shader file](../../manual/shader-files.md) (`.glsl`) or [shader graph](../../editor/shader-graphs.md) (`.shader`), as a project-relative path such as `"shaders/toon.glsl"`. Every submesh whose material has no shader of its own uses it; an empty string (default) means the engine built-in. A shader set on the material with [Mesh.setShader](mesh.md#shader) always takes priority. Changing the value reloads the meshes. Its parameter values can be set for the whole scene with [setDefaultShaderUniform](#setdefaultshaderuniform). See [Custom Shaders — Scene default shaders](../../editor/custom-shaders.md#scene-default-shaders).
+Scene default `mesh` [shader file](../../manual/shader-files.md) (`.glsl`) or [shader graph](../../editor/shader-graphs.md) (`.shader`), as a project-relative path such as `"shaders/toon.glsl"`. Every submesh whose material has no shader of its own uses it; an empty string (default) means the engine built-in. A shader set on the material with [Mesh.setShader](mesh.md#shader) always takes priority. Changing the value reloads the meshes. Its parameter values can be set for the whole scene with [setDefaultShaderUniform](#setdefaultshaderuniform). In C++, `setDefaultCustomShader(ShaderType type, path)` and `getDefaultCustomShader(type)` reach this and the other five defaults by [type](#shadertype). See [Custom Shaders — Scene default shaders](../../editor/custom-shaders.md#scene-default-shaders).
 
 === "C++"
 
