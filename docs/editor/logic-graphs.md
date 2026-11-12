@@ -20,7 +20,8 @@ exactly as if it had been written by hand.
 - An agent creates one with `edit_graph` and `create`, see [From agents](#from-agents).
 
 The file name is the script's name, so it starts with a letter and has only letters,
-digits and `_`. Opening a new graph writes its script. Give the script to an entity as
+digits and `_`. A graph named as an engine class, `Camera.logic`, is fine: its script's
+table is then `CameraScript`. Opening a new graph writes its script. Give the script to an entity as
 any Lua script: in the **Script** component of [Properties](properties.md), add the
 `.lua`. The script's row then has a graph button that opens the graph.
 
@@ -36,9 +37,16 @@ script that already exists reports it and leaves the file alone.
 | A value | Colored circles only | An expression, read where it is used, each time it is used |
 
 - An execution output leads to one node; linking it again moves the link. An execution
-  input takes links from any number of outputs.
-- What a node that runs returns is kept for the nodes after it in the same event. A value
-  node has no memory: **Random** linked to two inputs gives two numbers.
+  input takes links from any number of outputs; to remove one, click the link and press
+  Delete.
+- What a node that runs returns is kept for the nodes after it in the same event. A node
+  inside a **Branch** side or a loop's body may not have run, so only that side or body
+  reads its value, as only a loop's body reads its **Index**. A value node has no memory:
+  **Random** linked to two inputs gives two numbers.
+- Where two paths lead into the same node, what follows is written once for each path.
+  Keep the shared part short, or put it in a **Lua Code** node.
+- An event that asks a question, as **Should Collide**, answers yes unless a **Return**
+  node gives another **Result**.
 - An unlinked **Object** input of an engine class is the script's own entity, so
   **Set Position** alone moves the entity the script is on. Other entities come from an
   **Entity** variable or from the nodes that find them.
