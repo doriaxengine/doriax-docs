@@ -512,6 +512,11 @@ variant and the count when one is passed: 16 textures and 16 samplers per stage,
 blocks per stage outside OpenGL, and 15 varyings on WebGL 2. A shader file adds at most
 one or two samplers and four varyings to what the engine uses.
 
+Sprites drawing with one shader file share a draw call while its hooks read only what
+stays the same once they are batched in world space: not the local position, the
+object's position or scale, or the normal. See
+[Sprite batching](rendering-pipeline.md#sprite-batching) for the rest.
+
 ## Export
 
 Saving a scene records the shader variants its components use, and an export compiles

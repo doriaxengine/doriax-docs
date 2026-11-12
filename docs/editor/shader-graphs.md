@@ -72,9 +72,10 @@ group and changes its color, or edits a comment's text.
 ## Parameters
 
 Parameters are the graph's values for Properties, the `#pragma param` lines of the code.
-**+** adds one by type: float, vector 2 to 4, color, integer, 2D texture or cube map.
-Selecting one in the list edits its name, default, range, the filter and wrap of a
-texture, whether scripts set it (it is then hidden in Properties) and its description.
+**+ Parameter** adds one by type: float, vector 2 to 4, color, integer, 2D texture or cube
+map, and the trash button removes the selected one with its links. Selecting one in the
+list edits its name, default, range, the filter and wrap of a texture, whether scripts set
+it (it is then hidden in Properties) and its description.
 Nodes refer to a parameter by its id, so renaming one changes nothing else; a name must be
 a GLSL name nobody else uses.
 

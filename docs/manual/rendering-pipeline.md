@@ -912,12 +912,17 @@ Supported graphics backends (`GraphicBackend` enum):
 ## Sprite batching
 
 Sprites drawn one after another share one draw call when they use the same texture,
-shader, and blending. A sprite qualifies when it is a single quad drawn unlit with the
-built-in mesh shader: no light reaches it (the scene has none, or its Mesh has
-**Receive Lights** off), neither the mesh nor the scene sets a custom mesh shader, and
-its texture is an image rather than a [framebuffer](#framebuffers-and-render-to-texture).
-Instanced meshes, tilemaps, and terrains are drawn on their own and never join a sprite
-batch.
+shader, and blending. A sprite qualifies when it is a single quad drawn unlit: no light
+reaches it (the scene has none, or its Mesh has **Receive Lights** off), and its texture
+is an image rather than a [framebuffer](#framebuffers-and-render-to-texture). Instanced
+meshes, tilemaps, and terrains are drawn on their own and never join a sprite batch.
+
+A batch draws its sprites in world space, with their texture regions and colors in the
+vertices. Sprites with a [shader file](shader-files.md) batch with sprites of the same
+file, the same parameter values and the same **Max Offset**, unless the file's hooks read
+something that changes there: the local position, the object's position or scale, or the
+normal; the scene behind; `uv1` in the vertex stage, on a sprite with a texture region;
+or the vertex color, on a sprite with a color. Those sprites draw one by one.
 
 Batches follow draw order. Without a depth test, as in most 2D scenes, objects draw in
 hierarchy order, so keep sprites that share a texture or atlas next to each other: an
@@ -927,8 +932,8 @@ A sprite that nothing changes keeps a copy of its batch data from frame to frame
 drawing it costs very little, and moving it only moves its corners. Changing it through
 the Sprite or Mesh API, such as a new texture region, color, or flip, makes it take the
 copy again on the next update. Only sprites keep a copy: other quads still batch but are
-rebuilt every frame, and so are billboards and sprites whose entity also has a camera,
-light, sound, model, or bone component. C++ code that writes a sprite's `MeshComponent`
+rebuilt every frame, and so are sprites with a shader file, billboards, and sprites whose
+entity also has a camera, light, sound, model, or bone component. C++ code that writes a sprite's `MeshComponent`
 directly sets `SpriteComponent::needUpdateBatch`, see
 [Writing components directly](entity-component-system.md#writing-components-directly).
 
