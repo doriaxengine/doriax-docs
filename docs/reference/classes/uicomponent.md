@@ -17,6 +17,7 @@ description: UIComponent API reference (C++ and Lua).
 | `loaded` | C++ \| Lua (read-only) |
 | `minBufferCount` | C++ \| Lua (read-only) |
 | `minIndicesCount` | C++ \| Lua (read-only) |
+| [`shader`](#shader) | C++ \| Lua |
 | `primitiveType` | C++ \| Lua |
 | `vertexCount` | C++ \| Lua (read-only) |
 | `texture` | C++ \| Lua |
@@ -43,7 +44,9 @@ description: UIComponent API reference (C++ and Lua).
 | `buffer` | C++ |
 | `indices` | C++ |
 | `render` | C++ |
-| `shader` | C++ |
+| `shaderRender` | C++ |
+| [`shaderUniforms`](#shader) | C++ |
+| [`shaderTextures`](#shader) | C++ |
 | `shaderProperties` | C++ |
 | `slotVSParams` | C++ |
 | `slotFSParams` | C++ |
@@ -70,3 +73,15 @@ value, so colours set in the Properties window need nothing.
 image:setColor(Vector4(0.29, 0.29, 0.29, 1.0))   -- sRGB, converted for you
 image:getUIComponent().color = Vector4(0.07, 0.07, 0.07, 1.0)  -- linear, as stored
 ```
+
+---
+
+### shader
+
+The project-relative path of the `ui` [shader file](../../manual/shader-files.md#ui-points-and-lines)
+or [shader graph](../../editor/shader-graphs.md) the element draws with; empty uses the
+scene's [defaultUIShader](scene.md#defaultuishader), else the engine built-in. Set
+`needReload` after changing it. `shaderUniforms` and `shaderTextures` hold the values and
+textures of its parameters by name. [Image](image.md#shader), [Text](text.md#shader) and
+[Polygon](polygon.md#shader) set all three through `setShader`, `setShaderUniform` and
+`setShaderTexture`. `shaderRender` is the compiled shader the element draws with.

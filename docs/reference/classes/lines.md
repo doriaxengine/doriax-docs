@@ -18,7 +18,7 @@ The `Lines` object maintains an internal dynamic buffer. Call `updateLines()` af
 | Type | Name | Default | Langs |
 | --- | --- | --- | --- |
 | unsigned int | [maxLines](#maxlines) | `100` | C++ \| Lua |
-| string | [customShader](#customshader) | `""` | C++ \| Lua |
+| string | [shader](#shader) | `""` | C++ \| Lua |
 
 ### Methods
 
@@ -35,6 +35,8 @@ The `Lines` object maintains an internal dynamic buffer. Call `updateLines()` af
 | void | [setShaderUniform](#setshaderuniform) | C++ \| Lua |
 | Vector4 | [getShaderUniform](#setshaderuniform) | C++ \| Lua |
 | bool | [removeShaderUniform](#setshaderuniform) | C++ \| Lua |
+| void | [setShaderTexture](#setshadertexture) | C++ \| Lua |
+| Texture | [getShaderTexture](#setshadertexture) | C++ \| Lua |
 | [LinesComponent](linescomponent.md) | `getLinesComponent` | Lua |
 
 ## Property details
@@ -140,12 +142,12 @@ Removes all line segments.
 
 ---
 
-### customShader
+### shader
 
-* *Setter:* `void setCustomShader(const std::string& path)`
-* *Getter:* `std::string getCustomShader() const`
+* *Setter:* `void setShader(const std::string& path)`
+* *Getter:* `std::string getShader() const`
 
-Project-relative base path of a forked shader (`"shaders/laser"` resolves to `shaders/laser.vert` and `shaders/laser.frag`, or `"a.vert|b.frag"` names the files separately). Empty (default) uses the scene default shader for this type, or the engine built-in. Changing it reloads the component. Same semantics as [Mesh.customShader](mesh.md#customshader); see [Custom Shaders](../../editor/custom-shaders.md).
+Project-relative path of the `lines` [shader file](../../manual/shader-files.md#ui-points-and-lines) (`.glsl`) or [shader graph](../../editor/shader-graphs.md) (`.shader`) the lines draw with, such as `"shaders/laser.glsl"`. Empty (default) uses the scene's [defaultLinesShader](scene.md#defaultlinesshader), or the engine built-in. Changing it reloads the component, and a shader that fails to build draws as the built-in one. See [Custom Shaders](../../editor/custom-shaders.md).
 
 ---
 
@@ -158,12 +160,12 @@ Project-relative base path of a forked shader (`"shaders/laser"` resolves to `sh
 * `Vector4 getShaderUniform(const std::string& name) const`
 * `bool removeShaderUniform(const std::string& name)`
 
-Values of the parameters the custom shader declares with `#pragma param`, by name. Setting a value only rewrites the uploaded block, so it can run every frame; a parameter with no value reads the scene's value under a [scene default shader](scene.md#setdefaultshaderuniform), else its declared default. Same semantics as [Mesh.setShaderUniform](mesh.md#setshaderuniform); see [Custom Shaders — Shader parameters](../../editor/custom-shaders.md#shader-parameters).
+Values of the parameters the [shader](#shader) declares with `#pragma param`, by name. Setting a value only rewrites the uploaded block, so it can run every frame; a parameter with no value reads the scene's value under a [scene default shader](scene.md#setdefaultshaderuniform), else its declared default. Same semantics as [Mesh.setShaderUniform](mesh.md#setshaderuniform); see [Custom Shaders — Shader parameters](../../editor/custom-shaders.md#shader-parameters).
 
 === "C++"
 
     ```cpp
-    lines.setCustomShader("shaders/laser");
+    lines.setShader("shaders/laser.glsl");
     lines.setShaderUniform("strength", 0.8f);
     lines.setShaderUniform("glowColor", Vector4(1.0f, 0.8f, 0.2f, 1.0f));
     ```
@@ -171,7 +173,28 @@ Values of the parameters the custom shader declares with `#pragma param`, by nam
 === "Lua"
 
     ```lua
-    lines.customShader = "shaders/laser"
+    lines.shader = "shaders/laser.glsl"
     lines:setShaderUniform("strength", 0.8)
     lines:setShaderUniform("glowColor", Vector4(1, 0.8, 0.2, 1))
+    ```
+
+---
+
+### setShaderTexture
+
+* `void setShaderTexture(const std::string& name, const Texture& texture)`
+* `Texture getShaderTexture(const std::string& name) const`
+
+Sets a texture parameter the [shader](#shader) declares with `#pragma param texture2D` or `textureCube`, by name (see [Textures](../../manual/shader-files.md#textures)). An empty [Texture](texture.md) draws the declared default. Changing it reloads the component. `getShaderTexture` returns the texture set, empty when none.
+
+=== "C++"
+
+    ```cpp
+    lines.setShaderTexture("noise", Texture("textures/noise.png"));
+    ```
+
+=== "Lua"
+
+    ```lua
+    lines:setShaderTexture("noise", Texture("textures/noise.png"))
     ```

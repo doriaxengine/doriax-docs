@@ -52,7 +52,7 @@ use project templates.
 | `assets/` (or `resources/`) | Textures, models, fonts, sounds, materials, and other imported files. The folder chosen as the [assets directory](#assets-and-lua-directories) is the root every asset reference is stored against |
 | `scenes/` | YAML scene files edited by the visual editor |
 | `scripts/` | Lua scripts and C++ source files |
-| `shaders/` | Default location for forked shader sources (`.vert`/`.frag`/`.glsl`), and where compiled `.sdat` output goes — see [Custom Shaders](custom-shaders.md) |
+| `shaders/` | Default location for new shader files (`.glsl`) and graphs (`.shader`), and where compiled `.sdat` output goes — see [Custom Shaders](custom-shaders.md) |
 | `bundles/` | Reusable entity hierarchy files |
 | `settings/` | Scene startup references, build target settings, and export configuration |
 | `.doriax/` | The editor's own working directory: generated C++, build trees, models converted from FBX, and the settings that belong to your machine and your session. Recreated as needed and never committed — see [Version Control](version-control.md) |
@@ -193,7 +193,7 @@ Everything in the last three rows lives beside the project rather than in the ed
 own configuration, so **Save Project As** carries it along and a project copied to
 another drive keeps working.
 
-Shaders have no directory setting: each fork picks its own location when you create it,
+Shaders have no directory setting: shader files and graphs live anywhere in the project,
 and compiled `.sdat` output always goes to the project's `shaders` folder. See
 [Custom Shaders](custom-shaders.md#shader-locations).
 

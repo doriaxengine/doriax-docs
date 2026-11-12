@@ -15,7 +15,9 @@ The data behind a [SkyBox](skybox.md). In Lua, get it with `sky:getSkyComponent(
 | Name | Languages |
 | --- | --- |
 | `loaded` | C++ \| Lua (read-only) |
-| `customShader` | C++ \| Lua |
+| `shader` | C++ \| Lua |
+| `shaderUniforms` | C++ |
+| `shaderTextures` | C++ |
 | `texture` | C++ \| Lua |
 | `color` | C++ \| Lua |
 | `rotation` | C++ \| Lua |
@@ -25,4 +27,4 @@ The data behind a [SkyBox](skybox.md). In Lua, get it with `sky:getSkyComponent(
 | `needUpdateSky` | C++ \| Lua |
 | `needReload` | C++ \| Lua |
 
-Set `needUpdateTexture` after replacing `texture`, `needUpdateSky` after changing `rotation`, and `needReload` after changing `customShader`.
+Set `needUpdateTexture` after replacing `texture`, `needUpdateSky` after changing `rotation`, and `needReload` after changing `shader`. `shader` is the sky's [shader file](skybox.md#shader), the scene default when empty; `shaderUniforms` and `shaderTextures` hold its parameter values and textures by name; [setShaderUniform](skybox.md#setshaderuniform) and [setShaderTexture](skybox.md#setshadertexture) set them, also from Lua.

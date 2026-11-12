@@ -249,12 +249,11 @@ Property names come from the engine's shader system for that shader type; an unk
 property or type is reported as an error. Omit the properties to generate the base
 variant of a type (e.g. `--shader depth`).
 
-The custom shader is a fork's project-relative base path, followed by a
-[vertex offset and a coverage function](../manual/shader-effects.md#export) after `#`, as
-`fork#vertexOffset#coverage`. Leave the fork out for the built-in shader:
-`mesh:Uv1,Nor@#offsets/wind.glsl`, `depth:Uv1@##coverage/dissolve.glsl`,
-`mesh:Uv1@shaders/myMesh`. It needs the project's files, so the `shaders` command, which
-loads no project, builds built-in shaders only.
+A [shader file](../manual/shader-files.md#export) or graph of the project follows `@`, by
+its project-relative path: `mesh:Uv1,Nor@shaders/wind.glsl`,
+`depth:Uv1@shaders/dissolve.glsl`, `postprocess@shaders/grade.shader`. It needs the
+project's files, so the `shaders` command, which loads no project, builds built-in shaders
+only.
 
 ```bash
 # Base mesh shader plus a UV+normal variant, for WebGL 2 and Direct3D 11

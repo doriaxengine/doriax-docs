@@ -99,6 +99,7 @@ nav:
       - Animation Timeline: 'editor/animation.md'
       - Code Editor: 'editor/code-editor.md'
       - Custom Shaders: 'editor/custom-shaders.md'
+      - Shader Graphs: 'editor/shader-graphs.md'
       - Export Window: 'editor/export.md'
       - Command-Line Tools: 'editor/command-line.md'
       - MCP Server: 'editor/mcp-server.md'
@@ -117,7 +118,7 @@ nav:
       - 3D Graphics: 'manual/3d-graphics.md'
       - Rendering Pipeline: 'manual/rendering-pipeline.md'
       - Shader Variants: 'manual/shader-variants.md'
-      - Shader Effects: 'manual/shader-effects.md'
+      - Shader Files: 'manual/shader-files.md'
       - Multiple Resolutions: 'manual/multiple-resolutions.md'
       - User Interface: 'manual/user-interface.md'
       - Animation: 'manual/animation.md'
@@ -131,6 +132,7 @@ nav:
   - Reference:
       - API Index: 'reference/index.md'
       - Enumerations: 'reference/enums.md'
+      - Shader Graph Nodes: 'reference/shader-nodes.md'
       - Build Options: 'reference/build-options.md'
       - Core:
           - Engine: 'reference/classes/engine.md'

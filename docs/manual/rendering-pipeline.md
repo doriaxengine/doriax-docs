@@ -550,9 +550,9 @@ colour come from the material factors and the metallic-roughness / base-colour t
 ## Post-processing
 
 A scene can run an ordered chain of user **fullscreen passes** over its finished image.
-Each pass is a forked shader picked in the editor's **Post-processing** scene settings;
-see [Custom Shaders — Post-process passes](../editor/custom-shaders.md#post-process-passes)
-for authoring them.
+Each pass runs a post-process [shader file](shader-files.md#post-process) or graph picked in
+the editor's **Post-processing** scene settings; see
+[Custom Shaders — Post-process passes](../editor/custom-shaders.md#post-process-passes).
 
 ![A post-process pass drawing outlines and posterized colour over a 3D scene](../assets/screenshots/editor-postprocess.png)
 
@@ -785,8 +785,8 @@ follows **Length**, and higher water breaks a little sooner. Far away, where the
 would be smaller than a pixel, they blend into the even cover they would leave. A Crest
 Foam of `0.05` to `0.15` gives a breezy sea; towards `1` most of the surface is white.
 
-A [fork](../editor/custom-shaders.md) of the water shader keeps the foam it was forked
-with.
+A water's [shader file](../editor/custom-shaders.md#water-shaders) receives its color with
+the foam on it.
 
 ### Refraction
 
@@ -830,8 +830,8 @@ When the main camera goes below the surface, inside the water's area, the surfac
 from below shows the sky only through a bright window overhead, and the rest of the scene
 fades into the water with distance, using the same shallow colour, deep colour, and
 **Depth Fade**. With Depth Effects off the fade is even, as if everything were Depth Fade
-away. The fade is a fullscreen pass with its own shader, `underwater.frag`, which can be
-[forked](../editor/custom-shaders.md#water-shaders). Turn **Underwater** off on a water to
+away. The fade is a fullscreen pass, which the water's shader file can recolor with
+[`getUnderwaterColor`](shader-files.md#water). Turn **Underwater** off on a water to
 skip it; while editing, the viewport's **Disable underwater** setting keeps the editor
 camera's view clear.
 
@@ -869,14 +869,14 @@ it uses, and the scene can set a default water shader like it does for other typ
 Shaders are authored in GLSL and transpiled by the shader builder for each supported
 backend. Shader data files are generated at export time.
 
-Each renderable type (Mesh, UI, Points, Lines, Sky, Water) has a built-in shader. In the editor
-you can **fork** any of them — per component, or as a scene-wide default for that type —
-and edit the GLSL; the engine keeps driving the variant system, lighting, and the
-shadow/depth/G-buffer passes. A Mesh can fork its depth shader too, so a colour fork that
-displaces vertices or discards keeps its shadows in step. A shader set on the component
-wins over the scene default, which wins over the built-in. The same fork mechanism provides
-the scene's [post-process passes](#post-processing). See
-[Custom Shaders](../editor/custom-shaders.md).
+Each renderable type (Mesh, UI, Points, Lines, Sky, Water) has a built-in shader. A
+[shader file](shader-files.md) or [graph](../editor/shader-graphs.md) of the project fills
+hooks the built-in shader calls, per material or component, or as a scene-wide default for
+that type; the engine keeps driving the variant system, lighting, and the shadow, depth and
+G-buffer passes, which run the same hooks, so a mesh that moves vertices or cuts fragments
+keeps its shadows in step. A shader set on the material or component wins over the scene
+default, which wins over the built-in. The scene's [post-process passes](#post-processing)
+run shader files too. See [Custom Shaders](../editor/custom-shaders.md).
 
 Built-in skinned variants bind bone matrices through a **storage buffer** (`sbo_skinning`)
 on Vulkan, Metal, and Direct3D 11, or through an **unfilterable RGBA32F bone texture**
@@ -966,12 +966,11 @@ not a dither: the engine has no temporal anti-aliasing, so a stipple fade reads 
 on thin foliage. Turning it on selects a different shader variant (`Ifd`), while the two
 distances are plain uniforms that can be dragged freely.
 
-On the built-in triangle mesh shaders — no custom colour or depth fork, no scene default
-mesh shader, and [SSR](#screen-space-reflections-ssr) off — instances past **Fade End**
-are also dropped from the draw list, so they cost neither vertices nor a fragment. The
-list keeps a small margin past it and is cut again only once the camera has moved beyond
-that margin, not on every frame it moves. Custom shaders and the SSR G-buffer still draw
-every instance and rely on the vertex scale alone.
+On triangle meshes with [SSR](#screen-space-reflections-ssr) off, instances past
+**Fade End** are also dropped from the draw list, so they cost neither vertices nor a
+fragment. The list keeps a small margin past it and is cut again only once the camera has
+moved beyond that margin, not on every frame it moves. The SSR G-buffer still draws every
+instance and relies on the vertex scale alone.
 
 Fade is what keeps a field of instances from popping at the edge of its draw distance;
 the terrain's [foliage layers](terrain.md#foliage) set it up for themselves from each
@@ -1007,10 +1006,10 @@ off disables the distance too.
 
 ## Wind
 
-Wind is a [shader effect](shader-effects.md#wind). The scene parameter `Wind.velocity` is
+Wind is a [shader file](shader-files.md#wind). The scene parameter `Wind.velocity` is
 an air velocity in meters per second, set under **Shader Parameters** in the scene
 properties once a mesh sways, or from scripts. Meshes sway in it through the engine's
-`offsets/wind.glsl` [vertex offset](shader-effects.md#vertex-offsets). The lean grows
+`shaders/wind.glsl` [vertex offset](shader-files.md#vertex-offsets). The lean grows
 faster than the wind: against 10 m/s it is about a sixth at 3 m/s and nearly twice at
 15 m/s, so light air barely stirs a plant and a gale lays it over. Gusts roll downwind at
 the wind's speed, in fronts broken across it. The plant springs and shivers at a pace set
@@ -1020,7 +1019,7 @@ passes alike, so shadows, SSAO and SSR follow, and it moves no physics body.
 ```cpp
 scene->setShaderParameter("Wind", "velocity", Vector3(5.0f, 0.0f, -2.0f));
 
-grass.setVertexOffsetShader("offsets/wind.glsl");
+grass.setShader("shaders/wind.glsl");
 grass.setShaderUniform("windSway", 0.3f);
 grass.setShaderUniform("windSwayHeight", 0.5f); // tips bend, the base at y = 0 stays put
 grass.setVertexOffsetMax(0.8f);                  // its reach in 15 m/s of wind
@@ -1033,15 +1032,15 @@ pauses, and in the editor it holds while the scene is stopped or paused.
 
 ## See-through
 
-See-through is a [shader effect](shader-effects.md#see-through): a mesh whose coverage is
-`coverage/see_through.glsl` dithers away where it stands between a camera and a target, so a
+See-through is a [shader file](shader-files.md#see-through): a mesh whose material uses
+`shaders/see_through.glsl` dithers away where it stands between a camera and a target, so a
 character behind a tree or a roof stays in view. A script writes the target into the
 camera's `SeeThrough` view parameters, usually each frame from the player. The depth
 pre-pass and the SSR G-buffer drop the same pixels as the color pass, and shadow maps keep
 the whole mesh.
 
 ```cpp
-house.setCoverageShader("coverage/see_through.glsl");
+house.setShader("shaders/see_through.glsl");
 
 // each frame, round the player's chest, for whichever camera renders the scene
 scene->setMainViewShaderParameter("SeeThrough", "target", player.getWorldPosition() + Vector3(0, 0.9f, 0));
@@ -1109,9 +1108,10 @@ costs an extra geometry pass when they do not.
 
 The setting is off by default. Toggling it reloads meshes, because the prepass pipelines
 are built with each mesh. It runs only for the main camera and only while that camera
-has depth testing on; 2D and UI cameras skip it. A mesh whose colour shader is forked
-without a matching [depth fork](../editor/custom-shaders.md#the-depth-shader-row) is left
-out of the prepass, so its vertices stay consistent with the colour pass.
+has depth testing on; 2D and UI cameras skip it. Shader files run the same hooks in the
+prepass as in the color pass, so a mesh that moves its vertices stays consistent; a mesh
+that reads the [scene color or depth](shader-files.md#scene-color-and-depth) draws after
+the scene and is left out of the prepass.
 
 This is separate from the small depth target SSAO (and some post-process passes) already
 build when they need a depth texture. Enabling the scene prepass does not replace those.

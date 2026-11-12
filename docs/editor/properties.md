@@ -95,7 +95,7 @@ section for setting the framebuffer **Width**, **Height**, and sampling **Filter
 (Nearest or Linear). These control the resolution and look of the output texture, are
 saved with the scene, and are applied in exported projects.
 
-A camera's properties also list the view [shader parameters](../manual/shader-effects.md#in-the-editor)
+A camera's properties also list the view [shader parameters](../manual/shader-files.md#in-the-editor)
 the scene's shaders declare, such as the opening of the engine's see-through, under
 **Shader Parameters**.
 
@@ -215,8 +215,9 @@ The **Mesh** component exposes rendering flags beyond per-submesh material slots
 | **Detail Bias** | Scales how far detail is kept: above 1 keeps it longer, below 1 drops it sooner. Shown only while the scene's Mesh Detail is on. |
 | **Render in Probes** | Whether the mesh appears in [Reflection Probe](../reference/classes/reflectionprobe.md) captures. Turn it off so an object wrapped around a probe is not seen in its own reflection. |
 
-Effects such as wind, see-through or a dissolve are set in the mesh's **Shaders** section, as a
-[vertex offset or a coverage function](custom-shaders.md#the-vertex-offset-and-coverage-rows).
+Effects such as wind, see-through or a dissolve are [shader files](custom-shaders.md#the-shader-row)
+given to the mesh's materials; the mesh's **Shaders** section keeps **Max Offset**, the
+longest distance they move a vertex.
 
 Each **Submesh** section contains a **Material** row with a shaded preview sphere. The
 preview reflects the current **Receive IBL** setting so you can see environment
@@ -280,24 +281,18 @@ texture without replacing the rest of the material.
 
 ## Custom shaders
 
-Mesh, UI, Points, Lines, Sky, and Water components expose a **Shader** row. By default it shows
-**Built-in**; **Fork** opens a dialog to choose where the fork is created and what it is
-called, then writes it and opens the GLSL in the Code Editor. The remaining buttons pick
-the `.vert`/`.frag` files, reopen the assigned shader, and reset to the engine default.
-You can also drag an existing `.vert`/`.frag` from the Resources Browser onto the row.
-
-![The Shader and Depth Shader rows of a Mesh](../assets/screenshots/properties-shader-rows.png)
-
-A Mesh has a second **Depth Shader** row with the same controls. It forks the shader
-behind the mesh's shadow maps and depth pre-pass, for colour forks that move vertices or
-discard fragments, so the shadow follows — see
-[Custom Shaders — The Depth Shader row](custom-shaders.md#the-depth-shader-row). A Water
-has an **Underwater Shader** row instead, for the fade seen from below the surface — see
+A mesh's materials, and UI, Points, Lines, Sky and Water components, have a **Shader** row
+for a [shader file](../manual/shader-files.md) or a [shader graph](shader-graphs.md). It
+shows **None** for the engine's shader; **New** writes a shader file or a graph of the
+right type and opens it, and the other buttons list the engine's shader files, pick a
+file, copy an engine one into the project, open the file, and remove it. You can also
+drag a `.glsl` or `.shader` from the Resources Browser onto the row. A water's one file
+also draws the fade seen from below its surface — see
 [Custom Shaders — Water shaders](custom-shaders.md#water-shaders).
 
-Each fork, and each effect file of a Mesh, gets a **Parameters** section with one field
-per `#pragma param` line it declares. The values are saved on the component, shared by all of
-its shaders, and scriptable through `setShaderUniform`. See
+Each shader gets a **Parameters** section below its row with one field per `#pragma param`
+line it declares. A material keeps its own values, and a component its own; they are
+scriptable through `setShaderUniform`. See
 [Custom Shaders — Shader parameters](custom-shaders.md#shader-parameters).
 
 A scene can also define a **default custom shader per type** (in the scene settings'
@@ -308,12 +303,12 @@ section has fields for them too: those values belong to the scene, and an inheri
 component reads them for every parameter it does not set itself.
 
 The scene settings also have a **Post-processing** section: an ordered list of fullscreen
-passes, each one a forked shader under a collapsible header with reorder and remove
+passes, each one a post-process shader file or graph under a collapsible header with reorder and remove
 buttons, and an enable checkbox in its Shader row. Each `#pragma param` the pass declares
 becomes a field here.
 
-See [Custom Shaders](custom-shaders.md) for the full workflow, scene defaults, post-process
-passes, includes, and project settings.
+See [Custom Shaders](custom-shaders.md) for the full workflow, scene defaults and
+post-process passes.
 
 ## Sky component
 
@@ -453,7 +448,7 @@ on the water while it moves. It is made only during Play, from how the entity mo
 With no entity selected, Properties edits the scene. Lighting, shadows, SSAO, SSR,
 fixed resolution, default shaders, and post-processing live here — see
 [Rendering Pipeline](../manual/rendering-pipeline.md) for those. The scene values of
-[shader parameters](../manual/shader-effects.md#in-the-editor), such as the wind, are under
+[shader parameters](../manual/shader-files.md#in-the-editor), such as the wind, are under
 **Shader Parameters**.
 
 ![Scene settings with SSAO and SSR enabled](../assets/screenshots/properties-scene-settings.png)

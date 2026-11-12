@@ -17,8 +17,10 @@ The data behind [Lines](lines.md). In Lua, get it with `lines:getLinesComponent(
 | `loaded` | C++ \| Lua (read-only) |
 | `lines` | C++ \| Lua |
 | `maxLines` | C++ \| Lua (read-only) |
-| `customShader` | C++ \| Lua |
+| `shader` | C++ \| Lua |
+| `shaderUniforms` | C++ |
+| `shaderTextures` | C++ |
 | `needUpdateBuffer` | C++ \| Lua |
 | `needReload` | C++ \| Lua |
 
-`lines` is a list of [LineData](linedata.md). Set `needUpdateBuffer` after assigning it. Only the first `maxLines` are drawn; raise it with [`Lines.maxLines`](lines.md#maxlines). Set `needReload` after changing `customShader`. In Lua, lists are copies: assign the changed table back.
+`lines` is a list of [LineData](linedata.md). Set `needUpdateBuffer` after assigning it. Only the first `maxLines` are drawn; raise it with [`Lines.maxLines`](lines.md#maxlines). Set `needReload` after changing `shader`, the lines' [shader file](lines.md#shader), the scene default when empty. `shaderUniforms` and `shaderTextures` hold its parameter values and textures by name; [setShaderUniform](lines.md#setshaderuniform) and [setShaderTexture](lines.md#setshadertexture) set them, also from Lua. In Lua, lists are copies: assign the changed table back.

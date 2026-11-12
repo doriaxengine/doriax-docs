@@ -1,12 +1,12 @@
 ---
-description: Mesh API reference — geometry, materials, shadows, transparency, and GPU instancing.
+description: Mesh API reference — geometry, materials, shader files, shadows, transparency, and GPU instancing.
 ---
 
 # Mesh
 
 ## Description
 
-`Mesh` is the base class for all renderable 3D objects. It exposes the material system (color, texture, PBR material), shadow casting and receiving, transparency control, face culling, automatic detail levels, and GPU instancing (including distance fade and per-view instance culling) for drawing thousands of objects in a single draw call.
+`Mesh` is the base class for all renderable 3D objects. It exposes the material system (color, texture, PBR material, [shader file](#shader)), shadow casting and receiving, transparency control, face culling, automatic detail levels, and GPU instancing (including distance fade and per-view instance culling) for drawing thousands of objects in a single draw call.
 
 **Inherits:** [Object](object.md) → [EntityHandle](entityhandle.md)
 
@@ -64,12 +64,8 @@ See [EntityHandle ownership](entityhandle.md#ownership-and-lifetime).
 | bool | castShadowsWithTexture | `false` | C++ \| Lua |
 | bool | [transparent](#transparent-autotransparency) | `false` | C++ \| Lua |
 | bool | [autoTransparency](#transparent-autotransparency) | `true` | C++ \| Lua |
-| string | [customShader](#customshader) | `""` | C++ \| Lua |
-| string | [customDepthShader](#customdepthshader) | `""` | C++ \| Lua |
-| string | [vertexOffsetShader](#vertexoffsetshader-vertexoffsetmax) | `""` | C++ \| Lua |
-| float | [vertexOffsetMax](#vertexoffsetshader-vertexoffsetmax) | `0` | C++ \| Lua |
-| string | [coverageShader](#coverageshader-coverageshadows) | `""` | C++ \| Lua |
-| bool | [coverageShadows](#coverageshader-coverageshadows) | `false` | C++ \| Lua |
+| string | [shader](#shader) | `""` | C++ \| Lua |
+| float | [vertexOffsetMax](#vertexoffsetmax) | `0` | C++ \| Lua |
 | unsigned int | [maxInstances](#maxinstances) | `100` | C++ \| Lua |
 | bool | [instancedBillboard](#instancedbillboard-instancedcylindricalbillboard) | `false` | C++ \| Lua |
 | bool | [instancedCylindricalBillboard](#instancedbillboard-instancedcylindricalbillboard) | `false` | C++ \| Lua |
@@ -121,13 +117,15 @@ See [EntityHandle ownership](entityhandle.md#ownership-and-lifetime).
 | bool | [isTransparent](#transparent-autotransparency) | C++ |
 | void | [setAutoTransparency](#transparent-autotransparency) | C++ |
 | bool | [isAutoTransparency](#transparent-autotransparency) | C++ |
-| void | [setCustomShader](#customshader) | C++ |
-| string | [getCustomShader](#customshader) | C++ |
-| void | [setCustomDepthShader](#customdepthshader) | C++ |
-| string | [getCustomDepthShader](#customdepthshader) | C++ |
+| void | [setShader](#shader) | C++ \| Lua |
+| string | [getShader](#shader) | C++ \| Lua |
+| void | [setVertexOffsetMax](#vertexoffsetmax) | C++ |
+| float | [getVertexOffsetMax](#vertexoffsetmax) | C++ |
 | void | [setShaderUniform](#setshaderuniform) | C++ \| Lua |
 | Vector4 | [getShaderUniform](#setshaderuniform) | C++ \| Lua |
 | bool | [removeShaderUniform](#setshaderuniform) | C++ \| Lua |
+| void | [setShaderTexture](#setshadertexture) | C++ \| Lua |
+| Texture | [getShaderTexture](#setshadertexture) | C++ \| Lua |
 | void | [setAsMirror](#setasmirror-removemirror-ismirror) | C++ \| Lua |
 | void | [removeMirror](#setasmirror-removemirror-ismirror) | C++ \| Lua |
 | bool | [isMirror](#setasmirror-removemirror-ismirror) | C++ \| Lua |
@@ -140,6 +138,8 @@ See [EntityHandle ownership](entityhandle.md#ownership-and-lifetime).
 | void | [removeInstance](#addinstance) | C++ \| Lua |
 | bool | isInstanceVisible | C++ \| Lua |
 | void | setInstanceVisible | C++ \| Lua |
+| Vector4 | [getInstanceCustom](#setinstancecustom-getinstancecustom) | C++ \| Lua |
+| void | [setInstanceCustom](#setinstancecustom-getinstancecustom) | C++ \| Lua |
 | void | [updateInstances](#updateinstances) | C++ \| Lua |
 | size_t | [getNumInstances](#createinstancedmesh) | C++ \| Lua |
 | void | [clearInstances](#clearinstances) | C++ \| Lua |
@@ -210,12 +210,12 @@ Shorthand for the alpha channel of [color](#color). Values below 1.0 require [tr
 
 ### material
 
-* *Setter:* `void setMaterial(const Material& material)` *(all submeshes)*
+* *Setter:* `void setMaterial(const Material& material)` *(first submesh)*
 * *Setter:* `void setMaterial(unsigned int submesh, const Material& material)` *(per submesh)*
 * *Getter:* `Material getMaterial() const`
 * *Getter:* `Material getMaterial(unsigned int submesh) const`
 
-PBR material descriptor. Contains base color, metallic/roughness factors, normal map, emissive settings, and shader overrides.
+PBR material descriptor. Contains base color, metallic/roughness factors, normal map, emissive settings, and the [shader](#shader) with its parameter values.
 
 ---
 
@@ -320,103 +320,57 @@ show the side of an object facing the mirror — usually the side the key light 
 
 ---
 
-### customShader
+### shader
 
-* *Setter:* `void setCustomShader(const std::string& path)`
-* *Getter:* `std::string getCustomShader() const`
+* *Setter:* `void setShader(const std::string& path)` *(all submeshes)*
+* *Setter:* `void setShader(unsigned int submesh, const std::string& path)` *(per submesh)*
+* *Getter:* `std::string getShader() const` *(first submesh)*
+* *Getter:* `std::string getShader(unsigned int submesh) const`
 
-Project-relative base path of a forked shader used for this mesh's colour pass — `"shaders/wave"` resolves to `shaders/wave.vert` and `shaders/wave.frag`, or `"a.vert|b.frag"` names the two files separately. Empty (default) uses the scene's [defaultMeshShader](scene.md#defaultmeshshader), or the engine built-in when the scene has none. Changing it reloads the mesh. The engine loads the compiled shader; the sources are only needed by the editor. See [Custom Shaders](../../editor/custom-shaders.md).
+The [shader file](../../manual/shader-files.md) (`.glsl`) or [shader graph](../../editor/shader-graphs.md) (`.shader`) the mesh draws with, as a project-relative path such as `"shaders/wave.glsl"`, or one of [the engine's](../../manual/shader-files.md#the-engines-shader-files) such as `"shaders/wind.glsl"`. It must be a `mesh` shader. The path is stored on the [material](material.md#shader-shaderuniforms-shadertextures) of each submesh, so submeshes can draw with different shaders. Its hooks also run in the depth, shadow and G-buffer passes, so shadows, SSAO and reflections follow what it draws; see [Mesh hooks](../../manual/shader-files.md#mesh-hooks).
 
-Like colour and material, this is per Mesh component: a multi-node glTF [Model](model.md) renders through its part entities, so assign the shader (and its uniforms) on the parts — `Mesh(scene, partEntity)` — not on the Model root, whose own Mesh is empty unless the model is merged or single-node.
+Empty (default) uses the scene's [defaultMeshShader](scene.md#defaultmeshshader), or the engine built-in when the scene has none. Changing it reloads the mesh, and a shader that fails to build draws as the built-in one. [Terrain](terrain.md) ignores it. On a [Model](model.md) whose meshes are child entities, the setters change every part and a submesh index counts across them. The engine loads the compiled shader; the sources are only needed by the editor, and a shader given only at runtime must be added to the [export](../../manual/shader-files.md#export). See [Custom Shaders](../../editor/custom-shaders.md).
 
 === "C++"
 
     ```cpp
-    mesh.setCustomShader("shaders/wave");
+    mesh.setShader("shaders/wave.glsl");     // every submesh
+    mesh.setShader(1, "shaders/glass.glsl"); // the second submesh only
     ```
 
 === "Lua"
 
     ```lua
-    mesh.customShader = "shaders/wave"
+    mesh.shader = "shaders/wave.glsl"
+    mesh:setShader(1, "shaders/glass.glsl")
     ```
 
 ---
 
-### customDepthShader
+### vertexOffsetMax
 
-* *Setter:* `void setCustomDepthShader(const std::string& path)`
-* *Getter:* `std::string getCustomDepthShader() const`
+* *Setter:* `void setVertexOffsetMax(float vertexOffsetMax)`
+* *Getter:* `float getVertexOffsetMax() const`
 
-Project-relative base path of a forked **depth** shader — the one the mesh is drawn with into shadow maps, into the optional scene [depth prepass](../../manual/rendering-pipeline.md#depth-prepass), and into the depth pre-pass that feeds SSAO and post-process depth while SSR is off. Same path forms as [customShader](#customshader); empty (default) uses the engine built-in, and there is no scene default. Fork it when the colour fork displaces vertices or discards fragments, so the shadow follows; it reads the same [shader uniforms](#setshaderuniform). Changing it reloads the mesh. See [Custom Shaders — The Depth Shader row](../../editor/custom-shaders.md#the-depth-shader-row).
+The longest distance, in world units, the shader's [vertex offset](../../manual/shader-files.md#vertex-offsets) moves a vertex. Longer offsets are clamped to it, and culling widens the mesh bounds and each instance's sphere by it, so moved geometry is not culled at the screen edge or out of a shadow cascade. `0` (default) clamps nothing and keeps the bounds of the mesh data. It belongs to the mesh, not to a material, so one value covers every submesh.
 
 === "C++"
 
     ```cpp
-    mesh.setCustomShader("shaders/wave");
-    mesh.setCustomDepthShader("shaders/wave_depth");
+    grass.setShader("shaders/wind.glsl");
+    grass.setShaderUniform("windSway", 0.3f);
+    grass.setVertexOffsetMax(0.8f);
     ```
 
 === "Lua"
 
     ```lua
-    mesh.customShader = "shaders/wave"
-    mesh.customDepthShader = "shaders/wave_depth"
+    grass.shader = "shaders/wind.glsl"
+    grass:setShaderUniform("windSway", 0.3)
+    grass.vertexOffsetMax = 0.8
     ```
 
 ---
-
-### vertexOffsetShader / vertexOffsetMax
-
-* *vertexOffsetShader Setter:* `void setVertexOffsetShader(const std::string& path)`
-* *vertexOffsetShader Getter:* `std::string getVertexOffsetShader() const`
-* *vertexOffsetMax Setter:* `void setVertexOffsetMax(float vertexOffsetMax)`
-* *vertexOffsetMax Getter:* `float getVertexOffsetMax() const`
-
-`vertexOffsetShader` is a `.glsl` file, from the project or the engine, defining `vec3 getVertexOffset(vec3 localPosition, vec3 worldPosition)`, which returns how far each vertex moves in world units. The color, depth and G-buffer passes all apply it, so shadows and reflections follow, and its `#pragma param` values are the mesh's [shader uniforms](#setshaderuniform). The engine's `offsets/wind.glsl` sways the mesh in the scene's `Wind.velocity`. Empty (default) moves nothing. Changing it reloads the mesh. `vertexOffsetMax` is the longest offset: longer ones are clamped, and culling widens the bounds by it; `0` means no limit. Terrain ignores both. See [Shader Effects](../../manual/shader-effects.md#vertex-offsets).
-
-=== "C++"
-
-    ```cpp
-    flag.setVertexOffsetShader("shaders/flag_offset.glsl");
-    flag.setVertexOffsetMax(0.5f);
-    flag.setShaderUniform("waveHeight", 0.2f);
-    ```
-
-=== "Lua"
-
-    ```lua
-    flag.vertexOffsetShader = "shaders/flag_offset.glsl"
-    flag.vertexOffsetMax = 0.5
-    flag:setShaderUniform("waveHeight", 0.2)
-    ```
-
----
-
-### coverageShader / coverageShadows
-
-* *coverageShader Setter:* `void setCoverageShader(const std::string& path)`
-* *coverageShader Getter:* `std::string getCoverageShader() const`
-* *coverageShadows Setter:* `void setCoverageShadows(bool coverageShadows)`
-* *coverageShadows Getter:* `bool isCoverageShadows() const`
-
-`coverageShader` is a `.glsl` file, from the project or the engine, defining `float getCoverage(CoverageContext context)`, which returns how much of each fragment stays: 1 keeps it, 0 removes it, and opaque surfaces keep a dithered share in between while blended ones fade. The color, depth and G-buffer passes all apply it, so SSAO and reflections match, and its `#pragma param` values are the mesh's [shader uniforms](#setshaderuniform). The engine ships `coverage/see_through.glsl`, `coverage/dissolve.glsl` and `coverage/height_clip.glsl`. Empty (default) keeps everything. Changing it reloads the mesh. With `coverageShadows` on, the shadow maps follow the coverage too; off (default) they keep the whole silhouette, though the material's alpha mask still applies. Terrain ignores both. See [Shader Effects](../../manual/shader-effects.md#coverage).
-
-=== "C++"
-
-    ```cpp
-    crate.setCoverageShader("coverage/dissolve.glsl");
-    crate.setCoverageShadows(true);
-    crate.setShaderUniform("dissolve", 0.5f);
-    ```
-
-=== "Lua"
-
-    ```lua
-    crate.coverageShader = "coverage/dissolve.glsl"
-    crate.coverageShadows = true
-    crate:setShaderUniform("dissolve", 0.5)
-    ```
 
 ### maxInstances
 
@@ -463,7 +417,7 @@ Turns every instance to face the camera, the per-instance counterpart of [Object
 
 Instanced-mesh [distance fade](../../manual/rendering-pipeline.md#distance-fade). When `distanceFade` is on, instances shrink toward their base between `fadeStart` and `fadeEnd`, both model-space distances from the camera. Toggling the flag reloads the mesh (shader variant `Ifd`); the two distances are uniforms and can change without a reload. `Fade End` must be greater than `Fade Start`. Logs an error if the mesh is not instanced yet.
 
-On the built-in triangle shaders, instances past `fadeEnd` are also omitted from the draw. Custom shaders and the SSR G-buffer still submit them and rely on the vertex scale.
+On triangle meshes, instances past `fadeEnd` are also omitted from the draw, unless SSR is on: its G-buffer has no fade, so they are still submitted and rely on the vertex scale.
 
 === "C++"
 
@@ -592,45 +546,77 @@ property.
 * `void setShaderUniform(const std::string& name, const Vector3& value)`
 * `void setShaderUniform(const std::string& name, const Vector2& value)`
 * `void setShaderUniform(const std::string& name, float value)`
+* `void setShaderUniform(unsigned int submesh, const std::string& name, const Vector4& value)`
 * `Vector4 getShaderUniform(const std::string& name) const`
+* `Vector4 getShaderUniform(unsigned int submesh, const std::string& name) const`
 * `bool removeShaderUniform(const std::string& name)`
 
-Values of the parameters the mesh's shaders declare with `#pragma param`, by name (see
-[Custom Shaders — Shader parameters](../../editor/custom-shaders.md#shader-parameters)).
-A value is stored on the mesh and applied to every submesh, in the colour fork, the
-[depth fork](#customdepthshader), and the effect files alike; a narrower value leaves the
-remaining components at zero, and an `int` parameter takes the truncated value. Setting a
-value only rewrites the uploaded block, so it can be called every frame. Names no shader
-declares are kept but unused, and a parameter with no value reads the scene's value while
-the mesh inherits a [scene default shader](scene.md#setdefaultshaderuniform), else its
-declared default.
+Values of the parameters the mesh's [shader](#shader) declares with `#pragma param`, by
+name (see [Declaring parameters](../../manual/shader-files.md#declaring-parameters)). They
+are stored on the materials: without a submesh a value goes to every submesh, and with one,
+as a `Vector4`, only to that submesh, so two submeshes can give the same shader different
+values. A
+narrower value leaves the remaining components at zero, and an `int` parameter takes the
+truncated value. Setting a value only rewrites the uploaded block, so it can be called
+every frame. Names the shader does not declare are kept but unused, and a parameter with
+no value reads the scene's value while the material inherits the
+[scene default shader](scene.md#setdefaultshaderuniform), else its declared default.
 
-`getShaderUniform` returns the stored value, zero when unset. It reads the mesh's own value
-list, not the uploaded block or the scene's values, so an `int` parameter set to `3.7` reads
-back `3.7` while the shader sees `3`. `removeShaderUniform` drops a value and returns
-whether it existed; the parameter reads its inherited or declared default again. For a glTF
-model, call these on the part entities (see [customShader](#customshader)).
+`getShaderUniform` returns the stored value of the first submesh, or of `submesh`, zero
+when unset. It reads the material's own values, not the uploaded block or the scene's, so
+an `int` parameter set to `3.7` reads back `3.7` while the shader sees `3`.
+`removeShaderUniform` drops the value from every submesh and returns whether one existed;
+the parameter reads its inherited or declared default again.
 
 === "C++"
 
     ```cpp
-    mesh.setCustomShader("shaders/wave");
+    mesh.setShader("shaders/wave.glsl");
     mesh.setShaderUniform("amplitude", 0.3f);
     mesh.setShaderUniform("direction", Vector2(1.0f, 0.0f));
-    mesh.setShaderUniform("tint", Vector4(0.2f, 0.5f, 1.0f, 0.5f));
+    mesh.setShaderUniform(1, "tint", Vector4(0.2f, 0.5f, 1.0f, 0.5f)); // second submesh only
 
-    Vector4 tint = mesh.getShaderUniform("tint");
+    Vector4 tint = mesh.getShaderUniform(1, "tint");
     ```
 
 === "Lua"
 
     ```lua
-    mesh.customShader = "shaders/wave"
+    mesh.shader = "shaders/wave.glsl"
     mesh:setShaderUniform("amplitude", 0.3)
     mesh:setShaderUniform("direction", Vector2(1, 0))
-    mesh:setShaderUniform("tint", Vector4(0.2, 0.5, 1.0, 0.5))
+    mesh:setShaderUniform(1, "tint", Vector4(0.2, 0.5, 1.0, 0.5))
 
-    local tint = mesh:getShaderUniform("tint")
+    local tint = mesh:getShaderUniform(1, "tint")
+    ```
+
+---
+
+### setShaderTexture
+
+* `void setShaderTexture(const std::string& name, const Texture& texture)`
+* `void setShaderTexture(unsigned int submesh, const std::string& name, const Texture& texture)`
+* `Texture getShaderTexture(unsigned int submesh, const std::string& name) const`
+
+Sets a texture parameter the shader declares with `#pragma param texture2D` or
+`textureCube` (see [Textures](../../manual/shader-files.md#textures)), on the material of
+every submesh or of one. The [Texture](texture.md) can be a file, pixel data or a camera's
+render target, and an empty one draws the declared default. The texture is bound again
+without rebuilding the shader. `getShaderTexture` returns the texture set on the material
+of `submesh`, empty when none.
+
+=== "C++"
+
+    ```cpp
+    rock.setShader("shaders/detail.glsl");
+    rock.setShaderTexture("detail", Texture("textures/rock_detail.png"));
+    ```
+
+=== "Lua"
+
+    ```lua
+    rock.shader = "shaders/detail.glsl"
+    rock:setShaderTexture("detail", Texture("textures/rock_detail.png"))
     ```
 
 ---
@@ -709,6 +695,27 @@ Appends a new instance with the specified transform, creating the instanced mesh
 * `void updateInstance(size_t index, InstanceData instance)` *(and overloads)*
 
 Replaces the data for an existing instance at `index`. Call [updateInstances](#updateinstances) afterwards to sync changes to the GPU.
+
+---
+
+### setInstanceCustom / getInstanceCustom
+
+* `void setInstanceCustom(size_t index, Vector4 custom) const`
+* `Vector4 getInstanceCustom(size_t index)`
+
+A `Vector4` of the instance at `index` that shader files read as `context.instance`, for a color, a growth stage or a random seed per instance (see [Per-instance values](../../manual/shader-files.md#per-instance-values)). It is the `custom` field of [InstanceData](instancedata.md), `(0,0,0,0)` by default. The setter marks the instances for upload, so no [updateInstances](#updateinstances) call is needed. It logs an error if the mesh is not instanced, and the getter then returns zero.
+
+=== "C++"
+
+    ```cpp
+    trees.setInstanceCustom(0, Vector4(0.5f, 0.0f, 0.0f, 0.0f));
+    ```
+
+=== "Lua"
+
+    ```lua
+    trees:setInstanceCustom(0, Vector4(0.5, 0, 0, 0))
+    ```
 
 ---
 

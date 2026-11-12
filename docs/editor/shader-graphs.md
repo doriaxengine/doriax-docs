@@ -1,0 +1,154 @@
+---
+description: Build Doriax shaders from nodes in the shader graph editor — canvas, parameters, live preview in the scene and on a sphere, errors on the nodes, undo, Convert to code — and from AI agents through the graph MCP tools.
+---
+
+# Shader Graphs
+
+A **shader graph** (`.shader`) builds a [shader file](../manual/shader-files.md) from
+nodes. Its output node has one input per thing the shader can change, the base color,
+the roughness, the vertex offset, the final color and so on, and whatever feeds an input
+becomes the hook that fills it. The editor turns the graph into a shader file when it
+builds, so a graph goes in every slot a `.glsl` does and draws exactly as the same code
+would. Every node is listed in [Shader Graph Nodes](../reference/shader-nodes.md).
+
+![The graph window: the canvas, and the side panel with the preview, the parameters and the selected node](../assets/screenshots/editor-shader-graph.png)
+
+## Making one
+
+- On a **Shader** row in [Properties](properties.md), **New** → **Shader graph** writes a
+  graph of the slot's type under `shaders/`, assigns it and opens it.
+- In [Resources](resources.md), **New** → **Shader Graph** → a type writes one in the
+  current folder.
+- An agent creates one with `edit_graph` and `create`, see [From agents](#from-agents).
+
+A new graph holds only its output node, and draws as the built-in shader until something
+feeds it. Double-click a graph in Resources, or press **Open** on its Shader row, to open
+it in a tab next to the scenes and code. Open graphs come back with the project.
+
+## The window
+
+| Part | What it does |
+| --- | --- |
+| **Save** | Writes the file (Ctrl+S). The tab shows a dot while there are unsaved edits |
+| **+ Node** | Opens the node search at the center of the view |
+| **Frame** | Fits the graph in the view (F frames the selection) |
+| **Code** | Shows the shader file the graph makes, read-only; **Graph** goes back |
+| **Convert** | Writes that code beside the graph as a `.glsl`, gives it to every slot that used the graph, and opens it in the Code Editor |
+| Status | The graph's type, or how many errors it has |
+| Side panel | The [preview](#preview), the [parameters](#parameters), the selected node, group or comment, and the errors. Drag its edge to widen it |
+| Canvas | The nodes |
+
+## The canvas
+
+| Action | How |
+| --- | --- |
+| Pan | Drag with the middle button, or with the right one |
+| Zoom | Mouse wheel, around the cursor |
+| Select | Click a node; Ctrl or Shift + click adds or removes it; drag on empty space for a box; Ctrl+A for all |
+| Move | Drag a node, or a group by its title: a group carries what lies inside it |
+| Link | Drag from an output to an input, or the other way. An input takes one link, so a new one replaces the old |
+| Unlink | Drag a link off the input it feeds and drop it on empty space, or click the link and press Delete |
+| Add a node | Right click, or drop a link on empty space: the search opens, and the new node takes the link on its first pin that fits |
+| Reroute | Double-click a link to put a point on it |
+| Delete | Delete or Backspace. The output node stays |
+| Copy, cut, paste, duplicate | Ctrl+C, Ctrl+X, Ctrl+V at the mouse, Ctrl+D |
+| Undo, redo | Ctrl+Z, Ctrl+Y or Ctrl+Shift+Z, or the Edit menu. Each gesture or typed value is one step |
+
+A link joins only types that convert: numbers into each other, a texture into its own
+type, a bool into a bool, and never back into a node that feeds the link. Pins are colored
+by type. Positions snap to a grid of 10.
+
+The node search matches names, categories and ids as you type, and Enter takes the first
+match. It lists only the nodes the graph's type has (Scene Color only for meshes and
+post-process passes, Sky Direction only for the sky), and after a dropped link only those
+with a pin that fits. **Group** and **Comment** are in it too; the side panel renames a
+group and changes its color, or edits a comment's text.
+
+## Parameters
+
+Parameters are the graph's values for Properties, the `#pragma param` lines of the code.
+**+** adds one by type: float, vector 2 to 4, color, integer, 2D texture or cube map.
+Selecting one in the list edits its name, default, range, the filter and wrap of a
+texture, whether scripts set it (it is then hidden in Properties) and its description.
+Nodes refer to a parameter by its id, so renaming one changes nothing else; a name must be
+a GLSL name nobody else uses.
+
+Drag a parameter from the list onto the canvas: a value becomes a **Parameter** node and a
+texture a **Sample Texture** node set to it. The Texture setting of a sample node, and the
+Parameter setting of a Parameter node, list the parameters that fit.
+
+Values are set where the graph is used, as for any shader: in the material's or the
+component's [Parameters](custom-shaders.md#editing-values), or with `setShaderUniform`
+and `setShaderTexture` from scripts.
+
+## The inspector
+
+Select one node to see its description, its settings (a choice such as a texture's color
+space, a parameter, or text such as a Custom Function's code) and the constants of the
+inputs nothing feeds. An input that reads a field of the context by default, as UV reads
+`uv1`, shows it with **Set** to give it a constant instead; a constant has a reset arrow
+back to the default. The output node's inputs that are left alone keep what the material
+gives.
+
+## Preview
+
+The scene shows a graph's edits a moment after each one, saved or not, on every object
+that uses it, as long as the graph compiles: while it has an error the scene keeps the
+last graph that did. Closing the window without saving, or reloading the file, hands the
+scene back to the file. Exports always take the saved file.
+
+A mesh graph also draws on a lit sphere, cube or plane at the top of the side panel, with
+the defaults of its parameters.
+
+## Errors
+
+A node with an error has a red border and says why when the mouse is over it, and the side
+panel lists every error: click one to select and frame its node. A Custom Function whose
+code fails to compile names its node too, in the Output window as well. Typical errors are
+a texture node without a texture, a value of a type the input cannot take, and a node that
+reads something the graph's type does not have.
+
+## The file
+
+A graph is a short YAML file, sorted the same way every time, with whole-number
+positions, so a version control diff shows what changed:
+
+```yaml
+version: 1
+kind: shader
+type: mesh
+nextId: 6
+parameters:
+  - {id: 1, name: tint, type: color, default: [0.2, 0.6, 1, 1], description: Noise tint}
+nodes:
+  - {id: 2, type: output/mesh, pos: [600, 0], in: {roughness: 0.3}}
+  - {id: 3, type: noise/gradient, pos: [0, 0], in: {scale: 8}}
+  - {id: 4, type: parameter, pos: [0, 120], parameter: 1}
+  - {id: 5, type: math/multiply, pos: [300, 0]}
+links:
+  - [5.out, 2.baseColor]
+  - [3.out, 5.a]
+  - [4.rgb, 5.b]
+```
+
+A link goes from `node.pin` into `node.pin`; `node.pin.xyz` takes some components of an
+output, and `node.xyz` those of a node's first output. Ids are never reused. The code a graph builds is written to
+`.doriax/generated/shaders/<path>.glsl`, where you can read it.
+
+## From agents
+
+An agent connected through the [MCP server](mcp-server.md), or the AI Chat, builds graphs
+with three tools that answer from the node catalogue:
+
+| Tool | What it does |
+| --- | --- |
+| `list_graph_node_types` | The nodes a graph type takes, short, or complete for the words or category asked |
+| `read_graph` | A graph as JSON, whether it compiles with each error's node, and the code on request |
+| `edit_graph` | Operations applied in order as one step, all or nothing: add, remove, move, connect, disconnect, set a setting or a constant, add, change or remove a parameter, add a group or a comment. `create` makes the file |
+
+Within one `edit_graph` call, a node can be named by a `ref` an earlier operation gave
+it, and the output node is `output`, so one call can build a whole graph; nodes without a
+position are laid out in columns by their distance from the output. A graph open in the
+editor takes the edit as one step you can undo there, and one with unsaved edits is
+refused until you save or close it. Assign the result like any shader file, for example
+with `set_component_property` and `submeshes[0].material.shader`.

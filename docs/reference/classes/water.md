@@ -85,8 +85,7 @@ keeps the water out of a boat, a cabin, or a cave.
 | [Vector3](vector3.md) | [foamColor](#foamcolor-shorefoam-crestfoam) | `Vector3(1, 1, 1)` | C++ \| Lua |
 | float | [shoreFoam](#foamcolor-shorefoam-crestfoam) | `0.4` | C++ \| Lua |
 | float | [crestFoam](#foamcolor-shorefoam-crestfoam) | `0.15` | C++ \| Lua |
-| string | [customShader](#customshader-customunderwatershader) | `""` | C++ \| Lua |
-| string | [customUnderwaterShader](#customshader-customunderwatershader) | `""` | C++ \| Lua |
+| string | [shader](#shader) | `""` | C++ \| Lua |
 
 ### Methods
 
@@ -101,6 +100,8 @@ keeps the water out of a boat, a cabin, or a cave.
 | void | [setShaderUniform](#setshaderuniform) | C++ \| Lua |
 | Vector4 | [getShaderUniform](#setshaderuniform) | C++ \| Lua |
 | bool | [removeShaderUniform](#setshaderuniform) | C++ \| Lua |
+| void | [setShaderTexture](#setshadertexture) | C++ \| Lua |
+| Texture | [getShaderTexture](#setshadertexture) | C++ \| Lua |
 | float | [getHeight](#getheight-getnormal) | C++ \| Lua |
 | Vector3 | [getNormal](#getheight-getnormal) | C++ \| Lua |
 | [WaterComponent](watercomponent.md) | `getWaterComponent` | Lua |
@@ -360,18 +361,18 @@ drawn.
 
 ---
 
-### customShader / customUnderwaterShader
+### shader
 
-* *Setter*: void **setCustomShader**(const std::string& path)
-* *Getter*: std::string **getCustomShader**() const
-* *Setter*: void **setCustomUnderwaterShader**(const std::string& path)
-* *Getter*: std::string **getCustomUnderwaterShader**() const
+* *Setter*: void **setShader**(const std::string& path)
+* *Getter*: std::string **getShader**() const
 
-Base paths (no extension) of forked shaders. `customShader` replaces the water surface
-shader (`water.vert` / `water.frag`); `customUnderwaterShader` replaces the fullscreen
-fade of the [underwater](#underwater) view (`fullscreen.vert` / `underwater.frag`). An
-empty path uses the scene's [default water shader](scene.md#defaultwatershader) for
-`customShader`, then the built-in. See
+Project-relative path of the `water` [shader file](../../manual/shader-files.md#water)
+(`.glsl`) or [shader graph](../../editor/shader-graphs.md) (`.shader`). One file fills both
+hooks of the water: `getColor` on the surface, and `getUnderwaterColor` on the fade of the
+[underwater](#underwater) view. An empty path uses the scene's
+[default water shader](scene.md#defaultwatershader), then the built-in. Changing it reloads
+the water, and a shader that fails to build draws as the built-in one. The waves stay the
+engine's, so [getHeight](#getheight-getnormal) and buoyancy still match the surface. See
 [Custom Shaders — Water shaders](../../editor/custom-shaders.md#water-shaders).
 
 ---
@@ -396,10 +397,36 @@ normal use: the render system loads a water the first time it updates.
 * `Vector4 getShaderUniform(const std::string& name) const`
 * `bool removeShaderUniform(const std::string& name)`
 
-Values of the parameters the forks declare with `#pragma param`, by name. The water fork and
-the underwater fork read the same values. Setting a value only rewrites the uploaded block,
-so it can run every frame. Same semantics as [Mesh.setShaderUniform](mesh.md#setshaderuniform);
-see [Custom Shaders — Shader parameters](../../editor/custom-shaders.md#shader-parameters).
+Values of the parameters the [shader](#shader) declares with `#pragma param`, by name. The
+surface and the underwater fade read the same values. Setting a value only rewrites the
+uploaded block, so it can run every frame. Same semantics as
+[Mesh.setShaderUniform](mesh.md#setshaderuniform); see
+[Custom Shaders — Shader parameters](../../editor/custom-shaders.md#shader-parameters).
+
+---
+
+### setShaderTexture
+
+* `void setShaderTexture(const std::string& name, const Texture& texture)`
+* `Texture getShaderTexture(const std::string& name) const`
+
+Sets a texture parameter the [shader](#shader) declares with `#pragma param texture2D` or
+`textureCube`, by name (see [Textures](../../manual/shader-files.md#textures)); the surface
+and the underwater fade both bind it. An empty [Texture](texture.md) draws the declared
+default. Changing it reloads the water. `getShaderTexture` returns the texture set, empty
+when none.
+
+=== "C++"
+
+    ```cpp
+    water.setShaderTexture("flowMap", Texture("textures/river_flow.png"));
+    ```
+
+=== "Lua"
+
+    ```lua
+    water:setShaderTexture("flowMap", Texture("textures/river_flow.png"))
+    ```
 
 ---
 
@@ -429,5 +456,4 @@ included. The result matches the surface the next frame draws, so calling it in
     ```
 
 Neither call checks the water's area: a point outside it gets the waves as if the water
-went on. Both follow the built-in wave math, so a [custom shader](#customshader-customunderwatershader)
-that moves the vertices differently no longer matches them.
+went on. Both follow the engine's waves, which a [shader file](#shader) does not change.
