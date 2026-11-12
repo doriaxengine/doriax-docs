@@ -18,7 +18,7 @@ would. Every node is listed in [Shader Graph Nodes](../reference/shader-nodes.md
 - On a **Shader** row in [Properties](properties.md), **New** → **Shader graph** writes a
   graph of the slot's type under `shaders/`, assigns it and opens it.
 - In [Resources](resources.md), **New** → **Shader Graph** → a type writes one in the
-  current folder.
+  current folder; **Function** writes a [function](#functions) instead.
 - An agent creates one with `edit_graph` and `create`, see [From agents](#from-agents).
 
 A new graph holds only its output node, and draws as the built-in shader until something
@@ -108,6 +108,41 @@ code fails to compile names its node too, in the Output window as well. Typical 
 a texture node without a texture, a value of a type the input cannot take, and a node that
 reads something the graph's type does not have.
 
+## Functions
+
+A **function** is a `.shader` of type `function`: a part other graphs reuse. It has no
+output node of a shader type. Instead:
+
+| Node | What it does |
+| --- | --- |
+| **Function Input** | A value the function takes, with a name, a type (`float`, `vec2`, `vec3`, `vec4`, `color`, `int` or `bool`) and a **Default** for when the caller passes nothing. Nodes can feed the Default, such as UV |
+| **Function Output** | A value it gives back, with a name and a type |
+
+![A function's window: two Function Inputs, a parameter and two Function Outputs, with the first output on the preview sphere](../assets/screenshots/editor-shader-function.png)
+
+A **Subgraph** node calls a function from any graph, another function included. Its pins
+are the function's inputs on the left and its outputs on the right, top to bottom as those
+nodes stand in the function, and it takes the function's name as its title. Add one from
+the node search and pick the function in the inspector, or drop a function from Resources
+on the canvas. Double-click a Subgraph node to open its function.
+
+- A function takes any node: the graph calling it decides where each one runs, so a
+  function with Wind Sway feeds the vertex offset of mesh graphs, and one with Sky Direction
+  works in sky graphs.
+- The function's parameters become parameters of every shader that calls it, by name. Two
+  calls share them, and a parameter of the calling graph with the same name and type is the
+  same one. A texture the function samples comes in that way.
+- The calling graph builds the function's nodes into its own code, as if they stood there,
+  so a call costs what the same nodes would.
+- Editing a function rebuilds the graphs that call it, in the scene and in their windows,
+  saved or not. Exports read the saved files.
+- The window of a function previews its first output: on the sphere when its nodes fit a
+  mesh, as the vertex offset when nodes that work per vertex feed it. It checks every output.
+- An error inside a function shows on the Subgraph node of the calling graph, after the
+  function's path. A function that calls itself, directly or through another, is an error.
+- Renaming or moving a function in Resources updates the Subgraph nodes that call it.
+- A function goes in no Shader slot, and **Convert** is off for it.
+
 ## The file
 
 A graph is a short YAML file, sorted the same way every time, with whole-number
@@ -132,8 +167,11 @@ links:
 ```
 
 A link goes from `node.pin` into `node.pin`; `node.pin.xyz` takes some components of an
-output, and `node.xyz` those of a node's first output. Ids are never reused. The code a graph builds is written to
-`.doriax/generated/shaders/<path>.glsl`, where you can read it.
+output, and `node.xyz` those of a node's first output. Ids are never reused. A function is
+`type: function`, and a Subgraph node names it with `file`, as in
+`{id: 7, type: utility/subgraph, pos: [0, 0], file: shaders/rim.shader, in: {power: 2}}`. The
+code a graph builds is written to `.doriax/generated/shaders/<path>.glsl`, where you can
+read it.
 
 ## From agents
 
@@ -148,7 +186,10 @@ with three tools that answer from the node catalogue:
 
 Within one `edit_graph` call, a node can be named by a `ref` an earlier operation gave
 it, and the output node is `output`, so one call can build a whole graph; nodes without a
-position are laid out in columns by their distance from the output. A graph open in the
+position are laid out in columns by their distance from the output. `create` with
+`graph_type` `function` makes a [function](#functions) holding one Function Output, which
+answers to `output`; a Subgraph node takes the function's path through `set` with `file`,
+and `read_graph` lists its pins. A graph open in the
 editor takes the edit as one step you can undo there, and one with unsaved edits is
 refused until you save or close it. Assign the result like any shader file, for example
 with `set_component_property` and `submeshes[0].material.shader`.

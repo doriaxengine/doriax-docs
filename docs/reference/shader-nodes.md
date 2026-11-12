@@ -22,7 +22,8 @@ An input that nothing feeds takes its constant, set in the inspector, or its def
 default such as `uv1` reads that field of the hook's context, as the matching Input node
 would. Where a node runs: *any* runs in the stage that reads it; *vertex* and *fragment*
 nodes only in that stage. A vertex value read by fragment nodes reaches them through a
-varying the graph adds.
+varying the graph adds. A [function](../editor/shader-graphs.md#functions) takes every node,
+and the graph that calls it decides where each runs.
 
 ## Output
 
@@ -2037,3 +2038,49 @@ Works its input out per vertex and passes it to the fragments, interpolated, whe
 | Output | Type |
 | --- | --- |
 | Out (`out`) | dynamic |
+
+### Subgraph
+
+`utility/subgraph` · any stage · every type
+
+Runs a function graph of the project, a .shader of type function: its Function Inputs are the pins on the left, its Function Outputs those on the right.
+
+| Setting | Takes | Default |
+| --- | --- | --- |
+| Function (`file`) | a function graph |  |
+
+## Function
+
+### Function Input
+
+`function/input` · any stage · function graphs
+
+A value the calling graph passes in, a pin of its Subgraph node. Default is used when it passes none.
+
+| Input | Type | Default |
+| --- | --- | --- |
+| Default (`default`) | the Type | 0 |
+
+| Output | Type |
+| --- | --- |
+| Out (`out`) | the Type |
+
+| Setting | Takes | Default |
+| --- | --- | --- |
+| Name (`name`) | text | value |
+| Type (`valueType`) | one of `float`, `vec2`, `vec3`, `vec4`, `color`, `int`, `bool` | float |
+
+### Function Output
+
+`function/output` · any stage · function graphs
+
+A value the function gives back, a pin on the right of its Subgraph node.
+
+| Input | Type | Default |
+| --- | --- | --- |
+| Value (`value`) | the Type | 0 |
+
+| Setting | Takes | Default |
+| --- | --- | --- |
+| Name (`name`) | text | result |
+| Type (`valueType`) | one of `float`, `vec2`, `vec3`, `vec4`, `color`, `int`, `bool` | float |

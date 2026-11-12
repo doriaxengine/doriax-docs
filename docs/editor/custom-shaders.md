@@ -44,7 +44,8 @@ window:
 Every change is undoable. The build checks that a file is for the slot's type
 (`#pragma shader mesh` for a material), and a file that fails to build leaves the slot
 drawing with the built-in shader while the Output window shows the error, with the line,
-and for a graph the node.
+and for a graph the node. A graph [function](shader-graphs.md#functions) goes in no slot:
+other graphs call it.
 
 A mesh's **Shaders** section keeps **Max Offset**, the longest distance its vertex hooks
 move a vertex, which culling also widens the bounds by; see

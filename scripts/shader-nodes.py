@@ -7,7 +7,7 @@
 import json
 import sys
 
-CATEGORIES = ["Output", "Input", "Scene", "Parameter", "Math", "Vector", "Color", "UV", "Texture", "Noise", "Logic", "Effect", "Utility"]
+CATEGORIES = ["Output", "Input", "Scene", "Parameter", "Math", "Vector", "Color", "UV", "Texture", "Noise", "Logic", "Effect", "Utility", "Function"]
 TYPES = ["mesh", "ui", "points", "lines", "sky", "water", "postprocess"]
 
 HEADER = """---
@@ -34,7 +34,8 @@ An input that nothing feeds takes its constant, set in the inspector, or its def
 default such as `uv1` reads that field of the hook's context, as the matching Input node
 would. Where a node runs: *any* runs in the stage that reads it; *vertex* and *fragment*
 nodes only in that stage. A vertex value read by fragment nodes reaches them through a
-varying the graph adds.
+varying the graph adds. A [function](../editor/shader-graphs.md#functions) takes every node,
+and the graph that calls it decides where each runs.
 """
 
 
@@ -55,9 +56,16 @@ def number(n):
 
 def fits(node):
     types = node.get("shaderTypes") or []
+    if types == ["function"]:
+        return "function graphs"
     if not types or set(types) == set(TYPES):
         return "every type"
     return ", ".join(types)
+
+
+# a Function Input's or Output's pins take the type it is set to
+def pin_type(node, pin):
+    return "the Type" if node["id"].startswith("function/") else pin["type"]
 
 
 def node_section(node):
@@ -79,13 +87,13 @@ def node_section(node):
         else:
             lines += ["| Input | Type | Default |", "| --- | --- | --- |"]
             for pin in inputs:
-                lines.append(f"| {pin['label']} (`{pin['name']}`) | {pin['type']} | {value(pin)} |")
+                lines.append(f"| {pin['label']} (`{pin['name']}`) | {pin_type(node, pin)} | {value(pin)} |")
         lines.append("")
     outputs = node.get("outputs", [])
     if outputs:
         lines += ["| Output | Type |", "| --- | --- |"]
         for pin in outputs:
-            kind = {"parameter": "the parameter's", "mask": "as long as the mask"}.get(pin["type"], pin["type"])
+            kind = {"parameter": "the parameter's", "mask": "as long as the mask"}.get(pin["type"], pin_type(node, pin))
             lines.append(f"| {pin['label']} (`{pin['name']}`) | {kind} |")
         lines.append("")
     settings = node.get("settings", [])
@@ -99,6 +107,8 @@ def node_section(node):
                 takes = "a " + " or ".join(f"`{o}`" for o in options) + " parameter" if options else "a parameter"
             elif setting["type"] == "number":
                 takes = "a number"
+            elif setting["type"] == "function":
+                takes = "a function graph"
             else:
                 takes = "text"
             lines.append(f"| {setting['label']} (`{setting['name']}`) | {takes} | {value(setting)} |")
