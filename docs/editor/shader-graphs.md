@@ -103,7 +103,9 @@ last graph that did. Closing the window without saving, or reloading the file, h
 scene back to the file. Exports always take the saved file.
 
 A mesh graph also draws on a lit sphere, cube or plane at the top of the side panel, with
-the defaults of its parameters.
+the defaults of its parameters. The crosshair button next to the shapes draws the selected
+node's value instead, its first output as the final color, or as the vertex offset when
+nodes that work per vertex feed it; with nothing selected it draws the graph.
 
 ## Errors
 
