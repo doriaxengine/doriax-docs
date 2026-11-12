@@ -171,7 +171,8 @@ Every mesh shader file sees the shapes of `includes/coverage_helpers.glsl`:
 
 `getLight` replaces the engine's shading of one light: it returns what that light adds,
 and the engine adds the results of all lights. Ambient light, reflections and emission stay
-the engine's, physically based.
+the engine's, physically based. The engine's own diffuse term is the base color over π
+times the light and N·L, so divide by 3.14 for the same brightness.
 
 | `LightContext` field | Meaning |
 | --- | --- |

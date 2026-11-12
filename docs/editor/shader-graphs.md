@@ -11,6 +11,11 @@ becomes the hook that fills it. The editor turns the graph into a shader file wh
 builds, so a graph goes in every slot a `.glsl` does and draws exactly as the same code
 would. Every node is listed in [Shader Graph Nodes](../reference/shader-nodes.md).
 
+The Mesh Output's **Light** input replaces the engine's shading of each light with what
+feeds it, as `getLight` does in a [shader file](../manual/shader-files.md#lighting-and-the-final-color):
+the nodes behind it run once per light and read it through the **Light** node, its
+direction, color and shadow, and the surface through the **Material** node.
+
 ![The graph window: the canvas, and the side panel with the preview, the parameters and the selected node](../assets/screenshots/editor-shader-graph.png)
 
 ## Making one

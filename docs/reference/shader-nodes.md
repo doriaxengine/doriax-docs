@@ -43,6 +43,7 @@ What the mesh's material draws with.
 | Roughness (`roughness`) | float | `getSurface`, `surface.roughness` |
 | Occlusion (`occlusion`) | float | `getSurface`, `surface.occlusion` |
 | Emissive (`emissive`) | vec3 | `getSurface`, `surface.emissive` |
+| Light (`light`) | vec3 | `getLight`, its return value |
 | Coverage (`coverage`) | float | `getCoverage`, its return value |
 | Depth Offset (`depthOffset`) | float | `getDepthOffset`, its return value |
 | Final Color (`color`) | color | `getColor`, its return value |
@@ -263,7 +264,7 @@ Whether the fragment is on a front face.
 
 `input/material` · any stage · mesh
 
-The surface the material gives, before this graph changes it.
+The surface the material gives: before this graph changes it in the surface outputs, as changed in Light.
 
 | Output | Type |
 | --- | --- |
@@ -284,6 +285,18 @@ The color the engine would draw, linear.
 | Output | Type |
 | --- | --- |
 | Color (`color`) | vec4 |
+
+### Light
+
+`input/light` · any stage · mesh
+
+The light Light answers for, once per light: the direction toward it, its color times intensity and falloff, and its shadow, 1 lit and 0 shadowed.
+
+| Output | Type |
+| --- | --- |
+| Direction (`direction`) | vec3 |
+| Color (`color`) | vec3 |
+| Shadow (`shadow`) | float |
 
 ### Built-in Texture
 
