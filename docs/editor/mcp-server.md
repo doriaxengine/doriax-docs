@@ -114,8 +114,9 @@ plus `open_project` and `create_project`, which only MCP clients get: the chat r
 the editor, and switching projects would end its own turn. Each tool is marked read-only
 or not (`readOnlyHint`), which clients can use when they ask you to confirm a call.
 Shaders are written with `write_shader_file`, and their values set with `set_shader_uniform`;
-[shader graphs](shader-graphs.md#from-agents) are read and built with `read_graph` and
-`edit_graph`, from the nodes `list_graph_node_types` lists.
+[shader graphs](shader-graphs.md#from-agents) and [logic graphs](logic-graphs.md#from-agents)
+are read and built with `read_graph` and `edit_graph`, from the nodes
+`list_graph_node_types` lists.
 
 When a client connects, the server also sends the editor's main rules: build scenes in
 the editor and leave scripts to drive them, share repeated entities through bundles, give

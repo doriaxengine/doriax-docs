@@ -187,6 +187,7 @@ extension is optional.
 | --- | --- |
 | **Folder** | An empty folder |
 | **Lua Script** | A `.lua` module that returns an empty table named after the file |
+| **Logic Graph** | A [logic graph](logic-graphs.md) (`.logic`), a script made of nodes, with **On Start** and **On Update** |
 | **C++ Source** | An empty `.cpp` file |
 | **C++ Header** | A `.h` file starting with `#pragma once` |
 | **Shader** → a type | A [shader file](../manual/shader-files.md) (`.glsl`) of that type (Mesh, UI, Points, Lines, Sky, Water, Post-process), with an example to start from |
@@ -197,7 +198,7 @@ New files are not attached to any entity; give a shader to a material or compone
 [`require()`](../manual/scripting.md#require-and-module-paths), include a header from
 your scripts, or attach a script later with **Add Script** in Properties.
 
-- **Lua Script** is enabled only inside the project's
+- **Lua Script** and **Logic Graph** are enabled only inside the project's
   [Lua directory](project-workflow.md#assets-and-lua-directories), which `require()` and
   script entries resolve against.
 - A **C++ Source** compiles on its own only under one of the
