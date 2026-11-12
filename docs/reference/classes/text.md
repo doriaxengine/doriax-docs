@@ -315,7 +315,7 @@ Values of the parameters the [shader](#shader) declares with `#pragma param`, by
 * `void setShaderTexture(const std::string& name, const Texture& texture)`
 * `Texture getShaderTexture(const std::string& name) const`
 
-Sets a texture parameter the [shader](#shader) declares with `#pragma param texture2D` or `textureCube`, by name (see [Textures](../../manual/shader-files.md#textures)). An empty [Texture](texture.md) draws the declared default. Changing it reloads the component. `getShaderTexture` returns the texture set, empty when none.
+Sets a texture parameter the [shader](#shader) declares with `#pragma param texture2D` or `textureCube`, by name (see [Textures](../../manual/shader-files.md#textures)). An empty [Texture](texture.md) draws the declared default. The texture is bound again without reloading the component. `getShaderTexture` returns the texture set, empty when none.
 
 === "C++"
 

@@ -596,6 +596,7 @@ the parameter reads its inherited or declared default again.
 
 * `void setShaderTexture(const std::string& name, const Texture& texture)`
 * `void setShaderTexture(unsigned int submesh, const std::string& name, const Texture& texture)`
+* `Texture getShaderTexture(const std::string& name) const`
 * `Texture getShaderTexture(unsigned int submesh, const std::string& name) const`
 
 Sets a texture parameter the shader declares with `#pragma param texture2D` or
@@ -603,7 +604,7 @@ Sets a texture parameter the shader declares with `#pragma param texture2D` or
 every submesh or of one. The [Texture](texture.md) can be a file, pixel data or a camera's
 render target, and an empty one draws the declared default. The texture is bound again
 without rebuilding the shader. `getShaderTexture` returns the texture set on the material
-of `submesh`, empty when none.
+of `submesh`, the first without one, empty when none.
 
 === "C++"
 

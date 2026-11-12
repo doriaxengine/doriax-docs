@@ -216,7 +216,7 @@ The **Mesh** component exposes rendering flags beyond per-submesh material slots
 | **Render in Probes** | Whether the mesh appears in [Reflection Probe](../reference/classes/reflectionprobe.md) captures. Turn it off so an object wrapped around a probe is not seen in its own reflection. |
 
 Effects such as wind, see-through or a dissolve are [shader files](custom-shaders.md#the-shader-row)
-given to the mesh's materials; the mesh's **Shaders** section keeps **Max Offset**, the
+given to the mesh's materials; the mesh's **Vertex Offset** section keeps **Max Offset**, the
 longest distance they move a vertex.
 
 Each **Submesh** section contains a **Material** row with a shaded preview sphere. The

@@ -47,7 +47,7 @@ drawing with the built-in shader while the Output window shows the error, with t
 and for a graph the node. A graph [function](shader-graphs.md#functions) goes in no slot:
 other graphs call it.
 
-A mesh's **Shaders** section keeps **Max Offset**, the longest distance its vertex hooks
+A mesh's **Vertex Offset** section keeps **Max Offset**, the longest distance its vertex hooks
 move a vertex, which culling also widens the bounds by; see
 [Vertex offsets](../manual/shader-files.md#vertex-offsets).
 

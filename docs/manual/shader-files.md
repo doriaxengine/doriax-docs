@@ -95,7 +95,7 @@ the editor side.
 
 `getVertexOffset` returns how far the vertex moves, in world units. It runs after
 skinning, morph targets and instancing and before the instance distance fade.
-The mesh's **Max Offset** (`vertexOffsetMax`, in the **Shaders** section of the mesh) is
+The mesh's **Max Offset** (`vertexOffsetMax`, in the **Vertex Offset** section of the mesh) is
 the longest offset: longer ones are clamped to it, and culling widens the mesh bounds and
 each instance's sphere by it, so moved geometry is not cut at the screen edge or out of a
 shadow cascade. At 0 nothing is clamped and the bounds stay those of the mesh data.
@@ -145,7 +145,7 @@ normal and roughness.
 | `vec2 pixel` | The pixel counted from a corner every pass shares |
 | `vec2 screenUV` | Where the fragment is in the camera's view, 0 at the top left |
 | `bool frontFacing` | |
-| `float nearPlane`, `farPlane` | The camera's clip planes, as distances from the eye |
+| `float nearPlane`, `farPlane` | The camera's clip planes, as distances from the eye; 0 in shadow maps |
 | `mat3 worldToView` | Turns a world direction into the camera's space, z toward the eye |
 
 ### Coverage
