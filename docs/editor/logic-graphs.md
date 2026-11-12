@@ -6,27 +6,34 @@ description: Build Doriax scripts from nodes in the logic graph editor — event
 
 A **logic graph** (`.logic`) builds a [script](../manual/creating-scripts.md) from nodes.
 Events start it, white links carry the order things run in, and the other links carry
-values. Saving the graph writes a Lua script beside it, `Door.logic` to `Door.lua`, and
-that script is what entities run: the engine, Play and an export only ever see the Lua,
-exactly as if it had been written by hand.
+values. The editor turns the graph into a Lua script and keeps that script for itself,
+under the project's `.doriax` folder: you see and attach only the `.logic`, while the
+engine, Play and an export run the Lua, exactly as if it had been written by hand.
 
 ![The graph window with a logic graph: two events, the nodes they run and the values those read](../assets/screenshots/editor-logic-graph.png)
 
 ## Making one
 
+- On an entity, **New script** in [Properties](properties.md) with the **Logic Graph**
+  template writes a graph, attaches it and opens it.
 - In [Resources](resources.md), **New** → **Logic Graph** writes one in the current
-  folder, which must be inside the project's Lua directory. It starts with **On Start**
-  and **On Update**.
+  folder. It starts with **On Start** and **On Update**.
 - An agent creates one with `edit_graph` and `create`, see [From agents](#from-agents).
 
-The file name is the script's name, so it starts with a letter and has only letters,
-digits and `_`. A graph named as an engine class, `Camera.logic`, is fine: its script's
-table is then `CameraScript`. Opening a new graph writes its script. Give the script to an entity as
-any Lua script: in the **Script** component of [Properties](properties.md), add the
-`.lua`. The script's row then has a graph button that opens the graph.
+A graph lives inside the project's Lua directory. Its file name is the script's name, so
+it starts with a letter and has only letters, digits and `_`. A graph named as an engine
+class, `Camera.logic`, is fine: its script's table is then `CameraScript`.
 
-A `.lua` that was not written by a graph is never overwritten: a graph named like a
-script that already exists reports it and leaves the file alone.
+## Giving it to an entity
+
+A graph goes where a Lua script does:
+
+- **New script** → **Attach existing** → **Browse Script...** takes a `.logic`.
+- In a **Script** component, **+ Add Script** → **Logic Graph** asks for the file, and the
+  **Source File** of a Lua script row takes a `.logic` too.
+
+The row's source button opens the graph, and its variables show below it as the script's
+properties.
 
 ## How a graph runs
 
@@ -91,7 +98,7 @@ integer, boolean, text, vector, color or entity.
 The canvas, undo and the toolbar work as in [Shader Graphs](shader-graphs.md#the-canvas).
 **Code** shows the Lua the graph makes, and the status reads **script**, or the number of
 errors. Errors are listed in the side panel and outlined on their nodes; while a graph
-has errors, saving keeps the script it had.
+has errors, saving keeps the script it had. Ctrl+S, or **File** → **Save**, saves the graph.
 
 ## From agents
 
@@ -101,9 +108,9 @@ The [MCP server](mcp-server.md) and the AI Chat use the graph tools of shader gr
 | --- | --- |
 | `list_graph_node_types` | With `graph_type` `script`, lists the graph's own nodes and the engine classes; `search` or a class as `category` returns their nodes in full |
 | `read_graph` | Reads a `.logic`: variables, nodes, links, whether it compiles and, with `include_code`, the Lua |
-| `edit_graph` | Changes it in one step, or creates it with `create`. Nodes added without a position are laid out, one row for each event. The result names the script to attach with `attach_script` |
+| `edit_graph` | Changes it in one step, or creates it with `create`. Nodes added without a position are laid out, one row for each event. The result gives the path and class name `attach_script` takes: the graph itself |
 
 ## Command line
 
-`doriax-editor logic <file.logic> --out <file.lua>` writes a graph's script without the
-editor, and `doriax-editor logic-nodes` prints the node types as JSON.
+`doriax-editor logic <file.logic> --out <file.lua>` writes a graph's script to a file of
+your choice, and `doriax-editor logic-nodes` prints the node types as JSON.

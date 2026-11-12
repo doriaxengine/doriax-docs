@@ -34,7 +34,6 @@ it in a tab next to the scenes and code. Open graphs come back with the project.
 
 | Part | What it does |
 | --- | --- |
-| **Save** | Writes the file (Ctrl+S). The tab shows a dot while there are unsaved edits |
 | **+ Node** | Opens the node search at the center of the view |
 | **Frame** | Fits the graph in the view (F frames the selection) |
 | **Code** | Shows the shader file the graph makes, read-only; **Graph** goes back |
@@ -42,6 +41,9 @@ it in a tab next to the scenes and code. Open graphs come back with the project.
 | Status | The graph's type, or how many errors it has |
 | Side panel | The [preview](#preview), the [parameters](#parameters), the selected node, group or comment, and the errors. Drag its edge to widen it |
 | Canvas | The nodes |
+
+Ctrl+S, or **File** → **Save**, writes the file; the tab shows a dot while there are
+unsaved edits.
 
 ## The canvas
 
