@@ -921,7 +921,7 @@ A batch draws its sprites in world space, with their texture regions and colors 
 vertices. Sprites with a [shader file](shader-files.md) batch with sprites of the same
 file, the same parameter values and the same **Max Offset**, unless the file's hooks read
 something that changes there: the local position, the object's position or scale, or the
-normal; the scene behind; `uv1` in the vertex stage, on a sprite with a texture region;
+normal; the scene behind; `uv1`, on a sprite with a texture region;
 or the vertex color, on a sprite with a color. Those sprites draw one by one.
 
 Batches follow draw order. Without a depth test, as in most 2D scenes, objects draw in
