@@ -14,26 +14,27 @@ engine, Play and an export run the Lua, exactly as if it had been written by han
 
 ## Making one
 
-- On an entity, **New script** in [Properties](properties.md) with the **Logic Graph**
+- On an entity, **New Script** in [Properties](properties.md) with the **Logic Graph**
   template writes a graph, attaches it and opens it.
 - In [Resources](resources.md), **New** → **Logic Graph** writes one in the current
   folder. It starts with **On Start** and **On Update**.
 - An agent creates one with `edit_graph` and `create`, see [From agents](#from-agents).
 
 A graph lives inside the project's Lua directory. Its file name is the script's name, so
-it starts with a letter and has only letters, digits and `_`. A graph named as an engine
+it starts with a letter, has only letters, digits and `_`, and is not a word of Lua such
+as `end` or `local`. A graph named as an engine
 class, `Camera.logic`, is fine: its script's table is then `CameraScript`.
 
 ## Giving it to an entity
 
 A graph goes where a Lua script does:
 
-- **New script** → **Attach existing** → **Browse Script...** takes a `.logic`.
+- **New Script** → **Attach existing** → **Browse Script...** takes a `.logic`.
 - In a **Script** component, **+ Add Script** → **Logic Graph** asks for the file, and the
   **Source File** of a Lua script row takes a `.logic` too.
 
 The row's source button opens the graph, and its variables show below it as the script's
-properties.
+properties. Renaming or moving a graph in Resources carries the entities that use it.
 
 ## How a graph runs
 
@@ -71,7 +72,7 @@ properties.
 | Self | The script's entity, its scene, and the entity as an engine class such as `Mesh` |
 | Input | **Key**, the keyboard keys by name |
 | Utility | **Print**, **Lua Expression**, **Lua Code**, **Call Method** |
-| Engine | A category for each class of the [Lua API](../reference/index.md): a node for each method, and a **Get** and a **Set** for each property. Methods that only read, such as **Get World Position** or **Is Key Pressed**, are values; the others run |
+| Engine | A category for each class of the [Lua API](../reference/index.md): a node for each method, a **Get** for each property and a **Set** for the ones scripts can write. Methods that only read, such as **Get World Position** or **Is Key Pressed**, are values; the others run |
 | Enums | One node for each enum, with its value as a setting |
 
 Right click the canvas, or press **+ Node**, and type: the search matches every word in
@@ -108,9 +109,9 @@ The [MCP server](mcp-server.md) and the AI Chat use the graph tools of shader gr
 | --- | --- |
 | `list_graph_node_types` | With `graph_type` `script`, lists the graph's own nodes and the engine classes; `search` or a class as `category` returns their nodes in full |
 | `read_graph` | Reads a `.logic`: variables, nodes, links, whether it compiles and, with `include_code`, the Lua |
-| `edit_graph` | Changes it in one step, or creates it with `create`. Nodes added without a position are laid out, one row for each event. The result gives the path and class name `attach_script` takes: the graph itself |
+| `edit_graph` | Changes it in one step, or creates it with `create`. Nodes added without a position are laid out, one row for each event. The path of a new graph is inside the project's Lua directory. The result gives the path and class name `attach_script` takes, with type `lua`: the graph itself |
 
 ## Command line
 
-`doriax-editor logic <file.logic> --out <file.lua>` writes a graph's script to a file of
-your choice, and `doriax-editor logic-nodes` prints the node types as JSON.
+`doriax-editor logic <file.logic>` prints a graph's script, and `--out <file.lua>` writes
+it to a file of your choice, and `doriax-editor logic-nodes` prints the node types as JSON.

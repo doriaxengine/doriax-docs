@@ -61,8 +61,9 @@ unsaved edits.
 | Copy, cut, paste, duplicate | Ctrl+C, Ctrl+X, Ctrl+V at the mouse, Ctrl+D |
 | Undo, redo | Ctrl+Z, Ctrl+Y or Ctrl+Shift+Z, or the Edit menu. Each gesture or typed value is one step |
 
-A link joins only types that convert: numbers into each other, a texture into its own
-type, a bool into a bool, and never back into a node that feeds the link. Pins are colored
+A link joins only types that convert: a number into a number or a vector, a vector into
+one of its size or a shorter one (into a single number, split it first), a texture into
+its own type, a bool into a bool, and never back into a node that feeds the link. Pins are colored
 by type. Positions snap to a grid of 10.
 
 The node search matches names, categories and ids as you type, and Enter takes the first

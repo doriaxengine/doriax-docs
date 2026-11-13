@@ -41,8 +41,8 @@ The editor window is divided into a set of resizable panels:
 
 ![The View menu toggles each panel](../assets/screenshots/menu-view.png)
 
-**Save** writes the one thing you were last working on — the focused script, or the
-selected scene. **Save All** writes every changed scene and script *and* `project.yaml`,
+**Save** writes the one thing you were last working on — the focused script or graph, or
+the selected scene. **Save All** writes every changed scene and script *and* `project.yaml`,
 which is how settings changes are committed to disk. On a project that has never been
 saved, both ask where the project should live first.
 

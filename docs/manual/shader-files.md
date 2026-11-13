@@ -351,7 +351,8 @@ draw; it never rebuilds a shader.
 ```
 
 The default is `white`, `black` or `normal`, the filter `nearest`, `linear` or
-`trilinear`, and the wrap `repeat`, `clamp` or `mirror`. The code reads the texture by
+`trilinear` (which builds the texture's mipmaps), and the wrap `repeat`, `clamp` or
+`mirror`. The code reads the texture by
 its name, as GLSL does: `texture(detail, uv)`, `textureLod(detail, uv, 0.0)`. Helpers of
 your own take it as `detail_texture` and `detail_sampler`, the two halves the name stands
 for, so the name cannot be a word the file uses otherwise. A texture is bound in every

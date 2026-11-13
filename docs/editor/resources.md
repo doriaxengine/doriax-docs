@@ -191,7 +191,7 @@ extension is optional.
 | **C++ Source** | An empty `.cpp` file |
 | **C++ Header** | A `.h` file starting with `#pragma once` |
 | **Shader** → a type | A [shader file](../manual/shader-files.md) (`.glsl`) of that type (Mesh, UI, Points, Lines, Sky, Water, Post-process), with an example to start from |
-| **Shader Graph** → a type | A [shader graph](shader-graphs.md) (`.shader`) of that type, holding only its output node |
+| **Shader Graph** → a type | A [shader graph](shader-graphs.md) (`.shader`) of that type, holding only its output node; **Function** writes a [function](shader-graphs.md#functions) other graphs call |
 
 New files are not attached to any entity; give a shader to a material or component on its
 [Shader row](custom-shaders.md#the-shader-row). Load a Lua module from other scripts with

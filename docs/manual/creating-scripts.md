@@ -40,31 +40,33 @@ exist and you only need a new entry pointing at them.
 1. Select an entity in the **Structure** panel.
 2. Click **New Script** at the top of the **Properties** window (next to
    **New component**).
-3. Choose **Lua Script**, **C++ Subclass**, or **C++ Script Class**.
+3. Choose **C++ Subclass**, **C++ Script Class**, **Lua Script** or **Logic Graph**.
 4. Enter a class/module name and confirm.
 
 The editor then does everything in one undoable step:
 
 - writes template files into your project (header + source for C++, a single `.lua`
-  module for Lua) with example properties and event registration already in place,
+  module for Lua, a `.logic` [logic graph](../editor/logic-graphs.md) that opens in the
+  graph window) with example properties and event registration already in place,
 - adds a `ScriptComponent` to the entity if it does not have one,
 - appends an enabled script entry linked to the new files.
 
 ![The Create Script dialog](../assets/screenshots/script-create-dialog.png)
 
 The same dialog's **Attach existing** option links a script that already exists: browse
-to the `.lua` file (or the C++ header and source) and click **Attach**. The files are
-not changed.
+to the `.lua` file, the `.logic` graph (or the C++ header and source) and click
+**Attach**. The files are not changed.
 
 ### Flow B — Add Script (links existing files)
 
 1. Select the entity and add `ScriptComponent` through **New component** (skip if it
    already has one).
-2. In the **ScriptComponent** section, click **Add Script**. This creates an *empty*
-   script entry — no files are written.
+2. In the **ScriptComponent** section, click **Add Script** and choose **Lua Script** or
+   **C++ Script**. This creates an *empty* script entry — no files are written.
+   **Logic Graph** asks for a `.logic` file at once and adds an entry that runs it.
 3. Click the pencil button on the new entry to open **Edit Script Details** and set the
-   class name, then pick the **Header File** and **Source File** (or the `.lua` file for
-   Lua scripts) from your project.
+   class name, then pick the **Header File** and **Source File** (or the `.lua` file, or a
+   `.logic` graph, for Lua scripts) from your project.
 
 Use this flow to reuse one script across many entities, or to wire up files you wrote
 outside the editor.
@@ -88,6 +90,7 @@ another. All edits are undoable.
 | Type | Enum value | Generated base | Best use |
 | --- | --- | --- | --- |
 | Lua Script | `SCRIPT_LUA` | Lua table module | Fast iteration, UI glue, triggers, controllers |
+| Logic Graph | `SCRIPT_LUA` | A [logic graph](../editor/logic-graphs.md), run as the Lua the editor writes from it | Behavior built from nodes, without writing code |
 | C++ Subclass | `SUBCLASS` | The wrapper class matching the entity (`Mesh`, `Camera`, `Terrain`, `Button`, …) | Behavior that calls wrapper methods like `getPosition()` |
 | C++ Script Class | `SCRIPT_CLASS` | `ScriptBase` | Logic that accesses scene/entity explicitly without a wrapper |
 

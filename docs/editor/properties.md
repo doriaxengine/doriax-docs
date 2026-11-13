@@ -466,13 +466,15 @@ Each mesh can still opt out with **Detail Levels** on the Mesh component.
 
 Two buttons at the top of the Properties window create scripts:
 
-- **New Script** — opens a dialog that generates the script files (Lua module, or C++
-  header + source), adds a `ScriptComponent` if the entity lacks one, and links an
-  enabled entry to the new files — all in one undoable step. Its **Attach existing**
-  option links script files that already exist instead, without changing them.
+- **New Script** — opens a dialog that generates the script files (Lua module, C++
+  header + source, or a [logic graph](logic-graphs.md)), adds a `ScriptComponent` if the
+  entity lacks one, and links an enabled entry to the new files — all in one undoable
+  step. Its **Attach existing** option links script files or a `.logic` graph that
+  already exist instead, without changing them.
 - **New component → Script**, then **Add Script** inside the component — adds
-  an *empty* script entry without creating files. Use the entry's pencil button to set
-  the class name and link existing header/source (or `.lua`) files.
+  an *empty* Lua or C++ script entry without creating files, or with **Logic Graph** an
+  entry for a `.logic` file you pick. Use the entry's pencil button to set the class name
+  and link existing header/source (or `.lua` or `.logic`) files.
 
 Each script entry shows an enable checkbox, buttons to open its files in the Code
 Editor, and a right-click menu to reorder or remove it.

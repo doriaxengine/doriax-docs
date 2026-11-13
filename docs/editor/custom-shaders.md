@@ -185,7 +185,7 @@ section of its properties.
 Every change is undoable, and the chain is saved with the scene. An agent connected
 through the [MCP server](mcp-server.md), or the AI Chat, edits the same chain:
 `list_post_process_passes` reads it and `set_post_process_pass` adds, removes, moves,
-enables or repoints a pass.
+enables or repoints a pass, and sets its textures.
 
 The chain runs on the scene's **active camera**, after the opaque, transparent, UI and SSR
 passes, and before the fixed-resolution upscale. Secondary cameras (minimaps, mirrors,
