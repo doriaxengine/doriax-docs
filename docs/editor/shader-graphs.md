@@ -106,6 +106,13 @@ that uses it, as long as the graph compiles: while it has an error the scene kee
 last graph that did. Closing the window without saving, or reloading the file, hands the
 scene back to the file. Exports always take the saved file.
 
+A number typed or dragged on a pin shows at once, with no new build: while a graph is
+open, the editor keeps those numbers out of the shader and feeds them to it as values.
+Only what changes the code builds again, such as a link, a node or a setting. The saved
+graph, its generated `.glsl` and every export hold the numbers as constants, so a game
+draws them at no cost. A graph with an `int` parameter, the pins of a function graph and
+the pins past the first 96 keep building as before.
+
 A mesh graph also draws on a lit sphere, cube or plane at the top of the side panel, with
 the defaults of its parameters. The crosshair button next to the shapes draws the selected
 node's value instead, its first output as the final color, or as the vertex offset when
