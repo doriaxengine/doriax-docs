@@ -488,12 +488,12 @@ members.
 
 !!! note "There is no direct `.bundle` file loader"
     You don't load a `.bundle` file by path at runtime. Export turns each file into a
-    registered factory, and you spawn it by the **bundle name** — the file's path with the
-    `.bundle` extension removed and forward slashes (so `bundles/enemies/EnemyShip.bundle`
-    is created as `"enemies/EnemyShip"`). Only the bundles a scene instantiates and the
-    ones listed in **Project → Bundles** are registered, so a bundle spawned from script
-    alone has to be listed there. Use `BundleManager.getBundleNames()` to list everything
-    that is registered.
+    registered factory, and you spawn it by the **bundle name** — the file's path in the
+    project folder with the `.bundle` extension removed and forward slashes (so
+    `bundles/enemies/EnemyShip.bundle` is created as `"bundles/enemies/EnemyShip"`).
+    Only the bundles a scene instantiates and the ones listed in **Project → Bundles**
+    are registered, so a bundle spawned from script alone has to be listed there. Use
+    `BundleManager.getBundleNames()` to list everything that is registered.
 
 === "Lua"
 

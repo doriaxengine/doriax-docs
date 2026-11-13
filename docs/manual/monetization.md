@@ -786,7 +786,8 @@ rules require progress to be saved this way.
 
 Other portals have no cloud save, so `loadData()` reports `onDataLoadFailed`. Save there
 with [`UserSettings`](../reference/classes/usersettings.md), which the web stores in the
-browser.
+browser. Inside YouTube the browser can deny the game's frame its own storage; `UserSettings`
+then keeps its values only until the page closes, so progress there goes through `saveData`.
 
 ### What each portal supports {#web-portal-support}
 

@@ -30,11 +30,13 @@ reach instance members, whose ids only exist at runtime. Spawn through
 [`createBundle`](#createbundle) rather than calling either function yourself, so the
 instance is tracked for [`destroyBundle`](#destroybundle).
 
-The bundle **name** is the `.bundle` file's path with the extension removed, using forward
-slashes (for example, `bundles/enemies/EnemyShip.bundle` registers as
-`enemies/EnemyShip`). Registration covers the bundles a scene instantiates plus the ones
-listed in **Project → Bundles**; a bundle that exists only to be spawned from a script
-must be listed there, or it is not built and `createBundle` does not find it (see
+The bundle **name** is the `.bundle` file's path in the project folder with the extension
+removed, using forward slashes (for example, `enemies/EnemyShip.bundle` registers as
+`enemies/EnemyShip`, and `assets/enemies/EnemyShip.bundle`, in a project that keeps its
+assets in an `assets` folder, as `assets/enemies/EnemyShip`). Registration covers the
+bundles a scene instantiates plus the ones listed in **Project → Bundles**; a bundle that
+exists only to be spawned from a script must be listed there, or it is not built and
+`createBundle` does not find it (see
 [Bundles in the build](../../editor/bundles.md#bundles-in-the-build)). At runtime you
 spawn an instance by that name (or ID) with
 [`createBundle`](#createbundle), and remove it with [`destroyBundle`](#destroybundle):
