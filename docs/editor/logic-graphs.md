@@ -49,8 +49,9 @@ properties. Renaming or moving a graph in Resources carries the entities that us
   Delete.
 - What a node that runs returns is kept for the nodes after it in the same event. A node
   inside a **Branch** side or a loop's body may not have run, so only that side or body
-  reads its value, as only a loop's body reads its **Index**. A value node has no memory:
-  **Random** linked to two inputs gives two numbers.
+  reads its value, as only a loop's body reads its **Index**. A value node is worked out
+  again for each node that runs and reads it, and once for that node: **Random** linked
+  to two inputs of one node gives them the same number.
 - Where two paths lead into the same node, what follows is written once for each path.
   Keep the shared part short, or put it in a **Lua Code** node.
 - An event that asks a question, as **Should Collide**, answers yes unless a **Return**
@@ -84,8 +85,10 @@ gives its value with `return`. What Lua does not accept is reported on the node.
 
 ## Variables
 
-The side panel lists the graph's variables. **+ Variable** adds one of a type: number,
-integer, boolean, text, vector, color or entity.
+The side panel lists the graph's variables, each under a header that folds, so several
+can be open and set side by side; the trash can on a header removes its variable.
+**+ Variable** adds one of a type: number, integer, boolean, text, vector, color or
+entity.
 
 - A variable shows on the script in [Properties](properties.md), where each entity gets
   its own value, as [script properties](../manual/script-properties.md) do.
@@ -99,7 +102,7 @@ integer, boolean, text, vector, color or entity.
 The canvas, undo and the toolbar work as in [Shader Graphs](shader-graphs.md#the-canvas).
 **Code** shows the Lua the graph makes, and the status reads **script**, or the number of
 errors. Errors are listed in the side panel and outlined on their nodes; while a graph
-has errors, saving keeps the script it had. Ctrl+S, or **File** → **Save**, saves the graph.
+has errors, saving keeps the script it had, and an export stops on it. Ctrl+S, or **File** → **Save**, saves the graph.
 
 ## From agents
 
