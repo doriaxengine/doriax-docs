@@ -34,7 +34,7 @@ Use **Visible = false** for invisible HDR environments that only drive reflectio
 | `color` | C++ \| Lua |
 | `alpha` | C++ \| Lua |
 | `rotation` | C++ \| Lua |
-| [`customShader`](#customshader) | C++ \| Lua |
+| [`shader`](#shader) | C++ \| Lua |
 
 ## Methods
 
@@ -52,6 +52,8 @@ Use **Visible = false** for invisible HDR environments that only drive reflectio
 | [`setShaderUniform`](#setshaderuniform) | C++ \| Lua |
 | [`getShaderUniform`](#setshaderuniform) | C++ \| Lua |
 | [`removeShaderUniform`](#setshaderuniform) | C++ \| Lua |
+| [`setShaderTexture`](#setshadertexture) | C++ \| Lua |
+| [`getShaderTexture`](#setshadertexture) | C++ \| Lua |
 | `getSkyComponent` ([SkyComponent](skycomponent.md)) | Lua |
 
 ## Example
@@ -87,12 +89,12 @@ Enable **Receive IBL** on meshes that should reflect this environment. See
 
 ---
 
-### customShader
+### shader
 
-* *Setter:* `void setCustomShader(const std::string& path)`
-* *Getter:* `std::string getCustomShader() const`
+* *Setter:* `void setShader(const std::string& path)`
+* *Getter:* `std::string getShader() const`
 
-Project-relative base path of a forked shader (`"shaders/dayNight"` resolves to `shaders/dayNight.vert` and `shaders/dayNight.frag`, or `"a.vert|b.frag"` names the files separately). Empty (default) uses the scene default shader for this type, or the engine built-in. Changing it reloads the component. Same semantics as [Mesh.customShader](mesh.md#customshader); see [Custom Shaders](../../editor/custom-shaders.md).
+Project-relative path of the `sky` [shader file](../../manual/shader-files.md#sky) (`.glsl`) or [shader graph](../../editor/shader-graphs.md) (`.shader`) the sky draws with, such as `"shaders/dayNight.glsl"`. Its `getColor` hook receives the cube map sample times the sky's color and returns the color drawn. Empty (default) uses the scene's [defaultSkyShader](scene.md#defaultskyshader), or the engine built-in. Changing it reloads the component, and a shader that fails to build draws as the built-in one. See [Custom Shaders](../../editor/custom-shaders.md).
 
 ---
 
@@ -105,12 +107,12 @@ Project-relative base path of a forked shader (`"shaders/dayNight"` resolves to 
 * `Vector4 getShaderUniform(const std::string& name) const`
 * `bool removeShaderUniform(const std::string& name)`
 
-Values of the parameters the custom shader declares with `#pragma param`, by name. Setting a value only rewrites the uploaded block, so it can run every frame; a parameter with no value reads the scene's value under a [scene default shader](scene.md#setdefaultshaderuniform), else its declared default. Same semantics as [Mesh.setShaderUniform](mesh.md#setshaderuniform); see [Custom Shaders — Shader parameters](../../editor/custom-shaders.md#shader-parameters).
+Values of the parameters the [shader](#shader) declares with `#pragma param`, by name. Setting a value only rewrites the uploaded block, so it can run every frame; a parameter with no value reads the scene's value under a [scene default shader](scene.md#setdefaultshaderuniform), else its declared default. Same semantics as [Mesh.setShaderUniform](mesh.md#setshaderuniform); see [Custom Shaders — Shader parameters](../../editor/custom-shaders.md#shader-parameters).
 
 === "C++"
 
     ```cpp
-    sky.setCustomShader("shaders/dayNight");
+    sky.setShader("shaders/dayNight.glsl");
     sky.setShaderUniform("strength", 0.8f);
     sky.setShaderUniform("glowColor", Vector4(1.0f, 0.8f, 0.2f, 1.0f));
     ```
@@ -118,13 +120,35 @@ Values of the parameters the custom shader declares with `#pragma param`, by nam
 === "Lua"
 
     ```lua
-    sky.customShader = "shaders/dayNight"
+    sky.shader = "shaders/dayNight.glsl"
     sky:setShaderUniform("strength", 0.8)
     sky:setShaderUniform("glowColor", Vector4(1, 0.8, 0.2, 1))
     ```
 
+---
+
+### setShaderTexture
+
+* `void setShaderTexture(const std::string& name, const Texture& texture)`
+* `Texture getShaderTexture(const std::string& name) const`
+
+Sets a texture parameter the [shader](#shader) declares with `#pragma param texture2D` or `textureCube`, by name (see [Textures](../../manual/shader-files.md#textures)). An empty [Texture](texture.md) draws the declared default. The texture is bound again without reloading the component. `getShaderTexture` returns the texture set, empty when none.
+
+=== "C++"
+
+    ```cpp
+    sky.setShaderTexture("clouds", Texture("textures/clouds.png"));
+    ```
+
+=== "Lua"
+
+    ```lua
+    sky:setShaderTexture("clouds", Texture("textures/clouds.png"))
+    ```
+
 ## See also
 
+- [Shader Files — Sky](../../manual/shader-files.md#sky)
 - [Custom Shaders — Shader parameters](../../editor/custom-shaders.md#shader-parameters)
 - [Mesh — receiveIBL](mesh.md#receiveibl)
 - [Texture — cube maps](texture.md)

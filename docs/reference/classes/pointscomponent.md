@@ -20,7 +20,9 @@ The data behind [Points](points.md). In Lua, get it with `points:getPointsCompon
 | `maxPoints` | C++ \| Lua (read-only) |
 | `numVisible` | C++ \| Lua (read-only) |
 | `aabb` | C++ \| Lua (read-only) |
-| `customShader` | C++ \| Lua |
+| `shader` | C++ \| Lua |
+| `shaderUniforms` | C++ |
+| `shaderTextures` | C++ |
 | `texture` | C++ \| Lua |
 | `transparent` | C++ \| Lua |
 | `autoTransparency` | C++ \| Lua |
@@ -29,4 +31,4 @@ The data behind [Points](points.md). In Lua, get it with `points:getPointsCompon
 | `needUpdateTexture` | C++ \| Lua |
 | `needReload` | C++ \| Lua |
 
-`points` is a list of [PointData](pointdata.md). Set `needUpdate` after assigning it. Only the first `maxPoints` are drawn; raise it with [`Points.maxPoints`](points.md#maxpoints). Set `needReload` after changing `customShader`. In Lua, lists are copies: assign the changed table back.
+`points` is a list of [PointData](pointdata.md). Set `needUpdate` after assigning it. Only the first `maxPoints` are drawn; raise it with [`Points.maxPoints`](points.md#maxpoints). Set `needReload` after changing `shader`, the points' [shader file](points.md#shader), the scene default when empty. `shaderUniforms` and `shaderTextures` hold its parameter values and textures by name; [setShaderUniform](points.md#setshaderuniform) and [setShaderTexture](points.md#setshadertexture) set them, also from Lua. In Lua, lists are copies: assign the changed table back.

@@ -18,9 +18,9 @@ skinned depth pass that feeds shadow maps. That spelling is what
 [`--shader`](../editor/command-line.md#shader-specs) accepts and what the
 [Export Window](../editor/export.md#common-settings) **Shaders** list shows.
 
-A [custom shader](../editor/custom-shaders.md) adds a third dimension: the fork is
-compiled per property combination as well, alongside the built-in variant it falls back
-to when the fork fails to build.
+A [custom shader](../editor/custom-shaders.md), a shader file or graph, adds a third
+dimension: the engine's shader with the file's hooks is compiled per property combination
+as well, alongside the built-in variant it falls back to when the file fails to build.
 
 ## Where the set comes from
 
@@ -34,7 +34,7 @@ editor has actually drawn. Two consequences:
 
 - Saving **merges** into the stored list instead of replacing it, so a component that has
   not been rendered yet does not lose its variant from the file. Entries accumulate; the
-  only ones a save drops are those of a forked shader whose files were deleted from the
+  only ones a save drops are those of a shader file or graph that was deleted from the
   project, which no export could build. Drop other stale ones in the Export Window's
   **Shaders** list.
 - A headless [`doriax-editor export`](../editor/command-line.md#export-build-a-project-to-a-target)
@@ -99,12 +99,15 @@ the numeric form is what a scene file's `shaderKeys` entries hold.
 | 26 | `Ifd` | Instance distance fade |
 | 27 | `Tpb` | Terrain PBR layers |
 | 28 | `Dlo` | Directional lights only |
+| 29 | `Hu1` | Primary UV set a shader file's hooks read, where the material alone would not bind it |
+| 30 | `Hnr` | Vertex normals a shader file's hooks read, where the material alone would not bind them |
+| 31 | `Hu2` | Secondary UV set a shader file's hooks read |
 
 Bit 5 is reserved: it used to select the PCF shadow filter, which is uniform-driven now
 (Scene shadow quality).
 
 A scene whose lights are all directional draws built-in lit meshes with `Dlo`, which leaves
-out the point and spot light code, also when the mesh only adds effect functions. An export
+out the point and spot light code, also when the mesh has a shader file. An export
 ships every such variant both with and without it, so a script can still add a point or
 spot light at runtime.
 
@@ -121,14 +124,20 @@ spot light at runtime.
 | 6 | `Ist` | Instancing |
 | 7 | `Ams` | Alpha mask |
 | 8 | `Ifd` | Instance distance fade |
-| 9 | `Uv1` | Primary UV set for a [coverage function](shader-effects.md#coverage) |
+| 9 | `Uv1` | Primary UV set |
+| 10 | `Nor` | Vertex normals |
+| 11 | `Vc3` | Vertex color, RGB |
+| 12 | `Vc4` | Vertex color, RGBA |
+| 13 | `Uv2` | Secondary UV set |
+| 14 | `Tan` | Vertex tangents |
 
-The `gbuffer` type takes `Uv1` at bit 12 for the same reason.
+Bits 9 to 14 are the vertex data a [shader file](shader-files.md)'s hooks read, which the
+depth passes otherwise leave out. The `gbuffer` type takes them as `Uv1`, `Vc3`, `Vc4`,
+`Uv2` and `Tan` at bits 12 to 16, beside `Nor` at bit 1.
 
-[Shader effects](shader-effects.md) need no bit of their own: the vertex offset and the
-coverage function are part of the custom shader name that follows `@` in a spec, as
-`fork#vertexOffset#coverage`, for example `mesh:Uv1,Puc,Nor@#offsets/wind.glsl` or
-`depth:Uv1@##coverage/dissolve.glsl`.
+A shader file needs no bit of its own: its project-relative path follows `@` in a spec,
+for example `mesh:Uv1,Puc,Nor@shaders/wind.glsl` or `depth:Uv1@shaders/dissolve.glsl`, and
+its hooks are compiled into every variant of that name.
 
 ### `ui`, `points`, `lines`
 
@@ -211,6 +220,6 @@ a machine with a GPU ever opened the project.
 
 ## See also
 
-- [Custom Shaders](../editor/custom-shaders.md) — forking a built-in shader
+- [Custom Shaders](../editor/custom-shaders.md) — shader files and graphs of the project
 - [Command-Line Tools](../editor/command-line.md) — `export`, `shaders`, and `benchmark` subcommands
 - [Rendering Pipeline](rendering-pipeline.md#shaders) — what the built-in shaders do

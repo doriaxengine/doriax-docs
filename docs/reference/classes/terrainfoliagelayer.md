@@ -27,4 +27,4 @@ One foliage layer of a [Terrain](terrain.md): which model it scatters, where, an
 | `castShadows` | C++ \| Lua |
 | `windSway` | C++ \| Lua |
 
-Slopes are in degrees. `minHeight` and `maxHeight` are fractions of the terrain's `maxHeight`. `windSway` bends the instances toward the scene [wind](../../manual/shader-effects.md#wind): how far their tips move in 10 m/s, with the base still (`0`, the default, keeps them still).
+Slopes are in degrees. `minHeight` and `maxHeight` are fractions of the terrain's `maxHeight`. `windSway` bends the instances toward the scene [wind](../../manual/shader-files.md#wind) with the engine's `shaders/wind.glsl`: how far their tips move in 10 m/s, with the base still (`0`, the default, keeps them still).

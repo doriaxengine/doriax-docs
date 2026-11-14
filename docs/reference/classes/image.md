@@ -27,7 +27,7 @@ All UI elements also expose a rich set of pointer/focus callback events (inherit
 | unsigned int | [patchMarginTop](#patchmargin) | `0` | C++ \| Lua |
 | unsigned int | [patchMarginBottom](#patchmargin) | `0` | C++ \| Lua |
 | float | [textureScaleFactor](#texturescalefactor) | `0.0` | C++ \| Lua |
-| string | [customShader](#customshader) | `""` | C++ \| Lua |
+| string | [shader](#shader) | `""` | C++ \| Lua |
 
 ### Methods
 
@@ -43,6 +43,8 @@ All UI elements also expose a rich set of pointer/focus callback events (inherit
 | void | [setShaderUniform](#setshaderuniform) | C++ \| Lua |
 | Vector4 | [getShaderUniform](#setshaderuniform) | C++ \| Lua |
 | bool | [removeShaderUniform](#setshaderuniform) | C++ \| Lua |
+| void | [setShaderTexture](#setshadertexture) | C++ \| Lua |
+| Texture | [getShaderTexture](#setshadertexture) | C++ \| Lua |
 | [ImageComponent](imagecomponent.md) | `getImageComponent` | Lua |
 
 ### Callback events
@@ -162,12 +164,12 @@ Returns the axis-aligned bounding box in local or world space. Useful for hit-te
 
 ---
 
-### customShader
+### shader
 
-* *Setter:* `void setCustomShader(const std::string& path)`
-* *Getter:* `std::string getCustomShader() const`
+* *Setter:* `void setShader(const std::string& path)`
+* *Getter:* `std::string getShader() const`
 
-Project-relative base path of a forked shader (`"shaders/glow"` resolves to `shaders/glow.vert` and `shaders/glow.frag`, or `"a.vert|b.frag"` names the files separately). Empty (default) uses the scene default shader for this type, or the engine built-in. Changing it reloads the component. Same semantics as [Mesh.customShader](mesh.md#customshader); see [Custom Shaders](../../editor/custom-shaders.md).
+Project-relative path of the `ui` [shader file](../../manual/shader-files.md#ui-points-and-lines) (`.glsl`) or [shader graph](../../editor/shader-graphs.md) (`.shader`) the image draws with, such as `"shaders/glow.glsl"`. Empty (default) uses the scene's [defaultUIShader](scene.md#defaultuishader), or the engine built-in. Changing it reloads the component, and a shader that fails to build draws as the built-in one. It is the `shader` field of [UIComponent](uicomponent.md#shader); see [Custom Shaders](../../editor/custom-shaders.md).
 
 ---
 
@@ -180,12 +182,12 @@ Project-relative base path of a forked shader (`"shaders/glow"` resolves to `sha
 * `Vector4 getShaderUniform(const std::string& name) const`
 * `bool removeShaderUniform(const std::string& name)`
 
-Values of the parameters the custom shader declares with `#pragma param`, by name. Setting a value only rewrites the uploaded block, so it can run every frame; a parameter with no value reads the scene's value under a [scene default shader](scene.md#setdefaultshaderuniform), else its declared default. Same semantics as [Mesh.setShaderUniform](mesh.md#setshaderuniform); see [Custom Shaders — Shader parameters](../../editor/custom-shaders.md#shader-parameters).
+Values of the parameters the [shader](#shader) declares with `#pragma param`, by name. Setting a value only rewrites the uploaded block, so it can run every frame; a parameter with no value reads the scene's value under a [scene default shader](scene.md#setdefaultshaderuniform), else its declared default. Same semantics as [Mesh.setShaderUniform](mesh.md#setshaderuniform); see [Custom Shaders — Shader parameters](../../editor/custom-shaders.md#shader-parameters).
 
 === "C++"
 
     ```cpp
-    image.setCustomShader("shaders/glow");
+    image.setShader("shaders/glow.glsl");
     image.setShaderUniform("strength", 0.8f);
     image.setShaderUniform("glowColor", Vector4(1.0f, 0.8f, 0.2f, 1.0f));
     ```
@@ -193,9 +195,30 @@ Values of the parameters the custom shader declares with `#pragma param`, by nam
 === "Lua"
 
     ```lua
-    image.customShader = "shaders/glow"
+    image.shader = "shaders/glow.glsl"
     image:setShaderUniform("strength", 0.8)
     image:setShaderUniform("glowColor", Vector4(1, 0.8, 0.2, 1))
+    ```
+
+---
+
+### setShaderTexture
+
+* `void setShaderTexture(const std::string& name, const Texture& texture)`
+* `Texture getShaderTexture(const std::string& name) const`
+
+Sets a texture parameter the [shader](#shader) declares with `#pragma param texture2D` or `textureCube`, by name (see [Textures](../../manual/shader-files.md#textures)). An empty [Texture](texture.md) draws the declared default. The texture is bound again without reloading the component. `getShaderTexture` returns the texture set, empty when none.
+
+=== "C++"
+
+    ```cpp
+    image.setShaderTexture("noise", Texture("textures/noise.png"));
+    ```
+
+=== "Lua"
+
+    ```lua
+    image:setShaderTexture("noise", Texture("textures/noise.png"))
     ```
 
 ---

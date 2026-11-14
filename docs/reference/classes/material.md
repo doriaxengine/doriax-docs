@@ -8,7 +8,7 @@ description: Material API reference (C++ writable; Lua read-only).
 
 ## Description
 
-A PBR (Physically Based Rendering) material definition that drives how a mesh surface looks under lighting. `Material` is a plain data struct — it holds colour factors, metallic/roughness values, and up to five texture slots that correspond to the standard glTF 2.0 PBR workflow.
+A PBR (Physically Based Rendering) material definition that drives how a mesh surface looks under lighting. `Material` is a plain data struct — it holds colour factors, metallic/roughness values, up to five texture slots that correspond to the standard glTF 2.0 PBR workflow, and the [shader](#shader-shaderuniforms-shadertextures) the surface draws with.
 
 Materials are attached to [Mesh](mesh.md) objects (or individual sub-meshes) via `Mesh::setMaterial()`. When loading a [Model](model.md), each sub-mesh automatically receives the material defined in the source file.
 
@@ -51,6 +51,9 @@ Linked materials reload when the file changes on disk. See
 | [Texture](texture.md) | [occlusionTexture](#occlusiontexture) | empty | C++ \| Lua (read-only) |
 | [Texture](texture.md) | [normalTexture](#normaltexture) | empty | C++ \| Lua (read-only) |
 | std::string | [name](#name) | `""` | C++ |
+| std::string | [shader](#shader-shaderuniforms-shadertextures) | `""` | C++ \| Lua (read-only) |
+| vector&lt;pair&lt;string, Vector4&gt;&gt; | [shaderUniforms](#shader-shaderuniforms-shadertextures) | `{}` | C++ |
+| vector&lt;pair&lt;string, Texture&gt;&gt; | [shaderTextures](#shader-shaderuniforms-shadertextures) | `{}` | C++ |
 
 ## Property details
 
@@ -184,3 +187,21 @@ A tangent-space normal map [Texture](texture.md). Perturbs the surface normal pe
 ### name
 
 An optional human-readable identifier for the material, usually set automatically when loading a [Model](model.md) from a GLTF file. Can be used to look up or display material information at runtime.
+
+---
+
+### shader / shaderUniforms / shaderTextures
+
+* `void setShaderTexture(const std::string& name, const Texture& texture)`
+* `Texture getShaderTexture(const std::string& name) const`
+
+`shader` is the project-relative path of the [shader file](../../manual/shader-files.md) (`.glsl`) or [shader graph](../../editor/shader-graphs.md) (`.shader`) the submesh draws with. Empty uses the scene's [defaultMeshShader](scene.md#defaultmeshshader), else the engine built-in. `shaderUniforms` holds the values of the shader's `#pragma param` parameters by name, and `shaderTextures` its texture parameters, which `setShaderTexture` and `getShaderTexture` set and read. Each submesh has its own material, so each can draw with its own shader and values.
+
+On a live mesh, [Mesh.setShader](mesh.md#shader), [setShaderUniform](mesh.md#setshaderuniform) and [setShaderTexture](mesh.md#setshadertexture) edit these fields. A material given to `setMaterial` brings its shader and values along, and reloads the mesh when the shader differs. In the editor they are the **Shader** row of the material and its parameters, and a `.material` file keeps them. See [Custom Shaders](../../editor/custom-shaders.md).
+
+=== "C++"
+    ```cpp
+    Material glass = mesh.getMaterial(1);
+    glass.shader = "shaders/glass.glsl";
+    mesh.setMaterial(1, glass);
+    ```

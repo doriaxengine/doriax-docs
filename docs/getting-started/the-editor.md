@@ -72,7 +72,7 @@ for the export modes and output options.
 !!! note "Editor coverage"
     Terrain sculpting, painting, foliage and prop placement have a dedicated
     **Terrain Editor** window, particle entities can be created from the Structure
-    panel, and built-in shaders can be forked and edited in place (see
+    panel, and shaders are written as code or built from nodes in place (see
     [Custom Shaders](../editor/custom-shaders.md)). Audio tooling is not fully integrated
     into the editor yet — it is available at the engine/runtime level.
 

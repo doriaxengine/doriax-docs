@@ -17,12 +17,7 @@ The data behind a [Mesh](mesh.md) and the objects built on it, such as [Sprite](
 | `loaded` | C++ \| Lua (read-only) |
 | `vertexCount` | C++ \| Lua (read-only) |
 | `numSubmeshes` | C++ \| Lua (read-only) |
-| `customShader` | C++ \| Lua |
-| `customDepthShader` | C++ \| Lua |
-| `vertexOffsetShader` | C++ \| Lua |
 | `vertexOffsetMax` | C++ \| Lua |
-| `coverageShader` | C++ \| Lua |
-| `coverageShadows` | C++ \| Lua |
 | `aabb` | C++ \| Lua (read-only) |
 | `worldAABB` | C++ \| Lua (read-only) |
 | `receiveLights` | C++ \| Lua |
@@ -41,4 +36,4 @@ The data behind a [Mesh](mesh.md) and the objects built on it, such as [Sprite](
 | `needUpdateBuffer` | C++ \| Lua |
 | `needReload` | C++ \| Lua |
 
-Submeshes, materials, vertex buffers, and morph weights are C++ only; from Lua, use the [Mesh](mesh.md) methods for them.
+Submeshes, materials, vertex buffers, and morph weights are C++ only; from Lua, use the [Mesh](mesh.md) methods for them. The shader is not a field of the component: each submesh's [material](material.md#shader-shaderuniforms-shadertextures) holds its own, set with [Mesh.setShader](mesh.md#shader). `vertexOffsetMax` is the longest distance those shaders move a vertex, see [Mesh.vertexOffsetMax](mesh.md#vertexoffsetmax); set `needUpdateAABB` after changing it.

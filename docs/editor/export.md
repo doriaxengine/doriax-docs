@@ -143,11 +143,10 @@ Additions and exclusions are saved in `project.yaml` under `export`, and they ar
 **shared by all three export modes** — a shader you exclude for a Desktop test build is
 excluded from the Source Code export too. A [command-line export](command-line.md#project-settings-the-command-line-uses)
 applies them as well, unless `--shader` lists the shaders itself, and AI agents edit them
-with the `set_export_shaders` tool. Forked shaders are stored by their project-relative
-path rather than by a session id, so the list survives reopening the project. Effect
-functions follow `#`, as `fork#vertexOffset#coverage`: `mesh:8@#offsets/wind.glsl` is the
-built-in mesh with the engine's wind, and `mesh:8@##coverage/see_through.glsl` the built-in
-mesh with see-through.
+with the `set_export_shaders` tool. A variant with a [shader file](../manual/shader-files.md)
+or graph names it after `@` by its project-relative path, rather than by a session id, so
+the list survives reopening the project: `mesh:8@shaders/wind.glsl` is the mesh with the
+engine's wind, and `mesh:8@shaders/see_through.glsl` the mesh with see-through.
 
 ## Source Code mode
 
@@ -535,8 +534,8 @@ the `doriax-editor shaders` command needed to generate them.
 If shader compilation fails, the Output panel reports the shader name, stage, backend,
 and the compiler error. Fix the shader source and re-export.
 
-Custom (forked) shaders are compiled and shipped through this same pipeline, embedded into
-the build alongside the built-in ones. See [Custom Shaders — Export and runtime](custom-shaders.md#export-and-runtime).
+Custom shaders, shader files and graphs, are compiled and shipped through this same
+pipeline, embedded into the build alongside the built-in ones. See [Custom Shaders — Export and runtime](custom-shaders.md#export-and-runtime).
 
 ## Platform toolchains
 

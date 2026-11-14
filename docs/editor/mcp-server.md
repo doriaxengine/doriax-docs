@@ -7,8 +7,8 @@ description: Let AI agents outside the editor, such as Claude Code, Codex or Gem
 The editor can run a [Model Context Protocol](https://modelcontextprotocol.io) (MCP)
 server, so AI agents outside it — Claude Code, Codex, Gemini CLI and other MCP clients —
 can work on the open project with the same tools as the built-in AI Chat: inspect scenes
-and entities, add components, write scripts, fork shaders, run a scene and read the
-output log.
+and entities, add components, write scripts and shaders, build shader graphs, run a scene
+and read the output log.
 
 The agent brings its own model and account. The editor only runs the tools, so no API key
 is needed here and the AI Chat can stay closed. The server works on whichever project the
@@ -113,6 +113,10 @@ The server offers every tool the AI Chat uses, with the same checks and the same
 plus `open_project` and `create_project`, which only MCP clients get: the chat runs inside
 the editor, and switching projects would end its own turn. Each tool is marked read-only
 or not (`readOnlyHint`), which clients can use when they ask you to confirm a call.
+Shaders are written with `write_shader_file`, and their values set with `set_shader_uniform`;
+[shader graphs](shader-graphs.md#from-agents) and [logic graphs](logic-graphs.md#from-agents)
+are read and built with `read_graph` and `edit_graph`, from the nodes
+`list_graph_node_types` lists.
 
 When a client connects, the server also sends the editor's main rules: build scenes in
 the editor and leave scripts to drive them, share repeated entities through bundles, give

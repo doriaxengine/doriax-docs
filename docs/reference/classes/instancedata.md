@@ -15,4 +15,7 @@ description: InstanceData API reference (C++ and Lua).
 | `scale` | C++ \| Lua |
 | `color` | C++ \| Lua |
 | `textureRect` | C++ \| Lua |
+| `custom` | C++ \| Lua |
 | `visible` | C++ \| Lua |
+
+`custom` is a `Vector4`, `(0,0,0,0)` by default, that shader files read as `context.instance`; see [Mesh.setInstanceCustom](mesh.md#setinstancecustom-getinstancecustom).

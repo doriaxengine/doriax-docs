@@ -157,6 +157,8 @@ A `Scene` is the root container for all objects, systems, and resources in a pro
 | void | [setFixedResolutionSize](#fixedresolutionwidth-fixedresolutionheight) | C++ \| Lua |
 | void | [setFixedResolutionFilter](#fixedresolutionfilter) | C++ |
 | TextureFilter | [getFixedResolutionFilter](#fixedresolutionfilter) | C++ |
+| void | [setDefaultCustomShader](#defaultmeshshader) | C++ |
+| const std::string& | [getDefaultCustomShader](#defaultmeshshader) | C++ |
 | void | [setDefaultShaderUniform](#setdefaultshaderuniform) | C++ \| Lua |
 | Vector4 | [getDefaultShaderUniform](#setdefaultshaderuniform) | C++ \| Lua |
 | bool | [removeDefaultShaderUniform](#setdefaultshaderuniform) | C++ \| Lua |
@@ -167,6 +169,8 @@ A `Scene` is the root container for all objects, systems, and resources in a pro
 | void | [setPostProcessUniform](#setpostprocessuniform) | C++ \| Lua |
 | Vector4 | [getPostProcessUniform](#setpostprocessuniform) | C++ \| Lua |
 | bool | [removePostProcessUniform](#setpostprocessuniform) | C++ \| Lua |
+| void | [setPostProcessTexture](#setpostprocesstexture) | C++ \| Lua |
+| Texture | [getPostProcessTexture](#setpostprocesstexture) | C++ \| Lua |
 | void | [setPostProcessPassEnabled](#setpostprocesspassenabled) | C++ \| Lua |
 | bool | [isPostProcessPassEnabled](#setpostprocesspassenabled) | C++ \| Lua |
 | void | [enableUIEvents](#enableuievents_1) | C++ |
@@ -412,14 +416,14 @@ Gravity of the **3D physics world** (Jolt), in meters per second squared. Affect
 * `const ShaderUniformValues& getShaderParameterDefaults() const` (C++ only)
 
 Scene values that every shader declaring `#pragma scene <type> Collection.name` reads, such as
-the `Wind.velocity` of `offsets/wind.glsl`. `setShaderParameter` sets a runtime value: it
+the `Wind.velocity` of `shaders/wind.glsl`. `setShaderParameter` sets a runtime value: it
 overrides the one saved with the scene and is never saved, and clearing it brings the saved
 one back. The saved values are edited in the scene's **Shader Parameters**; the editor and
 exported scenes write the whole list, keyed by `Collection.name`, with
 `setShaderParameterDefaults`. `getShaderParameter` returns the runtime value, else the
 saved one, else zero, in which case a shader reads its declared default. Changing a value
 rebuilds no shader. Collection and name take letters, digits and
-underscores. See [Shader Effects](../../manual/shader-effects.md#declaring-parameters).
+underscores. See [Shader Files — Declaring parameters](../../manual/shader-files.md#declaring-parameters).
 
 === "C++"
 
@@ -444,11 +448,11 @@ underscores. See [Shader Effects](../../manual/shader-effects.md#declaring-param
 * *Removers:* `bool clearViewShaderParameter(Entity camera, collection, name)`, `bool clearMainViewShaderParameter(collection, name)`
 
 Runtime values of `#pragma view <type> Collection.name` parameters, which belong to one camera,
-such as the target of `coverage/see_through.glsl`. The main view values go to whichever
+such as the target of `shaders/see_through.glsl`. The main view values go to whichever
 camera renders the scene. A camera reads its own runtime value, then the main view's while
 it renders the scene, then the value saved on its
 [CameraComponent](cameracomponent.md). See
-[Shader Effects](../../manual/shader-effects.md#where-values-come-from).
+[Shader Files — Where values come from](../../manual/shader-files.md#where-values-come-from).
 
 === "C++"
 
@@ -631,18 +635,18 @@ Sampling filter used when the fixed-resolution image is upscaled to the view rec
 * *Setter:* `void setDefaultMeshShader(const std::string& path)`
 * *Getter:* `const std::string& getDefaultMeshShader() const`
 
-Scene-wide custom shader for Mesh components. The value is a project-relative base path to a forked shader (for example `"shaders/myMesh"`, resolving to `.vert`/`.frag`), or `"a.vert|b.frag"` for separately named files. Every Mesh whose own custom shader is empty uses it; an empty string (default) means the engine built-in. A shader assigned on the component always takes priority. Changing the value reloads the affected meshes. The fork's uniform values can be set for the whole scene with [setDefaultShaderUniform](#setdefaultshaderuniform). See [Custom Shaders — Scene default shaders](../../editor/custom-shaders.md#scene-default-shaders).
+Scene default `mesh` [shader file](../../manual/shader-files.md) (`.glsl`) or [shader graph](../../editor/shader-graphs.md) (`.shader`), as a project-relative path such as `"shaders/toon.glsl"`. Every submesh whose material has no shader of its own uses it; an empty string (default) means the engine built-in. A shader set on the material with [Mesh.setShader](mesh.md#shader) always takes priority. Changing the value reloads the meshes. Its parameter values can be set for the whole scene with [setDefaultShaderUniform](#setdefaultshaderuniform). In C++, `setDefaultCustomShader(ShaderType type, path)` and `getDefaultCustomShader(type)` reach this and the other five defaults by [type](#shadertype). See [Custom Shaders — Scene default shaders](../../editor/custom-shaders.md#scene-default-shaders).
 
 === "C++"
 
     ```cpp
-    scene.setDefaultMeshShader("shaders/toon");
+    scene.setDefaultMeshShader("shaders/toon.glsl");
     ```
 
 === "Lua"
 
     ```lua
-    scene.defaultMeshShader = "shaders/toon"
+    scene.defaultMeshShader = "shaders/toon.glsl"
     ```
 
 ---
@@ -652,7 +656,7 @@ Scene-wide custom shader for Mesh components. The value is a project-relative ba
 * *Setter:* `void setDefaultUIShader(const std::string& path)`
 * *Getter:* `const std::string& getDefaultUIShader() const`
 
-Scene-wide custom shader for UI components. Same semantics as [defaultMeshShader](#defaultmeshshader).
+Scene default `ui` shader for UI components without a [shader](uicomponent.md#shader) of their own. Same semantics as [defaultMeshShader](#defaultmeshshader).
 
 ---
 
@@ -661,7 +665,7 @@ Scene-wide custom shader for UI components. Same semantics as [defaultMeshShader
 * *Setter:* `void setDefaultSkyShader(const std::string& path)`
 * *Getter:* `const std::string& getDefaultSkyShader() const`
 
-Scene-wide custom shader for the Sky component. Same semantics as [defaultMeshShader](#defaultmeshshader).
+Scene default `sky` shader for a Sky component without a [shader](skybox.md#shader) of its own. Same semantics as [defaultMeshShader](#defaultmeshshader).
 
 ---
 
@@ -670,7 +674,7 @@ Scene-wide custom shader for the Sky component. Same semantics as [defaultMeshSh
 * *Setter:* `void setDefaultPointsShader(const std::string& path)`
 * *Getter:* `const std::string& getDefaultPointsShader() const`
 
-Scene-wide custom shader for Points components. Same semantics as [defaultMeshShader](#defaultmeshshader).
+Scene default `points` shader for Points components without a [shader](points.md#shader) of their own. Same semantics as [defaultMeshShader](#defaultmeshshader).
 
 ---
 
@@ -679,7 +683,7 @@ Scene-wide custom shader for Points components. Same semantics as [defaultMeshSh
 * *Setter:* `void setDefaultLinesShader(const std::string& path)`
 * *Getter:* `const std::string& getDefaultLinesShader() const`
 
-Scene-wide custom shader for Lines components. Same semantics as [defaultMeshShader](#defaultmeshshader).
+Scene default `lines` shader for Lines components without a [shader](lines.md#shader) of their own. Same semantics as [defaultMeshShader](#defaultmeshshader).
 
 ---
 
@@ -688,7 +692,7 @@ Scene-wide custom shader for Lines components. Same semantics as [defaultMeshSha
 * *Setter:* `void setDefaultWaterShader(const std::string& path)`
 * *Getter:* `const std::string& getDefaultWaterShader() const`
 
-Scene-wide custom shader for [Water](water.md) components. Same semantics as [defaultMeshShader](#defaultmeshshader). It covers the water surface only; the underwater fade has no scene default and is forked per water with [customUnderwaterShader](water.md#customshader-customunderwatershader).
+Scene default `water` shader for [Water](water.md) components without a [shader](water.md#shader) of their own. Same semantics as [defaultMeshShader](#defaultmeshshader). Such a water uses it for both hooks, the surface and the underwater fade.
 
 ---
 
@@ -697,15 +701,15 @@ Scene-wide custom shader for [Water](water.md) components. Same semantics as [de
 * *Setter:* `void setPostProcessPasses(const std::vector<PostProcessPass>& passes)`
 * *Getter:* `const std::vector<PostProcessPass>& getPostProcessPasses() const`
 
-Ordered chain of fullscreen post-process passes run over the scene's finished image, on the main camera only. Each entry is a [PostProcessPass](postprocesspass.md) with the fork to run, an enable flag, and the values of the parameters it declares. In Lua the property is a 1-based sequence of `PostProcessPass` values (a copy — assign it back to apply changes); build the chain as a sequence (a `{...}` literal or `table.insert`), whose array order is the pass order, and note that `pass_index` arguments such as [setPostProcessUniform](#setpostprocessuniform) count from 0.
+Ordered chain of fullscreen post-process passes run over the scene's finished image, on the main camera only. Each entry is a [PostProcessPass](postprocesspass.md) with the shader file to run, an enable flag, and the values and textures of the parameters it declares. In Lua the property is a 1-based sequence of `PostProcessPass` values (a copy — assign it back to apply changes); build the chain as a sequence (a `{...}` literal or `table.insert`), whose array order is the pass order, and note that `pass_index` arguments such as [setPostProcessUniform](#setpostprocessuniform) count from 0.
 
-Setting the chain rebuilds the passes on the next frame, unless only uniform values changed (same shaders and enable flags), in which case the compiled chain is kept and just the values are rewritten. For a single value or pass on a live chain, [setPostProcessUniform](#setpostprocessuniform) and [setPostProcessPassEnabled](#setpostprocesspassenabled) are the direct route. See [Custom Shaders — Post-process passes](../../editor/custom-shaders.md#post-process-passes).
+Setting the chain rebuilds the passes on the next frame, unless only uniform values changed (same shaders, enable flags and textures), in which case the compiled chain is kept and just the values are rewritten. For a single value or pass on a live chain, [setPostProcessUniform](#setpostprocessuniform) and [setPostProcessPassEnabled](#setpostprocesspassenabled) are the direct route. See [Custom Shaders — Post-process passes](../../editor/custom-shaders.md#post-process-passes).
 
 === "C++"
 
     ```cpp
     PostProcessPass sharpen;
-    sharpen.shader = "shaders/sharpen";
+    sharpen.shader = "shaders/sharpen.glsl";
     sharpen.setUniform("amount", 0.5f);
 
     scene.setPostProcessPasses({sharpen});
@@ -715,7 +719,7 @@ Setting the chain rebuilds the passes on the next frame, unless only uniform val
 
     ```lua
     local sharpen = PostProcessPass()
-    sharpen.shader = "shaders/sharpen"
+    sharpen.shader = "shaders/sharpen.glsl"
     sharpen:setUniform("amount", 0.5)
 
     scene.postProcessPasses = {sharpen}
@@ -939,7 +943,7 @@ Recalculates the active camera's projection to match the current canvas size. Ca
 * `void setDefaultShaderUniforms(ShaderType type, const ShaderUniformValues& values)` (C++ only)
 * `const ShaderUniformValues& getDefaultShaderUniforms(ShaderType type) const` (C++ only)
 
-Scene values for the parameters the scene default shader of `type` declares (see [ShaderType](#shadertype)), by name. Every component that inherits that default reads them for the parameters it does not set itself; a value set on the component with [setShaderUniform](mesh.md#setshaderuniform) wins. Setting a value only rewrites the uploaded blocks, so it can run every frame. A narrower value leaves the remaining components at zero, and a parameter with no value on either side reads its declared default. A type without a scene default is ignored. `getDefaultShaderUniform` returns the scene's stored value, zero when unset; `removeDefaultShaderUniform` drops it and returns whether it existed. The values stay when the default shader changes, so a fork with the same parameter names picks them up. See [Custom Shaders — Scene default shaders](../../editor/custom-shaders.md#scene-default-shaders).
+Scene values for the parameters the scene default shader of `type` declares (see [ShaderType](#shadertype)), by name. Every material or component that inherits that default reads them for the parameters it does not set itself; a value set on it with [setShaderUniform](mesh.md#setshaderuniform) wins. Setting a value only rewrites the uploaded blocks, so it can run every frame. A narrower value leaves the remaining components at zero, and a parameter with no value on either side reads its declared default. A type without a scene default is ignored. `getDefaultShaderUniform` returns the scene's stored value, zero when unset; `removeDefaultShaderUniform` drops it and returns whether it existed. The values stay when the default shader changes, so a shader with the same parameter names picks them up. See [Custom Shaders — Scene default shaders](../../editor/custom-shaders.md#scene-default-shaders).
 
 === "C++"
 
@@ -980,6 +984,27 @@ Sets one parameter of the pass at `index` (0 = first pass of [postProcessPasses]
     ```lua
     scene:setPostProcessUniform(0, "amount", 0.8)
     scene:setPostProcessUniform(0, "tintColor", Vector4(1, 0.9, 0.8, 1))
+    ```
+
+---
+
+### setPostProcessTexture
+
+* `void setPostProcessTexture(unsigned int index, const std::string& name, const Texture& texture)`
+* `Texture getPostProcessTexture(unsigned int index, const std::string& name) const`
+
+Sets a texture parameter of the pass at `index` (0 = first pass of [postProcessPasses](#postprocesspasses)), by the name its shader declares with `#pragma param texture2D` or `textureCube`. An empty texture draws the declared default. A change rebuilds the chain on the next frame, so it is not something to call every frame. An index past the chain logs an error and is ignored. `getPostProcessTexture` returns the stored texture, empty when none or when the index is past the chain.
+
+=== "C++"
+
+    ```cpp
+    scene.setPostProcessTexture(0, "lut", Texture("textures/grade_lut.png"));
+    ```
+
+=== "Lua"
+
+    ```lua
+    scene:setPostProcessTexture(0, "lut", Texture("textures/grade_lut.png"))
     ```
 
 ---

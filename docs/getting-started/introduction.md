@@ -67,8 +67,9 @@ This documentation follows a broad structure similar to large engine manuals:
 - Google AdMob ads, Google Play and App Store in-app purchases, and web game portal SDKs
 
 !!! tip "Custom shaders"
-    Fork, edit, and customize the built-in shaders for Mesh, UI, Points, Lines, Sky, and
-    Water components directly in the editor — see [Custom Shaders](../editor/custom-shaders.md).
+    Change how meshes, UI, points, lines, the sky, water and post-process passes draw with
+    shader files or node graphs, directly in the editor — see
+    [Custom Shaders](../editor/custom-shaders.md) and [Shader Graphs](../editor/shader-graphs.md).
 
 ## Platforms
 

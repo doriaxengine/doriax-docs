@@ -148,7 +148,7 @@ See [Bundles](bundles.md) for the full bundle workflow.
 
 ## Context menu
 
-Double-click a file to open it in its editor tool (image viewer, scene, or code editor).
+Double-click a file to open it in its editor tool (image viewer, scene, [shader graph](shader-graphs.md), or code editor).
 Right-click a file or folder to access:
 
 - **Open (Add)** — `.scene` files only: opens the scene alongside the one already open
@@ -187,14 +187,18 @@ extension is optional.
 | --- | --- |
 | **Folder** | An empty folder |
 | **Lua Script** | A `.lua` module that returns an empty table named after the file |
+| **Logic Graph** | A [logic graph](logic-graphs.md) (`.logic`), a script made of nodes, with **On Start** and **On Update** |
 | **C++ Source** | An empty `.cpp` file |
 | **C++ Header** | A `.h` file starting with `#pragma once` |
+| **Shader** → a type | A [shader file](../manual/shader-files.md) (`.glsl`) of that type (Mesh, UI, Points, Lines, Sky, Water, Post-process), with an example to start from |
+| **Shader Graph** → a type | A [shader graph](shader-graphs.md) (`.shader`) of that type, holding only its output node; **Function** writes a [function](shader-graphs.md#functions) other graphs call |
 
-New files are not attached to any entity. Load a Lua module from other scripts with
+New files are not attached to any entity; give a shader to a material or component on its
+[Shader row](custom-shaders.md#the-shader-row). Load a Lua module from other scripts with
 [`require()`](../manual/scripting.md#require-and-module-paths), include a header from
 your scripts, or attach a script later with **Add Script** in Properties.
 
-- **Lua Script** is enabled only inside the project's
+- **Lua Script** and **Logic Graph** are enabled only inside the project's
   [Lua directory](project-workflow.md#assets-and-lua-directories), which `require()` and
   script entries resolve against.
 - A **C++ Source** compiles on its own only under one of the

@@ -148,8 +148,8 @@ bounds, facing the motion.
     hull.wakeWaves = 1
     ```
 
-The wake is drawn by the built-in water shader; a fork of an older version draws none until
-it is forked again.
+The wake is drawn by the engine's water shader, so it also shows on a water with a
+[shader file](water.md#shader).
 
 ---
 

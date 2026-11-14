@@ -17,8 +17,9 @@ The data behind [Water](water.md). In Lua, get it with `water:getWaterComponent(
 | `loaded` | C++ \| Lua (read-only) |
 | `aabb` | C++ \| Lua (read-only) |
 | `worldAABB` | C++ \| Lua (read-only) |
-| `customShader` | C++ \| Lua |
-| `customUnderwaterShader` | C++ \| Lua |
+| `shader` | C++ \| Lua |
+| `shaderUniforms` | C++ |
+| `shaderTextures` | C++ |
 | `size` | C++ \| Lua |
 | `subdivisions` | C++ \| Lua |
 | `shallowColor` | C++ \| Lua |
@@ -55,4 +56,4 @@ The data behind [Water](water.md). In Lua, get it with `water:getWaterComponent(
 | `needUpdateTexture` | C++ \| Lua |
 | `needReload` | C++ \| Lua |
 
-The colors are linear here, while the [Water](water.md) setters take sRGB. Set `needReload` after changing `size`, `subdivisions`, or a custom shader, and `needUpdateTexture` after replacing `normalTexture`.
+The colors are linear here, while the [Water](water.md) setters take sRGB. Set `needReload` after changing `size`, `subdivisions`, or `shader`, and `needUpdateTexture` after replacing `normalTexture`. `shader` is the water's [shader file](water.md#shader), the scene default when empty; `shaderUniforms` and `shaderTextures` hold its parameter values and textures by name; [setShaderUniform](water.md#setshaderuniform) and [setShaderTexture](water.md#setshadertexture) set them, also from Lua.
