@@ -132,8 +132,10 @@ normal and roughness.
 | `float metallic`, `roughness`, `occlusion` | |
 | `vec3 emissive` | Linear |
 
-An unlit material gives the surface its base color and alpha only: the normal starts as
-(0, 1, 0), metallic as 0, roughness and occlusion as 1, and emissive as 0, in every pass.
+The base color and alpha include the vertex and instance color. A mesh without normals
+gives the surface the flat normal of each face, toward the camera. An unlit material gives
+the surface its base color and alpha only: the normal starts as (0, 1, 0), metallic as 0,
+roughness and occlusion as 1, and emissive as 0. All of this holds in every pass.
 
 | `FragmentContext` field | Meaning |
 | --- | --- |

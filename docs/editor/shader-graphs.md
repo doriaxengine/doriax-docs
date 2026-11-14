@@ -114,9 +114,11 @@ as constants, so a game draws them at no cost. The pins of a function graph and 
 past the first 96 of a graph keep building as before.
 
 A mesh graph also draws on a lit sphere, cube or plane at the top of the side panel, with
-the defaults of its parameters. The crosshair button next to the shapes draws the selected
-node's value instead, its first output as the final color, or as the vertex offset when
-nodes that work per vertex feed it; with nothing selected it draws the graph.
+the defaults of its parameters, at the resolution the panel shows it: widen the panel for a
+bigger, sharper preview. It draws again only when something changes. The crosshair button
+next to the shapes draws the selected node's value instead: its first output as the final
+color, as the vertex offset when nodes that work per vertex feed it, or as emissive or
+through Light when a Material or Light node does; with nothing selected it draws the graph.
 
 ## Errors
 
