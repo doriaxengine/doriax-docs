@@ -102,7 +102,7 @@ entity.
 The canvas, undo and the toolbar work as in [Shader Graphs](shader-graphs.md#the-canvas).
 **Code** shows the Lua the graph makes, and the status reads **script**, or the number of
 errors. Errors are listed in the side panel and outlined on their nodes; while a graph
-has errors, saving keeps the script it had, and an export stops on it. Ctrl+S, or **File** → **Save**, saves the graph.
+has errors, saving keeps the script it had, and an export stops on it. Ctrl+S, or **File** → **Save**, saves the graph, and so does **Play**, which saves every open graph and script before it starts.
 
 ## From agents
 
