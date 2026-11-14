@@ -86,7 +86,7 @@ the editor side.
 | `void getVaryings(VertexContext context, out Varyings varyings)` | vertex | every pass |
 | `vec4 getClipPosition(VertexContext context, vec4 clipPosition)` | vertex | the camera passes: color, depth prepass, G-buffer; not shadow maps |
 | `float getCoverage(FragmentContext context)` | fragment | every pass |
-| `void getSurface(FragmentContext context, inout Surface surface)` | fragment | color and G-buffer; the depth passes run it for `surface.alpha` of a masked material, starting from the material's factors: its maps other than the base color are not sampled there |
+| `void getSurface(FragmentContext context, inout Surface surface)` | fragment | color and G-buffer; the depth passes run it for `surface.alpha` of a masked material. Outside the color pass the surface starts from the material's factors: the depth passes sample none of its maps but the base color, and the G-buffer neither its emissive nor its normal map |
 | `vec3 getLight(FragmentContext context, Surface surface, LightContext light)` | fragment | color, once per light |
 | `vec4 getColor(FragmentContext context, vec4 color)` | fragment | color, last |
 | `float getDepthOffset(FragmentContext context)` | fragment | every pass but the shadow maps |
