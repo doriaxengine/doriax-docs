@@ -109,7 +109,7 @@ color pass.
 | --- | --- |
 | `vec3 localPosition` | The vertex in the mesh's own space, after morph targets and skinning |
 | `vec3 worldPosition` | Where it lands before the offset |
-| `vec3 normal` | World space; (0, 1, 0) without normals |
+| `vec3 normal` | World space, after morph targets and skinning; (0, 1, 0) without normals |
 | `vec2 uv1`, `uv2` | The UV sets as the mesh stores them; 0 without the set |
 | `vec4 color` | The vertex color times the instance color; 1 without either |
 | `vec4 instance` | The instance's custom value, see [Per-instance values](#per-instance-values); 0 without instancing |
