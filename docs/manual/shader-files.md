@@ -132,6 +132,9 @@ normal and roughness.
 | `float metallic`, `roughness`, `occlusion` | |
 | `vec3 emissive` | Linear |
 
+An unlit material gives the surface its base color and alpha only: the normal starts as
+(0, 1, 0), metallic as 0, roughness and occlusion as 1, and emissive as 0, in every pass.
+
 | `FragmentContext` field | Meaning |
 | --- | --- |
 | `vec3 worldPosition` | The fragment in world space |
