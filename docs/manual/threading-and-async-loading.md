@@ -39,6 +39,13 @@ While resources load, the entity is created immediately and the resource appears
 its data is ready. Query `Engine.getQueuedResourceCount()` to see how many resources
 are still pending.
 
+Decoding runs on the workers, but a texture is created on the GPU from the main thread. When
+many finish together, as when a part of the world spawns, each frame spends up to a quarter of
+its time creating them (never less than 4 ms) and leaves the rest for the next frames, which
+keeps the frame rate steady while they appear one after another. While a
+[loading scene](#loading-screens) is up they are all created at once, since it covers the
+wait. Without async loading every texture is created as soon as it is needed.
+
 ## Async thread scope (manual background work, C++)
 
 For your own background work, bracket it with `Engine::AsyncThreadScope` (an RAII
