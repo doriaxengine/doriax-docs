@@ -245,6 +245,10 @@ trigger contacts can be told apart from solid ones. A static sensor only sees **
 dynamic and kinematic bodies; make the sensor itself dynamic or kinematic when it must
 also detect sleeping bodies.
 
+A [3D character](#3d-characters) reaches these events too, as a `Body3D` of an entity that
+has no Body3D component: compare its entity with `getEntity()` before calling body methods
+on it, which would fail.
+
 ### Buoyancy
 
 A dynamic 3D body floats in a [Water](../reference/classes/water.md) once its

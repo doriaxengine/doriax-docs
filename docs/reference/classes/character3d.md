@@ -116,10 +116,14 @@ it; walking into a wall or a slope that is too steep slides along it. In the air
 * *Setter:* `void setLinearVelocity(Vector3)`
 * *Getter:* `Vector3 getLinearVelocity() const`
 
-The velocity of the last step, gravity and jumps included. Reading its `y` tells rising from
-falling. Setting an upward velocity launches the character, like a jump pad. The horizontal
-part comes from [moveVelocity](#movevelocity) on the ground, and in the air
-[airControl](#aircontrol) sets how much of it stays.
+The velocity the last step moved the character with, gravity, jumps and the ground's velocity
+included. Walls and the ground stop the character without changing it: standing, it reads a
+small downward speed, and against a wall the full walking speed. Use the
+[ground state](#ground-detection) to tell standing from falling.
+
+Setting an upward velocity launches the character, like a jump pad. The horizontal part comes
+from [moveVelocity](#movevelocity) on the ground, and in the air [airControl](#aircontrol)
+sets how much of it stays.
 
 ---
 
@@ -191,7 +195,7 @@ the ground it stands on. It does not check the ground itself: call it when
 [isOnGround](#ground-detection) is true, or count jumps for a double jump. A ceiling stops the
 rise at once.
 
-The height of a jump is about `speed * speed / (2 * gravity)`: `5` reaches about 1.2 m with the
+The height of a jump is about `speed * speed / (2 * gravity)`: `5` reaches about 1.25 m with the
 default gravity.
 
 ---

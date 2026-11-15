@@ -46,7 +46,7 @@ The dialog groups the components into these categories:
 | **User Interface** | UI Base, UI Layout, UI Container, Image, Text, Button, Panel, Scrollbar, Progressbar, Text Edit |
 | **2D Graphics** | Sprite, 2D Light, 2D Occluder, Sprite Animation, Tilemap, Polygon, Mesh Polygon |
 | **Primitives** | Points, Lines, Particles |
-| **Physics** | 2D Physics Body, 3D Physics Body, 2D Joint, 3D Joint |
+| **Physics** | 2D Physics Body, 3D Physics Body, 2D Joint, 3D Joint, 3D Character |
 | **Animation** | Animation, Action, Timed Action, Alpha / Color / Position / Rotation / Scale Action, Bone, Skin, Keyframe Tracks, Morph / Rotate / Scale / Translate Tracks |
 | **Sound & Script** | Sound, Script |
 

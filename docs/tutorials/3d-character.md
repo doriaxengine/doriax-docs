@@ -46,7 +46,7 @@ and the body stays **Static**.
 
 The deck is 2 m high. The ramp climbs it at 20 degrees and the steep ramp at 50.
 
-For the stairs, create a **Stairs** object (**+ → Create entity → Object**) and ten box steps
+For the stairs, create a **Stairs** object (**+ → Create entity → Empty object**) and ten box steps
 inside it, each 0.2 m higher than the last. Make the first one, give it its body, then
 duplicate it (**Ctrl+D**) and change its Y position, Z position and Y scale:
 
@@ -185,7 +185,7 @@ Press **Play**, click the scene view, and walk with **W A S D**, jumping with **
   it does not climb it.
 - Walk into the crate to push it. A heavier crate, or a lower **Max Strength** on the
   character, and it stays put.
-- Jump on the deck. A jump speed of `5` is about 1.2 m high.
+- Jump on the deck. A jump speed of `5` is about 1.25 m high.
 
 Then stop and try the component values:
 
