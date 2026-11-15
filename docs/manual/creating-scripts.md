@@ -90,7 +90,7 @@ another. All edits are undoable.
 | Type | Enum value | Generated base | Best use |
 | --- | --- | --- | --- |
 | Lua Script | `SCRIPT_LUA` | Lua table module | Fast iteration, UI glue, triggers, controllers |
-| Logic Graph | `SCRIPT_LUA` | A [logic graph](../editor/logic-graphs.md), run as the Lua the editor writes from it | Behavior built from nodes, without writing code |
+| Logic Graph | `SCRIPT_LUA` | A [logic graph](../editor/logic-graphs.md), run as the Lua script or the C++ class the editor writes from it | Behavior built from nodes, without writing code |
 | C++ Subclass | `SUBCLASS` | The wrapper class matching the entity (`Mesh`, `Camera`, `Terrain`, `Button`, …) | Behavior that calls wrapper methods like `getPosition()` |
 | C++ Script Class | `SCRIPT_CLASS` | `ScriptBase` | Logic that accesses scene/entity explicitly without a wrapper |
 

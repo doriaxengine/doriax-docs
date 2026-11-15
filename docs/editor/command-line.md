@@ -206,8 +206,8 @@ doriax-editor shaders --out ./shaders --shader mesh:Uv1,Nor --backend opengles
 | Command | Does |
 | --- | --- |
 | `doriax-editor shader-nodes` | Prints every [shader graph](shader-graphs.md) node type as JSON |
-| `doriax-editor logic-nodes` | Prints every [logic graph](logic-graphs.md) node type as JSON; `--check` compiles a graph around each one instead and prints the ones that fail |
-| `doriax-editor logic <file.logic>` | Prints the Lua script of a logic graph; `--out <file.lua>` writes it to a file |
+| `doriax-editor logic-nodes` | Prints every [logic graph](logic-graphs.md) node type as JSON; `--check` compiles a graph around each one instead and prints the ones that fail, as C++ with `--cpp`, and `--dump <dir>` keeps the scripts |
+| `doriax-editor logic <file.logic>` | Prints the script of a logic graph; `--out <file>` writes it to a file, and `--language cpp` writes the C++ class with its header |
 
 ## Graphic backends
 

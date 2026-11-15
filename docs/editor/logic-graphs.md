@@ -1,14 +1,15 @@
 ---
-description: Build Doriax scripts from nodes in the logic graph editor — events, execution links, variables shown in Properties, a node for every method and property of the Lua API — saved as an ordinary Lua script, and from AI agents through the graph MCP tools.
+description: Build Doriax scripts from nodes in the logic graph editor — events, execution links, variables shown in Properties, a node for every method and property of the Lua API — written as a Lua script or as a C++ class, and from AI agents through the graph MCP tools.
 ---
 
 # Logic Graphs
 
 A **logic graph** (`.logic`) builds a [script](../manual/creating-scripts.md) from nodes.
 Events start it, white links carry the order things run in, and the other links carry
-values. The editor turns the graph into a Lua script and keeps that script for itself,
-under the project's `.doriax` folder: you see and attach only the `.logic`, while the
-engine, Play and an export run the Lua, exactly as if it had been written by hand.
+values. The editor turns the graph into a script, in Lua or in C++, and keeps that script
+for itself, under the project's `.doriax` folder: you see and attach only the `.logic`,
+while the engine, Play and an export run the script, exactly as if it had been written
+by hand.
 
 ![The graph window with a logic graph: two events, the nodes they run and the values those read](../assets/screenshots/editor-logic-graph.png)
 
@@ -36,6 +37,40 @@ A graph goes where a Lua script does:
 The row's source button opens the graph, and its variables show below it as the script's
 properties. Renaming or moving a graph in Resources carries the entities that use it.
 
+## Lua or C++
+
+A graph is written as Lua unless you ask for C++:
+
+- **Project Settings** → [Build](project-settings.md#build) → **Logic Graphs** sets what
+  the project's graphs are written as.
+- The list at the right of a graph's toolbar sets it for that graph: **Project** takes
+  the project's setting, **Lua** and **C++** keep the graph to one whatever the project
+  says.
+
+The graph, its variables and the way it is attached stay the same in both, and changing
+the language keeps the values set in Properties.
+
+| | Lua | C++ |
+| --- | --- | --- |
+| Play | Starts at once | Compiles with the project's [C++ scripts](../manual/cpp-build-setup.md) first, so it needs the build tools |
+| Export | Ships as a `.lua` file | Compiles into the game |
+| The script | A Lua table, **On Start** is `init` | A class of `ScriptBase` with a header and a source; **On Start** runs at the first update, once the values of Properties are in |
+| Numbers | Lua numbers | `float`, and `int` for an integer variable |
+| **Code Expression**, **Code** | Hold Lua | Hold C++ |
+
+A few nodes have no C++ form: **Call Method**, the event properties of components, and
+the methods the Lua API adds on its own. A graph written as C++ reports them as errors
+on their nodes. An input of an engine node left unlinked and unset is a default-made
+value in C++, so link the objects a method needs.
+
+A whole number prints as `5` in C++, where Lua prints `5.0` for one it worked out as a
+fraction, such as a division.
+
+An **Entity** variable is a pointer in C++, set from Properties only: **Set Variable**
+does not take it, a **Private** one is an error, and **Is Nil** tells whether it has an
+entity. A C++ graph cannot share its name with a `.lua` file beside it, nor its class
+with another C++ script.
+
 ## How a graph runs
 
 | Kind of node | Pins | What it becomes |
@@ -53,7 +88,7 @@ properties. Renaming or moving a graph in Resources carries the entities that us
   again for each node that runs and reads it, and once for that node: **Random** linked
   to two inputs of one node gives them the same number.
 - Where two paths lead into the same node, what follows is written once for each path.
-  Keep the shared part short, or put it in a **Lua Code** node.
+  Keep the shared part short, or put it in a **Code** node.
 - An event that asks a question, as **Should Collide**, answers yes unless a **Return**
   node gives another **Result**.
 - An unlinked **Object** input of an engine class is the script's own entity, so
@@ -72,16 +107,17 @@ properties. Renaming or moving a graph in Resources carries the entities that us
 | Math, Logic, Text | Arithmetic, which also works on vectors, comparisons, and, or, not, select, join, format |
 | Self | The script's entity, its scene, and the entity as an engine class such as `Mesh` |
 | Input | **Key**, the keyboard keys by name |
-| Utility | **Print**, **Lua Expression**, **Lua Code**, **Call Method** |
+| Utility | **Print**, **Code Expression**, **Code**, **Call Method** |
 | Engine | A category for each class of the [Lua API](../reference/index.md): a node for each method and constant, a **Get** for each property and a **Set** for the ones scripts can write. Methods that only read, such as **Get World Position** or **Is Key Pressed**, are values; the others run |
 | Enums | One node for each enum, with its value as a setting |
 
 Right click the canvas, or press **+ Node**, and type: the search matches every word in
 the names, categories and ids, so `object position` finds **Set Position** of `Object`.
 
-**Lua Expression** is a value written in Lua, and **Lua Code** a few lines that run.
-Both read their inputs as `a`, `b`, `c` and `d` and the script as `self`, and **Lua Code**
-gives its value with `return`. What Lua does not accept is reported on the node.
+**Code Expression** is a value written in the graph's language, and **Code** a few lines
+that run. Both read their inputs as `a`, `b`, `c` and `d` and the script as `self`, or
+`this` in C++, and **Code** gives its value with `return`. What Lua does not accept is
+reported on the node; what C++ does not accept shows when Play builds the scripts.
 
 ## Variables
 
@@ -100,8 +136,8 @@ entity.
 ## The window
 
 The canvas, undo and the toolbar work as in [Shader Graphs](shader-graphs.md#the-canvas).
-**Code** shows the Lua the graph makes, and the status reads **script**, or the number of
-errors. Errors are listed in the side panel and outlined on their nodes; while a graph
+**Code** shows the script the graph makes, Lua or the C++ header and source, and the
+status reads **Lua script** or **C++ script**, or the number of errors. Errors are listed in the side panel and outlined on their nodes; while a graph
 has errors, saving keeps the script it had, and an export stops on it. Ctrl+S, or **File** → **Save**, saves the graph, and so does **Play**, which saves every open graph and script before it starts.
 
 ## From agents
@@ -111,10 +147,13 @@ The [MCP server](mcp-server.md) and the AI Chat use the graph tools of shader gr
 | Tool | Does |
 | --- | --- |
 | `list_graph_node_types` | With `graph_type` `script`, lists the graph's own nodes and the engine classes; `search` or a class as `category` returns their nodes in full |
-| `read_graph` | Reads a `.logic`: variables, nodes, links, whether it compiles and, with `include_code`, the Lua |
-| `edit_graph` | Changes it in one step, or creates it with `create`. Nodes added without a position are laid out, one row for each event. The path of a new graph is inside the project's Lua directory. The result gives the path and class name `attach_script` takes, with type `lua`: the graph itself |
+| `read_graph` | Reads a `.logic`: variables, nodes, links, whether it compiles, its `language` and, with `include_code`, the Lua, or the C++ source and header |
+| `edit_graph` | Changes it in one step, or creates it with `create`. Nodes added without a position are laid out, one row for each event. The path of a new graph is inside the project's Lua directory. `language` sets what the graph is written as: `lua`, `cpp`, or `project`. The result gives the path and class name `attach_script` takes, with type `lua` in both languages: the graph itself |
+| `set_project_logic_language` | Sets what the project's graphs are written as, `lua` or `cpp`; `get_project_summary` reports it as `logic_language` |
 
 ## Command line
 
-`doriax-editor logic <file.logic>` prints a graph's script, and `--out <file.lua>` writes
-it to a file of your choice, and `doriax-editor logic-nodes` prints the node types as JSON.
+`doriax-editor logic <file.logic>` prints a graph's script, and `--out <file>` writes
+it to a file of your choice. `--language cpp` writes the C++ class instead, with its
+header beside the file; without it the graph's own language is used, else Lua.
+`doriax-editor logic-nodes` prints the node types as JSON.

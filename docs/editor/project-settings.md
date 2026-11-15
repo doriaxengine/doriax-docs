@@ -143,6 +143,7 @@ The native resource pack has runtime restrictions — packed entries are read th
 | **2D Physics** | On | Builds Box2D into exported games |
 | **3D Physics** | On | Builds Jolt into exported games |
 | **C++ Standard** | `C++17` | Language standard the project's C++ scripts are compiled with, in Play and in exported games |
+| **Logic Graphs** | `Lua` | What [logic graphs](logic-graphs.md#lua-or-c) are written as: Lua, or C++ compiled with the C++ scripts. A graph can set its own in its window |
 
 The standard belongs to the project rather than to your machine — a script using
 `consteval` needs C++20 wherever it is built — so it is saved in `project.yaml` and
