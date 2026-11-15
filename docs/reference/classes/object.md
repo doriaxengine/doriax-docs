@@ -86,6 +86,8 @@ description: Object API reference — transform, hierarchy, visibility, billboar
 | void | [removeBody2D](#removebody2d) | C++ \| Lua |
 | [Body3D](body3d.md) | [getBody3D](#getbody3d) | C++ \| Lua |
 | void | [removeBody3D](#removebody3d) | C++ \| Lua |
+| [Character3D](character3d.md) | [getCharacter3D](#getcharacter3d) | C++ \| Lua |
+| void | [removeCharacter3D](#removecharacter3d) | C++ \| Lua |
 | [Ray](ray.md) | [getRay](#getray) | C++ \| Lua |
 | [Transform](transform.md) | `getTransform` | Lua |
 
@@ -429,6 +431,22 @@ Returns the [Body3D](body3d.md) physics handle for this object. Creates the body
 * `void removeBody3D()`
 
 Destroys the 3D physics body attached to this object.
+
+---
+
+### getCharacter3D
+
+* `Character3D getCharacter3D()`
+
+Returns the [Character3D](character3d.md) handle for this object. Creates the character component if it does not already exist.
+
+---
+
+### removeCharacter3D
+
+* `void removeCharacter3D()`
+
+Destroys the 3D character attached to this object.
 
 ---
 

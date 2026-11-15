@@ -17,7 +17,9 @@ Properties window with **New component → 3D Character**. Its capsule stands on
 origin, so a model whose origin is at its feet needs no offset. The entity needs no
 [Body3D](body3d.md); a static Body3D under it is the ground.
 
-Get the handle with `Character3D(scene, entity)`. A script sets where it wants to walk with
+Get the handle with `Character3D(scene, entity)`, or with
+[getCharacter3D](object.md#getcharacter3d) of an [Object](object.md), which also adds the
+component to an entity that has none, as one a script creates. A script sets where it wants to walk with
 [moveVelocity](#movevelocity) and jumps with [jump](#jump); each fixed step the physics system
 applies gravity, moves the character and writes its position to the entity's transform. The
 rotation stays where scripts put it.
@@ -105,7 +107,9 @@ used, so a direction from the camera can be passed as it is. It is kept until ch
 every frame from input, and set it to zero to stop.
 
 On the ground the character walks at this velocity plus the velocity of what it stands on, so
-it rides moving platforms. Walking into a step no higher than [stepUp](#stepup-stepdown) climbs
+it rides moving platforms. Up a ramp it is slower, the steeper the more: Jolt's
+CharacterVirtual takes out the part of the velocity that points into the slope, which leaves
+about 85% of the speed on a 20 degree ramp. Down a ramp it keeps the speed. Walking into a step no higher than [stepUp](#stepup-stepdown) climbs
 it; walking into a wall or a slope that is too steep slides along it. In the air,
 [airControl](#aircontrol) sets how much of it applies.
 
@@ -208,7 +212,7 @@ default gravity.
 * `Vector3 getGroundPosition() const` — contact point, world space
 * `Vector3 getGroundNormal() const`
 * `Vector3 getGroundVelocity() const` — of the ground at the contact point
-* `Entity getGroundEntity() const` — the body or character it stands on, `NULL_ENTITY` in the air
+* `Entity getGroundEntity() const` — the body or character it stands on or leans against, `NULL_ENTITY` when it touches nothing
 * `bool isSlopeTooSteep(Vector3 normal) const`
 
 The state of the last fixed step. Use `isOnGround` to allow a jump and `isSupported` to choose
@@ -256,7 +260,8 @@ sizes are scaled by the entity's scale. It cannot be called from a physics callb
 Rebuilds the character from its [Character3DComponent](character3dcomponent.md). Call it after
 changing a component value that only applies when the character is built: `height`, `radius`,
 `padding` or `innerBody`. The physics system builds the character on its own when the scene
-loads, and the getters and setters build it when a script's `init` runs first.
+loads, and the methods that read or move the character build it when a script's `init` runs
+first.
 
 ## Contacts and the inner body
 
@@ -264,7 +269,7 @@ With **Inner Body** on (the default), the character carries a kinematic body ins
 capsule. Rays, sensors and contact callbacks find the character through it: a ray from
 [Ray](ray.md)`::intersects` returns the character's entity, and a sensor's
 `onContactAdded3D` receives it. That entity has no Body3D, so compare it with
-`getEntity()` rather than calling body methods on it. `onBodyActivated3D` and
+`getEntity()` (`entity` in Lua) rather than calling body methods on it. `onBodyActivated3D` and
 `onBodyDeactivated3D` are for Body3D only and skip it. Other characters do not collide with
 inner bodies; characters block each other directly.
 
