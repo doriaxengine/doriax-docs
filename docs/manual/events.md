@@ -328,11 +328,15 @@ speed in points per second, the units of [Body2D](../reference/classes/body2d.md
 
 ### 3D events
 
-| Event | Meaning |
-| --- | --- |
-| `onBodyActivated3D` / `onBodyDeactivated3D` | Body activation state changed |
-| `onContactAdded3D` / `onContactPersisted3D` / `onContactRemoved3D` | 3D contact lifecycle |
-| `shouldCollide3D` | Filter whether two 3D bodies/shapes should collide |
+| Event | Signature | Meaning |
+| --- | --- | --- |
+| `onBodyActivated3D` / `onBodyDeactivated3D` | `void(Body3D)` | Body activation state changed |
+| `onContactAdded3D` / `onContactPersisted3D` | `void(Collider3D, Collider3D, Contact3D)` | Contact begins / continues |
+| `onContactRemoved3D` | `void(Collider3D, Collider3D, unsigned long, unsigned long)` | Contact ends |
+| `shouldCollide3D` | `bool(Collider3D, Collider3D, Vector3, CollideShapeResult3D)` | Filter pairs before collision |
+
+Each side is a [Collider3D](../reference/classes/collider3d.md): a Body3D or a Character3D. In
+Lua it arrives as the Body3D or the Character3D itself.
 
 Unlike the 2D contact events, these run while Jolt is stepping, which limits what they may
 do to the world — see [What a 3D callback may do](physics.md#what-a-3d-callback-may-do).

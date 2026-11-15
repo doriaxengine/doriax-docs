@@ -175,6 +175,7 @@ nav:
           - Body2D: 'reference/classes/body2d.md'
           - Body3D: 'reference/classes/body3d.md'
           - Character3D: 'reference/classes/character3d.md'
+          - Collider3D: 'reference/classes/collider3d.md'
           - Joint2D: 'reference/classes/joint2d.md'
           - Joint3D: 'reference/classes/joint3d.md'
       - Actions:

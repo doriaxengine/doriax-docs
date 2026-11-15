@@ -245,9 +245,32 @@ trigger contacts can be told apart from solid ones. A static sensor only sees **
 dynamic and kinematic bodies; make the sensor itself dynamic or kinematic when it must
 also detect sleeping bodies.
 
-A [3D character](#3d-characters) reaches these events too, as a `Body3D` of an entity that
-has no Body3D component: compare its entity with `getEntity()` (`entity` in Lua) before
-calling body methods on it, which would fail.
+A [3D character](#3d-characters) reaches these events too. Each side is a
+[Collider3D](../reference/classes/collider3d.md): `isCharacter3D()` tells a character from a
+body, and `getCharacter3D()` or `getBody3D()` gives its own handle. In Lua the side already is
+the Character3D or the Body3D.
+
+=== "C++"
+
+    ```cpp
+    void Checkpoint::onContactAdded(Collider3D colliderA, Collider3D colliderB, Contact3D contact){
+        Collider3D other = (colliderA.getEntity() == entity) ? colliderB : colliderA;
+        if (contact.isSensor() && other.isCharacter3D()){
+            reached = true;
+        }
+    }
+    ```
+
+=== "Lua"
+
+    ```lua
+    function Checkpoint:onContactAdded(colliderA, colliderB, contact)
+        local other = colliderA.entity == self.entity and colliderB or colliderA
+        if contact.sensor and other:isCharacter3D() then
+            self.reached = true
+        end
+    end
+    ```
 
 ### Buoyancy
 
@@ -507,10 +530,12 @@ or **PreSolve Events** on, and all are off by default (see
 [Body2D events](../reference/classes/body2d.md#setshapeenablehitevents-setshapecontactevents-setshapepresolveevents-setshapesensorevents)).
 A 2D event whose body was destroyed or recreated before it was dispatched is dropped, so
 an end event does not come for a body that no longer exists.
-**3D bodies** instead use `onContactAdded3D`,
+**3D bodies and characters** instead use `onContactAdded3D`,
 `onContactPersisted3D`, and `onContactRemoved3D` (plus `onBodyActivated3D` /
-`onBodyDeactivated3D`); each added/persisted callback receives a
-[Contact3D](../reference/classes/contact3d.md) carrying the contact normal and points.
+`onBodyDeactivated3D` for bodies); each side is a
+[Collider3D](../reference/classes/collider3d.md), a Body3D or a Character3D, and each
+added/persisted callback receives a [Contact3D](../reference/classes/contact3d.md) carrying the
+contact normal and points.
 
 Collision filters use category and mask bits. Put broad gameplay groups into category
 bits, such as player, enemy, world, projectile, and trigger. Use masks to decide which
@@ -527,6 +552,10 @@ positions, ray casts — but the broad phase is locked for the duration, so a bo
 from a callback: the call is refused and logged, and the next update retries it. Teardown
 is queued instead of refused, so removing a `Body3DComponent` from a callback still
 destroys its body, just after the step finishes.
+
+`onContactRemoved3D` is stricter: Jolt holds both bodies there, so use its sides only to know
+which entities parted. Reading a side's position or velocity trips a Jolt assertion in debug
+builds.
 
 `onBodyActivated3D` and `onBodyDeactivated3D` also run when a call outside the step wakes a
 body: `activate()`, a velocity or impulse on a sleeping body, or a joint motor. Jolt holds
@@ -593,7 +622,7 @@ when your character is body 1:
 
 ```cpp
 Vector3 n = contact.getWorldSpaceNormal();
-Vector3 up = (bodyA.getEntity() == characterEntity) ? n * -1.0f : n;
+Vector3 up = (colliderA.getEntity() == characterEntity) ? n * -1.0f : n;
 bool grounded = up.y > 0.7f;
 ```
 

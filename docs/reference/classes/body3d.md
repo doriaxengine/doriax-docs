@@ -8,7 +8,7 @@ description: Body3D API reference — 3D physics body powered by Jolt Physics, s
 
 `Body3D` is the 3D rigid-body handle built on top of the **Jolt Physics** library. Obtain one by calling `object.getBody3D()`. Create one or more shapes, set the body type and material properties, then call `load()` to register with the physics world. The body transform is synchronized with the parent [Object](object.md) each physics step.
 
-**Inherits:** [EntityHandle](entityhandle.md)
+**Inherits:** [Collider3D](collider3d.md)
 
 === "C++"
 
@@ -102,7 +102,7 @@ description: Body3D API reference — 3D physics body powered by Jolt Physics, s
 | bool | [applyBuoyancyImpulse](#applybuoyancyimpulse) | C++ \| Lua |
 | [SubmergedVolume3D](#submergedvolume3d) | [getSubmergedVolume](#getsubmergedvolume) | C++ \| Lua |
 | Vector3 | [getCenterOfMassPosition](#getcenterofmassposition) | C++ \| Lua |
-| Object | [getAttachedObject](#getattachedobject) | C++ \| Lua |
+| Object | [getAttachedObject](collider3d.md#getattachedobject) | C++ \| Lua |
 | [Body3DComponent](body3dcomponent.md) | `getBody3DComponent` | Lua |
 
 ## Enumerations
@@ -665,14 +665,6 @@ For a [Water](water.md), take the surface from
     end
     self.wasInWater = under.fraction > 0
     ```
-
----
-
-### getAttachedObject
-
-* `Object getAttachedObject()`
-
-Returns the [Object](object.md) that owns this body.
 
 ---
 

@@ -24,7 +24,7 @@ component to an entity that has none, as one a script creates. A script sets whe
 applies gravity, moves the character and writes its position to the entity's transform. The
 rotation stays where scripts put it.
 
-**Inherits:** [EntityHandle](entityhandle.md)
+**Inherits:** [Collider3D](collider3d.md)
 
 === "C++"
 
@@ -80,7 +80,7 @@ rotation stays where scripts put it.
 | float | getHeight | C++ \| Lua |
 | float | getRadius | C++ \| Lua |
 | void | [load](#load) | C++ \| Lua |
-| Object | getAttachedObject | C++ \| Lua |
+| Object | [getAttachedObject](collider3d.md#getattachedobject) | C++ \| Lua |
 | JPH::CharacterVirtual* | getJoltCharacter | C++ |
 | [Character3DComponent](character3dcomponent.md) | getCharacter3DComponent | Lua |
 
@@ -268,9 +268,10 @@ first.
 With **Inner Body** on (the default), the character carries a kinematic body inside its
 capsule. Rays, sensors and contact callbacks find the character through it: a ray from
 [Ray](ray.md)`::intersects` returns the character's entity, and a sensor's
-`onContactAdded3D` receives it. That entity has no Body3D, so compare it with
-`getEntity()` (`entity` in Lua) rather than calling body methods on it. `onBodyActivated3D` and
-`onBodyDeactivated3D` are for Body3D only and skip it. Other characters do not collide with
+`onContactAdded3D` receives it as a [Collider3D](collider3d.md) whose `isCharacter3D()` is
+`true` (in Lua, as the Character3D itself). An entity that also has a Body3D counts as its body,
+and its inner body is reported to nobody. `onBodyActivated3D` and `onBodyDeactivated3D` are for
+Body3D only and skip it. Other characters do not collide with
 inner bodies; characters block each other directly.
 
 Sensors never block the character.

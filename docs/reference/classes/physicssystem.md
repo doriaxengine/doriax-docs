@@ -78,6 +78,9 @@ chains are not. It is refused while the world is stepping.
 
 **3D:** `onContactAdded3D`, `onContactPersisted3D`, `onContactRemoved3D`, `onBodyActivated3D`, `onBodyDeactivated3D`, `shouldCollide3D`
 
+The 3D contact events and `shouldCollide3D` pass a [Collider3D](collider3d.md) for each side, a
+Body3D or a Character3D; the activation events pass a [Body3D](body3d.md).
+
 === "Lua"
 
     ```lua
@@ -100,8 +103,8 @@ See [Events](../../manual/events.md). Use `onFixedUpdate` for forces.
         RegisterEvent(self, self.scene:getPhysicsSystem().shouldCollide3D, "shouldCollide")
     end
 
-    function Trap:shouldCollide(bodyA, bodyB, offset, result)
-        if bodyA.entity == self.ghostEntity then
+    function Trap:shouldCollide(colliderA, colliderB, offset, result)
+        if colliderA.entity == self.ghostEntity then
             return false
         end
         return true          -- without this, nothing collides
@@ -114,6 +117,9 @@ See [Events](../../manual/events.md). Use `onFixedUpdate` for forces.
 
 * Reading and moving bodies is fine — velocity, position, ray casts. The engine uses
   Jolt's lock-free interfaces for the whole step.
+* `onContactRemoved3D` is the exception: Jolt holds both bodies there, so its sides only
+  tell which entities parted. Reading their position or velocity trips a Jolt assertion in
+  debug builds.
 * Creating a body or joint is **refused** and logged; the next update retries it.
 * Destroying one is **queued** and applied when the step ends, so removing a
   `Body3DComponent` from a callback tears its body down properly.

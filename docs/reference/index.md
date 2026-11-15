@@ -220,6 +220,7 @@ See also [Enumerations](enums.md) and [Build Options](build-options.md).
 - [Body2D](classes/body2d.md)
 - [Body3D](classes/body3d.md)
 - [Character3D](classes/character3d.md)
+- [Collider3D](classes/collider3d.md)
 - [CollideShapeResult3D](classes/collideshaperesult3d.md)
 - [Contact2D](classes/contact2d.md)
 - [Contact3D](classes/contact3d.md)
