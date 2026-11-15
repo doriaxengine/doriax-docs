@@ -80,6 +80,7 @@ nav:
   - Tutorials:
       - First 2D Scene: 'tutorials/first-2d-scene.md'
       - First 3D Scene: 'tutorials/first-3d-scene.md'
+      - 3D Character: 'tutorials/3d-character.md'
       - First UI Scene: 'tutorials/first-ui-scene.md'
       - Exporting a Project: 'tutorials/exporting-a-project.md'
   - Editor:
@@ -173,6 +174,7 @@ nav:
           - PhysicsSystem: 'reference/classes/physicssystem.md'
           - Body2D: 'reference/classes/body2d.md'
           - Body3D: 'reference/classes/body3d.md'
+          - Character3D: 'reference/classes/character3d.md'
           - Joint2D: 'reference/classes/joint2d.md'
           - Joint3D: 'reference/classes/joint3d.md'
       - Actions:

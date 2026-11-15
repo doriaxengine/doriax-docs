@@ -231,7 +231,7 @@ editor inspectors and high-level object wrappers.
 | 2D | `SpriteComponent`, `SpriteAnimationComponent`, `TilemapComponent`, `PolygonComponent` |
 | 3D | `MeshComponent`, `ModelComponent`, `InstancedMeshComponent`, `TerrainComponent`, `BoneComponent`, `SkinComponent` |
 | Rendering | `CameraComponent`, `LightComponent`, `FogComponent`, `SkyComponent`, `WaterComponent`, `WaterExclusionComponent`, `ParticlesComponent`, `LinesComponent`, `PointsComponent` |
-| Physics | `Body2DComponent`, `Body3DComponent`, `Joint2DComponent`, `Joint3DComponent` |
+| Physics | `Body2DComponent`, `Body3DComponent`, `Joint2DComponent`, `Joint3DComponent`, `Character3DComponent` |
 | UI | `UIComponent`, `UIContainerComponent`, `UILayoutComponent`, `ButtonComponent`, `TextComponent`, `ImageComponent`, `PanelComponent`, `ScrollbarComponent`, `ProgressbarComponent`, `TextEditComponent` |
 | Animation/actions | `ActionComponent`, `TimedActionComponent`, `PositionActionComponent`, `RotationActionComponent`, `ScaleActionComponent`, `ColorActionComponent`, `AlphaActionComponent`, keyframe track components |
 | Audio | `SoundComponent` |

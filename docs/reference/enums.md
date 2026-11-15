@@ -25,6 +25,7 @@ types. C++-only enums are noted below. See [Engine](classes/engine.md) for `Scal
 | `Shape3DBuildQuality` | Mesh shape collision tree (`FAVOR_RUNTIME_PERFORMANCE`, `FAVOR_BUILD_SPEED`) |
 | `Joint2DType` / `Joint3DType` | Constraints |
 | `Joint3DMotorState` | Hinge and prismatic motor (`OFF`, `VELOCITY`, `POSITION`, `POSITION_AND_VELOCITY`) |
+| `Character3DGroundState` | What a 3D character stands on (`ON_GROUND`, `ON_STEEP_GROUND`, `NOT_SUPPORTED`, `IN_AIR`) |
 | `AnchorPreset` / `PivotPreset` | UI layout |
 | `EaseType` | Animation easing |
 | `SoundState` / `SoundAttenuation` | Audio |

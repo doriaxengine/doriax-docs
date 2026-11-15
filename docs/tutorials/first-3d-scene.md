@@ -152,6 +152,7 @@ Press **Stop** when done.
 
 ## 9. Next steps
 
+- Walk a character over ramps and stairs in [3D Character](3d-character.md).
 - Add skeletal animation using the [Animation Timeline](../editor/animation.md).
 - Add a **Sky** entity, enable **Receive IBL** on reflective meshes, and optionally hide
   the sky with **Visible** while keeping reflections: see

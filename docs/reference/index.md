@@ -44,6 +44,7 @@ See also [Enumerations](enums.md) and [Build Options](build-options.md).
 - [BoneComponent](classes/bonecomponent.md)
 - [ButtonComponent](classes/buttoncomponent.md)
 - [CameraComponent](classes/cameracomponent.md)
+- [Character3DComponent](classes/character3dcomponent.md)
 - [ColorActionComponent](classes/coloractioncomponent.md)
 - [FogComponent](classes/fogcomponent.md)
 - [ImageComponent](classes/imagecomponent.md)
@@ -218,6 +219,7 @@ See also [Enumerations](enums.md) and [Build Options](build-options.md).
 
 - [Body2D](classes/body2d.md)
 - [Body3D](classes/body3d.md)
+- [Character3D](classes/character3d.md)
 - [CollideShapeResult3D](classes/collideshaperesult3d.md)
 - [Contact2D](classes/contact2d.md)
 - [Contact3D](classes/contact3d.md)

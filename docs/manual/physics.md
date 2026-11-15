@@ -29,6 +29,8 @@ The editor and Play always have both.
   spheres, capsules, polygons, and more).
 - **Joints** — constrain bodies together to model hinges, sliders, and other
   mechanical connections.
+- **3D characters** — a capsule that walks over the world, climbs steps and ramps and
+  knows when it stands on the ground, without being a rigid body.
 - **Collision detection** — the physics system detects overlaps and contacts between
   bodies each step.
 
@@ -419,6 +421,77 @@ To have the transform hold the body pose of the last step instead, turn it off w
 `PhysicsSystem::setInterpolation(false)` (`scene:getPhysicsSystem().interpolation = false`
 in Lua).
 
+## 3D characters
+
+A player or an NPC that walks is usually not a dynamic body: a dynamic capsule tips over,
+bounces off steps, slides down every slope and needs its ground found by hand. Doriax has a
+**3D Character** for this, built on Jolt Physics' `CharacterVirtual`. Add it with
+**New component → 3D Character** on the model's entity; the entity needs no Body3D.
+
+![A character's capsule and its step height drawn in the editor, with the 3D Character properties](../assets/screenshots/tutorial-character-edit.png)
+
+The capsule stands on the entity origin, so a model with its origin at its feet needs no
+offset. The editor draws it, with an amber ring at the **Step Up** height.
+
+| Property | Default | What it does |
+| --- | --- | --- |
+| **Height** / **Radius** | `1.8` / `0.3` | Size of the capsule, scaled with the entity |
+| **Max Slope** | `45` | Steepest ramp it walks up, in degrees; it slides down steeper ones |
+| **Step Up** | `0.4` | Highest step it climbs while walking |
+| **Step Down** | `0.5` | How far down it keeps to the ground on ramps and stairs, `0` to turn off |
+| **Gravity Factor** | `1` | Scales the scene's 3D gravity |
+| **Air Control** | `1` | `1` steers in the air as on the ground, `0` keeps the momentum of the jump |
+| **Mass** / **Max Strength** | `70` / `100` | Weight on what it stands on (kg), force it pushes bodies with (N) |
+| **Padding** | `0.02` | Gap it keeps from what it touches |
+| **Inner Body** | on | A kinematic body in the capsule, so rays, sensors and contact events find it |
+
+A script sets where it walks and when it jumps; the physics system does the rest every
+fixed step: gravity, sliding along walls, steps, ramps, moving platforms and pushing
+dynamic bodies. The character writes its position to the transform, drawn smoothly between
+steps like a body, and leaves the rotation to the script.
+
+=== "Lua"
+
+    ```lua
+    function Player:onUpdate()
+        local character = Character3D(self.scene, self.entity)
+
+        -- along the ground, kept until changed
+        character.moveVelocity = direction * self.speed
+
+        if character:isOnGround() and Input.isKeyPressed(Input.KEY_SPACE) then
+            character:jump(5)
+        end
+    end
+    ```
+
+=== "C++"
+
+    ```cpp
+    void Player::onUpdate(){
+        Character3D character(getScene(), getEntity());
+
+        character.setMoveVelocity(direction * speed);
+
+        if (character.isOnGround() && Input::isKeyPressed(D_KEY_SPACE)){
+            character.jump(5.0f);
+        }
+    }
+    ```
+
+`moveVelocity` can be set from `onUpdate` or `onFixedUpdate`: it is a request the next step
+reads, not a pose. To teleport, set `position` on the character or move the entity's transform.
+
+**Ground detection** comes with it: `isOnGround()` is true on walkable ground,
+`isSupported()` also on a slope too steep to walk, and `getGroundState()` tells the four cases
+apart. `getGroundNormal()`, `getGroundVelocity()` and `getGroundEntity()` describe what it
+stands on — a moving platform, a crate, another character. Read them after the step, in
+`onUpdate`, to choose animations or allow a jump.
+
+The [3D Character tutorial](../tutorials/3d-character.md) builds a level with a ramp, stairs
+and a crate and walks a character over it. See [Character3D](../reference/classes/character3d.md)
+for the whole API, crouching with `setShape` included.
+
 ## Contacts and filtering
 
 The physics system exposes contact subscriptions so you can react to collisions in game
@@ -470,8 +543,8 @@ report the window for helpers called from both.
 ## Raycasts and ground checks
 
 A common need for character controllers is knowing whether a body is **standing on the
-ground**. Doriax has no built-in `isGrounded()` flag, but you can build a reliable check
-two ways.
+ground**. A [3D Character](#3d-characters) reports it with `isOnGround()`. For a body, such as
+a 2D character or a dynamic ball, you can build a reliable check two ways.
 
 ### Downward raycast (recommended)
 
@@ -665,6 +738,7 @@ and joints don't carry over.
 ## Practical guidance
 
 - Prefer primitive collision shapes for dynamic entities.
+- Use a [3D Character](#3d-characters), not a dynamic body, for walking players and NPCs.
 - Keep visual meshes and collision meshes separate.
 - Use sensors for triggers, pickups, and detection volumes.
 - Use fixed update logic for physics-driven gameplay.
