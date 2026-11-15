@@ -73,7 +73,7 @@ properties. Renaming or moving a graph in Resources carries the entities that us
 | Self | The script's entity, its scene, and the entity as an engine class such as `Mesh` |
 | Input | **Key**, the keyboard keys by name |
 | Utility | **Print**, **Lua Expression**, **Lua Code**, **Call Method** |
-| Engine | A category for each class of the [Lua API](../reference/index.md): a node for each method, a **Get** for each property and a **Set** for the ones scripts can write. Methods that only read, such as **Get World Position** or **Is Key Pressed**, are values; the others run |
+| Engine | A category for each class of the [Lua API](../reference/index.md): a node for each method and constant, a **Get** for each property and a **Set** for the ones scripts can write. Methods that only read, such as **Get World Position** or **Is Key Pressed**, are values; the others run |
 | Enums | One node for each enum, with its value as a setting |
 
 Right click the canvas, or press **+ Node**, and type: the search matches every word in

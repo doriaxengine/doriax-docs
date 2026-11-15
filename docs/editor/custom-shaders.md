@@ -232,9 +232,9 @@ to the Output window.
 
 Shader files open in the [Code Editor](code-editor.md) with GLSL highlighting. Saving one
 recompiles the shaders that reach it through `#include` and refreshes the view, with no
-rebuild or replay. An edit in another editor is picked up when the file reloads. A graph
-needs no saving to be seen: the view shows its edits a moment after each one, while it
-compiles.
+rebuild or replay. A file changed outside the editor, in another editor or by a pull,
+reaches the view within a second, open or not. A graph needs no saving to be seen: the
+view shows its edits a moment after each one, while it compiles.
 
 ![A post-process shader open in the Code Editor next to its parameter fields](../assets/screenshots/editor-shader-code.png)
 
