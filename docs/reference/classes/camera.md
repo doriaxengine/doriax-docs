@@ -146,6 +146,8 @@ Switches between orthographic and perspective projection. Setting the type does 
 
 When `true` (default), the projection is automatically recalculated when the canvas size changes. Disable if you manage the projection matrix manually.
 
+An orthographic camera resized this way keeps where it sits in its view: with `leftClip` and `bottomClip` at `0` (the 2D default) it stays at the bottom-left corner, and with centered clips (the default for cameras the editor adds to a 3D scene) it stays in the middle.
+
 ---
 
 ### nearClip / farClip
