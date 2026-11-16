@@ -87,10 +87,10 @@ physics bodies, and more — each one is just an entity with the right component
 The **2D** submenu includes **2D Light** and **2D Occluder** for the 2D lighting
 system — see [2D Graphics — 2D lighting](../manual/2d-graphics.md#2d-lighting).
 
-The **Physics** submenu creates joints, empty bodies and a **Character 3D**. In a 3D scene,
-an entity's right-click menu also has **Add Physics Body** and **Add 3D Character**, which
-add the component to that entity, such as an imported model — see
-[Physics — 3D characters](../manual/physics.md#3d-characters).
+The **Physics** submenu creates joints, empty bodies and a **Character 3D**. An entity's
+right-click menu has **Add Physics Body**, a Body2D or a Body3D by the scene, and in a 3D
+scene **Add 3D Character**. Both add the component to that entity, such as an imported
+model — see [Physics — 3D characters](../manual/physics.md#3d-characters).
 
 ### Basic shapes
 
