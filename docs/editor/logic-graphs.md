@@ -54,7 +54,7 @@ the language keeps the values set in Properties.
 | --- | --- | --- |
 | Play | Starts at once | Compiles with the project's [C++ scripts](../manual/cpp-build-setup.md) first, so it needs the build tools |
 | Export | Ships as a `.lua` file | Compiles into the game |
-| The script | A Lua table, **On Start** is `init` | A class of `ScriptBase` with a header and a source; **On Start** runs at the first update, once the values of Properties are in |
+| The script | A Lua table, **On Start** is `init` | A class of `ScriptBase` with a header and a source; **On Start** runs at the first update or fixed update, once the values of Properties are in, and the other events wait for it |
 | Numbers | Lua numbers | `float`, and `int` for an integer variable |
 | **Code Expression**, **Code** | Hold Lua | Hold C++ |
 
