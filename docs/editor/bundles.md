@@ -220,6 +220,12 @@ with a download icon beside its name. The members come and go with
 With [async loading](../manual/threading-and-async-loading.md) on, the members' models and
 textures load on worker threads, so the game keeps running while they appear.
 
+On Demand is not the bundle version of a child scene's
+[Start active](../manual/scenes-and-entities.md#start-active) flag. A child scene that starts
+inactive is already built with its parent and only waits to be shown, so showing it is
+instant. An on-demand instance does not exist until `loadBundle`, so it costs nothing at
+scene load and pays for its entities and resources when it is loaded.
+
 Some limits:
 
 - The members are created from the bundle as it is: [overrides](#how-instances-stay-in-sync)

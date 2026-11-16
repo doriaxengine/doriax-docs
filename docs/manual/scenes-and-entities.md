@@ -234,6 +234,11 @@ A child scene that starts inactive is *ready but hidden*. Because it is already 
 showing it later with [`SceneManager.addChildScene`](#switching-scenes-with-scenemanager)
 is instant — there is no loading cost at the moment it appears.
 
+An inactive child scene is preloaded, not loaded on demand: it still takes its share of the
+parent's loading time and memory. That is the opposite trade of a bundle instance with
+[On Demand](../editor/bundles.md#instances-loaded-on-demand), which is not built at all until
+a script asks for it.
+
 **Start active** is not what makes a scene addable at runtime; any registered scene can be
 overlaid, and one that is not a child scene is simply built the first time you add it.
 What the flag controls is whether the scene comes up *with its parent*, and inactive
