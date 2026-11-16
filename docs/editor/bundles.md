@@ -229,6 +229,9 @@ Some limits:
 - Entities you placed under a member, rather than under the root, go with the members and do
   not come back with `loadBundle`; the export skips them and warns. Put them under the root, or
   add them to the bundle.
+- A camera render-to-texture link with a member at either end is not set up, and a main camera
+  that is a member leaves the scene on its default camera; the export warns about both. Set
+  them from a script once the instance is loaded, for example with `scene->setCamera(camera)`.
 - The option counts on an instance placed directly in a scene. One nested in another bundle
   comes and goes with the bundle that holds it.
 
