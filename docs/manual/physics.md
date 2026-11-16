@@ -470,7 +470,7 @@ offset. The editor draws it, with an amber ring at the **Step Up** height.
 | **Air Control** | `1` | `1` steers in the air as on the ground, `0` keeps the momentum of the jump |
 | **Mass** / **Max Strength** | `70` / `100` | Weight on what it stands on (kg), force it pushes bodies with (N) |
 | **Padding** | `0.02` | Gap it keeps from what it touches |
-| **Inner Body** | on | A kinematic body in the capsule, so rays, sensors and contact events find it |
+| **Inner Body** | on | A kinematic body in the capsule, so rays and sensors find it |
 
 A script sets where it walks and when it jumps; the physics system does the rest every
 fixed step: gravity, sliding along walls, steps, ramps, moving platforms and pushing
@@ -556,6 +556,10 @@ destroys its body, just after the step finishes.
 `onContactRemoved3D` is stricter: Jolt holds both bodies there, so use its sides only to know
 which entities parted. Reading a side's position or velocity trips a Jolt assertion in debug
 builds.
+
+A 3D character's own contacts are different: they arrive once the character has moved,
+outside the step, so their callbacks may also create bodies and read every side. Only
+`shouldCollide3D` runs while the character moves, and there it can read but not create.
 
 `onBodyActivated3D` and `onBodyDeactivated3D` also run when a call outside the step wakes a
 body: `activate()`, a velocity or impulse on a sleeping body, or a joint motor. Jolt holds

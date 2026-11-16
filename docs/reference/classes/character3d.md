@@ -104,7 +104,8 @@ rotation stays where scripts put it.
 
 The velocity the character walks with, in world units per second. Only its horizontal part is
 used, so a direction from the camera can be passed as it is. It is kept until changed: set it
-every frame from input, and set it to zero to stop.
+every frame from input, and set it to zero to stop. Below 1 cm/s the character counts as
+standing still, so input eased toward zero does not leave it creeping down a slope it can walk.
 
 On the ground the character walks at this velocity plus the velocity of what it stands on, so
 it rides moving platforms. Up a ramp it is slower, the steeper the more: Jolt's
@@ -239,7 +240,8 @@ while it slides down a steep slope.
 Changes the capsule while the character keeps playing, for example to crouch. It returns
 `false` and keeps the old capsule when the new one would not fit where the character stands,
 so a crouching character cannot stand up under a low ceiling. Like the component values, the
-sizes are scaled by the entity's scale. It cannot be called from a physics callback.
+sizes are scaled by the entity's scale. It cannot be called from a physics callback. On a
+character that is not built yet, it sets the size it will be built with and returns `true`.
 
 === "Lua"
 
@@ -260,18 +262,26 @@ sizes are scaled by the entity's scale. It cannot be called from a physics callb
 Rebuilds the character from its [Character3DComponent](character3dcomponent.md). Call it after
 changing a component value that only applies when the character is built: `height`, `radius`,
 `padding` or `innerBody`. The physics system builds the character on its own when the scene
-loads, and the methods that read or move the character build it when a script's `init` runs
-first.
+loads, and the methods that read the character build it when a script's `init` runs first.
+Setting [position](#position) or calling [setShape](#setshape) before then only sets where and
+how it will be built. A character that cannot be built, such as one scaled to zero, is tried
+again when its scale changes.
 
 ## Contacts and the inner body
 
-With **Inner Body** on (the default), the character carries a kinematic body inside its
-capsule. Rays, sensors and contact callbacks find the character through it: a ray from
+What the character walks into reaches the 3D contact events of
+[PhysicsSystem](physicssystem.md) as it moves: the floor it stands on, a wall it stops at, a
+crate it pushes. Each side is a [Collider3D](collider3d.md), the character first, and in Lua
+the character side is the Character3D itself. `shouldCollide3D` runs for these contacts too, so
+returning `false` lets the character walk through a body. Their callbacks run once the
+character has moved, so they may move it, add bodies or remove the character.
+
+With **Inner Body** on (the default), the character also carries a kinematic body inside its
+capsule. Rays and sensors find the character through it: a ray from
 [Ray](ray.md)`::intersects` returns the character's entity, and a sensor's
-`onContactAdded3D` receives it as a [Collider3D](collider3d.md) whose `isCharacter3D()` is
-`true` (in Lua, as the Character3D itself). An entity that also has a Body3D counts as its body,
-and its inner body is reported to nobody. `onBodyActivated3D` and `onBodyDeactivated3D` are for
-Body3D only and skip it. Other characters do not collide with
-inner bodies; characters block each other directly.
+`onContactAdded3D` receives it. An entity that also has a Body3D counts as its body, and its
+inner body is reported to nobody. `onBodyActivated3D` and `onBodyDeactivated3D` are for
+Body3D only and skip it. Characters block each other directly, without a contact event, and
+do not collide with each other's inner bodies.
 
 Sensors never block the character.

@@ -70,8 +70,15 @@ properties and methods, and `isCharacter3D()` tells them apart.
 | `onContactRemoved3D` | `void(Collider3D, Collider3D, unsigned long, unsigned long)` |
 | `shouldCollide3D` | `bool(Collider3D, Collider3D, Vector3, CollideShapeResult3D)` |
 
-A character takes part through its inner body, so it reaches these events only with
-[Inner Body](character3d.md#contacts-and-the-inner-body) on. `onBodyActivated3D` and
+What a character walks into, such as the floor, a wall or a crate, reaches these events
+from its own movement, with or without an inner body. `shouldCollide3D` decides that too: return
+`false` and the character walks through. In those contacts the character is the first side,
+the normal points from it to the body, and there is a single contact point. Changing the
+friction, restitution or sensor setting of such a contact has no effect.
+
+Sensors find a character through its
+[inner body](character3d.md#contacts-and-the-inner-body), so they see it only with Inner Body
+on. Two characters block each other without a contact event. `onBodyActivated3D` and
 `onBodyDeactivated3D` keep their [Body3D](body3d.md) and skip characters.
 
 In `onContactRemoved3D` Jolt holds both bodies, so use the sides there only to know which
