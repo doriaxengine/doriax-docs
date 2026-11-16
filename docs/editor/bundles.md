@@ -186,8 +186,9 @@ A placed instance normally comes with its scene. Tick **On Demand** in the insta
 **Bundle** component, in the Properties window, for one the game should only create when it
 needs it: a part of a large world, a level section, an interior. The editor keeps showing and
 editing the instance as before, but in Play and in an exported game the scene starts with only
-its root: the entity with its transform, its name and whatever else you put on it, such as a
-script. The members come and go with
+its root: the entity with its transform, its name, whatever else you put on it, such as a
+script, and the entities you placed under it. The Structure window marks an on-demand instance
+with a download icon beside its name. The members come and go with
 [`BundleManager::loadBundle` and `unloadBundle`](../reference/classes/bundlemanager.md#loadbundle-unloadbundle-isbundleloaded):
 
 === "Lua"
