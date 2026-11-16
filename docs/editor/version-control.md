@@ -19,9 +19,9 @@ every time two people do. All of it goes under `.doriax/`, which is not committe
 | `project.yaml` | `.doriax/` — everything below |
 | `*.scene`, `*.bundle` | `CMakeLists.txt` (regenerated on every build) |
 | Scripts (`.lua`, `.h`, `.cpp`) | `build/`, `.trash/` |
-| Assets, `.material`, shaders | `.vscode/`, `.idea/`, `*.user` |
+| Assets, `.material`, shaders | `.vscode/`, `.idea/`, `*.user`, `CMakeUserPresets.json` |
 | `ProjectBuild.cmake` | `UserSettings.xml` written by the running game |
-| `AGENTS.md` | Editor logs |
+| `AGENTS.md`, `.luarc.json` | Editor logs |
 
 `CMakeLists.txt` is generated from `project.yaml` and your scripts every time you press
 Play, so there is nothing in it to preserve. It also holds no path belonging to your
@@ -39,6 +39,7 @@ machine-specific — the shader cache, the engine library — come from
 | `user/rundata/` | Whatever the game writes through `data://` while you Play, so a playtest never dirties the working tree |
 | `LocalPaths.cmake` | The machine-specific paths `CMakeLists.txt` includes |
 | `engine-api/`, `generated/`, `scene_scripts.cpp` | The engine API snapshot and generated C++ glue |
+| `lua-api/` | Definitions of the project's Lua scripts for lua-language-server, see [IDE Integration](ide-integration.md) |
 | `build/`, `externalbuild/` | CMake build trees |
 | `imported/` | Models converted from FBX, laid out like the assets directory (see [FBX models](../manual/3d-graphics.md#fbx-models)) |
 | `editor.lock` | Locked while an editor has the project open, so a second editor cannot open it too. The lock ends when that editor closes, even if it crashes |

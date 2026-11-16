@@ -1,5 +1,5 @@
 ---
-description: The Editor Settings dialog — build toolchain, Emscripten SDK, default export directory, UI scale, AI Chat keys, the MCP server, and other machine-local editor preferences.
+description: The Editor Settings dialog — script editor, build toolchain, Emscripten SDK, default export directory, UI scale, AI Chat keys, the MCP server, and other machine-local editor preferences.
 ---
 
 # Editor Settings
@@ -20,12 +20,18 @@ The dialog is a modal with five tabs and an **OK** / **Cancel** footer.
 | Setting | Default | Effect |
 | --- | --- | --- |
 | **Default Export Directory** | Not set | Pre-fills the output folder in the Export Window for projects that have no remembered export directory yet |
+| **Script Editor** | Built-in Editor | Where Lua and C++ scripts open: the built-in editor, VS Code, Visual Studio, CLion, Rider or a command of yours |
 | **Editor VSync** | Enabled | VSync for the editor's own frames |
 | **UI Scale** | `100%` | Size of the editor text and panels, on top of the display scale the system reports |
 
 The default export directory is only a starting point: once you export a project, the
 folder you actually used is remembered per project *and per export mode*, and that
 remembered value wins the next time you open the Export Window.
+
+**Script Editor** applies to a double click on a script in Resources, the script buttons
+in Properties and the file links in the Output panel. Under an IDE the dialog shows where
+it found it, or that it found none. **Custom Command** takes a command line with
+`{project}`, `{file}`, `{line}` and `{column}`. See [IDE Integration](ide-integration.md).
 
 **Editor VSync** covers editing frames only. While a scene is running, frames follow the
 project's own [VSync](project-settings.md#window) setting instead, so the two never apply
@@ -55,6 +61,7 @@ The C++ toolchain used both when **playing** a scene with C++ scripts and when r
 | --- | --- | --- |
 | **CMake** | Auto-detect | Path to the `cmake` executable. **Browse** validates the pick by running it, and reports a folder with no working CMake instead of storing it. **Auto** returns to looking it up on `PATH` |
 | **Compiler** | Default | The compiler kit used to build C++ scripts |
+| **Debug Info** | Symbols | Debug information of the C++ scripts built for Play and the `doriax` CMake preset: **None**, **Symbols**, or **Symbols, No Optimization** |
 
 The **Compiler** dropdown lists the kits the editor detected (GCC, Clang, MSVC/Visual
 Studio), each paired with a compatible CMake generator, and shows the resolved C and C++
@@ -73,6 +80,11 @@ warns that builds still use the stored kit until you press OK.
     which is not committed, so a teammate opening the same project keeps their own
     toolchain. The kit you last chose also becomes the default for projects opened
     afterwards that have none, so in practice you set it once.
+
+**Debug Info** is stored per project with the kit. **Symbols** lets a debugger attached to
+the editor stop at breakpoints in scripts while keeping them optimized; **Symbols, No
+Optimization** makes stepping and variables exact at the cost of speed. See
+[Debugging C++ scripts](ide-integration.md#debugging-c-scripts).
 
 See [C++ Build Setup](../manual/cpp-build-setup.md) for what each toolchain requires, the
 Windows ABI rules, and how to read a failing build.

@@ -99,6 +99,7 @@ nav:
       - Terrain Editor: 'editor/terrain-editor.md'
       - Animation Timeline: 'editor/animation.md'
       - Code Editor: 'editor/code-editor.md'
+      - IDE Integration: 'editor/ide-integration.md'
       - Custom Shaders: 'editor/custom-shaders.md'
       - Shader Graphs: 'editor/shader-graphs.md'
       - Logic Graphs: 'editor/logic-graphs.md'

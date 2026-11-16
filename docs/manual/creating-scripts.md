@@ -210,6 +210,7 @@ creates a per-entity instance at runtime.
 ### Minimal template
 
 ```lua
+---@class PlayerController: LuaScript
 local PlayerController = {
     properties = {
         { name = "speed", displayName = "Speed", type = "float", default = 5.0 }
@@ -240,6 +241,9 @@ return PlayerController
 | Event methods | Name methods to match events (`onUpdate`, `onClick`, etc.) and register in `init()` |
 | `self.scene` | Injected `Scene*` — use for systems and entity wrappers |
 | `self.entity` | Injected entity ID |
+
+The first line is an annotation for lua-language-server, which types `self` in an IDE; the
+engine reads it as a comment. See [IDE Integration](../editor/ide-integration.md#lua-scripts).
 
 ### Module loading
 

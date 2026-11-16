@@ -12,9 +12,13 @@ and CI want. `benchmark` opens a window, times a scene, prints JSON, and exits.
 doriax-editor export    --project <path> --out <dir> [options]
 doriax-editor shaders   --out <dir> --shader <spec> [options]
 doriax-editor benchmark --project <path> [--scene <scene>] [options]
+doriax-editor --project <path>
 ```
 
-Running `doriax-editor` with **no arguments** launches the normal graphical editor.
+Running `doriax-editor` with **no arguments** launches the normal graphical editor on the
+last project. `--project <path>` (or `-p`) opens it on that project instead, a folder or
+its `project.yaml`; the **Doriax Editor** debug configuration of
+[IDE Integration](ide-integration.md#debugging-c-scripts) starts the editor this way.
 `--help`, `-h` or `help` print the top-level usage. Anything else is reported as an
 unrecognized argument and exits with code `2`, so a mistyped subcommand fails instead of
 opening a window.

@@ -268,7 +268,9 @@ whichever machine opens the project. Both are regenerated rather than committed 
 
 Configuring outside the editor works the same way, as long as the project has been
 opened in the editor once so `.doriax` exists. Pass `-DDORIAX_SHADER_PATH=<dir>` to
-override the shader cache location.
+override the shader cache location. The `doriax` preset of `CMakeUserPresets.json` does
+this with the editor's compiler and build type (presets need CMake 3.21), and the build
+writes `compile_commands.json` for IDEs. See [IDE Integration](../editor/ide-integration.md).
 
 The CMake build tree is generated under **`.doriax/build`**. It is a disposable cache —
 deleting it forces a full clean reconfigure and rebuild, which is a good first step when
