@@ -6,7 +6,11 @@ description: Log API reference — console output and log levels (C++ and Lua).
 
 ## Description
 
-`Log` provides static methods for writing messages to the platform console or log sink. Output goes to the IDE console during editor play mode, and to `stdout`/`logcat`/Xcode console on each platform. All methods accept `printf`-style format strings.
+`Log` provides static methods for writing messages to the platform console or log sink. Output goes to the editor's Output panel during play mode, and to `stdout`/`logcat`/Xcode console on each platform. All methods accept `printf`-style format strings.
+
+In the Output panel, lines written while the project plays carry the Play icon, apart from the editor's own. The level follows it, as in `[Warning]`, and `Log::print` lines have none. Copied text, [`editor.log`](../../about/faq.md#where-can-i-find-the-editor-crash-log) and the AI tools read `[Project]` in place of the icon.
+
+The panel's filter hides each level, and the **Editor** and **Project** boxes hide everything from one side. **Clear on Play**, in the panel's right-click menu, empties it each time Play starts.
 
 In Lua, the global `print()` function is also available as an alias for `Log.print`.
 
