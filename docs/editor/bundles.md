@@ -180,6 +180,57 @@ Scripts should reach an instance's entities by name under its root with
 [`findEntity(name, root)`](../reference/classes/entityregistry.md#findentity), never by
 an id copied from the editor.
 
+## Instances loaded on demand
+
+A placed instance normally comes with its scene. Tick **On Demand** in the instance root's
+**Bundle** component, in the Properties window, for one the game should only create when it
+needs it: a part of a large world, a level section, an interior. The editor keeps showing and
+editing the instance as before, but in Play and in an exported game the scene starts with only
+its root: the entity with its transform, its name and whatever else you put on it, such as a
+script. The members come and go with
+[`BundleManager::loadBundle` and `unloadBundle`](../reference/classes/bundlemanager.md#loadbundle-unloadbundle-isbundleloaded):
+
+=== "Lua"
+    ```lua
+    -- on the instance root
+    function Region:onUpdate()
+        local near = self:distanceToPlayer() < 500
+        if near and not BundleManager.isBundleLoaded(self.scene, self.entity) then
+            BundleManager.loadBundle(self.scene, self.entity)
+        elseif not near and BundleManager.isBundleLoaded(self.scene, self.entity) then
+            BundleManager.unloadBundle(self.scene, self.entity)
+        end
+    end
+    ```
+
+=== "C++"
+    ```cpp
+    // on the instance root
+    void Region::onUpdate() {
+        const bool near = distanceToPlayer() < 500.0f;
+        if (near && !BundleManager::isBundleLoaded(scene, entity)) {
+            BundleManager::loadBundle(scene, entity);
+        } else if (!near && BundleManager::isBundleLoaded(scene, entity)) {
+            BundleManager::unloadBundle(scene, entity);
+        }
+    }
+    ```
+
+With [async loading](../manual/threading-and-async-loading.md) on, the members' models and
+textures load on worker threads, so the game keeps running while they appear.
+
+Some limits:
+
+- The members are created from the bundle as it is: [overrides](#how-instances-stay-in-sync)
+  of an on-demand instance are not applied, and the export warns about them.
+- A scene entity that references a member starts with that reference empty. Look the member
+  up by name under the root once it is loaded (`scene->findEntity(name, root)`).
+- Entities you placed under a member, rather than under the root, go with the members and do
+  not come back with `loadBundle`; the export skips them and warns. Put them under the root, or
+  add them to the bundle.
+- The option counts on an instance placed directly in a scene. One nested in another bundle
+  comes and goes with the bundle that holds it.
+
 ## Bundles vs child scenes
 
 | | Bundle | Child scene |

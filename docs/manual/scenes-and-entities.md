@@ -495,6 +495,12 @@ members.
     are registered, so a bundle spawned from script alone has to be listed there. Use
     `BundleManager.getBundleNames()` to list everything that is registered.
 
+An instance placed in a scene can also wait for the game to ask for it: with **On Demand**
+ticked on its root, the scene starts with only that root, and
+`BundleManager.loadBundle(scene, root)` / `unloadBundle(scene, root)` create and remove its
+members, which is how a large world keeps only the parts near the player loaded. See
+[Instances loaded on demand](../editor/bundles.md#instances-loaded-on-demand).
+
 === "Lua"
 
     ```lua
