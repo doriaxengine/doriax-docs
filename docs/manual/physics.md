@@ -564,9 +564,10 @@ outside the step, so their callbacks may also create bodies and read every side.
 `shouldCollide3D` runs while the character moves, and there it can read but not create.
 
 `onBodyActivated3D` and `onBodyDeactivated3D` also run when a call outside the step wakes a
-body: `activate()`, a velocity or impulse on a sleeping body, or a joint motor. Jolt holds
-the body there too, so the callback can read and move bodies but must not wake a sleeping
-one.
+body: `activate()`, a velocity or impulse on a sleeping body, a joint motor, or a 3D
+character pushing a body or standing on it. Jolt holds the body there too, so the callback
+can read and move bodies but must not wake a sleeping one, and creating or removing a body
+or joint waits for the next step, as in a step.
 
 `preSolve2D` and `shouldCollide2D` run mid-step with the Box2D world locked, so a 2D body
 can only be read there. Moving it, changing its settings, applying a force, casting a 2D
