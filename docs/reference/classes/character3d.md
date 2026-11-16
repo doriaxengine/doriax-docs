@@ -12,8 +12,9 @@ going down, rides moving platforms, pushes dynamic bodies and falls with gravity
 **Jolt Physics' CharacterVirtual**, so it is not a rigid body: it never tips over, never bounces
 and never slides on its own when it stands still.
 
-The character is a [Character3DComponent](character3dcomponent.md) on the entity, added in the
-Properties window with **New component → 3D Character**. Its capsule stands on the entity
+The character is a [Character3DComponent](character3dcomponent.md) on the entity, added with
+**Add 3D Character** in the entity's right-click menu in the Structure panel, or with
+**New component → 3D Character** in the Properties window. Its capsule stands on the entity
 origin, so a model whose origin is at its feet needs no offset. The entity needs no
 [Body3D](body3d.md); a static Body3D under it is the ground.
 

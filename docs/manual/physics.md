@@ -452,8 +452,10 @@ in Lua).
 
 A player or an NPC that walks is usually not a dynamic body: a dynamic capsule tips over,
 bounces off steps, slides down every slope and needs its ground found by hand. Doriax has a
-**3D Character** for this, built on Jolt Physics' `CharacterVirtual`. Add it with
-**New component → 3D Character** on the model's entity; the entity needs no Body3D.
+**3D Character** for this, built on Jolt Physics' `CharacterVirtual`. Right-click the model in
+the Structure panel and choose **Add 3D Character**, or use **New component → 3D Character**;
+the entity needs no Body3D. **Create entity → Physics → Character 3D** makes a new entity with
+one.
 
 ![A character's capsule and its step height drawn in the editor, with the 3D Character properties](../assets/screenshots/tutorial-character-edit.png)
 

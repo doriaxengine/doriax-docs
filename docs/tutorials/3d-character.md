@@ -68,7 +68,8 @@ Last, a **Crate** box at `2.5, 0.5, 2`. Give it a body as well, set **Body Type*
 1. Drag `person.glb` from the Resources Browser into the scene view. Name the new Model
    entity `Player`, put it at `0, 0, 6` and set its rotation to `0, 180, 0` so it faces the
    level. Its origin is at its feet.
-2. With `Player` selected, click **New component** and choose **3D Character**.
+2. Right-click `Player` in the Structure panel and choose **Add 3D Character**. The same
+   component is also in **New component**, under Physics:
 
     ![The 3D Character component in the New component dialog](../assets/screenshots/tutorial-character-component.png)
 

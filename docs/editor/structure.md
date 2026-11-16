@@ -87,6 +87,11 @@ physics bodies, and more — each one is just an entity with the right component
 The **2D** submenu includes **2D Light** and **2D Occluder** for the 2D lighting
 system — see [2D Graphics — 2D lighting](../manual/2d-graphics.md#2d-lighting).
 
+The **Physics** submenu creates joints, empty bodies and a **Character 3D**. In a 3D scene,
+an entity's right-click menu also has **Add Physics Body** and **Add 3D Character**, which
+add the component to that entity, such as an imported model — see
+[Physics — 3D characters](../manual/physics.md#3d-characters).
+
 ### Basic shapes
 
 **Basic shape** creates a mesh entity with procedural geometry: Box, Plane, **Wall**,
