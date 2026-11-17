@@ -205,6 +205,12 @@ The animation selector uses each animation entity's name. Imported clips start w
 name authored in the GLTF; you can rename the entity in the Structure panel. Runtime
 `Model:findAnimation` and `Model:playAnimation` string lookups use that same entity name.
 
+Scene files leave out the keys of imported clips: the model loads them from its file, in
+the editor and in exported games. A track whose keys you edit, with Snapshot or by moving
+a key, is saved with its keys and no longer follows the file. A scene saved by an older
+editor keeps the keys it stored until you choose the model file again in the Model
+component.
+
 ![A character's skeleton drawn in the viewport, with its bones in the Structure panel](../assets/screenshots/editor-bones.png)
 
 At runtime, look up a clip by name on the `Model` object:
