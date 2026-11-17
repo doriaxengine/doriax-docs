@@ -178,9 +178,11 @@ Settings](../editor/editor-settings.md#migrating-from-older-projects).
 
 ## Script directories
 
-By default the editor compiles only the C++ scripts a scene actually uses — the files
-referenced by a Script component. A helper class that no entity mentions is never built,
-and every header is included by its full path from the project root.
+By default the editor compiles only the C++ scripts that are used — the files referenced
+by a Script component in a scene or in a
+[bundle the project builds](../editor/bundles.md#bundles-in-the-build). A helper class that
+no entity mentions is never built, and every header is included by its full path from the
+project root.
 
 **Project → [Project Settings](../editor/project-settings.md#directories) → Directories →
 Script Directories** changes that. Add any
