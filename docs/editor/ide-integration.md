@@ -20,7 +20,7 @@ where scripts open:
 | **Built-in Editor** | The [Code Editor](code-editor.md), the default |
 | **VS Code** | `code`, from `PATH` or the usual install folders |
 | **Visual Studio** | `devenv.exe` of the newest Visual Studio with C++ tools (Windows) |
-| **CLion**, **Rider** | The `clion` or `rider` launcher of JetBrains Toolbox, or the app on macOS |
+| **CLion**, **Rider** | On Windows `clion64.exe` or `rider64.exe` on `PATH`, a JetBrains Toolbox script, or the newest install. Elsewhere the `clion` or `rider` launcher, or the app on macOS |
 | **Custom Command** | A command line you write, see below |
 
 The choice applies to Lua and C++ files (`.lua`, `.h`, `.hpp`, `.cpp` and similar):
@@ -137,9 +137,10 @@ Lua scripts have no breakpoints yet: use `Log.print` and the links in Output.
 ## Lua scripts
 
 [lua-language-server](https://luals.github.io/), the Lua extension of VS Code
-(`sumneko.lua`), reads `.luarc.json`. The engine's classes, enums and global functions are
-typed, with the reference descriptions on hover, so completion, go to definition and type
-checks work across the API. It needs version 3.16 or newer, the first with Lua 5.5.
+(`sumneko.lua`), reads `.luarc.json`. The engine's classes, enums, events and global
+functions are typed, with the reference descriptions on hover, so completion, go to
+definition and type checks work across the API. An event such as `Engine.onUpdate` takes a
+function, or `add` and `call` on it. It needs version 3.16 or newer, the first with Lua 5.5.
 
 A script the editor creates starts with a class annotation:
 
