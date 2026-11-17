@@ -1,16 +1,17 @@
 ---
-description: Run Doriax exports, shader generation, and scene benchmarks from the command line.
+description: Run Doriax exports, shader generation, IDE file generation, and scene benchmarks from the command line.
 ---
 
 # Command-Line Tools
 
-The `doriax-editor` executable doubles as a **command-line tool**. `export` and `shaders`
-are headless: they run and exit without opening a window, which is what build servers
-and CI want. `benchmark` opens a window, times a scene, prints JSON, and exits.
+The `doriax-editor` executable doubles as a **command-line tool**. `export`, `shaders` and
+`ide` are headless: they run and exit without opening a window, which is what build
+servers and CI want. `benchmark` opens a window, times a scene, prints JSON, and exits.
 
 ```bash
 doriax-editor export    --project <path> --out <dir> [options]
 doriax-editor shaders   --out <dir> --shader <spec> [options]
+doriax-editor ide       --project <path>
 doriax-editor benchmark --project <path> [--scene <scene>] [options]
 doriax-editor --project <path>
 ```
@@ -31,8 +32,8 @@ opening a window.
     same program linked as a console application: use it for scripting and CI. Both
     accept the same subcommands, and both open the editor when given no arguments.
 
-On Linux and macOS there is a single binary. `export` and `shaders` run before the window
-backend starts, so they work on headless machines. `benchmark` still opens a window.
+On Linux and macOS there is a single binary. `export`, `shaders` and `ide` run before the
+window backend starts, so they work on headless machines. `benchmark` still opens a window.
 
 !!! note "macOS: the binary is inside the app bundle"
     The editor ships as `Doriax.app`, so the command-line entry point is
@@ -204,6 +205,19 @@ doriax-editor shaders --out ./shaders --shader mesh:Uv1,Nor --backend opengles
 | `--backend <list>` | Graphic backend(s) to compile for. Repeatable or a list. Defaults to **all** supported backends. |
 | `--shader <spec>` | **Required.** Shader(s) to generate. Repeatable (see [Shader specs](#shader-specs)). |
 | `-h`, `--help` | Show usage for this subcommand. |
+
+## `ide` — write the IDE files
+
+Writes what the editor writes when it saves a project: `CMakeLists.txt`,
+`CMakeUserPresets.json`, `.vscode`, `.luarc.json` and the engine API in `.doriax`. A
+fresh clone is then ready for an IDE or for the `doriax` preset, without opening the
+editor. See [IDE Integration](ide-integration.md).
+
+```bash
+doriax-editor ide --project ./MyGame
+cmake --preset doriax -S ./MyGame
+cmake --build ./MyGame/.doriax/externalbuild
+```
 
 ## Graph commands
 

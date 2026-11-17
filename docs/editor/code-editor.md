@@ -11,8 +11,8 @@ dialogs, and a live output panel for compile and export messages.
 ![Lua API completion in the Code Editor](../assets/screenshots/editor-code.png)
 
 !!! tip "Prefer your own IDE?"
-    Scripts can open in VS Code, Visual Studio, CLion or Rider instead, with completion,
-    hover documentation and debugging there. See [IDE Integration](ide-integration.md).
+    Scripts can open in VS Code, Visual Studio or CLion instead, with completion, hover
+    documentation and debugging there. See [IDE Integration](ide-integration.md).
 
 ## Supported workflows
 

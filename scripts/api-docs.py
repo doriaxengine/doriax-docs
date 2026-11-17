@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 """Writes the class and member descriptions of the API reference as JSON.
 
-The editor build takes them into its Lua stubs and the engine headers it copies
-to projects, so hovers in an IDE show them:
+The editor build runs it, with DORIAX_DOCS_DIR pointing here, and takes the
+descriptions into its Lua stubs and the engine headers it copies to projects,
+so hovers in an IDE show them:
 
-    python3 scripts/api-docs.py ../doriax/editor/resources/docs/api-docs.json
+    python3 scripts/api-docs.py api-docs.json
 """
 import json
 import os
