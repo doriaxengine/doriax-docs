@@ -19,7 +19,7 @@ where scripts open:
 | --- | --- |
 | **Built-in Editor** | The [Code Editor](code-editor.md), the default |
 | **VS Code** | `code`, from `PATH` or the usual install folders |
-| **Visual Studio** | `devenv.exe` of the newest Visual Studio with C++ tools (Windows) |
+| **Visual Studio** | `devenv.exe` of the newest Visual Studio, not Build Tools (Windows) |
 | **CLion**, **Rider** | On Windows `clion64.exe` or `rider64.exe` on `PATH`, a JetBrains Toolbox script, or the newest install. Elsewhere the `clion` or `rider` launcher, or the app on macOS |
 | **Custom Command** | A command line you write, see below |
 
