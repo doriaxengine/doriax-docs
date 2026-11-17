@@ -113,8 +113,8 @@ scripts are built with, for Play and for the preset:
 | **Symbols** | The default. Breakpoints and call stacks work; the code stays optimized, so some variables read as optimized out and stepping can jump |
 | **Symbols, No Optimization** | Exact stepping and variables, slower scripts |
 
-`.vscode/launch.json` has three configurations of the C/C++ extension (gdb on Linux, lldb
-on macOS, the Visual Studio debugger on Windows):
+`.vscode/launch.json` has three configurations of the C/C++ extension (gdb on Linux and
+for MinGW builds, lldb on macOS, the Visual Studio debugger for MSVC builds):
 
 | Configuration | Does |
 | --- | --- |
