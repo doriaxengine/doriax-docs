@@ -216,9 +216,11 @@ scenes use, which the project built by the preset only reads. A fresh clone is t
 for an IDE or for the `doriax` preset, without opening the editor. See
 [IDE Integration](ide-integration.md).
 
-The shaders are the ones each scene stored when the editor saved it. A scene the editor
-never drew, as one written by hand, can need others: the project names them when it
-starts, and saving the scene in the editor adds them.
+The shaders of meshes held in the scene file, UI, particles, lines and the sky come from
+the scene itself. Those of models, terrains and foliage are only known once the editor
+draws them, so they come from what each scene stored when the editor last saved it. A
+scene changed outside the editor can need others: the project names them when it starts,
+and saving the scene in the editor adds them.
 
 ```bash
 doriax-editor ide --project ./MyGame
