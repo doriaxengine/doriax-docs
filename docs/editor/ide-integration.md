@@ -51,7 +51,7 @@ Lua (`[string "scripts/Player.lua"]:12:`). Only files that exist are links.
 
 | File | Used by |
 | --- | --- |
-| `.vscode/c_cpp_properties.json` | The C/C++ extension: the compile commands of the Play build, and the include paths and defines until there are any |
+| `.vscode/c_cpp_properties.json` | The C/C++ extension: the compile commands of the last build, and the include paths and defines until there are any |
 | `.vscode/settings.json` | CMake Tools and clangd, and YAML highlighting for `.scene` and `.bundle` files |
 | `.vscode/extensions.json` | The recommended extensions: C/C++, CMake Tools and Lua |
 | `.vscode/tasks.json` | **Doriax: Build Project**, the standalone build of the preset |
@@ -60,7 +60,7 @@ Lua (`[string "scripts/Player.lua"]:12:`). Only files that exist are links.
 | `.luarc.json` | lua-language-server: Lua 5.5, the `require` paths, and the definitions below |
 | `.doriax/engine-api/lua-api/doriax.lua` | Definitions of the engine's Lua API |
 | `.doriax/lua-api/scripts.lua` | The properties of each Lua script |
-| `.doriax/build/compile_commands.json` | Compile commands of the Play build |
+| `.doriax/compile_commands.json` | Compile commands of the last build, from Play or the preset |
 
 They are written when the project is saved, when a scene plays, and by **Project → Open
 in…**. Each `.vscode` file starts with this line:
@@ -81,10 +81,10 @@ the new one.
 
 ## C++ scripts
 
-The Play build exports `compile_commands.json`, which the C/C++ extension and clangd read,
-so completion and errors follow the real build. Until the first Play, and with the Visual
-Studio generator, which writes none, the include paths and defines of
-`c_cpp_properties.json` stand in.
+Each build, from Play or from the preset in an IDE, copies its `compile_commands.json` to
+`.doriax`, where the C/C++ extension and clangd read it, so completion and errors follow
+the real build. Until the first build, and with the Visual Studio generator, which writes
+none, the include paths and defines of `c_cpp_properties.json` stand in.
 
 - **VS Code**: open the project folder and install the recommended extensions.
 - **Visual Studio**: turn on **Tools → Options → CMake → General → Use CMakePresets.json**,
