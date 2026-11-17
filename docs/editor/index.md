@@ -121,6 +121,9 @@ shortcuts use **Command** instead of Ctrl.
 | **F5** | Run current scene, or resume a paused one |
 | **F6** | Pause |
 | **F7** | Stop |
+| **Ctrl+F5** | Run the project in a window of its own, with the [Lua debugger](code-editor.md#debugging-lua-scripts) |
+| **F9** | Toggle a breakpoint on the line of the cursor (Code Editor, Lua) |
+| **F5** / **F10** / **F11** / **Shift+F11** | Continue / Step Over / Step Into / Step Out, while a script is stopped at a breakpoint |
 | **F8** | Detach or re-attach the camera while running ([Detached camera](scene-view.md#detached-camera)) |
 | **F11** | Show the running scene over the whole editor window, or go back ([Full screen](scene-view.md#full-screen)) |
 | **W** / **E** / **R** | Move / Rotate / Scale gizmo |

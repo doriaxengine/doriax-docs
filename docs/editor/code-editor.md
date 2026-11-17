@@ -25,6 +25,7 @@ dialogs, and a live output panel for compile and export messages.
 | **Event menu** | Add an engine, input, component, physics, or monetization event handler to a script in one click. See [Add events](#add-events) |
 | **API completion** | Engine API suggestions generated from Lua bindings; covers classes, methods, properties, and constants. Properties that return a [copy](../manual/math-and-utilities.md#changing-one-component-of-a-property) are marked `(copy)` |
 | **Build output** | Compiler errors, warnings, and export messages stream into the Output panel |
+| **Lua debugger** | Breakpoints, stepping, the call stack and variables for a project started with **Run Project**. See [Debugging Lua scripts](#debugging-lua-scripts) |
 
 ## Creating a new script
 
@@ -155,6 +156,46 @@ of the popup reverts the change to the staged lines, as one undo step.
 The marks follow your typing and compare with what is staged, so staging a change clears
 its marks. Untracked, ignored and conflicted files have none, and neither has a file
 opened through a symbolic link.
+
+## Debugging Lua scripts
+
+**Project → Run Project** (**Ctrl+F5**) builds the project and runs it in a window of its
+own, as a separate program, with the Lua debugger attached. The editor stays free while a
+script is stopped: you read its variables here while the project waits.
+
+Click a line number of a Lua script, or press **F9** on a line, to put a breakpoint there:
+a red dot. When that line is about to run, the project stops, the editor shows the line in
+yellow, and the **Debugger** panel opens beside Output:
+
+| Control | Key | Does |
+| --- | --- | --- |
+| **Continue** | F5 | Runs until the next breakpoint |
+| **Step Over** | F10 | Runs the line, without stopping inside the functions it calls |
+| **Step Into** | F11 | Goes into the function the line calls |
+| **Step Out** | Shift+F11 | Runs until the function returns |
+| **Pause** | | Stops at the next line of Lua that runs, to find where a script is stuck |
+| **Stop** | | Ends the project |
+
+**Call Stack** lists the functions that led to the line; click one to see its line and its
+variables. **Variables** has the locals and upvalues of that function: expand a table to
+see its fields. A Lua error that no `pcall` catches also stops the project, on the line
+that raised it, with the message in the panel and the variables still there.
+
+Breakpoints follow the text as you edit, and can be added or removed while the project
+runs. Things to know:
+
+- Running the project builds its executable, so it needs the
+  [C++ build tools](../manual/cpp-build-setup.md) even when all scripts are Lua. The first
+  build takes the longest.
+- Open scenes run as they are in the editor, saved or not. Scripts are saved first.
+- It is the same build as the `doriax` preset of
+  [IDE Integration](ide-integration.md#c-scripts): C++ scripts can be debugged there, in
+  an IDE.
+- **Play** in the Scene window runs the scene inside the editor, where breakpoints do not
+  stop.
+- Lua runs slower while the debugger watches each line.
+- A breakpoint inside a coroutine stops there, but a step that leaves the coroutine
+  continues to the next breakpoint.
 
 ## Script entry point
 

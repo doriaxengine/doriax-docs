@@ -136,7 +136,8 @@ it holds across rebuilds: each Play loads a new copy of the library. On Linux th
 the editor lets one of the same user attach, unless **Debug Info** is **None**. On Windows a debugger keeps the PDB it loaded open,
 so while one does, the next Play links the scripts under a new PDB name.
 
-Lua scripts have no breakpoints yet: use `Log.print` and the links in Output.
+Lua scripts are debugged in the built-in Code Editor: see
+[Debugging Lua scripts](code-editor.md#debugging-lua-scripts).
 
 ## Lua scripts
 
