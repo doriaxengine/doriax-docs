@@ -25,7 +25,7 @@ dialogs, and a live output panel for compile and export messages.
 | **Event menu** | Add an engine, input, component, physics, or monetization event handler to a script in one click. See [Add events](#add-events) |
 | **API completion** | Engine API suggestions generated from Lua bindings; covers classes, methods, properties, and constants. Properties that return a [copy](../manual/math-and-utilities.md#changing-one-component-of-a-property) are marked `(copy)` |
 | **Build output** | Compiler errors, warnings, and export messages stream into the Output panel |
-| **Lua debugger** | Breakpoints, stepping, the call stack and variables for a project started with **Run Project**. See [Debugging Lua scripts](#debugging-lua-scripts) |
+| **Lua debugger** | Breakpoints, stepping, the call stack and variables for a scene started with **Debug**. See [Debugging Lua scripts](#debugging-lua-scripts) |
 
 ## Creating a new script
 
@@ -159,12 +159,14 @@ opened through a symbolic link.
 
 ## Debugging Lua scripts
 
-**Project → Run Project** (**Ctrl+F5**) builds the project and runs it in a window of its
-own, as a separate program, with the Lua debugger attached. The editor stays free while a
-script is stopped: you read its variables here while the project waits.
+The Scene window has two ways to run a scene, side by side. **Play** (**F5**) runs it
+inside the editor. **Debug** (**Ctrl+F5**, or **Scene → Debug Current Scene**) builds the
+project and runs the scene in a window of its own, as a separate program, with the Lua
+debugger attached. The editor stays free while a script is stopped: you read its variables
+here while the scene waits.
 
 Click a line number of a Lua script, or press **F9** on a line, to put a breakpoint there:
-a red dot. When that line is about to run, the project stops, the editor shows the line in
+a red dot. When that line is about to run, the scene stops, the editor shows the line in
 yellow, and the **Debugger** panel opens beside Output:
 
 | Control | Key | Does |
@@ -173,26 +175,29 @@ yellow, and the **Debugger** panel opens beside Output:
 | **Step Over** | F10 | Runs the line, without stopping inside the functions it calls |
 | **Step Into** | F11 | Goes into the function the line calls |
 | **Step Out** | Shift+F11 | Runs until the function returns |
-| **Pause** | | Stops at the next line of Lua that runs, to find where a script is stuck |
-| **Stop** | | Ends the project |
+| **Pause** | F6 | Stops at the next line of Lua that runs, to find where a script is stuck |
+| **Stop** | F7 | Ends the scene |
+
+The Play, Pause and Stop buttons of the Scene window and of the footer, and their keys,
+act on the scene that is being debugged too: Play continues from a breakpoint.
 
 **Call Stack** lists the functions that led to the line; click one to see its line and its
 variables. **Variables** has the locals and upvalues of that function: expand a table to
-see its fields. A Lua error that no `pcall` catches also stops the project, on the line
+see its fields. A Lua error that no `pcall` catches also stops the scene, on the line
 that raised it, with the message in the panel and the variables still there.
 
-Breakpoints follow the text as you edit, and can be added or removed while the project
+Breakpoints follow the text as you edit, and can be added or removed while the scene
 runs. Things to know:
 
-- Running the project builds its executable, so it needs the
+- Debug builds the project's executable, so it needs the
   [C++ build tools](../manual/cpp-build-setup.md) even when all scripts are Lua. The first
   build takes the longest.
 - Open scenes run as they are in the editor, saved or not. Scripts are saved first.
 - It is the same build as the `doriax` preset of
   [IDE Integration](ide-integration.md#c-scripts): C++ scripts can be debugged there, in
   an IDE.
-- **Play** in the Scene window runs the scene inside the editor, where breakpoints do not
-  stop.
+- Breakpoints do not stop a scene started with **Play**. While one plays, the dots are
+  drawn hollow and Output says so.
 - Lua runs slower while the debugger watches each line.
 - A breakpoint inside a coroutine stops there, but a step that leaves the coroutine
   continues to the next breakpoint.

@@ -36,7 +36,7 @@ The editor window is divided into a set of resizable panels:
 | **Edit** | Undo, Redo, Duplicate, Delete, and [Editor Settings](editor-settings.md) |
 | **View** | Show or hide each panel, Detachable Windows, Reset Layout |
 | **Project** | [Project Settings](project-settings.md), Manage Scenes, Bundles, Empty Project Trash |
-| **Scene** | New Scene (3D / 2D / UI), Run, Pause, Resume, Stop, [Detach Camera](scene-view.md#detached-camera), [Full Screen](scene-view.md#full-screen), Remove Scene from Project |
+| **Scene** | New Scene (3D / 2D / UI), Run, [Debug](code-editor.md#debugging-lua-scripts), Pause, Resume, Stop, [Detach Camera](scene-view.md#detached-camera), [Full Screen](scene-view.md#full-screen), Remove Scene from Project |
 | **Help** | Documentation (**F1**), Keyboard Shortcuts, Report an Issue, About Doriax |
 
 ![The View menu toggles each panel](../assets/screenshots/menu-view.png)
@@ -121,9 +121,9 @@ shortcuts use **Command** instead of Ctrl.
 | **F5** | Run current scene, or resume a paused one |
 | **F6** | Pause |
 | **F7** | Stop |
-| **Ctrl+F5** | Run the project in a window of its own, with the [Lua debugger](code-editor.md#debugging-lua-scripts) |
+| **Ctrl+F5** | Debug current scene: run it in a window of its own, with the [Lua debugger](code-editor.md#debugging-lua-scripts). F5, F6 and F7 then continue, pause and stop it |
 | **F9** | Toggle a breakpoint on the line of the cursor (Code Editor, Lua) |
-| **F5** / **F10** / **F11** / **Shift+F11** | Continue / Step Over / Step Into / Step Out, while a script is stopped at a breakpoint |
+| **F10** / **F11** / **Shift+F11** | Step Over / Step Into / Step Out, while a script is stopped at a breakpoint |
 | **F8** | Detach or re-attach the camera while running ([Detached camera](scene-view.md#detached-camera)) |
 | **F11** | Show the running scene over the whole editor window, or go back ([Full screen](scene-view.md#full-screen)) |
 | **W** / **E** / **R** | Move / Rotate / Scale gizmo |
