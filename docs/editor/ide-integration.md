@@ -55,7 +55,7 @@ Lua (`[string "scripts/Player.lua"]:12:`). Only files that exist are links.
 | `.vscode/c_cpp_properties.json` | The C/C++ extension: the compile commands of the last build, and the include paths and defines until there are any |
 | `.vscode/settings.json` | CMake Tools and clangd, and YAML highlighting for `.scene` and `.bundle` files |
 | `.vscode/extensions.json` | The recommended extensions: C/C++, CMake Tools and Lua |
-| `.vscode/tasks.json` | **Doriax: Build Project**, the standalone build of the preset |
+| `.vscode/tasks.json` | **Doriax: Build Project**: runs [`doriax-editor ide`](command-line.md#ide-write-the-ide-files), then the standalone build of the preset |
 | `.vscode/launch.json` | The [debug configurations](#debugging-c-scripts) |
 | `CMakeUserPresets.json` | The `doriax` preset of Visual Studio, CLion and CMake Tools: the standalone build with the editor's compiler and build type |
 | `.luarc.json` | lua-language-server: Lua 5.5, the `require` paths, and the definitions below |
@@ -105,6 +105,11 @@ Play builds the scripts as a library the editor loads, in `.doriax/build`. The p
 builds the project as an executable of its own, in `.doriax/externalbuild`, linking the
 editor's engine library. Its build type is the editor's, `Release` for a release editor,
 and should stay so: scripts built as `Debug` do not match the engine library.
+
+That executable reads compiled shaders and cannot compile them. The build task of VS Code
+prepares them each time. In Visual Studio and CLion, **Play** or **Debug** the scene in
+the editor once, or run `doriax-editor ide`, after a change that needs a new shader: a
+project that stops at start with a missing shader is asking for this.
 
 ## Debugging C++ scripts
 

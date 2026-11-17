@@ -209,7 +209,8 @@ doriax-editor shaders --out ./shaders --shader mesh:Uv1,Nor --backend opengles
 ## `ide` — write the IDE files
 
 Writes what the editor writes when it saves a project: `CMakeLists.txt`,
-`CMakeUserPresets.json`, `.vscode`, `.luarc.json` and the engine API in `.doriax`. A
+`CMakeUserPresets.json`, `.vscode`, `.luarc.json` and the engine API in `.doriax`. It also
+compiles the shaders the scenes use, which the project built by the preset only reads. A
 fresh clone is then ready for an IDE or for the `doriax` preset, without opening the
 editor. See [IDE Integration](ide-integration.md).
 
