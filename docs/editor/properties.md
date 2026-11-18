@@ -453,8 +453,8 @@ fixed resolution, default shaders, and post-processing live here — see
 
 ![Scene settings with SSAO and SSR enabled](../assets/screenshots/properties-scene-settings.png)
 
-**Type** turns a 2D scene into a 3D one, or back — see
-[Scene types](project-workflow.md#scene-types).
+The button beside the scene name shows its type and turns a 2D scene into a 3D one, or
+back — see [Scene types](project-workflow.md#scene-types).
 
 Two scene-wide performance switches sit with the lighting block:
 

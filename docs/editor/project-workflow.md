@@ -86,11 +86,11 @@ defaults and authoring tools. A 3D scene can contain UI entities, and a UI scene
 reference 2D or 3D child scenes.
 
 To turn a 2D scene into a 3D one, or back, select the scene with no entity selected and
-choose its **Type** at the top of Properties. Entities and components stay as they are; the
-editor changes its viewport, tools and the scene's default camera, and the new viewport
-shows the same area. Cameras are neither added nor removed: a 3D scene without a camera
-plays from the viewport, like any 3D scene, and a 2D one from the default 2D camera. Undo
-turns the scene back. UI scenes keep their type.
+click the type button beside its name in Properties. Entities and components stay as they
+are; the editor changes its viewport, tools and the scene's default camera, and the new
+viewport shows the same area. Cameras are neither added nor removed: a 3D scene without a
+camera plays from the viewport, like any 3D scene, and a 2D one from the default 2D camera.
+Undo turns the scene back. UI scenes keep their type.
 
 ## Child scenes
 
