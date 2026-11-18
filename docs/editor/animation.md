@@ -207,9 +207,10 @@ name authored in the GLTF; you can rename the entity in the Structure panel. Run
 
 Scene files leave out the keys of imported clips: the model loads them from its file, in
 the editor and in exported games. A track whose keys you edit, with Snapshot or by moving
-a key, is saved with its keys and no longer follows the file. A scene saved by an older
-editor keeps the keys it stored until you choose the model file again in the Model
-component.
+a key, is saved with its keys and no longer follows the file. Clips are found in the file
+by name: when one is renamed or removed there, its tracks stay without keys and Output
+shows a warning until you choose the model file again in the Model component. A scene
+saved by an older editor keeps the keys it stored until you choose the model file again.
 
 ![A character's skeleton drawn in the viewport, with its bones in the Structure panel](../assets/screenshots/editor-bones.png)
 
