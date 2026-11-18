@@ -146,8 +146,9 @@ compile after two fixes, and tells you why.
 - Each change an agent makes is logged in the Output panel as `MCP: <what it did>`, and a
   failed call as a warning or an error.
 - While a project is loading, calls wait. While a scene is saving, calls that change the
-  project wait as well, and read-only ones still run. A call still waiting after two
-  minutes fails, and the agent is told to try again.
+  project wait as well, and read-only ones still run. After a scene type change, every
+  call waits for the next frame, when the scene has its new type. A call still waiting
+  after two minutes fails, and the agent is told to try again.
 - A call the client gives up on before it starts, for example when you cancel it, is
   dropped. One already running is asked to stop early where the action supports it, as an
   export or an asset download does.
