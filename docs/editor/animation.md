@@ -212,10 +212,12 @@ saved with its keys and no longer follows the file, even when you clear them. Th
 finds each clip in the file by name and each track by the name of the node it animates
 and the property; a clip or node whose name repeats in the file keeps its keys in the
 scene instead. When a track's clip, node or property is no longer in the file, Output
-shows a warning each time the scene opens and the track waits without keys until the file
-has it again, or until you choose the model file again in the Model component. A model
-inside a bundle keeps its keys in the bundle file. A scene saved by an older editor keeps
-the keys it stored until you choose the model file again.
+shows a warning each time the scene opens and the track waits until the file has it again,
+or until you choose the model file again in the Model component; keys you set on it
+meanwhile are kept, and the file fills only what is still missing. Deleting the model file
+in the editor puts the keys back in the scene. A model inside a bundle keeps its keys in
+the bundle file. A scene saved by an older editor keeps the keys it stored until you
+choose the model file again.
 
 ![A character's skeleton drawn in the viewport, with its bones in the Structure panel](../assets/screenshots/editor-bones.png)
 
