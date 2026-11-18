@@ -170,6 +170,12 @@ body.setType(BodyType::DYNAMIC);
 body.setAllowedDOFs2DPlane();
 ```
 
+`setAllowedDOFs2DPlane()` keeps the body on the XY plane, as 2D gameplay in a 3D scene needs.
+In the editor, the Body3D component of a dynamic body has an **Axis Lock** section: tick
+**Position Z** and **Rotation X** and **Y** for the same result. Physics does not move a locked
+axis, and one axis always stays free. From code, see
+[Body3D — setAllowedDOFs](../reference/classes/body3d.md#setalloweddofsall-setalloweddofs2dplane-setalloweddofs).
+
 ### 2D sensors
 
 In 2D the flag lives on each **shape**, so one body can mix solid and trigger shapes (a
