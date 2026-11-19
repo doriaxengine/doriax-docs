@@ -591,9 +591,7 @@ scenes drawn as layers.
     on, lights and emissive materials go above 1, and a threshold of about 1 makes only
     those glow.
 
-An export ships the bloom shaders when a saved scene has bloom on. A game that only turns
-it on from a script needs `bloomdown` and `bloomup` in the
-[export shader list](../editor/export.md).
+An export always ships the bloom shaders, so a script can turn bloom on at any time.
 
 ## HDR and tone mapping
 
@@ -630,9 +628,8 @@ the image as before.
 An emissive material goes above white when its Emissive Factor does: the colour picker
 takes values above 1, and glTF models bring theirs from `KHR_materials_emissive_strength`.
 
-An export ships the tone mapping shader when a saved scene uses HDR, an exposure other
-than 1 or a curve. A game that only turns them on from a script needs `tonemap` in the
-[export shader list](../editor/export.md).
+An export always ships the tone mapping shader, so a script can change HDR, exposure or the
+curve at any time.
 
 !!! note "Devices and scope"
     HDR needs float render targets that blend and filter. The desktop backends have
