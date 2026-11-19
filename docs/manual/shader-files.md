@@ -419,9 +419,10 @@ fragment hooks as `varyings.name`. A file takes at most four, packed by the buil
 
 ## The engine's shader files
 
-The engine ships five mesh shader files under `shaders/`. The Shader row lists them for
-a material, and its copy button puts one into the project to change it. Each calls a
-function of `effects/`, which a file of your own can call too, to combine them:
+The engine ships shader files under `shaders/`: five for meshes and seven for
+[post-process passes](#post-process-files). The Shader row lists the ones of its type, and
+its copy button puts one into the project to change it. Each calls a function of
+`effects/`, which a file of your own can call too, to combine them:
 
 | File | Parameters | What it does |
 | --- | --- | --- |
@@ -500,6 +501,58 @@ scene:setShaderParameter("Clip", "height", player:getWorldPosition().y + 2.5)
 -- grass bends away from the player
 scene:setShaderParameter("Interaction", "position", player:getWorldPosition())
 scene:setShaderParameter("Interaction", "radius", 1.5)
+```
+
+### Post-process files
+
+These go in a scene's [post-process passes](../editor/custom-shaders.md#post-process-passes),
+one per pass, and several can run one after another:
+
+| File | Parameters | What it does |
+| --- | --- | --- |
+| `shaders/vignette.glsl` | `intensity` (0.4), `radius` (0.5), `softness` (0.5), `roundness` (0), `tint` (black) | Darkens or tints the corners; `vignette(uv, color, intensity, radius, softness, roundness, tint)` |
+| `shaders/film_grain.glsl` | `amount` (0.08), `size` (1.5), `speed` (24), `highlights` (0.5) | Moving grain, fainter in the bright parts; `filmGrain(pixel, color, amount, size, speed, highlights)` |
+| `shaders/scanlines.glsl` | `lines` (240), `intensity` (0.35), `scroll` (0) | Dark lines across the image; `scanlines(uv, color, lines, intensity, scroll)` |
+| `shaders/chromatic_aberration.glsl` | `strength` (0.003), `radial` (1) | Splits red and blue apart toward the edges; `chromaticAberration(uv, color, strength, radial)` |
+| `shaders/crt.glsl` | `curvature` (0.15), `scanlines` (0.3), `lines` (240), `mask` (0.25), `bleed` (0.002), `vignette` (0.3), `brightness` (1.15) | A curved tube with scanlines, a phosphor mask and dark corners; `crt(uv, pixel, curvature, scanlines, lines, mask, bleed, vignette, brightness)` |
+| `shaders/vhs.glsl` | `distortion` (0.3), `colorBleed` (0.004), `noise` (0.15), `tracking` (0.2), `dropouts` (0.3) | A worn tape: wobbling lines, smeared color, snow, a rolling band of torn lines and white dropouts; `vhs(uv, distortion, colorBleed, noise, tracking, dropouts)` |
+| `shaders/depth_of_field.glsl` | `focusDistance` (10), `focusRange` (5), `falloff` (10), `blur` (6), `quality` (16) | Blurs what lies nearer or farther than the focus distance; `depthOfField(uv, color, focusDistance, focusRange, falloff, blur, quality)` |
+
+Sizes in pixels, like the depth of field's `blur`, are for a view 1080 pixels high and
+scale with the view, so the look holds at any window size and with a fixed game
+resolution. Grain, scanline scroll and the VHS tape move with `Engine.time`, which stands
+still in the editor outside Play.
+
+The depth of field keeps everything within `focusRange` of `focusDistance` sharp, and the
+blur grows to `blur` over the next `falloff` units. It reads the scene depth, so it is
+for 3D scenes: the sky counts as the far plane and blurs with the background, and in a
+2D scene, where nothing writes the depth, the whole image blurs evenly. `quality` is the
+number of samples per pixel; 16 covers a radius of about 8, wider blurs need more.
+
+```lua
+-- keep the player in focus
+local distance = (player:getWorldPosition() - camera:getWorldPosition()):length()
+scene:setPostProcessUniform(0, "focusDistance", distance)
+```
+
+`effects/scene_blur.glsl` adds `sceneBlur(uv, radius, samples)`, the scene averaged over a
+disc, which the graphs know as the Scene Blur node; it works in a mesh file too, for a
+frosted glass. In [post-process graphs](../editor/shader-graphs.md), Vignette, Film Grain and
+Scanlines are nodes of the Effect category that take a color and return it, so one graph
+can chain them in a single pass. Each pass reads and writes the whole image, so two effects in one file cost
+one pass instead of two:
+
+```glsl
+// A CRT screen with film grain, in one pass
+#pragma shader postprocess
+#pragma stage fragment
+#include "effects/crt.glsl"
+#include "effects/film_grain.glsl"
+
+vec4 getColor(FragmentContext context, vec4 color){
+    vec4 tube = crt(context.uv, context.pixel, 0.15, 0.3, 240.0, 0.25, 0.002, 0.3, 1.15);
+    return filmGrain(context.pixel, tube, 0.08, 1.5, 24.0, 0.5);
+}
 ```
 
 ## In the editor

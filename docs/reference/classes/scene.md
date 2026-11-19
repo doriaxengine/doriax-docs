@@ -61,6 +61,11 @@ A `Scene` is the root container for all objects, systems, and resources in a pro
 | float | [ssrIntensity](#ssrintensity) | `1.0` | C++ \| Lua |
 | float | [ssrBlur](#ssrblur) | `0.0` | C++ \| Lua |
 | int | [ssrDebugMode](#ssrdebugmode) | `0` | C++ \| Lua |
+| bool | [bloomEnabled](#bloomenabled) | `false` | C++ \| Lua |
+| float | [bloomThreshold](#bloomthreshold) | `0.8` | C++ \| Lua |
+| float | [bloomKnee](#bloomknee) | `0.5` | C++ \| Lua |
+| float | [bloomIntensity](#bloomintensity) | `1.0` | C++ \| Lua |
+| float | [bloomRadius](#bloomradius) | `0.7` | C++ \| Lua |
 | bool | [fixedResolutionEnabled](#fixedresolutionenabled) | `false` | C++ \| Lua |
 | unsigned int | [fixedResolutionWidth](#fixedresolutionwidth-fixedresolutionheight) | `640` | C++ \| Lua |
 | unsigned int | [fixedResolutionHeight](#fixedresolutionwidth-fixedresolutionheight) | `360` | C++ \| Lua |
@@ -584,6 +589,51 @@ Glossy blur amount in `[0..1]`. `0` keeps mirror-sharp reflections; higher value
 * *Getter:* `int getSSRDebugMode() const`
 
 Debug visualization of the SSR G-buffer, rendered full-screen: `0` off, `1` reflection buffer, `2` normal, `3` roughness, `4` metallic, `5` albedo, `6` IBL specular. Not serialized.
+
+---
+
+### bloomEnabled
+
+* *Setter:* `void setBloomEnabled(bool bloomEnabled)`
+* *Getter:* `bool isBloomEnabled() const`
+
+Adds a glow around the bright parts of the image, on the main camera, before the post-process passes. See [Bloom](../../manual/rendering-pipeline.md#bloom). Default `false`.
+
+---
+
+### bloomThreshold
+
+* *Setter:* `void setBloomThreshold(float threshold)`
+* *Getter:* `float getBloomThreshold() const`
+
+Linear brightness of the brightest colour channel where the glow starts; `1` is white. Default `0.8`.
+
+---
+
+### bloomKnee
+
+* *Setter:* `void setBloomKnee(float knee)`
+* *Getter:* `float getBloomKnee() const`
+
+Soft start below the threshold, as a share of it, in `[0..1]`. `0` cuts hard at the threshold. Default `0.5`.
+
+---
+
+### bloomIntensity
+
+* *Setter:* `void setBloomIntensity(float intensity)`
+* *Getter:* `float getBloomIntensity() const`
+
+Strength of the glow added over the image. Default `1.0`.
+
+---
+
+### bloomRadius
+
+* *Setter:* `void setBloomRadius(float radius)`
+* *Getter:* `float getBloomRadius() const`
+
+How far the glow spreads, in `[0..1]`: `0` keeps it close to the bright parts, `1` spreads it wide. Default `0.7`.
 
 ---
 

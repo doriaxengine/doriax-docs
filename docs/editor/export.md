@@ -133,7 +133,7 @@ Each entry shows where it came from:
 | Trash | *(Excluded)*, greyed out | Removed by hand, kept in the list so it can be restored |
 
 Use **Add** if your game enables a feature only at runtime from scripts (say, turning on
-SSR) so its shaders ship too. **Delete** on a collected shader does not remove the row —
+SSR or bloom) so its shaders ship too. **Delete** on a collected shader does not remove the row —
 it marks it *(Excluded)* and greys it out, so you can always see what a build is leaving
 out and why the list is shorter than the scenes suggest. Selecting an excluded entry
 turns the button into **Restore**, and **Reset Shader Overrides** clears every manual

@@ -34,7 +34,7 @@ window:
 | --- | --- |
 | Label | The shader's path, *(built-in)* for one of the engine's, *(scene default)* when the slot inherits the scene's, or **None** |
 | **New** | Offers **Shader code** or **Shader graph**, of the slot's type, written under `shaders/` and named after the entity. It is assigned and opened in the [Code Editor](code-editor.md) or the [graph window](shader-graphs.md). Available while the slot is empty |
-| **Engine shaders** | For materials: the engine's shader files, the wind, the push, the see-through opening, the height cut and the dissolve, described in [Shader Files](../manual/shader-files.md#the-engines-shader-files) |
+| **Engine shaders** | The engine's shader files of the slot's type: for materials the wind, the push, the see-through opening, the height cut and the dissolve; for post-process passes the vignette, film grain, scanlines, chromatic aberration, CRT, VHS and depth of field. See [Shader Files](../manual/shader-files.md#the-engines-shader-files) |
 | **Pick** | Chooses a `.glsl` or `.shader` of the project |
 | **Copy** | Copies the engine shader the slot uses into the project, to change it, and uses the copy |
 | **Open** | Opens the file: code in the Code Editor, a graph in the graph window |
@@ -182,13 +182,19 @@ section of its properties.
 | Checkbox | Before the shader name in the **Shader** row. Enables or disables the pass without removing it |
 | **Shader** row | The controls of any other Shader row |
 
+The engine ships seven passes ready to use, listed by the **Engine shaders** button of the
+Shader row: vignette, film grain, scanlines, chromatic aberration, CRT, VHS and depth of
+field. [Post-process files](../manual/shader-files.md#post-process-files) describes their
+values.
+
 Every change is undoable, and the chain is saved with the scene. An agent connected
 through the [MCP server](mcp-server.md), or the AI Chat, edits the same chain:
 `list_post_process_passes` reads it and `set_post_process_pass` adds, removes, moves,
 enables or repoints a pass, and sets its textures.
 
 The chain runs on the scene's **active camera**, after the opaque, transparent, UI and SSR
-passes, and before the fixed-resolution upscale. Secondary cameras (minimaps, mirrors,
+passes and [bloom](../manual/rendering-pipeline.md#bloom), and before the fixed-resolution
+upscale. Secondary cameras (minimaps, mirrors,
 portals) do not run it; if the active camera renders to a texture, the chain writes into
 that texture. A scene drawn as a layer skips its chain, because a fullscreen pass would
 overwrite the scene below it.

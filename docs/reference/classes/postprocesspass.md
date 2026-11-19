@@ -47,7 +47,8 @@ for the chain in the editor.
 ### shader
 
 Project-relative path of the `postprocess` [shader file](../../manual/shader-files.md#post-process)
-(`.glsl`) or [shader graph](../../editor/shader-graphs.md) (`.shader`), such as
+(`.glsl`) or [shader graph](../../editor/shader-graphs.md) (`.shader`), or one of the
+[engine's](../../manual/shader-files.md#post-process-files), such as
 `"shaders/vignette.glsl"`. Its `getColor` hook runs over the finished image and receives
 the previous pass at each pixel. Empty runs the built-in passthrough, which is also what a
 shader that fails to build falls back to.
@@ -82,8 +83,8 @@ keeps the compiled chain).
     ```cpp
     PostProcessPass vignette;
     vignette.shader = "shaders/vignette.glsl";
-    vignette.setUniform("strength", 0.6f);
-    vignette.setUniform("color", Vector3(0.0f, 0.0f, 0.1f));
+    vignette.setUniform("intensity", 0.6f);
+    vignette.setUniform("tint", Vector3(0.0f, 0.0f, 0.1f));
 
     scene.setPostProcessPasses({vignette});
     ```
@@ -93,8 +94,8 @@ keeps the compiled chain).
     ```lua
     local vignette = PostProcessPass()
     vignette.shader = "shaders/vignette.glsl"
-    vignette:setUniform("strength", 0.6)
-    vignette:setUniform("color", Vector3(0, 0, 0.1))
+    vignette:setUniform("intensity", 0.6)
+    vignette:setUniform("tint", Vector3(0, 0, 0.1))
 
     scene.postProcessPasses = {vignette}
     ```

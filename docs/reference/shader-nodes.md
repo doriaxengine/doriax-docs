@@ -388,6 +388,22 @@ SSAO, 1 without it.
 | --- | --- |
 | Occlusion (`occlusion`) | float |
 
+### Scene Blur
+
+`scene/blur` · fragment stage · mesh, postprocess
+
+What is drawn behind, averaged over a disc of Radius pixels of a 1080-line view, linear. More Samples is smoother and slower.
+
+| Input | Type | Default |
+| --- | --- | --- |
+| UV (`uv`) | vec2 | screenUV |
+| Radius (`radius`) | float | 4 |
+| Samples (`samples`) | float | 16 |
+
+| Output | Type |
+| --- | --- |
+| Color (`color`) | vec4 |
+
 ## Parameter
 
 ### Parameter
@@ -1988,6 +2004,60 @@ A fixed pattern to compare a fading value with, 0 to 1.
 | Output | Type |
 | --- | --- |
 | Out (`out`) | float |
+
+### Vignette
+
+`effect/vignette` · fragment stage · postprocess
+
+Darkens or tints the image toward its corners.
+
+| Input | Type | Default |
+| --- | --- | --- |
+| Color (`in`) | color | %color |
+| Intensity (`intensity`) | float | 0.4000000059604645 |
+| Radius (`radius`) | float | 0.5 |
+| Softness (`softness`) | float | 0.5 |
+| Roundness (`roundness`) | float | 0 |
+| Tint (`tint`) | color | 0, 0, 0, 1 |
+
+| Output | Type |
+| --- | --- |
+| Color (`color`) | vec4 |
+
+### Film Grain
+
+`effect/filmGrain` · fragment stage · postprocess
+
+Moving grain, fainter in the bright parts.
+
+| Input | Type | Default |
+| --- | --- | --- |
+| Color (`in`) | color | %color |
+| Amount (`amount`) | float | 0.07999999821186066 |
+| Size (`size`) | float | 1.5 |
+| Speed (`speed`) | float | 24 |
+| Highlights (`highlights`) | float | 0.5 |
+
+| Output | Type |
+| --- | --- |
+| Color (`color`) | vec4 |
+
+### Scanlines
+
+`effect/scanlines` · fragment stage · postprocess
+
+Dark lines across the image, as on an old screen.
+
+| Input | Type | Default |
+| --- | --- | --- |
+| Color (`in`) | color | %color |
+| Lines (`lines`) | float | 240 |
+| Intensity (`intensity`) | float | 0.3499999940395355 |
+| Scroll (`scroll`) | float | 0 |
+
+| Output | Type |
+| --- | --- |
+| Color (`color`) | vec4 |
 
 ### Intersection Foam
 

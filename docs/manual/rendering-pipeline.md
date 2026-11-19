@@ -43,8 +43,8 @@ Each frame, the engine runs the following phases in order:
 8. **UI pass** — UI entities are rendered in screen-space canvas coordinates, on top of
    the 3D or 2D scene.
 9. **Post-processing** — Screen-space effects run over the finished image: SSR composites
-   its reflections, then the scene's [post-process chain](#post-processing) applies each
-   enabled user pass in order. ([Fog](#fog) is not a post pass — it is computed in the
+   its reflections, [bloom](#bloom) adds its glow, then the scene's
+   [post-process chain](#post-processing) applies each enabled user pass in order. ([Fog](#fog) is not a post pass — it is computed in the
    mesh shader.)
 
 Cameras that render to a texture (minimaps, [mirrors](#mirrors-and-planar-reflections),
@@ -547,6 +547,51 @@ colour come from the material factors and the metallic-roughness / base-colour t
     small seam — raise **Max Steps** or lower **Thickness** to tighten it. SSR runs for the
     main camera only and is skipped when there is no framebuffer destination.
 
+## Bloom
+
+Bloom adds a soft glow around the bright parts of the image, such as lamps, emissive
+materials and sunlit white walls. It is a scene setting, under **Bloom** in the scene's
+Properties:
+
+| Parameter | Effect |
+| --- | --- |
+| **Threshold** | Brightness where the glow starts, in linear colour: `1` is white. Lower it to make more of the image glow |
+| **Knee** | Softens the start below the threshold, as a share of it. `0` cuts hard at the threshold |
+| **Intensity** | Strength of the glow |
+| **Radius** | How far the glow spreads: `0` keeps it close to the bright parts, `1` spreads it wide |
+
+```cpp
+scene.setBloomEnabled(true);
+scene.setBloomThreshold(0.8f);
+scene.setBloomKnee(0.5f);
+scene.setBloomIntensity(1.0f);
+scene.setBloomRadius(0.7f);
+```
+
+```lua
+scene.bloomEnabled = true
+scene.bloomThreshold = 0.8
+scene.bloomIntensity = 1.0
+```
+
+The engine keeps what passes the threshold, blurs it down a chain of half-size images and
+back up, and adds the result over the scene. The chain goes down until the smallest image
+is about 8 pixels high, so the glow covers the same share of the view at any window size,
+and with a fixed game resolution it runs at that resolution. Bloom runs on the scene's
+active camera after SSR and before the [post-process passes](#post-processing), which see
+the glow. Like them, it renders the scene offscreen, and it skips secondary cameras and
+scenes drawn as layers.
+
+!!! note "Brightness range"
+    The scene colour is stored with 8 bits per channel, so nothing on screen is brighter
+    than white: an emissive material at full strength and a white wall in the sun both
+    reach 1. With a threshold near 1 only the brightest pixels glow; lower it, or raise
+    **Intensity**, for a stronger glow.
+
+An export ships the bloom shaders when a saved scene has bloom on. A game that only turns
+it on from a script needs `bloomdown` and `bloomup` in the
+[export shader list](../editor/export.md).
+
 ## Post-processing
 
 A scene can run an ordered chain of user **fullscreen passes** over its finished image.
@@ -557,7 +602,7 @@ the editor's **Post-processing** scene settings; see
 ![A post-process pass drawing outlines and posterized colour over a 3D scene](../assets/screenshots/editor-postprocess.png)
 
 The chain runs on the scene's active camera, after the opaque, transparent, UI, and SSR
-passes and before the fixed-resolution upscale. Enabling it redirects the colour
+passes and [bloom](#bloom), and before the fixed-resolution upscale. Enabling it redirects the colour
 pass into an offscreen buffer, exactly like SSR does, and the passes ping-pong between two
 buffers so a chain of any length costs two render targets. The last pass writes the real
 destination — the camera framebuffer, the fixed-resolution target, or the screen.
