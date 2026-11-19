@@ -419,7 +419,7 @@ fragment hooks as `varyings.name`. A file takes at most four, packed by the buil
 
 ## The engine's shader files
 
-The engine ships shader files under `shaders/`: five for meshes and seven for
+The engine ships shader files under `shaders/`: five for meshes and eleven for
 [post-process passes](#post-process-files). The Shader row lists the ones of its type, and
 its copy button puts one into the project to change it. Each calls a function of
 `effects/`, which a file of your own can call too, to combine them:
@@ -517,6 +517,10 @@ one per pass, and several can run one after another:
 | `shaders/crt.glsl` | `curvature` (0.15), `scanlines` (0.3), `lines` (240), `mask` (0.25), `bleed` (0.002), `vignette` (0.3), `brightness` (1.15) | A curved tube with scanlines, a phosphor mask and dark corners; `crt(uv, pixel, curvature, scanlines, lines, mask, bleed, vignette, brightness)` |
 | `shaders/vhs.glsl` | `distortion` (0.3), `colorBleed` (0.004), `noise` (0.15), `tracking` (0.2), `dropouts` (0.3) | A worn tape: wobbling lines, smeared color, snow, a rolling band of torn lines and white dropouts; `vhs(uv, distortion, colorBleed, noise, tracking, dropouts)` |
 | `shaders/depth_of_field.glsl` | `focusDistance` (10), `focusRange` (5), `falloff` (10), `blur` (6), `quality` (16) | Blurs what lies nearer or farther than the focus distance; `depthOfField(uv, color, focusDistance, focusRange, falloff, blur, quality)` |
+| `shaders/outline.glsl` | `lineColor` (black), `thickness` (2), `depthSensitivity` (0.5), `colorSensitivity` (0), `fadeDistance` (0) | Lines along silhouettes and creases, and along color changes if asked; `outline(uv, color, lineColor, thickness, depthSensitivity, colorSensitivity, fadeDistance)` |
+| `shaders/pixelate.glsl` | `pixelSize` (4), `colorLevels` (0), `dither` (0) | Large square pixels, with fewer shades and ordered dithering if asked; `pixelate(uv, color, pixelSize, colorLevels, dither)` |
+| `shaders/color_adjustments.glsl` | `brightness` (1), `contrast` (1), `saturation` (1), `hueShift` (0), `tint` (white) | Brightness, contrast, saturation, hue and tint, worked on the colors as the screen shows them; `colorAdjustments(color, brightness, contrast, saturation, hueShift, tint)` |
+| `shaders/sharpen.glsl` | `strength` (0.5) | Brings out fine detail, less where the contrast is already high, so edges do not get halos; `sharpen(uv, color, strength)` |
 
 Sizes in pixels, like the depth of field's `blur`, are for a view 1080 pixels high and
 scale with the view, so the look holds at any window size and with a fixed game
@@ -534,6 +538,17 @@ number of samples per pixel; 16 covers a radius of about 8, wider blurs need mor
 local distance = (player:getWorldPosition() - camera:getWorldPosition()):length()
 scene:setPostProcessUniform(0, "focusDistance", distance)
 ```
+
+The outline draws a line where the depth jumps, at a silhouette, and where the surface
+turns, at a crease. A higher `depthSensitivity` catches smaller jumps and gentler turns: at
+1 even the facets of a low-poly sphere show. It works from the scene depth, so it outlines
+opaque 3D meshes and leaves out transparent ones. In 2D, where nothing writes the depth,
+`colorSensitivity` draws the lines where the brightness changes instead. Above 0 it does
+the same in 3D, which also outlines texture detail. `fadeDistance` removes the lines from
+far away, where they would crowd together.
+
+With `colorLevels` at 2 or more, the pixelate pass keeps that many shades of each color
+channel, and `dither` mixes neighboring shades in a fixed pattern instead of banding.
 
 `effects/scene_blur.glsl` adds `sceneBlur(uv, radius, samples)`, the scene averaged over a
 disc, which the graphs know as the Scene Blur node; it works in a mesh file too, for a

@@ -182,9 +182,9 @@ section of its properties.
 | Checkbox | Before the shader name in the **Shader** row. Enables or disables the pass without removing it |
 | **Shader** row | The controls of any other Shader row |
 
-The engine ships seven passes ready to use, listed by the **Engine shaders** button of the
-Shader row: vignette, film grain, scanlines, chromatic aberration, CRT, VHS and depth of
-field. [Post-process files](../manual/shader-files.md#post-process-files) describes their
+The engine ships eleven passes ready to use, listed by the **Engine shaders** button of
+the Shader row: vignette, film grain, scanlines, chromatic aberration, CRT, VHS, depth of
+field, outline, pixelate, color adjustments and sharpen. [Post-process files](../manual/shader-files.md#post-process-files) describes their
 values.
 
 Every change is undoable, and the chain is saved with the scene. An agent connected
