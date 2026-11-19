@@ -193,8 +193,9 @@ through the [MCP server](mcp-server.md), or the AI Chat, edits the same chain:
 enables or repoints a pass, and sets its textures.
 
 The chain runs on the scene's **active camera**, after the opaque, transparent, UI and SSR
-passes and [bloom](../manual/rendering-pipeline.md#bloom), and before the fixed-resolution
-upscale. Secondary cameras (minimaps, mirrors,
+passes, [bloom](../manual/rendering-pipeline.md#bloom) and
+[tone mapping](../manual/rendering-pipeline.md#hdr-and-tone-mapping), and before the
+fixed-resolution upscale. Secondary cameras (minimaps, mirrors,
 portals) do not run it; if the active camera renders to a texture, the chain writes into
 that texture. A scene drawn as a layer skips its chain, because a fullscreen pass would
 overwrite the scene below it.

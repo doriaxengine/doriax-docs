@@ -66,6 +66,9 @@ A `Scene` is the root container for all objects, systems, and resources in a pro
 | float | [bloomKnee](#bloomknee) | `0.5` | C++ \| Lua |
 | float | [bloomIntensity](#bloomintensity) | `1.0` | C++ \| Lua |
 | float | [bloomRadius](#bloomradius) | `0.7` | C++ \| Lua |
+| bool | [hdrEnabled](#hdrenabled) | `false` | C++ \| Lua |
+| float | [exposure](#exposure) | `1.0` | C++ \| Lua |
+| [ToneMapping](#tonemapping) | [toneMapping](#tonemapping_1) | `NONE` | C++ \| Lua |
 | bool | [fixedResolutionEnabled](#fixedresolutionenabled) | `false` | C++ \| Lua |
 | unsigned int | [fixedResolutionWidth](#fixedresolutionwidth-fixedresolutionheight) | `640` | C++ \| Lua |
 | unsigned int | [fixedResolutionHeight](#fixedresolutionwidth-fixedresolutionheight) | `360` | C++ \| Lua |
@@ -214,6 +217,17 @@ PCF filter quality of shadow edges, shared by [shadowQuality](#shadowquality) (3
 * **LOW** — 3×3 taps in 3D / 5 taps in 2D (default)
 * **MEDIUM** — 5×5 taps in 3D / 9 taps in 2D
 * **HIGH** — 7×7 taps in 3D / 13 taps in 2D
+
+---
+
+### ToneMapping
+
+The curve [toneMapping](#tonemapping_1) brings the scene brightness to the screen with.
+
+* **NONE** — Clips at white (default)
+* **REINHARD** — Compresses gently and pales bright colours
+* **ACES** — Film-like contrast that rolls highlights off
+* **AGX** — Keeps bright colours neutral as they near white
 
 ---
 
@@ -634,6 +648,37 @@ Strength of the glow added over the image. Default `1.0`.
 * *Getter:* `float getBloomRadius() const`
 
 How far the glow spreads, in `[0..1]`: `0` keeps it close to the bright parts, `1` spreads it wide. Default `0.7`.
+
+---
+
+### hdrEnabled
+
+* *Setter:* `void setHDREnabled(bool hdrEnabled)`
+* *Getter:* `bool isHDREnabled() const`
+
+Draws the main camera into a float buffer that keeps brightness above white until the tone curve, on devices with float render targets. See [HDR and tone mapping](../../manual/rendering-pipeline.md#hdr-and-tone-mapping). Default `false`.
+
+---
+
+### exposure
+
+* *Setter:* `void setExposure(float exposure)`
+* *Getter:* `float getExposure() const`
+
+Linear multiplier of the scene brightness before the tone curve. Default `1.0`.
+
+---
+
+### toneMapping
+
+* *Setter:* `void setToneMapping(ToneMapping toneMapping)`
+* *Getter:* `ToneMapping getToneMapping() const`
+
+The [ToneMapping](#tonemapping) curve from the scene brightness to the screen, applied before the post-process passes. Default `NONE`.
+
+```lua
+scene.toneMapping = ToneMapping.ACES
+```
 
 ---
 

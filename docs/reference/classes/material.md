@@ -121,7 +121,7 @@ Controls the PBR metallic-roughness workflow:
 
 ### emissiveFactor
 
-An additive linear-space RGB glow colour. The surface emits light of this colour independent of external lighting. Multiplied with `emissiveTexture` when present. Keep all channels at `0` (the default) to disable emission.
+An additive linear-space RGB glow colour. The surface emits light of this colour independent of external lighting. Multiplied with `emissiveTexture` when present. Keep all channels at `0` (the default) to disable emission. Values above 1 make the surface brighter than white, which [HDR](../../manual/rendering-pipeline.md#hdr-and-tone-mapping) keeps and bloom picks up; the editor's colour picker takes them, and glTF models bring them from `KHR_materials_emissive_strength`.
 
 ---
 

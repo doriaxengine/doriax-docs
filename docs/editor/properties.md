@@ -446,7 +446,7 @@ on the water while it moves. It is made only during Play, from how the entity mo
 ## Scene settings
 
 With no entity selected, Properties edits the scene. Lighting, shadows, SSAO, SSR,
-fixed resolution, bloom, default shaders, and post-processing live here — see
+fixed resolution, bloom, tone mapping, default shaders, and post-processing live here — see
 [Rendering Pipeline](../manual/rendering-pipeline.md) for those. The scene values of
 [shader parameters](../manual/shader-files.md#in-the-editor), such as the wind, are under
 **Shader Parameters**.

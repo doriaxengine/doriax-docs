@@ -43,7 +43,8 @@ Each frame, the engine runs the following phases in order:
 8. **UI pass** — UI entities are rendered in screen-space canvas coordinates, on top of
    the 3D or 2D scene.
 9. **Post-processing** — Screen-space effects run over the finished image: SSR composites
-   its reflections, [bloom](#bloom) adds its glow, then the scene's
+   its reflections, [bloom](#bloom) adds its glow, [tone mapping](#hdr-and-tone-mapping)
+   brings the brightness to the screen, then the scene's
    [post-process chain](#post-processing) applies each enabled user pass in order. ([Fog](#fog) is not a post pass — it is computed in the
    mesh shader.)
 
@@ -583,14 +584,63 @@ the glow. Like them, it renders the scene offscreen, and it skips secondary came
 scenes drawn as layers.
 
 !!! note "Brightness range"
-    The scene colour is stored with 8 bits per channel, so nothing on screen is brighter
-    than white: an emissive material at full strength and a white wall in the sun both
-    reach 1. With a threshold near 1 only the brightest pixels glow; lower it, or raise
-    **Intensity**, for a stronger glow.
+    Without [HDR](#hdr-and-tone-mapping) the scene colour is stored with 8 bits per
+    channel, so nothing on screen is brighter than white: an emissive material at full
+    strength and a white wall in the sun both reach 1. With a threshold near 1 only the
+    brightest pixels glow; lower it, or raise **Intensity**, for a stronger glow. With HDR
+    on, lights and emissive materials go above 1, and a threshold of about 1 makes only
+    those glow.
 
 An export ships the bloom shaders when a saved scene has bloom on. A game that only turns
 it on from a script needs `bloomdown` and `bloomup` in the
 [export shader list](../editor/export.md).
+
+## HDR and tone mapping
+
+With **HDR** on, the main camera draws into a float buffer, so lights and emissive materials
+keep the brightness they have above white instead of clipping. Bloom then sees how bright
+each part really is, and a **tone curve** brings the result to the screen before the
+post-process passes. These are scene settings, under **Tone Mapping** in the scene's
+Properties:
+
+| Parameter | Effect |
+| --- | --- |
+| **HDR** | Float scene colour, 16 bits per channel |
+| **Exposure** | Multiplies the brightness before the curve |
+| **Curve** | `None` clips at white; `Reinhard` compresses gently and pales bright colours; `ACES` gives film-like contrast and rolls highlights off; `AgX` keeps bright colours neutral as they near white |
+
+```cpp
+scene.setHDREnabled(true);
+scene.setExposure(1.0f);
+scene.setToneMapping(ToneMapping::ACES);
+```
+
+```lua
+scene.hdrEnabled = true
+scene.exposure = 1.0
+scene.toneMapping = ToneMapping.ACES
+```
+
+The order is the scene, SSR, bloom, then exposure and the curve, then the
+[post-process passes](#post-processing), which receive the 0 to 1 image they always did.
+Without HDR, exposure and the curve still run on the 8-bit image, and a curve then darkens
+pure white a little, since nothing reaches above it. HDR off, exposure 1 and no curve leave
+the image as before.
+
+An emissive material goes above white when its Emissive Factor does: the colour picker
+takes values above 1, and glTF models bring theirs from `KHR_materials_emissive_strength`.
+
+An export ships the tone mapping shader when a saved scene uses HDR, an exposure other
+than 1 or a curve. A game that only turns them on from a script needs `tonemap` in the
+[export shader list](../editor/export.md).
+
+!!! note "Devices and scope"
+    HDR needs float render targets that blend and filter. The desktop backends have
+    them; WebGL 2 and older GLES devices may not, and there the scene keeps the 8-bit
+    buffer while exposure and the curve still apply. Only the main camera of the main
+    scene draws in HDR: secondary cameras, mirrors, probes and scenes drawn as layers stay
+    8-bit. UI drawn in the same scene goes through the curve like the rest, so keep a HUD
+    in a child scene.
 
 ## Post-processing
 
@@ -602,7 +652,8 @@ the editor's **Post-processing** scene settings; see
 ![A post-process pass drawing outlines and posterized colour over a 3D scene](../assets/screenshots/editor-postprocess.png)
 
 The chain runs on the scene's active camera, after the opaque, transparent, UI, and SSR
-passes and [bloom](#bloom), and before the fixed-resolution upscale. Enabling it redirects the colour
+passes, [bloom](#bloom) and [tone mapping](#hdr-and-tone-mapping), and before the
+fixed-resolution upscale. Enabling it redirects the colour
 pass into an offscreen buffer, exactly like SSR does, and the passes ping-pong between two
 buffers so a chain of any length costs two render targets. The last pass writes the real
 destination — the camera framebuffer, the fixed-resolution target, or the screen.
