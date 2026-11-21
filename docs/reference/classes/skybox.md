@@ -10,7 +10,8 @@ description: SkyBox API reference (C++ and Lua).
 Cubemap sky rendering and the source environment for **image-based lighting (IBL)**.
 
 When a Sky entity has a valid cubemap texture, the engine generates irradiance and
-prefiltered specular environment maps from it. Meshes with **Receive IBL** enabled on
+prefiltered specular environment maps from it. A sky drawn by a
+[shader file](../../manual/shader-files.md#sky) gets them from a capture of what it draws. Meshes with **Receive IBL** enabled on
 their Mesh component use those maps for reflections and indirect diffuse lighting.
 
 ## Editor-only component fields
@@ -20,7 +21,7 @@ the scene (not yet exposed on the `SkyBox` script class):
 
 | Field | Default | Purpose |
 | --- | --- | --- |
-| **visible** | `true` | Draw the sky background. When `false`, the sky is hidden but IBL maps are still built from the texture. |
+| **visible** | `true` | Draw the sky background. When `false`, the sky is hidden but IBL maps are still built from the texture or the shader. |
 | **texture** | — | Cubemap source (six faces or single file). |
 | **color** | white | Linear RGBA tint. |
 | **rotation** | `0` | Y-axis rotation in degrees. |

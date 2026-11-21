@@ -282,8 +282,9 @@ environment).
 
 ## Image-based lighting (IBL)
 
-When a scene contains a Sky entity with a valid cubemap texture, the engine builds two
-environment maps from that sky:
+When a scene contains a Sky entity with a valid cubemap texture, or with a
+[shader file](shader-files.md#sky) that draws it, the engine builds two environment maps
+from that sky:
 
 | Map | Purpose |
 | --- | --- |
@@ -300,7 +301,8 @@ space for normal maps).
 
 Typical workflow:
 
-1. Add a Sky entity and assign a cubemap (HDR or LDR).
+1. Add a Sky entity and assign a cubemap (HDR or LDR), or a sky shader file. A shader
+   sky is drawn into a cube map first, and again whenever what it reads changes.
 2. Select meshes that should reflect the environment (metal, glass, wet stone, etc.).
 3. Enable **Receive IBL** on those meshes in the Properties window, or call
    `setReceiveIBL(true)` (Lua: `mesh.receiveIBL = true`) in code.
@@ -1232,7 +1234,7 @@ scene.depthPrepassEnabled = true
 | Mesh LOD | Turn scene Mesh Detail on for triangle-heavy scenes; raise **Threshold** or lower a mesh's **Detail Bias** to drop triangles sooner |
 | Instance culling | Keep **Cull Instances** on unless a shader moves instances off their bounds; split huge batches into regional entities |
 | Depth prepass | Enable for heavy opaque overdraw (forests, interiors); leave off when most pixels are shaded once already |
-| IBL cost | Environment maps are rebuilt when the sky texture changes; disable **Receive IBL** on distant or unimportant meshes |
+| IBL cost | Environment maps are rebuilt when the sky texture changes, and when a shader sky's values or sun change, at most ten times a second; disable **Receive IBL** on distant or unimportant meshes |
 | Shadow casters | Limit shadow-casting lights; cascade only when needed; turn off **Cast Shadows** on grass-scale [terrain foliage](terrain.md#foliage) |
 | Transparent objects | Keep transparent draw counts low; sort correctly |
 | Tilemaps | Chunk culling is automatic, so map size costs little; a tilemap is capped at 16 383 tiles |

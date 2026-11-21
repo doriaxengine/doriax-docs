@@ -268,7 +268,26 @@ map sample times the sky's color, linear.
 | `vec3 direction` | Of the cube map, in the sky's own space |
 | `vec4 textureColor` | The cube map sample, linear |
 | `vec4 tint` | The sky's color, linear |
+| `vec3 sunDirection` | Toward the strongest directional light, in the sky's own space |
+| `vec3 sunColor` | That light's color times its intensity, linear; black without one |
 | `vec2 pixel` | |
+
+The sun follows the scene's light, so a disc drawn from it always sits where the shadows
+come from:
+
+```glsl
+float disc = smoothstep(0.9985, 0.9995, dot(normalize(context.direction), context.sunDirection));
+return color + vec4(context.sunColor * disc, 0.0);
+```
+
+A sky drawn by a shader file also lights the scene. The engine draws it into a cube map
+and builds the [environment maps](rendering-pipeline.md#image-based-lighting-ibl) from
+that, as it does from a sky texture, so meshes with **Receive IBL** and water take their
+ambient light and reflections from what the shader draws. The capture is taken again when
+something the shader reads changes: its parameters, the sky color, the sun, or the scene
+parameters it declares. A sky that changes every frame, such as one reading
+`Engine.time` during Play, has its lighting follow ten times a second. The capture keeps 8
+bits per channel, so a sky brighter than white lights the scene as white.
 
 ## Water
 

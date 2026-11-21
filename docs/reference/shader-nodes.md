@@ -319,6 +319,17 @@ The cube map direction, in the sky's own space.
 | --- | --- |
 | Direction (`direction`) | vec3 |
 
+### Sky Sun
+
+`input/skySun` · any stage · sky
+
+The strongest directional light: the direction toward it, in the sky's own space, and its color times intensity, black without one.
+
+| Output | Type |
+| --- | --- |
+| Direction (`direction`) | vec3 |
+| Color (`color`) | vec3 |
+
 ### Underwater
 
 `input/underwater` · any stage · water
