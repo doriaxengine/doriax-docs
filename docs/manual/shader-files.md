@@ -284,8 +284,9 @@ A sky drawn by a shader file also lights the scene. The engine draws it into a c
 and builds the [environment maps](rendering-pipeline.md#image-based-lighting-ibl) from
 that, as it does from a sky texture, so meshes with **Receive IBL** and water take their
 ambient light and reflections from what the shader draws. The capture is taken again when
-something the shader reads changes: its parameters, the sky color, the scene parameters it
-declares, and the sun if it reads it. A sky that changes every frame, such as one reading
+something the shader reads changes: its parameters, the sky color, the background color
+that shows where it is transparent, the scene parameters it declares, and the sun if it
+reads it. A sky that changes every frame, such as one reading
 `Engine.time` during Play or sampling a camera's texture, has its lighting follow ten times
 a second. Where the device renders to float textures, the capture keeps values above 1, so
 a sun brighter than white lights the scene as brightly; elsewhere it lights as white.
