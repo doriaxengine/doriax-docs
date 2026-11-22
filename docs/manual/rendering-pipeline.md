@@ -274,6 +274,11 @@ sky.setTextures("daysky",
     "sky/pz.png", "sky/nz.png");
 ```
 
+A sky can also be drawn by a [shader file](shader-files.md#sky) instead of a texture. The
+engine ships two, listed in the Sky's Shader row: `shaders/gradient_sky.glsl`, three colors
+that meet at the horizon, and `shaders/physical_sky.glsl`, the scene's sun scattered by the
+air, for blue days and red sunsets. See [Sky files](shader-files.md#sky-files).
+
 In the editor, the Sky component also exposes **Visible**. When disabled, the sky is not
 drawn in the viewport but still generates IBL environment maps for meshes that use them.
 Use this when you want reflections and indirect lighting from an environment without
