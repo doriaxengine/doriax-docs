@@ -19,5 +19,6 @@ The data behind [Fog](fog.md). In Lua, get it with `fog:getFogComponent()`.
 | `density` | C++ \| Lua |
 | `linearStart` | C++ \| Lua |
 | `linearEnd` | C++ \| Lua |
+| `skyBlend` | C++ \| Lua |
 
 `color` is linear here, while the [Fog](fog.md) setter takes sRGB.

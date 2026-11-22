@@ -22,6 +22,7 @@ Three fog models are supported: linear, exponential, and squared-exponential.
 | float | [density](#density) | `0.01` | C++ \| Lua |
 | float | [linearStart](#linearstart-linearend) | `10.0` | C++ \| Lua |
 | float | [linearEnd](#linearstart-linearend) | `100.0` | C++ \| Lua |
+| float | [skyBlend](#skyblend) | `0.0` | C++ \| Lua |
 
 ### Methods
 
@@ -33,6 +34,7 @@ Three fog models are supported: linear, exponential, and squared-exponential.
 | void | [setLinearStart](#linearstart-linearend) | C++ |
 | void | [setLinearEnd](#linearstart-linearend) | C++ |
 | void | [setLinearStartEnd](#linearstart-linearend) | C++ \| Lua |
+| void | [setSkyBlend](#skyblend) | C++ |
 | [FogComponent](fogcomponent.md) | `getFogComponent` | Lua |
 
 ## Enumerations
@@ -78,7 +80,7 @@ The fog calculation model.
 * *Setter*: void **setColor**(float red, float green, float blue)
 * *Getter*: Vector3 **getColor**() const
 
-The fog colour in linear space. Match this to your sky colour for a natural-looking effect.
+The fog colour in linear space. Match this to your sky colour for a natural-looking effect, or let [skyBlend](#skyblend) take the sky's own.
 
 ---
 
@@ -98,3 +100,12 @@ The density coefficient for `EXPONENTIAL` and `EXPONENTIALSQUARED` modes. Larger
 * *Getter*: float **getLinearStart**() / **getLinearEnd**() const
 
 The near and far clip distances for `LINEAR` fog. Objects closer than `linearStart` are unaffected; objects beyond `linearEnd` are fully in the fog colour.
+
+---
+
+### skyBlend
+
+* *Setter*: void **setSkyBlend**(float skyBlend)
+* *Getter*: float **getSkyBlend**() const
+
+How much the fog takes the color of the sky behind each point, from 0 (the fog color only) to 1 (the sky's only). Far things then fade into the sky behind them: blue at noon, gold toward a low sun. It reads the sky's lighting maps, so it needs a Sky with a cube map or a [shader file](../../manual/shader-files.md#sky); without one the fog keeps its color.

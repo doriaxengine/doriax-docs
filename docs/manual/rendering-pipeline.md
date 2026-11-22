@@ -258,6 +258,19 @@ fog.setDensity(0.02f);
 // For LINEAR mode use fog.setLinearStartEnd(start, end) instead of density
 ```
 
+A single fog color only matches the sky in one direction. **Sky Blend** (`skyBlend`, 0 to 1)
+gives the fog the color of the sky behind each point instead, so distant hills fade into
+the blue of the horizon at noon and into the gold on the sun's side at sunset. Looking
+down, the fog takes the horizon's color rather than the ground's below it. The thicker the
+fog, the sharper the sky it shows, so the farthest things blend into exactly what is
+drawn behind them. It needs a Sky with a cube map or a
+[shader file](shader-files.md#sky), such as the physical sky; without one the fog keeps
+its color.
+
+```cpp
+fog.setSkyBlend(1.0f);
+```
+
 ## Skybox
 
 Add a **Sky** entity (Skybox component) and assign either a single cubemap texture or six
