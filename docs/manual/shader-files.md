@@ -271,7 +271,6 @@ map sample times the sky's color, linear.
 | `vec3 sunDirection` | Toward the strongest directional light, in the sky's own space |
 | `vec3 sunColor` | That light's color times its intensity, linear; black without one |
 | `vec2 pixel` | |
-| `bool capturing` | True while the sky is drawn into the capture that lights the scene |
 
 The sun follows the scene's light, so a disc drawn from it always sits where the shadows
 come from:
@@ -292,16 +291,21 @@ reads it. A sky that changes every frame, such as one reading
 a second. Where the device renders to float textures, the capture keeps values above 1, so
 a sun brighter than white lights the scene as brightly; elsewhere it lights as white.
 
-`vec4 skyCapture(vec3 direction)` reads that capture back, linear. A sky that is expensive
-to work out can do it only while `capturing`, and the view then costs one texture read per
-pixel. The capture is 256 pixels a side, so small, sharp things such as the sun's disc are
-better drawn in the view, which also keeps them out of the lighting:
+While the capture is drawn, `Engine.pass` is `PASS_SKY_CAPTURE`, and
+`vec4 skyCapture(vec3 direction)` reads the last capture back, linear. A sky that is
+expensive to work out can do it only in that pass, and the view then costs one texture read
+per pixel. The capture is 256 pixels a side, so small, sharp things such as the sun's disc
+are better drawn in the view, which also keeps them out of the lighting:
 
 ```glsl
-if (context.capturing)
+if (Engine.pass == PASS_SKY_CAPTURE)
     return expensiveSky(context.direction);
 return skyCapture(context.direction) + sunDisc(context.direction);
 ```
+
+Where the sky is transparent, the capture has the scene's background color behind it, so a
+sky with an alpha below 1 should draw itself in the view too. A file that declares its own
+`skyCapture` function keeps it, and the engine's is left out.
 
 ## Water
 
@@ -610,7 +614,7 @@ These go in a Sky's Shader row, or in the scene's default sky shader:
 | File | Parameters | What it does |
 | --- | --- | --- |
 | `shaders/gradient_sky.glsl` | `zenithColor`, `horizonColor`, `groundColor`, `skyCurve` (0.5), `groundCurve` (0.1), `sunSize` (2), `sunGlow` (0.3), `sunGlowSize` (30), `energy` (1) | Three colors that meet at the horizon, with the sun's disc and a glow around it; `gradientSky(direction, sunDirection, sunColor, zenith, horizon, ground, skyCurve, groundCurve, sunSize, sunGlow, sunGlowSize)` |
-| `shaders/physical_sky.glsl` | `intensity` (2), `airColor`, `airDensity` (1), `haze` (1), `hazeGlow` (0.8), `ozone` (1), `groundColor`, `sunSize` (1), `altitude` (0.1), `samples` (16) | Sunlight scattered by the air: blue days, red sunsets and twilight; `physicalSky(air, direction, sunDirection, altitude, samples)` and `physicalSun(air, direction, sunDirection, sunSize, altitude)`, with `air` from `earthAtmosphere(airColor, airDensity, haze, hazeGlow, ozone, groundColor)` |
+| `shaders/physical_sky.glsl` | `intensity` (1.5), `airColor`, `airDensity` (1), `haze` (1), `hazeGlow` (0.8), `ozone` (1), `groundColor`, `sunSize` (1), `altitude` (0.1), `samples` (16) | Sunlight scattered by the air: blue days, red sunsets and twilight; `physicalSky(air, direction, sunDirection, altitude, samples)` and `physicalSun(air, direction, sunDirection, sunSize, altitude)`, with `air` from `earthAtmosphere(airColor, airDensity, haze, hazeGlow, ozone, groundColor)` |
 
 Both put the sun where the scene's strongest directional light comes from. The gradient
 keeps its colors at any hour, and the light only adds the disc and the glow. The physical
@@ -621,13 +625,14 @@ so for a red evening light, change the light's color as the sun goes down.
 The physical sky follows Sébastien Hillaire's atmosphere model: air that scatters blue
 more than red, haze that glows around the sun, and an ozone layer that keeps twilight
 blue. `intensity` scales it to the light's intensity. Since the sky also lights the scene,
-it sets how bright the shade is next to the sunlit sides: at 2, with the light of 4 the
+it sets how bright the shade is next to the sunlit sides: at 1.5, with the light of 4 the
 editor gives new lights, the two stay close to their proportion on a clear day. With
 [tone mapping](rendering-pipeline.md#hdr-and-tone-mapping) the blue deepens, as in a photograph.
 
 The air is worked out only into the [capture](#sky), again when the light or a parameter
 changes, and the view reads it back and adds the sun, so drawing it costs about as much as
-a plain sky. `samples` is the number of steps along each direction of the capture; more
+a plain sky. A sky made transparent by its color's alpha works its air out in the view
+instead. `samples` is the number of steps along each direction of the capture; more
 smooth the horizon. A sun that moves every frame, as in a day cycle, has its sky taken
 again up to ten times a second, and its disc follows every frame.
 
