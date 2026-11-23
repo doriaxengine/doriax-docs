@@ -269,9 +269,10 @@ camera takes one color for its whole view. It needs a Sky with a cube map or a
 its color.
 
 Meshes the sky lights, and water, need nothing more for it. The others, unlit ones or
-those with **Receive IBL** off, build a shader variant with one more texture. An export has
-that variant when Sky Blend was above 0 in the saved scene. Turned on by a script in a
-scene saved at 0, the fog colors only what the sky lights.
+those with **Receive IBL** off, build a shader variant with one more texture. An export of
+a scene with fog and a sky has those meshes with the variant and without it, so a script
+can turn Sky Blend on and off. A [shader file](shader-files.md#limits) with no texture
+left for it keeps the plain fog color, and the build says so.
 
 ```cpp
 fog.setSkyBlend(1.0f);
@@ -722,6 +723,12 @@ file: click the camera button on the field (or drag a camera entity from the Str
 panel onto it). The chosen camera is switched to render-to-texture and its output feeds
 the slot — the basis for the manual mirror setup below. A camera used this way cannot
 also be the scene's main camera.
+
+A texture cannot be read by the pass that draws into it, so a camera leaves out what shows
+its own output: the submesh, UI element, points, lines, water or sky whose shader samples
+it, while the rest of a mesh still draws. With screen-space reflections, post-processing
+or a fixed resolution the scene is drawn into another buffer first, and those objects draw
+showing the frame before.
 
 A related mechanism lets the **main camera itself** render offscreen at a fixed
 internal resolution that is then upscaled to the window — for pixel-art rendering or

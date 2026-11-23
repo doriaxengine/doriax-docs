@@ -240,7 +240,8 @@ no attribute.
 
 `Engine.pass` is the pass being drawn, `PASS_COLOR`, `PASS_DEPTH`, `PASS_SHADOW` or
 `PASS_GBUFFER`, and each pass also defines `IN_COLOR_PASS`, `IN_DEPTH_PASS` or
-`IN_GBUFFER_PASS` for code that should not be compiled elsewhere at all.
+`IN_GBUFFER_PASS` for code that should not be compiled elsewhere at all. A hook defined
+under one of them is left out of the other passes.
 
 ## UI, points and lines
 
@@ -651,7 +652,9 @@ camera's properties its view parameters. See [Custom Shaders](../editor/custom-s
 Each compiled variant must fit the backends' limits, which the builder checks, naming the
 variant and the count when one is passed: 16 textures and 16 samplers per stage, 8 uniform
 blocks per stage outside OpenGL, and 15 varyings on WebGL 2. A shader file adds at most
-one or two samplers and four varyings to what the engine uses.
+one or two samplers and four varyings to what the engine uses. Where the sky color of the
+[fog](rendering-pipeline.md#fog) would be the texture too many, the variant builds
+without it and the fog keeps its color.
 
 Sprites drawing with one shader file share a draw call while its hooks read only what
 stays the same once they are batched in world space: not the local position, the
