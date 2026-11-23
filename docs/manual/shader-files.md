@@ -241,7 +241,8 @@ no attribute.
 `Engine.pass` is the pass being drawn, `PASS_COLOR`, `PASS_DEPTH`, `PASS_SHADOW` or
 `PASS_GBUFFER`, and each pass also defines `IN_COLOR_PASS`, `IN_DEPTH_PASS` or
 `IN_GBUFFER_PASS` for code that should not be compiled elsewhere at all. A hook defined
-under one of them is left out of the other passes.
+under one of them is left out of the other passes. The `PASS_` names are the engine's in
+every shader file, so a file cannot define them again.
 
 ## UI, points and lines
 
