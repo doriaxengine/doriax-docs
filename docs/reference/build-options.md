@@ -81,11 +81,13 @@ cmake --build build --config Debug
 | `DORIAX_STOREKIT` | `ON` | iOS only: compile the StoreKit 2 adapter, a Swift source that needs Swift 6.1 (Xcode 16.3 or later), defining the `DORIAX_STOREKIT` macro. `OFF` leaves [`InAppPurchase`](classes/inapppurchase.md) unavailable on iOS. |
 | `DORIAX_WEB_PORTAL` | `none` | Web only: the game portal SDK built in for [`WebPortal`](classes/webportal.md): `none`, `crazygames`, `poki`, `gamedistribution`, `yandex` or `youtube`. Any other value fails configuration. A portal also defines `DORIAX_WEB_PORTAL_<NAME>`, like `DORIAX_WEB_PORTAL_POKI`. |
 | `DORIAX_WEB_PORTAL_GAME_ID` | `""` | Web only: the game ID of portals that need one, which is GameDistribution. |
+| `DORIAX_WEB_MAX_PIXEL_RATIO` | `2` | Web only: the most pixels drawn for each CSS pixel on phones and HiDPI screens. See [Screen density](../building/html5.md#screen-density). |
 
 The editor writes these options into exported CMake projects from **Project
 Settings** (VSync, the Window settings, the C++ standard, the physics backends, iOS
-**Google AdMob** and **App Store Purchases**, and the web **Game Portal**). For a manually
-configured standalone runtime, override them at configure time:
+**Google AdMob** and **App Store Purchases**, and the web **Game Portal** and
+**Max Pixel Ratio**). For a manually configured standalone runtime, override them at
+configure time:
 
 ```bash
 cmake -S engine -B build-runtime \

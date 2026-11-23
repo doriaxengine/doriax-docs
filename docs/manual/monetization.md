@@ -769,8 +769,9 @@ A rewarded ad grants its reward only through `onAdFinished`.
 
 The engine [pauses](#ads-pause-the-game) while one of its ads plays. GameDistribution,
 Yandex Games and YouTube Playables also pause the game themselves: for an ad they start
-on their own, a purchase window, or the player switching away. The engine stays paused
-until both the ad and the portal let it go, and `Engine::onResume` follows.
+on their own, a purchase window, or the player switching away. A web game also pauses
+while its [page is hidden](../building/html5.md#hidden-pages). The engine stays paused
+until the ad, the portal, and the page all let it go, and `Engine::onResume` follows.
 
 YouTube Playables can mute a game from its own interface. The engine follows it: audio
 stays silent while YouTube has it off, whatever the game's

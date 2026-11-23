@@ -797,7 +797,9 @@ Called after the regular update and fixed-update passes each frame. Useful for l
 * `static FunctionSubscribe<void()> onPause`
 * Callback: `void()`
 
-Called when the system suspends the application (e.g. phone call received, app moved to background). It also fires while a full-screen ad covers the game and while a web portal pauses it; see [Ads pause the game](../../manual/monetization.md#ads-pause-the-game).
+Called when the system suspends the application (e.g. phone call received, app moved to background). On the web that is the page being hidden; see [Hidden pages](../../building/html5.md#hidden-pages). It also fires while a full-screen ad covers the game and while a web portal pauses it; see [Ads pause the game](../../manual/monetization.md#ads-pause-the-game).
+
+The engine pauses the playing sounds after this callback and resumes them before `onResume`. A sound the game paused itself, here or earlier, stays paused.
 
 ---
 

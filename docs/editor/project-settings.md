@@ -198,6 +198,7 @@ Studio workspaces are generated.
 | **Head Include** | Empty | HTML inserted into the page's `<head>` |
 | **Resize Canvas To Window** | Enabled | Resizes the rendering surface to the browser window. Aspect ratio and stretching still follow the canvas **Scaling Mode** |
 | **Hide Emscripten UI** | Disabled | Hides the default logo, status line, controls and output console. The nodes are kept alive, so the SDK's status callbacks keep working |
+| **Max Pixel Ratio** | 2 | Most pixels drawn for each CSS pixel on phones and HiDPI screens. Higher is sharper and costs more GPU time, and 1 draws at the CSS size on every screen. See [Screen density](../building/html5.md#screen-density) |
 | **Game Portal** | None | The web game portal whose SDK the export builds in, for the [`WebPortal`](../reference/classes/webportal.md) class: CrazyGames, Poki, GameDistribution, Yandex Games or YouTube Playables |
 | **Portal Game ID** | Empty | GameDistribution only: the game's ID from the GameDistribution dashboard. Without it the SDK is not loaded |
 

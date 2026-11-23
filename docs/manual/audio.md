@@ -111,6 +111,10 @@ moving entity in the editor's Structure panel (or in the scene hierarchy).
     AudioSystem::stopAll();
     ```
 
+The engine also pauses the playing sounds by itself while the game is suspended: the app
+in the background, a hidden web page, or a full-screen ad. It resumes the same sounds
+afterwards, so one the game had paused stays paused.
+
 ## SoundPool
 
 For sounds that play frequently (gunshots, footsteps, coins), the engine caches decoded

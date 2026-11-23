@@ -20,10 +20,10 @@ producing JavaScript and WebAssembly output that runs in the browser.
 
 The generated page is not fixed. **Project Settings → Platforms → Web** sets the page
 title, a favicon, extra `<head>` markup, whether the canvas follows the browser window,
-and whether Emscripten's default logo, status line and console are hidden. For full
-control, supply a **Custom HTML Shell**: any HTML file containing a
-`{{DORIAX_DEFAULT_HTML}}` marker, which the build replaces with the page Emscripten
-generated. See [Web settings](../editor/project-settings.md#web).
+whether Emscripten's default logo, status line and console are hidden, and how many
+pixels HiDPI screens draw. For full control, supply a **Custom HTML Shell**: any HTML
+file containing a `{{DORIAX_DEFAULT_HTML}}` marker, which the build replaces with the
+page Emscripten generated. See [Web settings](../editor/project-settings.md#web).
 
 ## Game portals
 
@@ -36,6 +36,31 @@ export. A build configured by hand takes the same choice as
 plus `-DDORIAX_WEB_PORTAL_GAME_ID=<id>` for GameDistribution. See
 [Monetization → Web portals](../manual/monetization.md#web-portals) for the API and for
 testing each portal on `localhost`.
+
+## Screen density
+
+On phones and HiDPI monitors one CSS pixel covers several device pixels. The game draws
+at the device's resolution, up to the **Max Pixel Ratio** of the
+[Web settings](../editor/project-settings.md#web), which is 2 by default. A canvas that
+is 800×360 on the page of a phone with three device pixels per CSS pixel is drawn at
+1600×720. Input coordinates and
+[`System::getScreenWidth`](../reference/classes/system.md#getscreenwidth-getscreenheight)
+follow that size, so canvas scaling works as on any other screen. Lower the setting when
+a GPU-heavy game runs slowly on such screens. A build configured by hand takes it as
+[`-DDORIAX_WEB_MAX_PIXEL_RATIO=1.5`](../reference/build-options.md#runtime-project-options).
+
+The drawing size follows the size the canvas has on the page, so a custom shell only
+needs to style the canvas with CSS. With **Resize Canvas To Window** off and no CSS of
+your own, the canvas has the project's window size.
+
+## Hidden pages
+
+The game pauses while its page is hidden: another tab in front, the browser minimized,
+or the phone locked. Sounds pause with it and
+[`Engine::onPause`](../reference/classes/engine.md#onpause) fires.
+[`Engine::onResume`](../reference/classes/engine.md#onresume) follows when the page
+shows again. A YouTube Playables export leaves this to YouTube, which pauses the game
+itself.
 
 ## 1. Install Emscripten
 

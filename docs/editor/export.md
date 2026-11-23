@@ -392,9 +392,10 @@ for Windows** component of Visual Studio. Without either, Emscripten falls back 
 
 The generated page is customized from the [Web settings](project-settings.md#web): page
 title, favicon, an optional custom HTML shell, extra `<head>` markup, canvas resizing,
-and hiding Emscripten's default UI. The **Game Portal** setting builds in the SDK of one
-web game portal, for the [`WebPortal`](../reference/classes/webportal.md) class; export
-once per portal. See [Monetization → Web portals](../manual/monetization.md#web-portals).
+hiding Emscripten's default UI, and the pixel ratio limit of HiDPI screens. The
+**Game Portal** setting builds in the SDK of one web game portal, for the
+[`WebPortal`](../reference/classes/webportal.md) class; export once per portal. See
+[Monetization → Web portals](../manual/monetization.md#web-portals).
 
 !!! tip "Testing the build"
     Browsers do not load WebAssembly from `file://`. Serve the destination folder with
