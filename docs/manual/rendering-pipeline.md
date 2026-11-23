@@ -266,8 +266,12 @@ drawn behind them. Looking down, where there is ground instead of sky, the fog t
 sky mirrored above the horizon, more blurred the steeper the view, and an orthographic
 camera takes one color for its whole view. It needs a Sky with a cube map or a
 [shader file](shader-files.md#sky), such as the physical sky; without one the fog keeps
-its color. Meshes build a shader variant for it while it is above 0, with one more
-texture; water reads the sky it already reflects.
+its color.
+
+Meshes the sky lights, and water, need nothing more for it. The others, unlit ones or
+those with **Receive IBL** off, build a shader variant with one more texture. An export has
+that variant when Sky Blend was above 0 in the saved scene. Turned on by a script in a
+scene saved at 0, the fog colors only what the sky lights.
 
 ```cpp
 fog.setSkyBlend(1.0f);

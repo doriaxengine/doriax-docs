@@ -304,8 +304,9 @@ return skyCapture(context.direction) + sunDisc(context.direction);
 ```
 
 Where the sky is transparent, the capture has the scene's background color behind it, so a
-sky with an alpha below 1 should draw itself in the view too. A file that declares its own
-`skyCapture` function keeps it, and the engine's is left out.
+sky with an alpha below 1 should draw itself in the view too. `skyCapture` is the engine's
+name, as `sceneColor` is in mesh files: a file can add one that takes other parameters, but
+not define it again.
 
 ## Water
 
