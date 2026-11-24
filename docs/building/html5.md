@@ -9,9 +9,10 @@ producing JavaScript and WebAssembly output that runs in the browser.
 
 !!! tip "Let the editor build it"
     The Export Window's **Web** mode runs this entire build for you — it locates the
-    Emscripten SDK, compiles the project, and copies the `.html`/`.js`/`.wasm`/`.data`
-    files to your destination folder. The manual steps below are for Source Code
-    exports and custom setups. See [Export Window](../editor/export.md#web-mode).
+    Emscripten SDK, compiles the project, and copies `index.html` and the
+    `.js`/`.wasm`/`.data` files to your destination folder, ready to upload. The manual
+    steps below are for Source Code exports and custom setups. See
+    [Export Window](../editor/export.md#web-mode).
 
     If the SDK is not on `PATH`, point the editor at your `emsdk` folder once in
     **Edit → [Editor Settings](../editor/editor-settings.md#web) → Web**.

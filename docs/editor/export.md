@@ -375,9 +375,15 @@ adaptive layers rather than a single PNG.
 
 ## Web mode
 
-Builds the project with Emscripten and copies `MyProject.html`, `.js`, `.wasm`, and
-`.data` (the packed assets) to the destination. The Web graphic backend is fixed to
-**WebGL 2 (OpenGL ES 3)**.
+Builds the project with Emscripten and copies `index.html`, `MyProject.js`, `.wasm`,
+`.data` (the packed assets), and `favicon.png` to the destination. The Web graphic backend
+is fixed to **WebGL 2 (OpenGL ES 3)**.
+
+The page is named `index.html` because hosting platforms such as itch.io open that file by
+default, so zip the contents of the folder and upload them without renaming anything.
+Export each game to its own folder, since the page replaces an `index.html` that is
+already there. Versions up to 0.8.5 named the page `MyProject.html`; exporting to the same
+folder again removes that file.
 
 The editor locates the Emscripten SDK automatically from the `EMSDK` environment
 variable or `emcmake` on `PATH`. If neither is set, point at your `emsdk` folder once in
