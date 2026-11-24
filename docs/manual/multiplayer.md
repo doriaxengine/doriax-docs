@@ -355,13 +355,55 @@ network->setInterpolationDelay(0.07f);
 A shorter delay shows the server sooner and stutters more on a bad connection. Keep it
 above two send intervals.
 
+### Physics {#entity-physics}
+
+Physics runs on the server. While a client is connected, the copies it has of the
+entities that follow the server are not simulated:
+
+- A **dynamic body**, 2D or 3D, becomes **kinematic**. It moves to each state with a
+  velocity, so it pushes the bodies that only this client has, like debris, and nothing
+  on the client pushes it back.
+- A **3D character** becomes [kinematic](../reference/classes/character3d.md#kinematic):
+  it has no gravity and ignores `moveVelocity` and `jump`.
+
+Apply forces, impulses and character movement on the server. A client asks for them
+with an RPC:
+
+=== "Lua"
+
+    ```lua
+    -- on the client that owns the player
+    Network.rpc(Network.SERVER, "jump")
+
+    -- on the server
+    Network.registerRpc("jump", function(sender)
+        Character3D(self.scene, players[sender]):jump(5)
+    end)
+    ```
+
+=== "C++"
+
+    ```cpp
+    // on the client that owns the player
+    Network::rpc(Network::SERVER, "jump");
+
+    // on the server
+    Network::registerRpc("jump", [this](int sender){
+        Character3D(getScene(), players[sender]).jump(5);
+    });
+    ```
+
+When the client disconnects, the bodies and characters of its scene entities are
+simulated again, so the scene keeps working offline.
+
 ### What does not follow yet {#entity-limits}
 
 - Only the transform is sent. Animations, colors and script values go through RPCs.
 - In a bundle only the root follows; its children move with it.
 - A spawned bundle is created at the root of the scene, not under a parent.
-- Physics runs on the server. On a client, an entity that follows the server should
-  have no body or a kinematic one, or the client's own simulation fights the states.
+- A body on a child of a bundle is still simulated on the client. Keep the body on the
+  root.
+- A client does not predict its own player: it sees it after the trip to the server.
 
 ## Web builds {#web}
 
