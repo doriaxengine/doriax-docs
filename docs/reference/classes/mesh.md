@@ -230,10 +230,14 @@ GPU draw mode. Overloads are available per submesh.
 
 ### faceCulling
 
-* *Setter:* `void setFaceCulling(bool faceCulling)`
+* *Setter:* `void setFaceCulling(bool faceCulling)` *(first submesh)*
+* *Setter:* `void setFaceCulling(unsigned int submesh, bool faceCulling)` *(per submesh)*
 * *Getter:* `bool isFaceCulling() const`
+* *Getter:* `bool isFaceCulling(unsigned int submesh) const`
 
-Enables or disables back-face culling globally for this mesh. Disable for double-sided geometry (e.g. leaves, cards): back faces are then lit with their normal flipped toward the viewer, as glTF double-sided materials are.
+Enables or disables back-face culling. Disable for double-sided geometry (e.g. leaves, cards): back faces are then lit with their normal flipped toward the viewer, as glTF double-sided materials are.
+
+Sprites, tilemaps, and mesh polygons always draw both sides, so they also show under a [UI camera](camera.md#cameratype) and with a negative scale. They turn culling off again every time their geometry is built.
 
 ---
 

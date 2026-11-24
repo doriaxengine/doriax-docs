@@ -78,6 +78,7 @@ texture, rects, and tiles first, then call this method if C++ code needs the geo
 immediately. It is **not bound to Lua**; the mesh system builds and rebuilds tilemaps
 automatically during rendering. Adding, removing, or clearing rects and tiles, and setting
 `textureScaleFactor` or `reserveTiles`, marks the tilemap to be rebuilt on the next frame.
+A texture of another size also rebuilds it, because rects can be in pixels.
 
 === "C++"
     ```cpp
@@ -118,7 +119,9 @@ Several overloads are available:
 * void **addRect**(float x, float y, float width, float height)
 * void **addRect**([Rect](rect.md) rect)
 
-Defines a named atlas frame. The `texture` path specifies which file to sample from; when omitted, the tilemap uses the default texture set on the mesh. `rect` is the pixel region (x, y, width, height) within the atlas.
+Defines a named atlas frame. The `texture` path specifies which file to sample from; when omitted, the rect uses the texture set with [setTexture](mesh.md#settexture), or the first one added with a path. A tilemap created from code draws nothing until it has a texture. `rect` is the region (x, y, width, height) within the atlas, in pixels or as fractions from 0 to 1.
+
+Each texture takes one submesh, and an exported project holds at least 4 per mesh, see [`MAX_SUBMESHES`](../build-options.md#engine-capacity-macros).
 
 The `id` parameter is an explicit integer key; use the simpler overloads when you don't need manual IDs.
 
@@ -178,7 +181,9 @@ Several overloads are available:
 * void **addTile**(const std::string& name, const std::string& rectString, Vector2 position, float width, float height)
 * void **addTile**(const std::string& rectString, Vector2 position, float width, float height)
 
-Places a tile instance in world space. `rectId` (or `rectString`) identifies which atlas frame to use; `position` is the 2D world-space centre; `width` and `height` are the tile's display dimensions.
+Places a tile in the tilemap's local space. `rectId` (or `rectString`) identifies which atlas frame to use; `position` is the tile's corner with the lowest X and Y, and negative coordinates are clamped to 0; `width` and `height` are the tile's display dimensions.
+
+Y points up under an orthographic camera and down under a [UI camera](camera.md#cameratype), so the first row of tiles is at the bottom with one and at the top with the other.
 
 === "C++"
     ```cpp

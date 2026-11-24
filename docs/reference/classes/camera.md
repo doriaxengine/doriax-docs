@@ -37,7 +37,7 @@ description: Camera API reference — orthographic and perspective projection, t
 
 | Type | Name | Default | Languages |
 | --- | --- | --- | --- |
-| [CameraType](#cameratype) | [type](#type) | `ORTHOGRAPHIC` | C++ \| Lua |
+| [CameraType](#cameratype) | [type](#type) | `CAMERA_PERSPECTIVE` | C++ \| Lua |
 | bool | [autoResize](#autoresize) | `true` | C++ \| Lua |
 | float | [nearClip](#nearclip-farclip) | `0.1` | C++ \| Lua |
 | float | [farClip](#nearclip-farclip) | `1000.0` | C++ \| Lua |
@@ -125,8 +125,9 @@ description: Camera API reference — orthographic and perspective projection, t
 
 ### CameraType
 
-* **ORTHOGRAPHIC** — Parallel projection; objects do not shrink with distance. Used for 2D games and UI.
-* **PERSPECTIVE** — Frustum projection; objects appear smaller with distance. Used for 3D scenes.
+* **CAMERA_UI** — Parallel projection over the canvas, with the origin at the top-left and Y pointing down. Used for UI scenes, and by the camera a scene creates for itself when none is set.
+* **CAMERA_ORTHO** — Parallel projection with Y pointing up; objects do not shrink with distance. Used for 2D games.
+* **CAMERA_PERSPECTIVE** — Frustum projection; objects appear smaller with distance. Used for 3D scenes.
 
 ## Property details
 
@@ -135,7 +136,7 @@ description: Camera API reference — orthographic and perspective projection, t
 * *Setter:* `void setType(CameraType type)`
 * *Getter:* `CameraType getType() const`
 
-Switches between orthographic and perspective projection. Setting the type does not automatically recalculate clip planes; use [setOrtho](#setortho) or [setPerspective](#setperspective) for that.
+Switches the projection. A new type starts with its default values for the canvas; use [setOrtho](#setortho) or [setPerspective](#setperspective) to set your own.
 
 ---
 
