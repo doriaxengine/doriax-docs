@@ -72,6 +72,11 @@ pauses or closes a menu on Escape does the same on Back. Back never closes the g
 itself. To close it from the main menu, call [`System::quit()`](../reference/classes/system.md#quit)
 when Escape is pressed there.
 
+The arrows and the center button of an Android TV remote arrive as the arrow keys and
+`D_KEY_ENTER`, so they move between the buttons of a menu and press them. A remote has no
+pointer, so [focus a button](user-interface.md#keyboard-and-gamepad-navigation) when a menu
+opens.
+
 ## Mouse
 
 Like the keyboard, `Input.isMousePressed(button)` returns `true` while the button is
@@ -514,6 +519,14 @@ input:
     System::showVirtualKeyboard();   // text argument defaults to L""
     System::hideVirtualKeyboard();
     ```
+
+A tap on a [TextEdit](../reference/classes/textedit.md) opens the keyboard. It closes when
+the typing ends: on a tap elsewhere, on Escape, or when a script moves the focus to a button.
+On Android, Back closes the keyboard first, and pressing it again leaves the field.
+
+While text is being typed on Android, the keys that type go to the text, and a TV remote's
+center button works as Enter there. The other keys still reach the game, like the arrows, Back,
+and the gamepad buttons. Once the keyboard is hidden with `hideVirtualKeyboard`, all of them do.
 
 ## Cross-platform advice
 
