@@ -82,6 +82,9 @@ and how to use it.
 | static bool | [rpc](#rpc-rpcunreliable) | C++ \| Lua |
 | static bool | [rpcUnreliable](#rpc-rpcunreliable) | C++ \| Lua |
 | static bool | [sendRpc](#sendrpc) | C++ |
+| static Entity | [spawn](#spawn) | C++ \| Lua |
+| static int | [getOwner](#getowner-isowner) | C++ \| Lua |
+| static bool | [isOwner](#getowner-isowner) | C++ \| Lua |
 
 ### Callback events
 
@@ -280,6 +283,28 @@ The values are `nil`, booleans, integers, numbers, strings, `Vector2`, `Vector3`
 * static bool **sendRpc**(int target, const std::string& name, const Packet& values, [NetworkDelivery](#networkdelivery) delivery)
 
 `rpc` with the values already written to a packet with `Packet::writeValue`.
+
+---
+
+### spawn
+
+* static Entity **spawn**(const std::string& bundle, Scene* scene, int owner = SERVER)
+
+On the server, creates an instance of a bundle in the scene and in the same scene of
+every client. The root of the bundle needs a
+[NetworkComponent](networkcomponent.md). Returns the root, or no entity when this peer
+is not the server. Destroying the instance destroys it on the clients too. See
+[Entities that follow the server](../../manual/multiplayer.md#entities).
+
+---
+
+### getOwner / isOwner {#getowner-isowner}
+
+* static int **getOwner**(Scene* scene, Entity entity)
+* static bool **isOwner**(Scene* scene, Entity entity)
+
+The peer an entity was spawned for: 1, the server, for an entity of the scene, and 0
+for an entity without a NetworkComponent. `isOwner` is true when it is this peer.
 
 ## Events
 

@@ -12,8 +12,8 @@ The model is server-authoritative. A client only reaches the server, never anoth
 client, so the server decides what every player sees. The server can also be a player
 (a *listen server*): the same code runs on it and on the clients.
 
-Entities are not synchronized on their own. Send what the other side needs to know with
-RPCs.
+Entities with a **Network** component [follow the server](#entities) on every client.
+Everything else is sent with RPCs.
 
 ## Hosting and connecting {#hosting-and-connecting}
 
@@ -247,6 +247,121 @@ by letting the server target itself:
 `Network.hostOffline()` is a server that opens no port. A single-player session then
 runs the same code, and it is the only way to host in a web build, since a browser
 can't accept connections.
+
+## Entities that follow the server {#entities}
+
+Add a **Network** component to an entity (**Add Component → Network**) and the clients
+show it where the server has it. The server sends its position and rotation, and scale
+when **Sync Scale** is on, and each client moves the entity smoothly between the states
+it receives. Only the server moves such an entity: a client that moves it is overwritten
+by the next state.
+
+Two kinds of entity follow the server:
+
+- **Entities saved in a scene**, which every peer already has when it loads the scene. A
+  door or a platform only needs the component.
+- **Bundles created with `Network.spawn`**, for what appears during the game: players,
+  bullets, pickups. The root of the bundle has the component, and the server creates the
+  instance in its scene and in the same scene of every client.
+
+=== "Lua"
+
+    ```lua
+    -- on the server, one player for each client that joins
+    Network.onPeerConnected = function(peer)
+        players[peer] = Network.spawn("player", self.scene, peer)
+    end
+
+    Network.onPeerDisconnected = function(peer)
+        BundleManager.destroyBundle(self.scene, players[peer])
+        players[peer] = nil
+    end
+    ```
+
+=== "C++"
+
+    ```cpp
+    // on the server, one player for each client that joins
+    void Game::onPeerConnected(int peer){
+        players[peer] = Network::spawn("player", getScene(), peer);
+    }
+
+    void Game::onPeerDisconnected(int peer){
+        BundleManager::destroyBundle(getScene(), players[peer]);
+        players.erase(peer);
+    }
+    ```
+
+Destroying the instance on the server destroys it on the clients. A bundle created with
+`BundleManager.createBundle` stays local, as before.
+
+### Owners {#owners}
+
+The last argument of `spawn` is the **owner**: the peer the entity belongs to, the
+server when left out. The owner changes nothing by itself. It is there for the project
+to ask whose entity this is, and it is already set when the scripts of the bundle start:
+
+=== "Lua"
+
+    ```lua
+    function Player:init()
+        if Network.isOwner(self.scene, self.entity) then
+            -- this peer's own player: it gets the camera and reads the input
+            RegisterEngineEvent(self, "onFixedUpdate")
+        end
+    end
+
+    function Player:onFixedUpdate()
+        Network.rpcUnreliable(Network.SERVER, "input", self.direction)
+    end
+    ```
+
+=== "C++"
+
+    ```cpp
+    Player::Player(Scene* scene, Entity entity): ScriptBase(scene, entity){
+        if (Network::isOwner(scene, entity)){
+            // this peer's own player: it gets the camera and reads the input
+            REGISTER_ENGINE_EVENT(onFixedUpdate);
+        }
+    }
+    ```
+
+The client sends what the player wants with an RPC, the server checks it and moves the
+entity, and every client sees the result. A player's own entity is therefore shown a
+little late, by the trip to the server and the [delay](#entity-tuning) below.
+
+### Joining and leaving {#entity-join}
+
+A client receives the entities of a scene when it has that scene loaded and is
+connected, in either order: the spawned bundles as they are at that moment, and the
+scene entities that moved. Clients in another scene receive nothing of this one.
+
+When a client disconnects, the bundles the server spawned are destroyed in its scenes
+and the scene entities stay where they were.
+
+### Tuning {#entity-tuning}
+
+The server sends states 20 times per second, and only for the entities that moved. A
+client shows the scene 0.1 seconds in the past, so it has two states to move between
+even when one is lost. `NetworkSystem` changes both for a scene:
+
+```cpp
+auto network = scene->getSystem<NetworkSystem>();
+network->setSendRate(30);
+network->setInterpolationDelay(0.07f);
+```
+
+A shorter delay shows the server sooner and stutters more on a bad connection. Keep it
+above two send intervals.
+
+### What does not follow yet {#entity-limits}
+
+- Only the transform is sent. Animations, colors and script values go through RPCs.
+- In a bundle only the root follows; its children move with it.
+- A spawned bundle is created at the root of the scene, not under a parent.
+- Physics runs on the server. On a client, an entity that follows the server should
+  have no body or a kinematic one, or the client's own simulation fights the states.
 
 ## Web builds {#web}
 
