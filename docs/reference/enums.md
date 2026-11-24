@@ -49,6 +49,7 @@ types. C++-only enums are noted below. See [Engine](classes/engine.md) for `Scal
 | `ProductType` / `PurchaseState` / `BillingResponse` | In-app purchases |
 | `RecurrenceMode` / `SubscriptionReplacementMode` | Subscription pricing and plan changes |
 | `WebPortalType` / `WebPortalAdType` / `WebPortalEnvironment` | Web game portals |
+| `NetworkState` / `NetworkDelivery` | Multiplayer sessions |
 
 Run `doriax/generate_api_suggestions.py` against the engine binding folder for the
 authoritative member list when documenting new enum values.

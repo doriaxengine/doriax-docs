@@ -242,6 +242,7 @@ See also [Enumerations](enums.md) and [Build Options](build-options.md).
     - [ProductOffer](classes/inapppurchase.md#productoffer)
     - [PurchaseDetails](classes/inapppurchase.md#purchasedetails)
 - [WebPortal](classes/webportal.md)
+- [Network](classes/network.md)
 
 ## Systems
 
