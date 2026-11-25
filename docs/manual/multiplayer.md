@@ -331,6 +331,41 @@ The client sends what the player wants with an RPC, the server checks it and mov
 entity, and every client sees the result. A player's own entity is therefore shown a
 little late, by the trip to the server and the [delay](#entity-tuning) below.
 
+### Script values {#entity-values}
+
+A script on an entity with a Network component can make its own values follow the
+server: health, a score, a name, a color. The server sets the value as usual, and each
+client receives it when it changes and when it joins.
+
+=== "Lua"
+
+    ```lua
+    function Player:init()
+        self.health = 100
+        Network.sync(self, "health", "onHealthChanged")
+    end
+
+    -- on the clients, after self.health took the server's value
+    function Player:onHealthChanged(value, old)
+        self.bar.value = value
+    end
+    ```
+
+=== "C++"
+
+    ```cpp
+    Player::Player(Scene* scene, Entity entity): ScriptBase(scene, entity){
+        REGISTER_SYNC(health);
+    }
+    ```
+
+    `Network::sync(scene, entity, "health", &health, callback)` does the same and
+    calls `callback` on a client when the value changed.
+
+The values are the ones an [RPC carries](#rpc-values). The method name is optional, and
+both sides register the same names. A value a client changes by itself stays until the
+server changes its own.
+
 ### Joining and leaving {#entity-join}
 
 A client receives the entities of a scene when it has that scene loaded and is
@@ -398,7 +433,8 @@ simulated again, so the scene keeps working offline.
 
 ### What does not follow yet {#entity-limits}
 
-- Only the transform is sent. Animations, colors and script values go through RPCs.
+- Of the components, only the transform is sent. Animations and colors go through
+  [script values](#entity-values) or RPCs.
 - In a bundle only the root follows; its children move with it.
 - A spawned bundle is created at the root of the scene, not under a parent.
 - A body on a child of a bundle is still simulated on the client. Keep the body on the

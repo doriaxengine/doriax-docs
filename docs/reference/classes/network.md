@@ -85,6 +85,7 @@ and how to use it.
 | static Entity | [spawn](#spawn) | C++ \| Lua |
 | static int | [getOwner](#getowner-isowner) | C++ \| Lua |
 | static bool | [isOwner](#getowner-isowner) | C++ \| Lua |
+| static void | [sync](#sync) | C++ \| Lua |
 
 ### Callback events
 
@@ -305,6 +306,21 @@ is not the server. Destroying the instance destroys it on the clients too. See
 
 The peer an entity was spawned for: 1, the server, for an entity of the scene, and 0
 for an entity without a NetworkComponent. `isOwner` is true when it is this peer.
+
+---
+
+### sync
+
+* static void **sync**(Scene* scene, Entity entity, const std::string& name, T* value, std::function&lt;void()&gt; changed = nullptr)
+
+Makes a value of a script follow the server: the clients receive it when it changes on
+the server and when they join, and `changed` is called on a client after the value was
+replaced. The entity needs a [NetworkComponent](networkcomponent.md). In a C++ script
+`REGISTER_SYNC(member)` registers a member and removes it with the script.
+
+In Lua it is `Network.sync(self, "field", "methodName")`, where the optional method
+receives the new and the old value. See
+[Script values](../../manual/multiplayer.md#entity-values).
 
 ## Events
 
