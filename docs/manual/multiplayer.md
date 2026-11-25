@@ -146,7 +146,9 @@ destroyed with its entity:
     }
     ```
 
-A name holds one function: registering it again replaces the earlier one. An RPC
+A name holds one function: registering it again replaces the earlier one, so a script
+that several entities have should not register an RPC of its own. Register it once and
+pass the entity or the peer as a value. An RPC
 registered with a plain function stays until `unregisterRpc`, so it must not use a
 script that may be destroyed.
 
@@ -372,8 +374,8 @@ A client receives the entities of a scene when it has that scene loaded and is
 connected, in either order: the spawned bundles as they are at that moment, and the
 scene entities that moved. Clients in another scene receive nothing of this one.
 
-When a client disconnects, the bundles the server spawned are destroyed in its scenes
-and the scene entities stay where they were.
+When a session ends, the bundles it spawned are destroyed, on the client that
+disconnected and on a server that closed. The scene entities stay where they were.
 
 ### Tuning {#entity-tuning}
 
@@ -400,6 +402,9 @@ entities that follow the server are not simulated:
   on the client pushes it back.
 - A **3D character** becomes [kinematic](../reference/classes/character3d.md#kinematic):
   it has no gravity and ignores `moveVelocity` and `jump`.
+
+An entity that syncs neither position nor rotation, only [script values](#entity-values),
+keeps its own physics.
 
 Apply forces, impulses and character movement on the server. A client asks for them
 with an RPC:
