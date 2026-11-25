@@ -444,8 +444,14 @@ A client with another version gets `onConnectionFailed("version")`.
 
 ## Testing {#testing}
 
-Run the project twice on one machine and connect to `127.0.0.1`, or export it and run
-the copies side by side.
+To run the project twice on one machine, press Play in the editor and choose
+**Scene → Run in Another Instance** for each extra player. An instance is a second
+editor on the same project that plays the scene at once and closes when its Play stops.
+Make one of them host and the others connect to `127.0.0.1`. Exported copies run side
+by side work the same way.
+
+With C++ scripts, start an instance after the first editor finished building: both
+build in the same folder.
 
 A game that works on one machine can fail on a real connection. `setSimulation` delays
 and drops what this side sends, so set it on both sides to affect both directions:
