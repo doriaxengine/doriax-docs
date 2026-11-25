@@ -498,6 +498,8 @@ A client with another version gets `onConnectionFailed("version")`.
 To run the project twice on one machine, press Play in the editor and choose
 **Scene → Run in Another Instance** for each extra player. An instance is a second
 editor on the same project that plays the scene at once and closes when its Play stops.
+It plays what is saved: the command saves the open scenes first, and scripts open in the
+code editor are yours to save.
 Make one of them host and the others connect to `127.0.0.1`. Exported copies run side
 by side work the same way.
 
