@@ -287,6 +287,9 @@ siblings. The mesh parts of a model are the exception: the ones the file does no
 animate can be regrouped anywhere inside their own model, bones included (see
 [Organizing the parts of a model](#organizing-the-parts-of-a-model)).
 
+A bundle instance moves by its root, and its members stay inside it (see
+[Moving instances and members](bundles.md#moving-instances-and-members)).
+
 Drag and drop also crosses window boundaries:
 
 | Drag | Drop | Result |
