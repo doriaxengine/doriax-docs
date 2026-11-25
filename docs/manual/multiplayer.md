@@ -441,6 +441,16 @@ simulated again, so the scene keeps working offline.
   root.
 - A client does not predict its own player: it sees it after the trip to the server.
 
+## Dedicated server {#dedicated-server}
+
+A server that no one plays on needs no window. On Linux, build the exported project
+with `DORIAX_HEADLESS` ([how](../building/linux.md#dedicated-server)): it runs the
+scenes, the scripts and the physics at 60 frames per second, draws nothing, plays no
+sound and stops on Ctrl+C. Scripts tell it apart with a start argument or an
+environment variable of your own, and call `Network.host` there.
+
+The same project is the client: export it as usual for the players.
+
 ## Web builds {#web}
 
 A web build connects with the browser's WebSocket:
