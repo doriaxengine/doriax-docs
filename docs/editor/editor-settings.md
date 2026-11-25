@@ -61,7 +61,7 @@ The C++ toolchain used both when **playing** a scene with C++ scripts and when r
 | --- | --- | --- |
 | **CMake** | Auto-detect | Path to the `cmake` executable. **Browse** validates the pick by running it, and reports a folder with no working CMake instead of storing it. **Auto** returns to looking it up on `PATH` |
 | **Compiler** | Default | The compiler kit used to build C++ scripts |
-| **Debug Info** | Symbols | Debug information of the C++ scripts built for Play and the `doriax` CMake preset: **None**, **Symbols**, or **Symbols, No Optimization** |
+| **Debug Info** | Symbols | Debug information of the C++ scripts built for Play, Debug and the `doriax` CMake preset: **None**, **Symbols**, or **Symbols, No Optimization** |
 
 The **Compiler** dropdown lists the kits the editor detected (GCC, Clang, MSVC/Visual
 Studio), each paired with a compatible CMake generator, and shows the resolved C and C++
@@ -81,10 +81,11 @@ warns that builds still use the stored kit until you press OK.
     toolchain. The kit you last chose also becomes the default for projects opened
     afterwards that have none, so in practice you set it once.
 
-**Debug Info** is stored per project with the kit. **Symbols** lets a debugger attached to
-the editor stop at breakpoints in scripts while keeping them optimized; **Symbols, No
-Optimization** makes stepping and variables exact at the cost of speed. See
-[Debugging C++ scripts](ide-integration.md#debugging-c-scripts).
+**Debug Info** is stored per project with the kit. **Symbols** lets a debugger stop at
+breakpoints in scripts while keeping them optimized; **Symbols, No Optimization** makes
+stepping and variables exact at the cost of speed. With **None**, C++ breakpoints of the
+Code Editor are off. See [Debugging scripts](code-editor.md#c-scripts) for the built-in
+debugger and [Debugging C++ scripts](ide-integration.md#debugging-c-scripts) for an IDE.
 
 See [C++ Build Setup](../manual/cpp-build-setup.md) for what each toolchain requires, the
 Windows ABI rules, and how to read a failing build.

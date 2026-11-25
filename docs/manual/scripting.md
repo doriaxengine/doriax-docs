@@ -16,6 +16,7 @@ both in the same project.
 | Runtime performance | High | Maximum (native) |
 | Compilation | Interpreted at runtime | Compiled at **build time** |
 | Best for | Gameplay logic, prototyping, glue code | Performance-critical systems |
+| [Debugging](../editor/code-editor.md#debugging-scripts) | Breakpoints in the Code Editor | Breakpoints in the Code Editor, with gdb or lldb |
 
 A common workflow is to prototype in Lua, then move hot paths to C++ when you need the
 extra performance.
