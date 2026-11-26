@@ -113,8 +113,11 @@ project that stops at start with a missing shader is asking for this.
 
 ## Debugging C++ scripts
 
+The built-in Code Editor has its own [C++ debugger](code-editor.md#c-scripts), with no
+setup. This section is for debugging from the IDE.
+
 **Editor Settings → [Desktop](editor-settings.md#desktop) → Debug Info** sets what the
-scripts are built with, for Play and for the preset:
+scripts are built with, for Play, Debug and the preset:
 
 | Debug Info | Effect |
 | --- | --- |
@@ -142,7 +145,7 @@ the editor lets one of the same user attach, unless **Debug Info** is **None**. 
 so while one does, the next Play links the scripts under a new PDB name.
 
 Lua scripts are debugged in the built-in Code Editor: see
-[Debugging Lua scripts](code-editor.md#debugging-lua-scripts).
+[Debugging scripts](code-editor.md#debugging-scripts).
 
 ## Lua scripts
 

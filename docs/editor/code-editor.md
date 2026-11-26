@@ -25,7 +25,7 @@ dialogs, and a live output panel for compile and export messages.
 | **Event menu** | Add an engine, input, component, physics, or monetization event handler to a script in one click. See [Add events](#add-events) |
 | **API completion** | Engine API suggestions generated from Lua bindings; covers classes, methods, properties, and constants. Properties that return a [copy](../manual/math-and-utilities.md#changing-one-component-of-a-property) are marked `(copy)` |
 | **Build output** | Compiler errors, warnings, and export messages stream into the Output panel |
-| **Lua debugger** | Breakpoints, stepping, the call stack and variables for a scene started with **Debug**. See [Debugging Lua scripts](#debugging-lua-scripts) |
+| **Debugger** | Breakpoints, stepping, the call stack and variables of Lua and C++ scripts, for a scene started with **Debug**. See [Debugging scripts](#debugging-scripts) |
 
 ## Creating a new script
 
@@ -157,15 +157,15 @@ The marks follow your typing and compare with what is staged, so staging a chang
 its marks. Untracked, ignored and conflicted files have none, and neither has a file
 opened through a symbolic link.
 
-## Debugging Lua scripts
+## Debugging scripts
 
 The Scene window has two ways to run a scene, side by side. **Play** (**F5**) runs it
 inside the editor. **Debug** (**Ctrl+F5**, or **Scene → Debug Current Scene**) builds the
-project and runs the scene in a window of its own, as a separate program, with the Lua
+project and runs the scene in a window of its own, as a separate program, with the
 debugger attached. The editor stays free while a script is stopped: you read its variables
 here while the scene waits.
 
-Click a line number of a Lua script, or press **F9** on a line, to put a breakpoint there:
+Click a line number of a Lua or C++ script, or press **F9** on a line, to put a breakpoint there:
 a red dot. When that line is about to run, the scene stops, the editor shows the line in
 yellow, and the **Debugger** panel opens beside Output:
 
@@ -175,7 +175,7 @@ yellow, and the **Debugger** panel opens beside Output:
 | **Step Over** | F10 | Runs the line, without stopping inside the functions it calls |
 | **Step Into** | F11 | Goes into the function the line calls |
 | **Step Out** | Shift+F11 | Runs until the function returns |
-| **Pause** | F6 | Stops at the next line of Lua that runs, to find where a script is stuck |
+| **Pause** | F6 | Stops at the next line of Lua that runs, to find where a script is stuck. With the [C++ debugger](#c-scripts) attached and no Lua running, stops the scene where it is |
 | **Stop** | F7 | Ends the scene |
 
 The Play, Pause and Stop buttons of the Scene window and of the footer, and their keys,
@@ -194,13 +194,49 @@ runs. Things to know:
   build takes the longest.
 - Open scenes run as they are in the editor, saved or not. Scripts are saved first.
 - It is the same build as the `doriax` preset of
-  [IDE Integration](ide-integration.md#c-scripts): C++ scripts can be debugged there, in
-  an IDE.
+  [IDE Integration](ide-integration.md#c-scripts), so an IDE can debug it too.
 - Breakpoints do not stop a scene started with **Play**. While one plays, the dots are
   drawn hollow and Output says so.
 - Lua runs slower while the debugger watches each line.
 - A breakpoint inside a coroutine stops there, but a step that leaves the coroutine
   continues to the next breakpoint.
+
+### C++ scripts
+
+Breakpoints in C++ scripts work the same way, in `.cpp` and `.h` files. For them, Debug
+attaches the debugger of your system to the scene: **gdb** (14 or newer) on Linux,
+**lldb-dap** on macOS. The one beside the compiler of the
+[kit](editor-settings.md#desktop) is used, then the one in the `PATH`. It only comes
+along when the project has C++ scripts, and **Debug Info** in
+[Editor Settings](editor-settings.md#desktop) is not **None**.
+
+!!! note "Windows"
+    The official Windows editor builds scripts with the Visual Studio compilers (MSVC, or
+    Clang targeting MSVC), which neither debugger reads well: C++ breakpoints are off
+    there, and those projects are debugged in
+    [Visual Studio](ide-integration.md#debugging-c-scripts). Only a
+    [MinGW build of the editor](../manual/cpp-build-setup.md#choosing-a-compiler) has
+    them, with the gdb of the MinGW kit.
+
+- With **Symbols**, the default, the code stays optimized: some variables read as
+  `<optimized out>` and a step can jump. Pick **Symbols, No Optimization** for exact
+  stepping and variables.
+- **Call Stack** shows the engine functions that called the script too. **Variables** has
+  the arguments and locals of the selected function; expand `this` for the members of the
+  script.
+- A crash, such as a null pointer, stops the scene on the line where it happened, with the
+  signal in the panel.
+- A scene with Lua and C++ scripts stops at the breakpoints of both.
+- **Step Into** enters engine code only when the engine was built with debug information,
+  and **Step Out** of an event handler lands in the engine.
+- A stop outside the project, such as a **Pause** inside the engine, opens no file by
+  itself: click a function in **Call Stack** to see its file, when it is on this computer.
+  A file from outside the project opens read-only, and its tab is not restored with the
+  project.
+- The scene runs with the Lua breakpoints only when the debugger cannot attach: it is too
+  old, or the system refuses it (a container or a hardened `ptrace_scope` on Linux).
+  Output says why, and the dots of C++ breakpoints are drawn hollow. A debugger that was
+  not found is only reported when a C++ breakpoint is set.
 
 ## Script entry point
 

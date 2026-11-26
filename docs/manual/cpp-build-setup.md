@@ -22,6 +22,10 @@ If you only use Lua scripts, no build tools are required.
 When you press Play in a project that contains C++ scripts, the editor first checks for
 these tools and shows a *Missing Build Tools* dialog listing anything it could not find.
 
+A debugger is optional: **gdb** 14 or newer (Linux, MinGW builds of the editor) or
+**lldb-dap** (macOS) lets [Debug](../editor/code-editor.md#c-scripts) stop at breakpoints
+in C++ scripts. The Visual Studio compilers have none there.
+
 === "Windows"
 
     Install one of:
