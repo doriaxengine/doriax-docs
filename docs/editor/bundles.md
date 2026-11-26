@@ -132,6 +132,24 @@ New entities created under a bundle root from the Structure create menu can join
 bundle directly. Nested bundle instances have matching *(nested)* menu entries to
 control membership in the outer bundle.
 
+## Moving instances and members
+
+Drag an instance root in the Structure panel to move the whole instance, for example to
+put it under a character. The root belongs to the scene, so this does not change the
+bundle or its other instances.
+
+Members move only inside their own instance, and every other instance follows. Entities
+outside the instance are not offered as drop targets. To take a member out, use
+**Remove from bundle** first. The members of a nested bundle also stay inside that
+nested bundle.
+
+A bundle cannot be inside another instance of itself, at any depth, because the scene
+could not load it. The Structure panel does not accept a drop that would cause this, and
+**Insert to Bundle** refuses it with the reason in the Output window. One case is only
+caught on the drop: a `.bundle` file that no open scene uses yet, dragged from the
+Resources Browser into an instance of a bundle nested in it. The target is highlighted,
+and the import is then refused.
+
 ## Saving
 
 Bundle edits mark the bundle as modified, and modified bundles are written to their
