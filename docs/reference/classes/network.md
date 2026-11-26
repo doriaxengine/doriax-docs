@@ -77,11 +77,9 @@ and how to use it.
 | static void | [setVersion](#setversion) | C++ \| Lua |
 | static void | [setSimulation](#setsimulation) | C++ \| Lua |
 | static void | [registerRpc](#registerrpc) | C++ \| Lua |
-| static void | [registerRawRpc](#registerrawrpc) | C++ |
 | static void | [unregisterRpc](#unregisterrpc) | C++ \| Lua |
 | static bool | [rpc](#rpc-rpcunreliable) | C++ \| Lua |
 | static bool | [rpcUnreliable](#rpc-rpcunreliable) | C++ \| Lua |
-| static bool | [sendRpc](#sendrpc) | C++ |
 | static Entity | [spawn](#spawn) | C++ \| Lua |
 | static int | [getOwner](#getowner-isowner) | C++ \| Lua |
 | static bool | [isOwner](#getowner-isowner) | C++ \| Lua |
@@ -219,40 +217,37 @@ turn it off. See [Testing](../../manual/multiplayer.md#testing).
 * static void **registerRpc**(const std::string& name, Function function)
 
 Registers the function a peer calls with this name. It receives the sender's number
-and then the values. Registering a name again replaces its function.
+and then the values. A name holds one function: registering it again replaces the
+earlier one.
 
-A script registers a method with `REGISTER_RPC(name, method)` in C++ or
-`Network.registerRpc(name, self, "method")` in Lua, and the RPC is removed when the
-script is destroyed. See [RPCs in a script](../../manual/multiplayer.md#rpc-scripts).
+A script registers one of its methods, and the RPC is removed when the script is
+destroyed. See [RPCs in a script](../../manual/multiplayer.md#rpc-scripts).
 
 === "C++"
 
     ```cpp
-    Network::registerRpc("hit", [this](int sender, int target, float damage){
+    REGISTER_RPC("hit", onHit);
+
+    void Game::onHit(int sender, int target, float damage){
         applyDamage(target, damage);
-    });
+    }
     ```
 
-    The function may be a lambda or a function pointer whose first parameter is
-    `int`. An RPC whose values don't match the other parameters is logged and not
-    called.
+    An RPC whose values don't match the parameters after `int sender` is logged and
+    not called.
 
 === "Lua"
 
     ```lua
-    Network.registerRpc("hit", function(sender, target, damage)
+    Network.registerRpc("hit", self, "onHit")
+
+    function Game:onHit(sender, target, damage)
         applyDamage(target, damage)
-    end)
+    end
     ```
 
----
-
-### registerRawRpc
-
-* static void **registerRawRpc**(const std::string& name, std::function&lt;void(int, Packet&)&gt; handler)
-
-Like `registerRpc`, with the values left in the packet for the handler to read with
-`Packet::readValue`, which returns false on a value of another type.
+Outside a script the function is a lambda or a function pointer in C++ and a function
+in Lua. It stays until [`unregisterRpc`](#unregisterrpc).
 
 ---
 
@@ -276,14 +271,6 @@ or there is no session.
 The values are `nil`, booleans, integers, numbers, strings, `Vector2`, `Vector3`,
 `Vector4` and `Quaternion`. `rpc` always arrives and keeps the order of the calls;
 `rpcUnreliable` may be lost. See [RPCs](../../manual/multiplayer.md#rpcs).
-
----
-
-### sendRpc
-
-* static bool **sendRpc**(int target, const std::string& name, const Packet& values, [NetworkDelivery](#networkdelivery) delivery)
-
-`rpc` with the values already written to a packet with `Packet::writeValue`.
 
 ---
 
@@ -343,10 +330,3 @@ or `RegisterEvent` in Lua (see [Events](../../manual/events.md#service-events)).
 * **CONNECTING** — A client waiting for its server.
 * **CONNECTED** — A client of a server.
 * **HOSTING** — A server.
-
----
-
-### NetworkDelivery
-
-* **RELIABLE** — Arrives, in the order sent.
-* **UNRELIABLE** — May be lost or arrive late, never waits for a resend.

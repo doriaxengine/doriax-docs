@@ -83,13 +83,22 @@ stops.
 The receiving side registers a function under a name. The first argument is always the
 peer that called it, followed by the values it sent.
 
+### In a script {#rpc-scripts}
+
+A script registers one of its methods, and the RPC is removed when the script is
+destroyed with its entity:
+
 === "Lua"
 
     ```lua
     -- on the server
-    Network.registerRpc("move", function(sender, position)
-        players[sender].position = position
-    end)
+    function Game:init()
+        Network.registerRpc("move", self, "onMove")
+    end
+
+    function Game:onMove(sender, position)
+        self.players[sender].position = position
+    end
 
     -- on a client
     Network.rpc(Network.SERVER, "move", Vector3(1, 0, 4))
@@ -99,9 +108,13 @@ peer that called it, followed by the values it sent.
 
     ```cpp
     // on the server
-    Network::registerRpc("move", [this](int sender, Vector3 position){
+    Game::Game(Scene* scene, Entity entity): ScriptBase(scene, entity){
+        REGISTER_RPC("move", onMove);
+    }
+
+    void Game::onMove(int sender, Vector3 position){
         players[sender].setPosition(position);
-    });
+    }
 
     // on a client
     Network::rpc(Network::SERVER, "move", Vector3(1, 0, 4));
@@ -117,40 +130,31 @@ The target of an RPC is:
 Handlers run at the start of a frame, and the RPCs of a frame leave when it ends. A
 handler can call RPCs, disconnect a peer or close the session.
 
-### In a script {#rpc-scripts}
+A name holds one function: registering it again replaces the earlier one, so a script
+that several entities have should not register an RPC of its own. Register it once, in
+a script the scene has one of, and pass the entity or the peer as a value.
 
-A script registers one of its methods, and the RPC is removed when the script is
-destroyed with its entity:
+### Outside a script {#rpc-functions}
+
+Code that belongs to no script registers a plain function:
 
 === "Lua"
 
     ```lua
-    function Player:init()
-        Network.registerRpc("move", self, "onMove")
-    end
-
-    function Player:onMove(sender, position)
-        self.target = position
-    end
+    Network.registerRpc("say", function(sender, text)
+        print("peer " .. sender .. ": " .. text)
+    end)
     ```
 
 === "C++"
 
     ```cpp
-    Player::Player(Scene* scene, Entity entity): ScriptBase(scene, entity){
-        REGISTER_RPC("move", onMove);
-    }
-
-    void Player::onMove(int sender, Vector3 position){
-        target = position;
-    }
+    Network::registerRpc("say", [](int sender, std::string text){
+        Log::print("peer %i: %s", sender, text.c_str());
+    });
     ```
 
-A name holds one function: registering it again replaces the earlier one, so a script
-that several entities have should not register an RPC of its own. Register it once and
-pass the entity or the peer as a value. An RPC
-registered with a plain function stays until `unregisterRpc`, so it must not use a
-script that may be destroyed.
+It stays until `unregisterRpc`, so it must not use a script that may be destroyed.
 
 ### Values {#rpc-values}
 
