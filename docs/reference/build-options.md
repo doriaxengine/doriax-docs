@@ -77,6 +77,7 @@ cmake --build build --config Debug
 | `DORIAX_CXX_STANDARD` | `17` | C++ standard for the engine and the game target. Accepts `17`, `20` or `23` only — configuration fails on any other value. |
 | `DORIAX_PHYSICS_2D` | `ON` | Build and link Box2D. `OFF` leaves out 2D bodies, joints and their Lua API. When on, the engine target also defines the `DORIAX_PHYSICS_2D` macro for the game. |
 | `DORIAX_PHYSICS_3D` | `ON` | Build and link Jolt. `OFF` leaves out 3D bodies, joints and their Lua API. When on, the engine target also defines the `DORIAX_PHYSICS_3D` macro for the game. |
+| `DORIAX_HEADLESS` | `OFF` | Linux only: build a [dedicated server](../manual/multiplayer.md#dedicated-server) that opens no window, draws nothing and plays no sound. |
 | `DORIAX_ADMOB` | `ON` | iOS only: link Google Mobile Ads and compile the AdMob adapter, defining the `DORIAX_ADMOB` macro. `OFF` leaves [`AdMob`](classes/admob.md) unavailable. |
 | `DORIAX_STOREKIT` | `ON` | iOS only: compile the StoreKit 2 adapter, a Swift source that needs Swift 6.1 (Xcode 16.3 or later), defining the `DORIAX_STOREKIT` macro. `OFF` leaves [`InAppPurchase`](classes/inapppurchase.md) unavailable on iOS. |
 | `DORIAX_WEB_PORTAL` | `none` | Web only: the game portal SDK built in for [`WebPortal`](classes/webportal.md): `none`, `crazygames`, `poki`, `gamedistribution`, `yandex` or `youtube`. Any other value fails configuration. A portal also defines `DORIAX_WEB_PORTAL_<NAME>`, like `DORIAX_WEB_PORTAL_POKI`. |

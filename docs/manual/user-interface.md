@@ -332,8 +332,8 @@ matches your design resolution and choose a scaling mode:
 
 | Scaling mode | Behavior |
 | --- | --- |
-| `FITWIDTH` | Scale to fit the horizontal axis; may letterbox vertically |
-| `FITHEIGHT` | Scale to fit the vertical axis; may letterbox horizontally |
+| `FITWIDTH` | Keep the canvas width; the height follows the screen aspect ratio |
+| `FITHEIGHT` | Keep the canvas height; the width follows the screen aspect ratio |
 | `LETTERBOX` | Fit inside the screen maintaining aspect ratio |
 | `CROP` | Fill the screen, cropping edges |
 | `STRETCH` | Stretch to fill (may distort) |

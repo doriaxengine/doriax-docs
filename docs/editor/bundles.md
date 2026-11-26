@@ -146,9 +146,9 @@ nested bundle.
 A bundle cannot be inside another instance of itself, at any depth, because the scene
 could not load it. The Structure panel does not accept a drop that would cause this, and
 **Insert to Bundle** refuses it with the reason in the Output window. One case is only
-caught on the drop: a `.bundle` file that holds a nested bundle, dragged from the
-Resources Browser into an instance of that nested bundle. The target is highlighted, and
-the import is then refused.
+caught on the drop: a `.bundle` file that no open scene uses yet, dragged from the
+Resources Browser into an instance of a bundle nested in it. The target is highlighted,
+and the import is then refused.
 
 ## Saving
 

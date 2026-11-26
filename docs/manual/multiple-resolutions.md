@@ -84,8 +84,8 @@ canvas.
 
 !!! tip
     You can react to canvas changes (window resize, device rotation) with the
-    `Engine::onCanvasChanged` event, for example to reposition elements that are not
-    anchor-driven.
+    `Engine::onViewChanged` event (`Engine.onCanvasChanged` in Lua), for example to
+    reposition elements that are not anchor-driven.
 
 ## Fixed resolution
 

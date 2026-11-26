@@ -374,14 +374,15 @@ Use these to chain gameplay reactions to tweens, timelines, or audio playback.
 
 ## Service events
 
-The [monetization services](monetization.md) report through static events of their
-classes, which belong to no entity or scene:
+The [monetization services](monetization.md) and [multiplayer](multiplayer.md) report
+through static events of their classes, which belong to no entity or scene:
 
 | Class | Events |
 | --- | --- |
 | [`AdMob`](../reference/classes/admob.md#events) | `onInitialized`, `onConsentUpdated`, `onAdLoaded`, `onAdFailedToLoad`, `onAdShown`, `onAdFailedToShow`, `onAdDismissed`, `onAdClicked`, `onAdImpression`, `onUserEarnedReward`, `onAdPaid`, `onAdInspectorClosed` |
 | [`InAppPurchase`](../reference/classes/inapppurchase.md#events) | `onInitialized`, `onDisconnected`, `onProductsQueried`, `onPurchaseUpdated`, `onPurchaseFailed`, `onPurchasesQueried`, `onPurchaseAcknowledged`, `onPurchaseConsumed` |
 | [`WebPortal`](../reference/classes/webportal.md#events) | `onInitialized`, `onAdStarted`, `onAdFinished`, `onAdError`, `onDataLoaded`, `onDataLoadFailed`, `onDataSaveFailed` |
+| [`Network`](../reference/classes/network.md#events) | `onPeerConnected`, `onPeerDisconnected`, `onConnected`, `onConnectionFailed`, `onDisconnected` |
 
 Pass the static member to `REGISTER_EVENT` in C++ or `RegisterEvent` in Lua:
 
@@ -446,5 +447,5 @@ component callback of a scene at once.
 
 - [Engine](../reference/classes/engine.md) — engine events (`onUpdate`, input, lifecycle)
 - [PhysicsSystem](../reference/classes/physicssystem.md) — collision and contact events
-- [AdMob](../reference/classes/admob.md), [InAppPurchase](../reference/classes/inapppurchase.md), [WebPortal](../reference/classes/webportal.md) — service events
+- [AdMob](../reference/classes/admob.md), [InAppPurchase](../reference/classes/inapppurchase.md), [WebPortal](../reference/classes/webportal.md), [Network](../reference/classes/network.md) — service events
 - Script workflow: [Creating Scripts](creating-scripts.md)

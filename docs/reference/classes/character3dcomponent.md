@@ -26,6 +26,7 @@ The data a [Character3D](character3d.md) is built from. In the editor it is **3D
 | `gravityFactor` | `1` | C++ \| Lua |
 | `airControl` | `1` | C++ \| Lua |
 | `innerBody` | `true` | C++ \| Lua |
+| `kinematic` | `false` | C++ \| Lua |
 | `moveVelocity` | `(0,0,0)` | C++ \| Lua |
 | `needReloadCharacter` | `true` | C++ \| Lua |
 
@@ -34,7 +35,7 @@ entity. A height under twice the radius makes it a sphere. `padding` is the gap 
 keeps from what it touches, and `innerBody` gives it the kinematic body that rays and sensors
 find (see [Contacts and the inner body](character3d.md#contacts-and-the-inner-body)).
 
-`stepUp`, `stepDown`, `gravityFactor`, `airControl` and `moveVelocity` are read at every fixed
-step. The others are used when the character is built: set `needReloadCharacter`, or call
+`stepUp`, `stepDown`, `gravityFactor`, `airControl`, `kinematic` and `moveVelocity` are read at
+every fixed step. The others are used when the character is built: set `needReloadCharacter`, or call
 [Character3D::load](character3d.md#load), after changing them. The [Character3D](character3d.md)
 setters for `maxSlopeAngle`, `mass` and `maxStrength` change the running character too.

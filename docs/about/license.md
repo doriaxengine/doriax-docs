@@ -24,6 +24,7 @@ Doriax integrates several open-source libraries, including:
 | Library | Use |
 | --- | --- |
 | [Box2D](https://box2d.org/) | 2D physics |
+| [ENet](https://github.com/zpl-c/enet) | Multiplayer over UDP |
 | [Jolt Physics](https://github.com/jrouwe/JoltPhysics) | 3D physics |
 | [Lua](https://www.lua.org/) | Scripting |
 | [meshoptimizer](https://github.com/zeux/meshoptimizer) | Mesh detail-level (LOD) simplification |

@@ -53,6 +53,7 @@ This documentation follows a broad structure similar to large engine manuals:
 | UI | A built-in UI system for menus, HUDs, and overlays |
 | Physics | Integrated 2D and 3D physics via Box2D and Jolt Physics |
 | Audio | 3D positional audio |
+| Multiplayer | A server and its clients on desktop, mobile and web, with RPCs between them — see [Multiplayer](../manual/multiplayer.md) |
 | Monetization | AdMob ads and in-app purchases (Google Play and the App Store) on mobile, and the SDKs of five web game portals — see [Monetization](../manual/monetization.md) |
 
 ## Engine features

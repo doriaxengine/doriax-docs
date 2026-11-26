@@ -187,6 +187,25 @@ reports its size.
 `Engine::getFramerate()` per frame. Draw, instance, and triangle averages come from
 [`Engine::getFrameStats()`](../reference/classes/engine.md#framestats).
 
+## `play` — play a scene in another editor
+
+Opens a second editor on a project that another editor may already have open, and
+plays a scene at once. It is what **Scene → Run in Another Instance** starts, to test
+[multiplayer](../manual/multiplayer.md#testing) on one machine.
+
+```bash
+doriax-editor play --project ./MyGame --scene Level01
+```
+
+| Option | Description |
+| --- | --- |
+| `-p`, `--project <path>` | **Required.** Project directory or a `project.yaml` file. |
+| `-s`, `--scene <scene>` | Scene name, scene file name, or path. Defaults to the project's start scene. |
+
+The instance does not lock the project, keeps the workspace file as it is and leaves
+the MCP port to the first editor. It closes when its Play stops. Edit and save in the
+first editor only.
+
 ## `shaders` — generate shader files standalone
 
 Compiles shader variants directly to an output directory, without exporting a whole
