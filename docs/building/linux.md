@@ -77,6 +77,18 @@ Assets and Lua files are copied next to the build output when the project contai
 In a Source Code export, `python3 doriax.py` runs both commands. See
 [Build Script](build-script.md).
 
+## Dedicated server
+
+`-DDORIAX_HEADLESS=ON` builds the project without window, graphics and sound, for a
+machine that only hosts a [multiplayer](../manual/multiplayer.md#dedicated-server)
+session. It needs no X11, OpenGL or Vulkan packages, and takes an export made for the
+OpenGL backend.
+
+```bash
+cmake -S . -B build-server -DCMAKE_BUILD_TYPE=Release -DDORIAX_HEADLESS=ON
+cmake --build build-server
+```
+
 ## Vulkan backend
 
 To build a Linux runtime with the Vulkan backend, install the Vulkan SDK development

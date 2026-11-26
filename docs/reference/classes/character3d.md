@@ -63,6 +63,7 @@ rotation stays where scripts put it.
 | float | [maxStrength](#mass-maxstrength) | `100` | C++ \| Lua |
 | float | [gravityFactor](#gravityfactor) | `1` | C++ \| Lua |
 | float | [airControl](#aircontrol) | `1` | C++ \| Lua |
+| bool | [kinematic](#kinematic) | `false` | C++ \| Lua |
 
 ### Methods
 
@@ -189,6 +190,15 @@ How much the character steers in the air, from `0` to `1`. `1` moves it in the a
 ground. `0` keeps the horizontal velocity it had when it left the ground, so a jump follows its
 arc whatever the input. Values in between steer from that velocity towards
 [moveVelocity](#movevelocity) at every fixed step.
+
+---
+
+### kinematic
+
+A kinematic character is not simulated: no gravity, no `moveVelocity`, no jump. It stays
+where its Transform is and follows it when a script or an animation moves the entity, and
+its inner body still blocks other bodies. On a multiplayer client the engine sets it for
+the characters that [follow the server](../../manual/multiplayer.md#entity-physics).
 
 ## Method details
 

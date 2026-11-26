@@ -132,6 +132,7 @@ nav:
       - Math & Utilities: 'manual/math-and-utilities.md'
       - Threading & Async Loading: 'manual/threading-and-async-loading.md'
       - Monetization: 'manual/monetization.md'
+      - Multiplayer: 'manual/multiplayer.md'
   - Reference:
       - API Index: 'reference/index.md'
       - Enumerations: 'reference/enums.md'
@@ -198,6 +199,7 @@ nav:
           - AdMob: 'reference/classes/admob.md'
           - InAppPurchase: 'reference/classes/inapppurchase.md'
           - WebPortal: 'reference/classes/webportal.md'
+          - Network: 'reference/classes/network.md'
       - Scripting:
           - ScriptBase: 'reference/classes/scriptbase.md'
       - Math:
