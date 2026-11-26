@@ -46,6 +46,16 @@ tooltip. Click the **eye icon** on a child scene node to load it *inline* — it
 appear nested under the node so you can view and edit them in the parent's context. This
 is an editing convenience and does not affect runtime behavior.
 
+A child scene of the same type as its parent, such as a UI scene inside another UI scene,
+is drawn from the parent's editor camera, so its entities line up with the parent's and
+follow the view as you move it. You can select them by clicking in the Scene view, and in
+3D **F**, **Home**, and a double-click in this panel frame them like the parent's own
+entities. A selected entity of the child is outlined; the gizmo to move it is in the child
+scene's own tab. A child of another type, such as a UI scene used as a HUD, keeps its own camera and
+stays fixed on screen. A running game always draws each child scene from its own camera,
+and so does **View Through Camera**; see
+[Cameras of child scenes](../manual/scenes-and-entities.md#cameras-of-child-scenes).
+
 The entities shown inline still belong to the child scene. Dragging one only creates a
 reference to it: drop it on a script's entity property in Properties, or on a script open
 in the [Code Editor](code-editor.md#drag-entities-into-your-code). Drop targets that

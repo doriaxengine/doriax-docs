@@ -257,6 +257,19 @@ the one added last ends up on top. At runtime, `SceneManager.addChildScene` alwa
 scene **on top** of the current layers, so re-adding is also how you bring a layer to the
 front.
 
+### Cameras of child scenes
+
+Every scene draws from **its own camera**, child scenes included. That is what keeps a
+HUD fixed on screen while the gameplay camera moves: its UI camera never follows the main
+one. A 3D child scene without a main camera plays from wherever its own editor view was
+left, and the editor warns about it in the Output window when Play starts.
+
+In the editor, a child scene loaded inline that has the type of its parent, such as a UI
+scene inside another UI scene, is drawn from the parent's editor camera so both can be
+edited in one space (see [Structure Panel](../editor/structure.md#child-scenes)). A HUD
+over a 2D or 3D level keeps its own camera there too, and so does every child scene in
+Play and in **View Through Camera**.
+
 ## Switching scenes with SceneManager
 
 [`SceneManager`](../reference/classes/scenemanager.md) is the runtime entry point for
