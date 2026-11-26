@@ -231,6 +231,8 @@ along when the project has C++ scripts, and **Debug Info** in
   and **Step Out** of an event handler lands in the engine.
 - A stop outside the project, such as a **Pause** inside the engine, opens no file by
   itself: click a function in **Call Stack** to see its file, when it is on this computer.
+  A file from outside the project opens read-only, and its tab is not restored with the
+  project.
 - The scene runs with the Lua breakpoints only when the debugger cannot attach: it is too
   old, or the system refuses it (a container or a hardened `ptrace_scope` on Linux).
   Output says why, and the dots of C++ breakpoints are drawn hollow. A debugger that was
