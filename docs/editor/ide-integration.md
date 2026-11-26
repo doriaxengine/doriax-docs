@@ -117,7 +117,7 @@ The built-in Code Editor has its own [C++ debugger](code-editor.md#c-scripts), w
 setup. This section is for debugging from the IDE.
 
 **Editor Settings → [Desktop](editor-settings.md#desktop) → Debug Info** sets what the
-scripts are built with, for Play and for the preset:
+scripts are built with, for Play, Debug and the preset:
 
 | Debug Info | Effect |
 | --- | --- |

@@ -204,11 +204,19 @@ runs. Things to know:
 ### C++ scripts
 
 Breakpoints in C++ scripts work the same way, in `.cpp` and `.h` files. For them, Debug
-attaches the debugger of your system to the scene: **gdb** (14 or newer) on Linux and with
-MinGW kits, **lldb-dap** on macOS. The one beside the compiler of the
+attaches the debugger of your system to the scene: **gdb** (14 or newer) on Linux,
+**lldb-dap** on macOS. The one beside the compiler of the
 [kit](editor-settings.md#desktop) is used, then the one in the `PATH`. It only comes
 along when the project has C++ scripts, and **Debug Info** in
 [Editor Settings](editor-settings.md#desktop) is not **None**.
+
+!!! note "Windows"
+    The official Windows editor builds scripts with the Visual Studio compilers (MSVC, or
+    Clang targeting MSVC), which neither debugger reads well: C++ breakpoints are off
+    there, and those projects are debugged in
+    [Visual Studio](ide-integration.md#debugging-c-scripts). Only a
+    [MinGW build of the editor](../manual/cpp-build-setup.md#choosing-a-compiler) has
+    them, with the gdb of the MinGW kit.
 
 - With **Symbols**, the default, the code stays optimized: some variables read as
   `<optimized out>` and a step can jump. Pick **Symbols, No Optimization** for exact
@@ -221,10 +229,12 @@ along when the project has C++ scripts, and **Debug Info** in
 - A scene with Lua and C++ scripts stops at the breakpoints of both.
 - **Step Into** enters engine code only when the engine was built with debug information,
   and **Step Out** of an event handler lands in the engine.
-- When the debugger is missing or too old, Output says so and the scene runs with the Lua
-  breakpoints only.
-- Kits of the Visual Studio compilers have no debugger here: debug those projects in
-  [Visual Studio](ide-integration.md#debugging-c-scripts).
+- A stop outside the project, such as a **Pause** inside the engine, opens no file by
+  itself: click a function in **Call Stack** to see its file, when it is on this computer.
+- The scene runs with the Lua breakpoints only when the debugger cannot attach: it is too
+  old, or the system refuses it (a container or a hardened `ptrace_scope` on Linux).
+  Output says why, and the dots of C++ breakpoints are drawn hollow. A debugger that was
+  not found is only reported when a C++ breakpoint is set.
 
 ## Script entry point
 
