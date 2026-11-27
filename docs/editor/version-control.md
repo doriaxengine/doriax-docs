@@ -21,7 +21,7 @@ every time two people do. All of it goes under `.doriax/`, which is not committe
 | Scripts (`.lua`, `.h`, `.cpp`) | `build/`, `.trash/` |
 | Assets, `.material`, shaders | `.vscode/`, `.idea/`, `*.user`, `CMakeUserPresets.json` |
 | `ProjectBuild.cmake` | `UserSettings.xml` written by the running game |
-| `AGENTS.md`, `.luarc.json` | Editor logs |
+| `AGENTS.md`, `.luarc.json`, `.clangd` | Editor logs |
 
 `CMakeLists.txt` is generated from `project.yaml` and your scripts every time you press
 Play, so there is nothing in it to preserve. It also holds no path belonging to your
