@@ -35,3 +35,5 @@ label — for example with [`Scene::findEntity`](entityregistry.md#findentity).
 of per-frame durations in **milliseconds**. `loop` restarts the sequence when it
 finishes. Without it, playback stops on the last frame. `frameIndex`, `frameTimeIndex`,
 and `spriteFrameCount` are runtime playback state (shown read-only in the editor).
+`spriteFrameCount` is the time spent on the current frame in milliseconds, a float that
+keeps fractions between updates.

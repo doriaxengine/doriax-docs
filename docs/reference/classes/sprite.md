@@ -313,7 +313,11 @@ Plays a frame animation. Time values are in milliseconds.
 * The first overload accepts explicit frame ID lists and per-frame durations.
 * The second overload plays a contiguous range of frame IDs at a fixed interval. The range
   includes both ends, so `startAnimation(0, 0, 100, false)` shows frame 0 alone.
-* The third overload plays all frames whose names begin with `name` at a fixed interval.
+* The third overload plays all frames whose names contain `name` at a fixed interval.
+
+Calling it while an animation plays switches to the new one, which shows its first frame
+right away. If there is nothing to play, such as an empty list, an invalid range, or a
+name that matches no frame, it logs an error and stops the current animation.
 
 === "C++"
 
@@ -344,7 +348,7 @@ Freezes the animation at the current frame. Call [resumeAnimation](#resumeanimat
 
 * `void resumeAnimation()`
 
-Resumes a paused animation from where it was stopped.
+Continues a paused animation from where it was paused.
 
 ---
 
@@ -352,4 +356,6 @@ Resumes a paused animation from where it was stopped.
 
 * `void stopAnimation()`
 
-Stops the animation and resets to the first frame of the sequence.
+Stops the animation. The sprite keeps the frame it shows, and the next
+[startAnimation](#startanimation) or [resumeAnimation](#resumeanimation) plays from the
+first frame.

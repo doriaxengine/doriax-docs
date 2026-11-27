@@ -101,8 +101,12 @@ frame 0 alone. A negative start, or an end before the start, logs an error and k
 current animation.
 
 Without `loop`, the animation stops when it reaches its last frame and leaves that frame
-showing. A one-frame animation stops after its interval. A frame time of 0 moves on one
-frame per update.
+showing. A one-frame animation stops after its interval. A frame time of 0 or less moves
+on one frame per update.
+
+To change the frames of a playing animation, call [restart](action.md#restart) after
+`setAnimation` so it shows the new first frame right away. A `start()` there keeps it
+running, and the old frame stays until the first interval passes.
 
 ## See also
 

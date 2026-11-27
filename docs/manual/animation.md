@@ -207,6 +207,11 @@ sprite:startAnimation(0, 7, 80, true)
 sprite:stopAnimation()
 ```
 
+To switch animations, call `startAnimation` again. The new one shows its first frame
+right away, so there is no need to stop or pause the old one first. With one
+`SpriteAnimation` action per animation on the same sprite, stop the one playing and start
+the next in the same frame.
+
 !!! note "Lookup uses the sprite animation entity name"
     `SpriteAnimationComponent` has no separate name. Rename the action entity in the
     Structure panel (or call `setName`) and find it with `Scene:findEntity` when you need
