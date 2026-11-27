@@ -166,14 +166,17 @@ In a 2D scene the editor uses orthographic projection and a canvas overlay. Spri
 tilemaps, UI widgets, and polygons should be positioned in a consistent logical
 coordinate system so that canvas scaling stays predictable across different screen sizes.
 
-Tilemap cells can be painted directly in the scene view when a Tilemap entity is
-selected and the tile-paint mode is active.
+To paint tilemap cells in the scene view, open the [Tilemap Editor](tilemap-editor.md).
+While its paint mode is on, clicks paint instead of selecting, the right mouse button
+erases, and E and R pick the Eraser and Rectangle Fill tools instead of the Rotate and
+Scale gizmos.
 
 ![A tilemap selected, with its tile rects in the Properties window](../assets/screenshots/editor-2d-tilemap.png)
 
 ### Placing and grouping tiles
 
-Drag a tile rect from the Tilemap palette onto the viewport to place it. With
+Drag a tile rect from the **Tile Rects** list in the Properties window onto the viewport
+to place it. With
 **Snap tile** enabled in the viewport settings:
 
 - Dropped tiles snap to multiples of their own size in the tilemap's local space.

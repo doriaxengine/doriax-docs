@@ -60,6 +60,7 @@ offering to save it if it has unsaved changes.
 | Import and preview assets | Resources Browser |
 | Share PBR materials across meshes | Create `.material` files (Properties → Resources drag), link from Scene view |
 | Slice sprite sheets and tilesets | Sprite Slicer, Tileset Slicer |
+| Paint tiles into tilemaps | Tilemap Editor |
 | Sculpt, paint and populate terrain | Terrain Editor |
 | Write Lua or C++ scripts | Code Editor and script creation dialog |
 | Animate objects and characters | Animation Timeline |
@@ -151,6 +152,7 @@ typing in a text field, so a shortcut never steals a keystroke from an input.
 - [Resources Browser](resources.md)
 - [Sprite Slicer](sprite-slicer.md)
 - [Tileset Slicer](tileset-slicer.md)
+- [Tilemap Editor](tilemap-editor.md)
 - [Terrain Editor](terrain-editor.md)
 - [Animation Timeline](animation.md)
 - [Code Editor](code-editor.md)

@@ -35,7 +35,8 @@ the viewport.
 ![A 2D platformer level with sprites and tilemaps](../assets/screenshots/editor-2d-sprite.png)
 
 Build 2D scenes with sprites and tilemaps. The **sprite slicer** and **tileset slicer**
-tools let you cut sprite sheets and tilesets into usable frames and tiles.
+tools let you cut sprite sheets and tilesets into usable frames and tiles, and the
+**Tilemap Editor** paints the tiles into your levels.
 
 ## Animation
 
@@ -86,6 +87,7 @@ The detailed editor manual is split into focused pages:
 - [Scene View](../editor/scene-view.md)
 - [Properties & Components](../editor/properties.md)
 - [Resources Browser](../editor/resources.md)
+- [Tilemap Editor](../editor/tilemap-editor.md)
 - [Terrain Editor](../editor/terrain-editor.md)
 - [Animation Timeline](../editor/animation.md)
 - [Code Editor](../editor/code-editor.md)

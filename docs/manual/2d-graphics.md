@@ -79,7 +79,7 @@ other in the hierarchy so they batch. See
 
 Tilemaps let you compose large 2D worlds from reusable tiles. Use the **tileset
 slicer** in the editor to cut a tileset image into tiles, then paint them into a
-tilemap in the scene view.
+tilemap with the [Tilemap Editor](../editor/tilemap-editor.md).
 
 Tilemaps are designed for large grids of repeated texture regions. Keep individual
 tiles consistent in size, and split very large worlds into scenes or chunks so editing

@@ -9,14 +9,14 @@ Each rect gets a name and a numeric ID — its index in the tilemap's rect list.
 are the values you store in `TileData` cells and reference from `Tilemap` objects in
 script.
 
-![The Tileset Slicer cutting a tileset into 81 tile rects](../assets/screenshots/tileset-slicer.png)
+![The Tileset Slicer cutting a tileset into 314 tile rects and skipping 10 empty cells](../assets/screenshots/tileset-slicer.png)
 
 ## Opening the Tileset Slicer
 
 Select an entity with a **Tilemap** component. In the [Properties window](properties.md),
-click **Slicer Tool** in the component's **Tile Rects** section. The slicer cuts the
-tilemap's texture; when the tilemap uses several textures, pick the one to slice at the
-top of the dialog.
+click **Slicer Tool** in the component's **Tile Rects** section, or click **Slice** in the
+[Tilemap Editor](tilemap-editor.md). The slicer cuts the tilemap's texture; when the
+tilemap uses several textures, pick the one to slice at the top of the dialog.
 
 ## Setting up the grid
 
@@ -28,16 +28,23 @@ top of the dialog.
 | **Offset X / Y** | Pixel inset of the first tile |
 | **Padding X / Y** | Pixel gap between tiles, for tilesets with gutters |
 | **Prefix** | Rect name, followed by its number: `tile_0`, `tile_1`, … |
+| **Skip empty cells** | Leaves out cells whose pixels are all transparent. It is on by default, and the preview counts the cells it skipped |
 
 The **Preview** shows how many rects the grid produces, and **Rect Details** lists each
 one in pixels. Click **Apply** to replace the rects of the sliced texture; rects that
 belong to the tilemap's other textures are kept, and the new ones follow them, numbered
 left to right, top to bottom. The change is one undoable step.
 
+Tiles you already placed keep their image when you slice a texture again. A tile moves to
+the new rect with the same bounds, and the rect keeps its **Collision** setting. Tiles
+whose rect is gone get rect ID `-1` and stop drawing until you paint over them. If the
+new grid keeps none of the old bounds, tiles keep their place in the slice order instead.
+
 ## Tile IDs
 
 Tile IDs are plain integers. In a tilemap with a single texture, the tile at column 0,
-row 0 is ID `0`; column 1, row 0 is ID `1`; and so on. Use these IDs when filling
+row 0 is ID `0`; column 1, row 0 is ID `1`; and so on. Cells left out by **Skip empty
+cells** get no ID, so the IDs after them move down. Use these IDs when filling
 `TileData` in script.
 
 ```lua
@@ -56,12 +63,12 @@ tilemap:addTile(1, Vector2(32, 0), 32, 32)
 
 ## Painting tiles in the editor
 
-After slicing, the TilemapComponent's **Tile Rects** list shows a preview of each rect.
-To place tiles:
+After slicing, click **Open Tilemap Editor** in the Tilemap component and paint with the
+[Tilemap Editor](tilemap-editor.md), which has a palette of the tileset and brush, line,
+rectangle, and fill tools.
 
-1. Select the **Tilemap** entity.
-2. In the **Properties window**, find the rect in the **Tile Rects** list.
-3. Drag its preview into the viewport to place a tile there.
+To place a single tile without it, find the rect in the **Tile Rects** list of the
+Properties window and drag its preview into the viewport.
 
 ![Tile rect previews in the Tilemap component, ready to drag into the scene](../assets/screenshots/properties-tilemap.png)
 
@@ -84,7 +91,9 @@ while the body is selected, and the shape's **Boxes** row counts them.
 
 To leave out tiles that shouldn't block anything, like grass, clouds, or background
 props, click the weight button on their rect's row in the **Tile Rects** list. It dims
-when Collision is off, and every tile placed from that rect is then skipped.
+when Collision is off, and every tile placed from that rect is then skipped. **Collision
+Paint** in the Tilemap Editor palette changes the same setting as you click or drag
+across tiles.
 
 Every tile becomes a full square, so a ramp tile blocks like a wall. For slopes, and for
 one-way platforms that need their own filter or events, turn Collision off on those rects
@@ -113,6 +122,7 @@ Tiles** again after painting. See [Physics](../manual/physics.md#tilemap-collisi
 
 ## See also
 
+- [Tilemap Editor](tilemap-editor.md)
 - [Sprite Slicer](sprite-slicer.md)
 - [Scene View](scene-view.md#placing-and-grouping-tiles)
 - [Tilemap](../reference/classes/tilemap.md)
