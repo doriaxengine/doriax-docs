@@ -163,7 +163,7 @@ others follow the water's own switches.
 
 `sky`, `blit`, `gtao`, `gtaoblur`, `ssr`, `ssrblur`, `composite`, `shadow2d`,
 `postprocess`, `underwater`, and `probefilter` have no properties; name the type on its own.
-The older names `ssao`, `ssaoblur` and `Sao` still load from scene files, project lists and
+The older names `ssao`, `ssaoblur`, `Sao` and `SSAO` still load from scene files, project lists and
 commands, but they are deprecated and will be removed in a later version.
 
 ### Combinations that are easy to miss
