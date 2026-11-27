@@ -692,7 +692,7 @@ destination — the camera framebuffer, the fixed-resolution target, or the scre
 
 A pass reads the previous pass's output (`u_sceneColorTexture`) and may also sample depth
 (`u_depthTexture`), the SSR G-buffer (`u_gbufferTexture`), and ambient occlusion
-(`u_ssaoTexture`). When a pass samples depth while SSR and GTAO are both off, the engine
+(`u_gtaoTexture`). When a pass samples depth while SSR and GTAO are both off, the engine
 runs the depth pre-pass for it, so depth-driven effects work on their own.
 
 Values the pass declares with `#pragma param` lines become fields in the scene settings, and

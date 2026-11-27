@@ -543,9 +543,9 @@ Debug aid: when enabled, lit meshes output the raw screen-space AO buffer as gra
 
 ---
 
-### ssaoEnabled / ssaoRadius / ssaoIntensity / ssaoHalfResolution / ssaoDebug
+### ssaoEnabled / ssaoRadius / ssaoIntensity / ssaoHalfResolution / ssaoDebug / ssaoBias
 
-Deprecated names of [gtaoEnabled](#gtaoenabled), [gtaoRadius](#gtaoradius), [gtaoIntensity](#gtaointensity), [gtaoHalfResolution](#gtaohalfresolution) and [gtaoDebug](#gtaodebug), from when the effect was called SSAO; they will be removed in a later version. In C++ they are `setSSAOEnabled`, `isSSAOEnabled` and so on, marked `[[deprecated]]`. Scene files saved with the `ssao*` keys still load.
+Deprecated names of [gtaoEnabled](#gtaoenabled), [gtaoRadius](#gtaoradius), [gtaoIntensity](#gtaointensity), [gtaoHalfResolution](#gtaohalfresolution) and [gtaoDebug](#gtaodebug), from when the effect was called SSAO; they will be removed in a later version. `ssaoBias` is kept only so older scripts run: GTAO has no bias, so setting it does nothing. In C++ they are `setSSAOEnabled`, `isSSAOEnabled` and so on, marked `[[deprecated]]`. Scene files saved with the `ssao*` keys still load.
 
 ---
 
