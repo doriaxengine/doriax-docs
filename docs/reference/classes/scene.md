@@ -48,12 +48,12 @@ A `Scene` is the root container for all objects, systems, and resources in a pro
 | [ShadowQuality](#shadowquality) | [shadow2DQuality](#shadow2dquality) | `LOW` | C++ \| Lua |
 | Vector2 | [gravity2D](#gravity2d) | `(0,-9.81)` | C++ \| Lua |
 | Vector3 | [gravity3D](#gravity3d) | `(0,-9.81,0)` | C++ \| Lua |
-| bool | [ssaoEnabled](#ssaoenabled) | `false` | C++ \| Lua |
-| float | [ssaoRadius](#ssaoradius) | `0.5` | C++ \| Lua |
-| float | [ssaoIntensity](#ssaointensity) | `1.0` | C++ \| Lua |
-| float | [ssaoThinOccluders](#ssaothinoccluders) | `1.0` | C++ \| Lua |
-| bool | [ssaoHalfResolution](#ssaohalfresolution) | `false` | C++ \| Lua |
-| bool | [ssaoDebug](#ssaodebug) | `false` | C++ \| Lua |
+| bool | [gtaoEnabled](#gtaoenabled) | `false` | C++ \| Lua |
+| float | [gtaoRadius](#gtaoradius) | `0.5` | C++ \| Lua |
+| float | [gtaoIntensity](#gtaointensity) | `1.0` | C++ \| Lua |
+| float | [gtaoThinOccluders](#gtaothinoccluders) | `1.0` | C++ \| Lua |
+| bool | [gtaoHalfResolution](#gtaohalfresolution) | `false` | C++ \| Lua |
+| bool | [gtaoDebug](#gtaodebug) | `false` | C++ \| Lua |
 | bool | [ssrEnabled](#ssrenabled) | `false` | C++ \| Lua |
 | float | [ssrMaxDistance](#ssrmaxdistance) | `8.0` | C++ \| Lua |
 | float | [ssrThickness](#ssrthickness) | `0.5` | C++ \| Lua |
@@ -130,18 +130,18 @@ A `Scene` is the root container for all objects, systems, and resources in a pro
 | void | [setMainViewShaderParameter](#view-shader-parameters) | C++ \| Lua |
 | Vector4 | [getMainViewShaderParameter](#view-shader-parameters) | C++ \| Lua |
 | bool | [clearMainViewShaderParameter](#view-shader-parameters) | C++ \| Lua |
-| void | [setSSAOEnabled](#ssaoenabled) | C++ |
-| bool | [isSSAOEnabled](#ssaoenabled) | C++ |
-| void | [setSSAORadius](#ssaoradius) | C++ |
-| float | [getSSAORadius](#ssaoradius) | C++ |
-| void | [setSSAOIntensity](#ssaointensity) | C++ |
-| float | [getSSAOIntensity](#ssaointensity) | C++ |
-| void | [setSSAOThinOccluders](#ssaothinoccluders) | C++ |
-| float | [getSSAOThinOccluders](#ssaothinoccluders) | C++ |
-| void | [setSSAOHalfResolution](#ssaohalfresolution) | C++ |
-| bool | [isSSAOHalfResolution](#ssaohalfresolution) | C++ |
-| void | [setSSAODebug](#ssaodebug) | C++ |
-| bool | [isSSAODebug](#ssaodebug) | C++ |
+| void | [setGTAOEnabled](#gtaoenabled) | C++ |
+| bool | [isGTAOEnabled](#gtaoenabled) | C++ |
+| void | [setGTAORadius](#gtaoradius) | C++ |
+| float | [getGTAORadius](#gtaoradius) | C++ |
+| void | [setGTAOIntensity](#gtaointensity) | C++ |
+| float | [getGTAOIntensity](#gtaointensity) | C++ |
+| void | [setGTAOThinOccluders](#gtaothinoccluders) | C++ |
+| float | [getGTAOThinOccluders](#gtaothinoccluders) | C++ |
+| void | [setGTAOHalfResolution](#gtaohalfresolution) | C++ |
+| bool | [isGTAOHalfResolution](#gtaohalfresolution) | C++ |
+| void | [setGTAODebug](#gtaodebug) | C++ |
+| bool | [isGTAODebug](#gtaodebug) | C++ |
 | void | [setSSREnabled](#ssrenabled) | C++ |
 | bool | [isSSREnabled](#ssrenabled) | C++ |
 | void | [setSSRMaxDistance](#ssrmaxdistance) | C++ |
@@ -489,57 +489,63 @@ it renders the scene, then the value saved on its
 
 ---
 
-### ssaoEnabled
+### gtaoEnabled
 
-* *Setter:* `void setSSAOEnabled(bool enabled)`
-* *Getter:* `bool isSSAOEnabled() const`
+* *Setter:* `void setGTAOEnabled(bool enabled)`
+* *Getter:* `bool isGTAOEnabled() const`
 
-Enables screen-space ambient occlusion, computed as ground truth ambient occlusion (GTAO). SSAO darkens the ambient/indirect lighting (IBL or global illumination) in creases and contact areas; it does not affect direct light. Toggling it recompiles lit mesh shaders. Applies to the main camera.
+Enables ambient occlusion, computed in screen space as ground truth ambient occlusion (GTAO). It darkens the ambient/indirect lighting (IBL or global illumination) in creases and contact areas; it does not affect direct light. Toggling it recompiles lit mesh shaders. Applies to the main camera.
 
 ---
 
-### ssaoRadius
+### gtaoRadius
 
-* *Setter:* `void setSSAORadius(float radius)`
-* *Getter:* `float getSSAORadius() const`
+* *Setter:* `void setGTAORadius(float radius)`
+* *Getter:* `float getGTAORadius() const`
 
 How far occluders count, in world units; they fade out over the last 30% of it. Larger values gather occlusion from farther surfaces (broader, softer AO); smaller values keep it to tight contact creases. Close to the camera its reach on screen stops at a quarter of the image height. Default `0.5`.
 
 ---
 
-### ssaoIntensity
+### gtaoIntensity
 
-* *Setter:* `void setSSAOIntensity(float intensity)`
-* *Getter:* `float getSSAOIntensity() const`
+* *Setter:* `void setGTAOIntensity(float intensity)`
+* *Getter:* `float getGTAOIntensity() const`
 
 Strength of the effect, applied as an exponent on the visibility; higher values darken occluded areas more, and around `2` comes closer to ray-traced AO. Default `1.0`.
 
 ---
 
-### ssaoThinOccluders
+### gtaoThinOccluders
 
-* *Setter:* `void setSSAOThinOccluders(float thinOccluders)`
-* *Getter:* `float getSSAOThinOccluders() const`
+* *Setter:* `void setGTAOThinOccluders(float thinOccluders)`
+* *Getter:* `float getGTAOThinOccluders() const`
 
-How soon occluders far in front of a surface stop counting. The depth buffer has no thickness, so a chair leg in front of the floor looks like a wall to SSAO and leaves a dark halo behind it; higher values treat such occluders as thin. `0` treats every occluder as solid, which suits dense grass and foliage; around `1` suits furniture and railings. Default `1.0`.
+How soon occluders far in front of a surface stop counting. The depth buffer has no thickness, so a chair leg in front of the floor looks like a wall to GTAO and leaves a dark halo behind it; higher values treat such occluders as thin. `0` treats every occluder as solid, which suits dense grass and foliage; around `1` suits furniture and railings. Default `1.0`.
 
 ---
 
-### ssaoHalfResolution
+### gtaoHalfResolution
 
-* *Setter:* `void setSSAOHalfResolution(bool halfResolution)`
-* *Getter:* `bool isSSAOHalfResolution() const`
+* *Setter:* `void setGTAOHalfResolution(bool halfResolution)`
+* *Getter:* `bool isGTAOHalfResolution() const`
 
 Computes and blurs the occlusion at half the width and height, for about a quarter of the cost, and lit meshes upsample it. The depth pre-pass stays at full size. AO comes out a little softer. Default `false`.
 
 ---
 
-### ssaoDebug
+### gtaoDebug
 
-* *Setter:* `void setSSAODebug(bool debug)`
-* *Getter:* `bool isSSAODebug() const`
+* *Setter:* `void setGTAODebug(bool debug)`
+* *Getter:* `bool isGTAODebug() const`
 
 Debug aid: when enabled, lit meshes output the raw screen-space AO buffer as grayscale instead of their shaded color, so you can inspect and tune the occlusion directly. Not serialized.
+
+---
+
+### ssaoEnabled / ssaoRadius / ssaoIntensity / ssaoHalfResolution / ssaoDebug
+
+Deprecated names of [gtaoEnabled](#gtaoenabled), [gtaoRadius](#gtaoradius), [gtaoIntensity](#gtaointensity), [gtaoHalfResolution](#gtaohalfresolution) and [gtaoDebug](#gtaodebug), from when the effect was called SSAO; they will be removed in a later version. In C++ they are `setSSAOEnabled`, `isSSAOEnabled` and so on, marked `[[deprecated]]`. Scene files saved with the `ssao*` keys still load.
 
 ---
 
@@ -908,7 +914,7 @@ Returns the entity handle of the currently active camera.
 
 * `void setViewCamera(Entity camera)`
 
-Draws the scene from `camera` instead of the active camera, while [getCamera](#getcamera) keeps returning the active one, so scripts, audio, and UI events are unaffected. Effects tied to the main camera (shadows, SSAO, SSR, post-processing, terrain and mesh detail) follow the view camera. Pass `NULL_ENTITY` to draw from the active camera again. The editor uses it for its [detached camera](../../editor/scene-view.md#detached-camera).
+Draws the scene from `camera` instead of the active camera, while [getCamera](#getcamera) keeps returning the active one, so scripts, audio, and UI events are unaffected. Effects tied to the main camera (shadows, GTAO, SSR, post-processing, terrain and mesh detail) follow the view camera. Pass `NULL_ENTITY` to draw from the active camera again. The editor uses it for its [detached camera](../../editor/scene-view.md#detached-camera).
 
 ---
 

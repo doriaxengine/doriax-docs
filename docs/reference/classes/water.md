@@ -338,7 +338,7 @@ frame then. Stopping Play in the editor clears it.
 * *Getter*: bool **isDepthEffects**() const
 
 Uses the scene depth for shore foam, soft edges where the water meets geometry, and the
-shallow-to-deep tint. The depth comes from SSR or SSAO when the scene already has one of
+shallow-to-deep tint. The depth comes from SSR or GTAO when the scene already has one of
 them on; otherwise the engine adds a depth pre-pass for the water. Only the main camera
 has the scene depth.
 

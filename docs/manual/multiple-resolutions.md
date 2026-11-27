@@ -158,7 +158,7 @@ is rasterized with before being stretched into that view rect. In practice:
 - **Editor preview.** In the editor, the scene viewport stays at native resolution
   while editing (so gizmos and selection remain precise) and switches to the fixed
   resolution when you press **Play**.
-- **Screen-space effects follow the fixed resolution.** SSAO and SSR run at the
+- **Screen-space effects follow the fixed resolution.** GTAO and SSR run at the
   internal resolution, so they get the same pixelated look — and the same performance
   savings — as the rest of the scene.
 - The image is rendered once per frame into the internal buffer and upscaled in a

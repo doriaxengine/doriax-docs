@@ -91,7 +91,7 @@ the numeric form is what a scene file's `shaderKeys` entries hold.
 | 18 | `Ist` | Instancing |
 | 19 | `Ibl` | Image-based lighting |
 | 20 | `Mir` | Mirror |
-| 21 | `Sao` | SSAO |
+| 21 | `Sao` | GTAO |
 | 22 | `L2d` | 2D lights |
 | 23 | `S2d` | 2D shadows |
 | 24 | `Ams` | Alpha mask |
@@ -169,7 +169,7 @@ others follow the water's own switches.
 Several properties come from the scene or the frame rather than from the model, so a
 variant list assembled by hand tends to be short by a factor of two or four:
 
-- **`Sao`** is set on every lit mesh in a scene with SSAO enabled, terrain included.
+- **`Sao`** is set on every lit mesh in a scene with GTAO enabled, terrain included.
 - **`Ibl`** is off until the sky's environment maps finish generating, so the same mesh
   needs the variant both with and without it - the first frames are drawn before they
   exist.

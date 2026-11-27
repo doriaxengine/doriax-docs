@@ -121,7 +121,7 @@ A field costs an attribute or a computation only in the variants whose hooks rea
 ### The surface
 
 `getSurface` changes the surface the material made, before any light reaches it. The
-same code runs in the G-buffer, so screen-space reflections and SSAO see the changed
+same code runs in the G-buffer, so screen-space reflections and GTAO see the changed
 normal and roughness.
 
 | `Surface` field | Meaning |
@@ -159,7 +159,7 @@ roughness and occlusion as 1, and emissive as 0. All of this holds in every pass
 between, opaque and alpha-tested surfaces keep a steady 4×4 dithered share of their
 pixels, and blended surfaces multiply their alpha instead. The coverage and the
 material's alpha test are separate tests that both have to pass. The depth prepass and
-the G-buffer cut what the color pass cuts, so SSAO, reflections and depth-based
+the G-buffer cut what the color pass cuts, so GTAO, reflections and depth-based
 post-processing match it; the shadow maps cut it too with `#pragma coverage_shadows
 apply`.
 
@@ -341,7 +341,7 @@ finished image of a scene, where `color` is the previous pass at this pixel. Its
 | `vec4 sceneColor(vec2 uv)` | The previous pass, linear |
 | `float sceneDepth(vec2 uv)` | Distance from the eye in world units, the far plane where nothing was drawn |
 | `vec3 sceneNormal(vec2 uv)` | World space, from the G-buffer that screen-space reflections draw; needs SSR on |
-| `float sceneOcclusion(vec2 uv)` | SSAO, 1 without it |
+| `float sceneOcclusion(vec2 uv)` | GTAO, 1 without it |
 
 An input is bound only when the file calls its function.
 

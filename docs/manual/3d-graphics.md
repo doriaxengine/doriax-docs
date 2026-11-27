@@ -241,7 +241,7 @@ the GLTF `alphaCutoff` value (default `0.5`) controls the combined base-colour f
 and texture alpha test in both the visible surface and its shadow/depth passes. Blended
 submeshes keep depth testing but **disable depth writes** in the colour pass so overlapping
 translucent surfaces composite instead of occluding each other. When auto-transparency
-marks the mesh transparent, the SSAO depth pre-pass and SSR G-buffer skip it; shadow
+marks the mesh transparent, the GTAO depth pre-pass and SSR G-buffer skip it; shadow
 maps still render it. In the editor, expand **Mesh → Submesh → Material** to change
 **Alpha Mode** and **Alpha Cutoff**. See the
 [Material reference](../reference/classes/material.md#alphamode-alphacutoff) for the mode
@@ -352,9 +352,9 @@ gizmo and spot shadow frustum use that same orientation and aspect ratio.
 For C++ and Lua setup, in-memory masks, and clearing a mask at runtime, see
 [Light.spotMask](../reference/classes/light.md#spotmask).
 
-Enable **screen-space ambient occlusion** with `Scene::setSSAOEnabled(true)` to add soft
+Enable **ambient occlusion** (GTAO) with `Scene::setGTAOEnabled(true)` to add soft
 contact shading in creases and corners. It affects ambient/indirect light only — see
-[Rendering Pipeline — Ambient occlusion (SSAO)](rendering-pipeline.md#ambient-occlusion-ssao).
+[Rendering Pipeline — Ambient occlusion (GTAO)](rendering-pipeline.md#ambient-occlusion-gtao).
 
 ## Environment
 

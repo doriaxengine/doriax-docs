@@ -37,7 +37,7 @@ Each frame, the engine runs the following phases in order:
    drawn after opaque geometry. Blended submeshes still depth-test, but they do **not**
    write depth in the colour pass, so overlapping translucent surfaces composite instead
    of punching holes in each other. A mesh marked transparent (including by
-   `autoTransparency`) is skipped by the SSAO depth pre-pass and the SSR G-buffer;
+   `autoTransparency`) is skipped by the GTAO depth pre-pass and the SSR G-buffer;
    shadow maps still render it. A [Water](#water) surface is drawn inside this pass:
    transparencies on the far side of it first, then the water, then the rest.
 8. **UI pass** — UI entities are rendered in screen-space canvas coordinates, on top of
@@ -445,41 +445,45 @@ added on top.
     capture can be partial. A probe never appears in its own capture, and captures do not
     include other probes' reflections (no recursion).
 
-## Ambient occlusion (SSAO)
+## Ambient occlusion (GTAO)
 
-Screen-space ambient occlusion darkens creases, corners, and contact areas where ambient
+Ambient occlusion darkens creases, corners, and contact areas where ambient
 light is naturally blocked. Like Godot, Unity, and Unreal, it modulates only the
 **ambient/indirect** term (IBL or global illumination) — direct light from your sun, point,
 and spot lights is left untouched — so it reads as soft contact shading rather than a
 second shadow.
 
-The occlusion is ground truth ambient occlusion (GTAO). Each frame the render system runs
-a small depth pre-pass for the main camera. Along two screen directions per pixel, it finds
+Doriax computes it in screen space as ground truth ambient occlusion (GTAO). Each frame the
+render system runs a small depth pre-pass for the main camera. Along two screen directions per pixel, it finds
 the highest surface on each side within the radius, and the part of the hemisphere above
 those horizons, weighted toward the surface normal, is what stays lit. A 4×4 pattern turns
 the directions from pixel to pixel and a 4×4 blur combines them, leaving out samples across
 a depth edge, so occlusion stays on its own surface instead of haloing around silhouettes.
 The lit mesh shader multiplies the result into its ambient term.
 
-SSAO is a scene setting:
+GTAO is a scene setting:
 
 ```cpp
-scene.setSSAOEnabled(true);
-scene.setSSAORadius(0.5f);     // how far occluders count (world units)
-scene.setSSAOIntensity(1.0f);  // exponent on the visibility
-scene.setSSAOThinOccluders(1.0f); // occluders far in front count less
-scene.setSSAOHalfResolution(true); // a quarter of the pixels, a little softer
+scene.setGTAOEnabled(true);
+scene.setGTAORadius(0.5f);     // how far occluders count (world units)
+scene.setGTAOIntensity(1.0f);  // exponent on the visibility
+scene.setGTAOThinOccluders(1.0f); // occluders far in front count less
+scene.setGTAOHalfResolution(true); // a quarter of the pixels, a little softer
 ```
 
 ```lua
-scene.ssaoEnabled = true
-scene.ssaoRadius = 0.5
-scene.ssaoIntensity = 1.0
-scene.ssaoThinOccluders = 1.0
-scene.ssaoHalfResolution = true
+scene.gtaoEnabled = true
+scene.gtaoRadius = 0.5
+scene.gtaoIntensity = 1.0
+scene.gtaoThinOccluders = 1.0
+scene.gtaoHalfResolution = true
 ```
 
-In the editor, the same controls live under **Scene → Ambient Occlusion (SSAO)** in the
+The older SSAO names of these settings (`setSSAOEnabled`, `scene.ssaoEnabled` and the
+others) and the `ssao*` keys of older scene files still work, but they are deprecated and
+will be removed in a later version.
+
+In the editor, the same controls live under **Scene → Ambient Occlusion (GTAO)** in the
 Properties window, including a **Debug View** toggle that renders the raw AO buffer so you
 can tune radius and intensity directly.
 
@@ -491,21 +495,21 @@ can tune radius and intensity directly.
 | **Half Resolution** | Computes and blurs the occlusion at half width and height, for about a quarter of the cost, and lit meshes upsample it. The depth pre-pass stays full size |
 
 Because the effect only touches ambient light, it is most visible with a strong ambient
-source — raise **Global Illumination Intensity** or use IBL if SSAO looks too subtle in a
+source — raise **Global Illumination Intensity** or use IBL if GTAO looks too subtle in a
 scene lit mainly by direct light.
 
 !!! note "Scope and limitations"
-    SSAO is computed for the main camera only; other cameras draw without it. Normals are
-    reconstructed from depth when SSAO runs alone; when
-    [SSR](#screen-space-reflections-ssr) is also enabled SSAO reuses the SSR G-buffer's
+    GTAO is computed for the main camera only; other cameras draw without it. Normals are
+    reconstructed from depth when GTAO runs alone; when
+    [SSR](#screen-space-reflections-ssr) is also enabled GTAO reuses the SSR G-buffer's
     depth **and** geometric normals — a single shared geometry pass, and sharper at
-    silhouettes. Enabling SSAO recompiles lit mesh shaders. The depth buffer has no
-    thickness, so SSAO cannot tell a chair leg standing in front of the floor from a wall:
+    silhouettes. Enabling GTAO recompiles lit mesh shaders. The depth buffer has no
+    thickness, so GTAO cannot tell a chair leg standing in front of the floor from a wall:
     **Thin Occluders** decides how much such occluders count.
 
 ## Screen-space reflections (SSR)
 
-![A scene with SSAO and SSR enabled in its settings](../assets/screenshots/editor-pirate-adventure.png)
+![A scene with GTAO and SSR enabled in its settings](../assets/screenshots/editor-gtao-ssr.png)
 
 Screen-space reflections add real-time reflections of on-screen geometry — wet floors,
 polished metal, glossy surfaces — by marching the camera depth buffer in screen space and
@@ -527,7 +531,7 @@ pass too, so a reflective wet patch reflects like one:
    so rough materials get soft reflections while mirrors stay sharp.
 3. **Composite** — recomputes the surface's environment specular (the sky, or its probe
    blended over it) and blends the reflection over it with the correct GGX reflectance
-   (including metal tint), darkened by the material's ambient occlusion and SSAO as the
+   (including metal tint), darkened by the material's ambient occlusion and GTAO as the
    colour pass darkens it, writing the final image. Pixels with nothing reflected skip it.
 
 The opaque colour pass is rendered into an offscreen buffer first so the march has a full
@@ -688,7 +692,7 @@ destination — the camera framebuffer, the fixed-resolution target, or the scre
 
 A pass reads the previous pass's output (`u_sceneColorTexture`) and may also sample depth
 (`u_depthTexture`), the SSR G-buffer (`u_gbufferTexture`), and ambient occlusion
-(`u_ssaoTexture`). When a pass samples depth while SSR and SSAO are both off, the engine
+(`u_ssaoTexture`). When a pass samples depth while SSR and GTAO are both off, the engine
 runs the depth pre-pass for it, so depth-driven effects work on their own.
 
 Values the pass declares with `#pragma param` lines become fields in the scene settings, and
@@ -896,7 +900,7 @@ and other waters' reflection passes see the water reflect the sky.
 With **Depth Effects** on, the water reads the scene depth for shore foam, soft edges
 where it meets geometry, and a tint that deepens with the water under each pixel. The
 depth comes from the [SSR](#screen-space-reflections-ssr) G-buffer or the
-[SSAO](#ambient-occlusion-ssao) / post-process depth pre-pass when one of them already
+[GTAO](#ambient-occlusion-gtao) / post-process depth pre-pass when one of them already
 ran; otherwise the engine adds a depth pre-pass for the water. Only the main camera has
 the scene depth, so other cameras draw the water without these effects.
 
@@ -987,7 +991,7 @@ bodies inside them.
 | Grid | `(Subdivisions + 1)²` vertices, displaced in the vertex shader |
 | Planar Reflection | The visible scene drawn once more, at half resolution |
 | Refraction | One copy of the scene per frame, and the main pass split around it |
-| Depth Effects | A depth pre-pass, only when SSAO, SSR, and post-process depth are all off |
+| Depth Effects | A depth pre-pass, only when GTAO, SSR, and post-process depth are all off |
 | Underwater | One fullscreen pass while the camera is below the surface |
 | Water Exclusion | A volume test per water fragment, with one texture lookup inside a hull's bounds |
 
@@ -1149,7 +1153,7 @@ faster than the wind: against 10 m/s it is about a sixth at 3 m/s and nearly twi
 15 m/s, so light air barely stirs a plant and a gale lays it over. Gusts roll downwind at
 the wind's speed, in fronts broken across it. The plant springs and shivers at a pace set
 by the air going past, and stays still in calm air. It moves the color, depth and G-buffer
-passes alike, so shadows, SSAO and SSR follow, and it moves no physics body.
+passes alike, so shadows, GTAO and SSR follow, and it moves no physics body.
 
 ```cpp
 scene->setShaderParameter("Wind", "velocity", Vector3(5.0f, 0.0f, -2.0f));
@@ -1248,7 +1252,7 @@ prepass as in the color pass, so a mesh that moves its vertices stays consistent
 that reads the [scene color or depth](shader-files.md#scene-color-and-depth) draws after
 the scene and is left out of the prepass.
 
-This is separate from the small depth target SSAO (and some post-process passes) already
+This is separate from the small depth target GTAO (and some post-process passes) already
 build when they need a depth texture. Enabling the scene prepass does not replace those.
 
 In the editor the toggle is **Scene → Depth Prepass**. From script:
@@ -1277,8 +1281,8 @@ scene.depthPrepassEnabled = true
 | Render targets | Minimize framebuffer resolution for off-screen effects |
 | Mirrors | Each mirror re-renders the scene once per frame; keep one hero reflection and lower its target resolution if needed |
 | Water | Keep **Subdivisions** as low as the waves allow; Planar Reflection re-renders the scene and Refraction copies it once per frame |
-| SSAO | Adds a depth pre-pass (or reuses the SSR G-buffer) plus two fullscreen passes; **Half Resolution** runs them on a quarter of the pixels, the usual choice on integrated and mobile GPUs |
-| SSR | Adds a G-buffer geometry pass plus fullscreen march/blur/composite passes; lower **Max Steps** for cost, and it shares its geometry pass with SSAO when both are on |
+| GTAO | Adds a depth pre-pass (or reuses the SSR G-buffer) plus two fullscreen passes; **Half Resolution** runs them on a quarter of the pixels, the usual choice on integrated and mobile GPUs |
+| SSR | Adds a G-buffer geometry pass plus fullscreen march/blur/composite passes; lower **Max Steps** for cost, and it shares its geometry pass with GTAO when both are on |
 | Textures | Use compressed formats (ETC2/BC) on mobile/desktop respectively |
 
 The editor footer reports FPS, frame time, draw calls, and triangles for the last drawn

@@ -9,7 +9,7 @@ project. It does not replace the engine's shaders: it fills hooks they call, to 
 vertices, change the surface, replace the lighting, cut fragments away or recolor what is
 drawn. Lighting, shadows, fog, skinning, instancing and every
 [shader variant](../manual/shader-variants.md) keep working, and the depth, shadow and
-G-buffer passes run the same hooks as the color pass, so shadows, SSAO and reflections
+G-buffer passes run the same hooks as the color pass, so shadows, GTAO and reflections
 follow what is drawn.
 
 - [Shader Files](../manual/shader-files.md) explains how to write one: the hooks of each
@@ -202,7 +202,7 @@ overwrite the scene below it.
 
 A pass reads the previous pass, the scene depth, normals and occlusion through the
 functions [Post-process](../manual/shader-files.md#post-process) lists, bound only when it
-calls them; while SSR and SSAO are both off, the engine runs a depth prepass for a chain
+calls them; while SSR and GTAO are both off, the engine runs a depth prepass for a chain
 that reads the depth.
 
 ### Pass values

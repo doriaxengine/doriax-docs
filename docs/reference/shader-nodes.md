@@ -389,7 +389,7 @@ World normal of what is drawn, needs SSR on.
 
 `scene/occlusion` · fragment stage · postprocess
 
-SSAO, 1 without it.
+GTAO, 1 without it.
 
 | Input | Type | Default |
 | --- | --- | --- |

@@ -402,7 +402,7 @@ Under the **Shader** and **Underwater Shader** rows, the fields are grouped into
 | | **Caustics** | *(Refraction)* Brightness of the sunlight patterns on the floor seen through the water, 0 turns them off. Needs Depth Effects. |
 | | **Caustics Scale** | *(Refraction)* World size of one cell of the caustics. |
 | **Underwater** | **Underwater** | A camera below the surface sees the scene fade into the water with distance. |
-| **Foam** | **Depth Effects** | Shore foam, soft edges, and depth tint from the scene depth. Adds a depth pass when SSAO and SSR are off. |
+| **Foam** | **Depth Effects** | Shore foam, soft edges, and depth tint from the scene depth. Adds a depth pass when GTAO and SSR are off. |
 | | **Foam Color** | Colour of the foam. |
 | | **Shore Foam** | Water depth the shore foam covers. Needs Depth Effects. |
 | | **Crest Foam** | How much of the surface breaks into whitecaps, `0` for none. |
@@ -445,13 +445,13 @@ on the water while it moves. It is made only during Play, from how the entity mo
 
 ## Scene settings
 
-With no entity selected, Properties edits the scene. Lighting, shadows, SSAO, SSR,
+With no entity selected, Properties edits the scene. Lighting, shadows, GTAO, SSR,
 fixed resolution, bloom, tone mapping, default shaders, and post-processing live here — see
 [Rendering Pipeline](../manual/rendering-pipeline.md) for those. The scene values of
 [shader parameters](../manual/shader-files.md#in-the-editor), such as the wind, are under
 **Shader Parameters**.
 
-![Scene settings with SSAO and SSR enabled](../assets/screenshots/properties-scene-settings.png)
+![Scene settings with GTAO and SSR enabled](../assets/screenshots/properties-scene-settings.png)
 
 The button beside the scene name shows its type and turns a 2D scene into a 3D one, or
 back — see [Scene types](project-workflow.md#scene-types).
