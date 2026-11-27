@@ -453,18 +453,20 @@ light is naturally blocked. Like Godot, Unity, and Unreal, it modulates only the
 and spot lights is left untouched — so it reads as soft contact shading rather than a
 second shadow.
 
-Each frame the render system runs a small depth pre-pass for the main camera, derives
-occlusion from a rotated hemisphere kernel, blurs it, and the lit mesh shader multiplies
-the result into its ambient term. The blur leaves out samples across a depth edge, so
-occlusion stays on its own surface instead of haloing around silhouettes.
+The occlusion is ground truth ambient occlusion (GTAO). Each frame the render system runs
+a small depth pre-pass for the main camera. Along two screen directions per pixel, it finds
+the highest surface on each side within the radius, and the part of the hemisphere above
+those horizons, weighted toward the surface normal, is what stays lit. A 4×4 pattern turns
+the directions from pixel to pixel and a 4×4 blur combines them, leaving out samples across
+a depth edge, so occlusion stays on its own surface instead of haloing around silhouettes.
+The lit mesh shader multiplies the result into its ambient term.
 
 SSAO is a scene setting:
 
 ```cpp
 scene.setSSAOEnabled(true);
-scene.setSSAORadius(0.5f);     // view-space sampling radius (world units)
-scene.setSSAOIntensity(1.0f);  // strength (exponent on the occlusion factor)
-scene.setSSAOBias(0.025f);     // depth bias to avoid self-occlusion acne
+scene.setSSAORadius(0.5f);     // how far occluders count (world units)
+scene.setSSAOIntensity(1.0f);  // exponent on the visibility
 scene.setSSAOHalfResolution(true); // a quarter of the pixels, a little softer
 ```
 
@@ -472,19 +474,17 @@ scene.setSSAOHalfResolution(true); // a quarter of the pixels, a little softer
 scene.ssaoEnabled = true
 scene.ssaoRadius = 0.5
 scene.ssaoIntensity = 1.0
-scene.ssaoBias = 0.025
 scene.ssaoHalfResolution = true
 ```
 
 In the editor, the same controls live under **Scene → Ambient Occlusion (SSAO)** in the
 Properties window, including a **Debug View** toggle that renders the raw AO buffer so you
-can tune radius/intensity/bias directly.
+can tune radius and intensity directly.
 
 | Parameter | Effect |
 | --- | --- |
-| **Radius** | How far samples reach in view space — larger is broader/softer, smaller stays in tight creases |
-| **Intensity** | Darkening strength; raise to make occlusion more pronounced |
-| **Bias** | Pushes samples off the surface to stop flat areas self-occluding (acne) |
+| **Radius** | How far occluders count, in world units; they fade out over the last 30% of it. Larger is broader and softer, smaller stays in tight creases |
+| **Intensity** | Exponent on the visibility; raise it to make occlusion more pronounced. Around `2` comes closer to ray-traced AO |
 | **Half Resolution** | Computes and blurs the occlusion at half width and height, for about a quarter of the cost, and lit meshes upsample it. The depth pre-pass stays full size |
 
 Because the effect only touches ambient light, it is most visible with a strong ambient
@@ -497,7 +497,10 @@ scene lit mainly by direct light.
     reconstructed from depth when SSAO runs alone; when
     [SSR](#screen-space-reflections-ssr) is also enabled SSAO reuses the SSR G-buffer's
     depth **and** geometric normals — a single shared geometry pass, and sharper at
-    silhouettes. Enabling SSAO recompiles lit mesh shaders.
+    silhouettes. Enabling SSAO recompiles lit mesh shaders. The depth buffer has no
+    thickness, so occluders far in front of a surface count less, as if they were thin:
+    chair legs leave no dark halo on the floor behind them, and dense grass occludes less
+    than it really does.
 
 ## Screen-space reflections (SSR)
 
@@ -1273,6 +1276,7 @@ scene.depthPrepassEnabled = true
 | Render targets | Minimize framebuffer resolution for off-screen effects |
 | Mirrors | Each mirror re-renders the scene once per frame; keep one hero reflection and lower its target resolution if needed |
 | Water | Keep **Subdivisions** as low as the waves allow; Planar Reflection re-renders the scene and Refraction copies it once per frame |
+| SSAO | Adds a depth pre-pass (or reuses the SSR G-buffer) plus two fullscreen passes; **Half Resolution** runs them on a quarter of the pixels, the usual choice on integrated and mobile GPUs |
 | SSR | Adds a G-buffer geometry pass plus fullscreen march/blur/composite passes; lower **Max Steps** for cost, and it shares its geometry pass with SSAO when both are on |
 | Textures | Use compressed formats (ETC2/BC) on mobile/desktop respectively |
 

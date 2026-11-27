@@ -51,7 +51,6 @@ A `Scene` is the root container for all objects, systems, and resources in a pro
 | bool | [ssaoEnabled](#ssaoenabled) | `false` | C++ \| Lua |
 | float | [ssaoRadius](#ssaoradius) | `0.5` | C++ \| Lua |
 | float | [ssaoIntensity](#ssaointensity) | `1.0` | C++ \| Lua |
-| float | [ssaoBias](#ssaobias) | `0.025` | C++ \| Lua |
 | bool | [ssaoHalfResolution](#ssaohalfresolution) | `false` | C++ \| Lua |
 | bool | [ssaoDebug](#ssaodebug) | `false` | C++ \| Lua |
 | bool | [ssrEnabled](#ssrenabled) | `false` | C++ \| Lua |
@@ -136,8 +135,6 @@ A `Scene` is the root container for all objects, systems, and resources in a pro
 | float | [getSSAORadius](#ssaoradius) | C++ |
 | void | [setSSAOIntensity](#ssaointensity) | C++ |
 | float | [getSSAOIntensity](#ssaointensity) | C++ |
-| void | [setSSAOBias](#ssaobias) | C++ |
-| float | [getSSAOBias](#ssaobias) | C++ |
 | void | [setSSAOHalfResolution](#ssaohalfresolution) | C++ |
 | bool | [isSSAOHalfResolution](#ssaohalfresolution) | C++ |
 | void | [setSSAODebug](#ssaodebug) | C++ |
@@ -494,7 +491,7 @@ it renders the scene, then the value saved on its
 * *Setter:* `void setSSAOEnabled(bool enabled)`
 * *Getter:* `bool isSSAOEnabled() const`
 
-Enables screen-space ambient occlusion. SSAO darkens the ambient/indirect lighting (IBL or global illumination) in creases and contact areas; it does not affect direct light. Toggling it recompiles lit mesh shaders. Applies to the main camera; terrain is currently excluded.
+Enables screen-space ambient occlusion, computed as ground truth ambient occlusion (GTAO). SSAO darkens the ambient/indirect lighting (IBL or global illumination) in creases and contact areas; it does not affect direct light. Toggling it recompiles lit mesh shaders. Applies to the main camera; terrain is currently excluded.
 
 ---
 
@@ -503,7 +500,7 @@ Enables screen-space ambient occlusion. SSAO darkens the ambient/indirect lighti
 * *Setter:* `void setSSAORadius(float radius)`
 * *Getter:* `float getSSAORadius() const`
 
-View-space sampling radius (world units). Larger values gather occlusion from farther surfaces (broader, softer AO); smaller values keep it to tight contact creases.
+How far occluders count, in world units; they fade out over the last 30% of it. Larger values gather occlusion from farther surfaces (broader, softer AO); smaller values keep it to tight contact creases. Default `0.5`.
 
 ---
 
@@ -512,16 +509,7 @@ View-space sampling radius (world units). Larger values gather occlusion from fa
 * *Setter:* `void setSSAOIntensity(float intensity)`
 * *Getter:* `float getSSAOIntensity() const`
 
-Strength of the effect, applied as an exponent on the occlusion factor — higher values darken occluded areas more.
-
----
-
-### ssaoBias
-
-* *Setter:* `void setSSAOBias(float bias)`
-* *Getter:* `float getSSAOBias() const`
-
-View-space depth bias that prevents self-occlusion artifacts (acne) on flat surfaces. Increase slightly if flat areas appear dirty; keep small to preserve fine contact detail.
+Strength of the effect, applied as an exponent on the visibility; higher values darken occluded areas more, and around `2` comes closer to ray-traced AO. Default `1.0`.
 
 ---
 

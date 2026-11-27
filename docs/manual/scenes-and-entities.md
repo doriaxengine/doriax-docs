@@ -148,7 +148,7 @@ Every scene owns rendering and interaction state that affects all entities withi
 | Shadow quality | PCF filtering level for smoother shadow edges (`NONE` to `HIGH`) |
 | Light state | `OFF`, `ON`, or `AUTO` (auto-detects lights in the scene) |
 | Global illumination | Ambient light color and intensity |
-| Ambient occlusion (SSAO) | Screen-space ambient occlusion — enable plus radius, intensity, and bias — see [Rendering Pipeline](rendering-pipeline.md#ambient-occlusion-ssao) |
+| Ambient occlusion (SSAO) | Screen-space ambient occlusion — enable plus radius, intensity, and half resolution — see [Rendering Pipeline](rendering-pipeline.md#ambient-occlusion-ssao) |
 | Reflections (SSR) | Screen-space reflections — enable plus distance, thickness, intensity, and glossy blur — see [Rendering Pipeline](rendering-pipeline.md#screen-space-reflections-ssr) |
 | Ambient light (2D) | Flat ambient color and intensity for 2D scenes, with its own 2D shadow quality — see [2D lighting](2d-graphics.md#2d-lighting) |
 | Physics gravity | Per-world gravity in m/s² — 2D (Box2D) and 3D (Jolt) are independent — see [Physics](physics.md#gravity) |
