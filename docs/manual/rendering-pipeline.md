@@ -467,6 +467,7 @@ SSAO is a scene setting:
 scene.setSSAOEnabled(true);
 scene.setSSAORadius(0.5f);     // how far occluders count (world units)
 scene.setSSAOIntensity(1.0f);  // exponent on the visibility
+scene.setSSAOThinOccluders(1.0f); // occluders far in front count less
 scene.setSSAOHalfResolution(true); // a quarter of the pixels, a little softer
 ```
 
@@ -474,6 +475,7 @@ scene.setSSAOHalfResolution(true); // a quarter of the pixels, a little softer
 scene.ssaoEnabled = true
 scene.ssaoRadius = 0.5
 scene.ssaoIntensity = 1.0
+scene.ssaoThinOccluders = 1.0
 scene.ssaoHalfResolution = true
 ```
 
@@ -483,8 +485,9 @@ can tune radius and intensity directly.
 
 | Parameter | Effect |
 | --- | --- |
-| **Radius** | How far occluders count, in world units; they fade out over the last 30% of it. Larger is broader and softer, smaller stays in tight creases |
+| **Radius** | How far occluders count, in world units; they fade out over the last 30% of it. Larger is broader and softer, smaller stays in tight creases. Close to the camera its reach on screen stops at a quarter of the image height |
 | **Intensity** | Exponent on the visibility; raise it to make occlusion more pronounced. Around `2` comes closer to ray-traced AO |
+| **Thin Occluders** | How soon occluders far in front of a surface stop counting. `0` treats every occluder as solid, which suits dense grass; around `1` keeps chair legs and railings from casting dark halos |
 | **Half Resolution** | Computes and blurs the occlusion at half width and height, for about a quarter of the cost, and lit meshes upsample it. The depth pre-pass stays full size |
 
 Because the effect only touches ambient light, it is most visible with a strong ambient
@@ -492,15 +495,13 @@ source — raise **Global Illumination Intensity** or use IBL if SSAO looks too 
 scene lit mainly by direct light.
 
 !!! note "Scope and limitations"
-    SSAO is computed for the main camera; render-to-texture cameras and terrain are
-    currently excluded (terrain would exceed the shader's sampler limit). Normals are
+    SSAO is computed for the main camera only; other cameras draw without it. Normals are
     reconstructed from depth when SSAO runs alone; when
     [SSR](#screen-space-reflections-ssr) is also enabled SSAO reuses the SSR G-buffer's
     depth **and** geometric normals — a single shared geometry pass, and sharper at
     silhouettes. Enabling SSAO recompiles lit mesh shaders. The depth buffer has no
-    thickness, so occluders far in front of a surface count less, as if they were thin:
-    chair legs leave no dark halo on the floor behind them, and dense grass occludes less
-    than it really does.
+    thickness, so SSAO cannot tell a chair leg standing in front of the floor from a wall:
+    **Thin Occluders** decides how much such occluders count.
 
 ## Screen-space reflections (SSR)
 
