@@ -472,6 +472,7 @@ offset. The editor draws it, with an amber ring at the **Step Up** height.
 | --- | --- | --- |
 | **Height** / **Radius** | `1.8` / `0.3` | Size of the capsule, scaled with the entity |
 | **Max Slope** | `45` | Steepest ramp it walks up, in degrees; it slides down steeper ones |
+| **Support Angle** | `90` | How far up its rounded bottom a contact holds it up, from Max Slope to `90`; lower drops it off edges sooner |
 | **Step Up** | `0.4` | Highest step it climbs while walking |
 | **Step Down** | `0.5` | How far down it keeps to the ground on ramps and stairs, `0` to turn off |
 | **Gravity Factor** | `1` | Scales the scene's 3D gravity |

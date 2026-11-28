@@ -18,6 +18,7 @@ The data a [Character3D](character3d.md) is built from. In the editor it is **3D
 | `height` | `1.8` | C++ \| Lua |
 | `radius` | `0.3` | C++ \| Lua |
 | `maxSlopeAngle` | `45` | C++ \| Lua |
+| `supportAngle` | `90` | C++ \| Lua |
 | `stepUp` | `0.4` | C++ \| Lua |
 | `stepDown` | `0.5` | C++ \| Lua |
 | `mass` | `70` | C++ \| Lua |
@@ -38,4 +39,5 @@ find (see [Contacts and the inner body](character3d.md#contacts-and-the-inner-bo
 `stepUp`, `stepDown`, `gravityFactor`, `airControl`, `kinematic` and `moveVelocity` are read at
 every fixed step. The others are used when the character is built: set `needReloadCharacter`, or call
 [Character3D::load](character3d.md#load), after changing them. The [Character3D](character3d.md)
-setters for `maxSlopeAngle`, `mass` and `maxStrength` change the running character too.
+setters for `maxSlopeAngle`, `supportAngle`, `mass` and `maxStrength` change the running
+character too.

@@ -57,6 +57,7 @@ rotation stays where scripts put it.
 | Vector3 | [linearVelocity](#linearvelocity) | `(0,0,0)` | C++ \| Lua |
 | Vector3 | [position](#position) | — | C++ \| Lua |
 | float | [maxSlopeAngle](#maxslopeangle) | `45` | C++ \| Lua |
+| float | [supportAngle](#supportangle) | `90` | C++ \| Lua |
 | float | [stepUp](#stepup-stepdown) | `0.4` | C++ \| Lua |
 | float | [stepDown](#stepup-stepdown) | `0.5` | C++ \| Lua |
 | float | [mass](#mass-maxstrength) | `70` | C++ \| Lua |
@@ -124,9 +125,10 @@ it; walking into a wall or a slope that is too steep slides along it. In the air
 * *Getter:* `Vector3 getLinearVelocity() const`
 
 The velocity the last step moved the character with, gravity, jumps and the ground's velocity
-included. Walls and the ground stop the character without changing it: standing, it reads a
-small downward speed, and against a wall the full walking speed. Use the
-[ground state](#ground-detection) to tell standing from falling.
+included. Walls and the ground stop the character without changing it: walking, it reads a
+small downward speed, and against a wall the full walking speed. Standing still on ground that
+does not move, it reads zero. Use the [ground state](#ground-detection) to tell standing from
+falling.
 
 Setting an upward velocity launches the character, like a jump pad. The horizontal part comes
 from [moveVelocity](#movevelocity) on the ground, and in the air [airControl](#aircontrol)
@@ -153,6 +155,25 @@ the character at the next step.
 
 The steepest ground, in degrees, that the character walks on. Steeper ground reports
 `ON_STEEP_GROUND`: the character slides down it and walking into it does not climb it.
+
+---
+
+### supportAngle
+
+How far up the rounded bottom of the capsule, in degrees from its lowest point, a contact still
+holds the character up. It places what Jolt Physics calls the supporting volume: above it, what
+the capsule touches can block the character but never carries it. The default `90` reaches the
+middle of the lower sphere.
+
+It limits how far over an edge the character can stand. The further its feet are past the edge,
+the higher up the rounded bottom the edge touches, and above this angle the edge no longer holds
+the character, so it drops off. A lower angle drops it sooner. While an edge holds it, a
+character standing still stays where it is.
+
+It never goes below [maxSlopeAngle](#maxslopeangle): an edge touches the rounded bottom where a
+ramp of the same angle would, and a ramp the character can walk has to hold it up. Below `90`,
+ramps steeper than the angle report `NOT_SUPPORTED` instead of `ON_STEEP_GROUND`, so
+[isSupported](#ground-detection) is false on them. The character slides down both the same way.
 
 ---
 
