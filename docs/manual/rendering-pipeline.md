@@ -499,7 +499,9 @@ source — raise **Global Illumination Intensity** or use IBL if GTAO looks too 
 scene lit mainly by direct light.
 
 !!! note "Scope and limitations"
-    GTAO is computed for the main camera only; other cameras draw without it. Normals are
+    GTAO is computed for the main camera only; other cameras and reflection probe captures
+    draw without it, and only what is on screen occludes, so an occluder just past the edge
+    of the view casts nothing. Normals are
     reconstructed from depth when GTAO runs alone; when
     [SSR](#screen-space-reflections-ssr) is also enabled GTAO reuses the SSR G-buffer's
     depth **and** geometric normals — a single shared geometry pass, and sharper at
@@ -690,10 +692,11 @@ pass into an offscreen buffer, exactly like SSR does, and the passes ping-pong b
 buffers so a chain of any length costs two render targets. The last pass writes the real
 destination — the camera framebuffer, the fixed-resolution target, or the screen.
 
-A pass reads the previous pass's output (`u_sceneColorTexture`) and may also sample depth
-(`u_depthTexture`), the SSR G-buffer (`u_gbufferTexture`), and ambient occlusion
-(`u_gtaoTexture`). When a pass samples depth while SSR and GTAO are both off, the engine
-runs the depth pre-pass for it, so depth-driven effects work on their own.
+A pass reads the previous pass's output with `sceneColor()` and may also read depth
+(`sceneDepth()`), the normals of the SSR G-buffer (`sceneNormal()`), and ambient occlusion
+(`sceneOcclusion()`), as [Shader Files — Post-process](shader-files.md#post-process) shows.
+When a pass reads depth while SSR and GTAO are both off, the engine runs the depth pre-pass
+for it, so depth-driven effects work on their own.
 
 Values the pass declares with `#pragma param` lines become fields in the scene settings, and
 a pass that reads `Engine.resolution` or `Engine.time` gets them from the engine. Scripts
