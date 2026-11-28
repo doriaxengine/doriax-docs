@@ -149,6 +149,8 @@ When `true` (default), the projection is automatically recalculated when the can
 
 An orthographic camera resized this way keeps where it sits in its view: with `leftClip` and `bottomClip` at `0` (the 2D default) it stays at the bottom-left corner, and with centered clips (the default for cameras the editor adds to a 3D scene) it stays in the middle.
 
+`setOrtho`, `setPerspective`, `setAspect` and the clip setters turn it off. The camera then keeps those values when the canvas changes shape, so a canvas of another aspect stretches the image: a camera whose clips span 16:9 is drawn squeezed into a square letterboxed canvas.
+
 ---
 
 ### nearClip / farClip
