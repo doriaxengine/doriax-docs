@@ -49,5 +49,5 @@ end
     entity instead of referencing the existing one. See
     [Referencing other entities](../../manual/creating-scripts.md#referencing-other-entities).
 
-The name lookup is linear over the entity list; cache the result in `init()` rather than
-calling it every frame.
+Without a parent the name lookup is linear over the entity list; with one it reads only that
+parent's branch. Cache the result in `init()` rather than calling it every frame.

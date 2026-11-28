@@ -342,8 +342,8 @@ objects at runtime.
     - **Keep handles to created entities alive.** A one-argument handle *owns* its
       entity; if you store it only in a local variable, the entity can be destroyed when
       that handle is garbage-collected. Store runtime-spawned objects in `self`.
-    - **Cache `findEntity` results.** The lookup is linear over the entity list — resolve
-      once in `init()`, not every frame.
+    - **Cache `findEntity` results.** The lookup is linear over the entity list, or over the
+      parent's branch when you pass one — resolve once in `init()`, not every frame.
 
 ## Lua runtime lifecycle
 
